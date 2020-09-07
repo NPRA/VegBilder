@@ -1,5 +1,5 @@
 import React from "react";
-import { Map, TileLayer } from "react-leaflet";
+import { Map, TileLayer, WMSTileLayer } from "react-leaflet";
 import { render } from "@testing-library/react";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
@@ -11,6 +11,13 @@ const MapView = () => {
         <TileLayer
           url="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=norges_grunnkart&zoom={z}&x={x}&y={y}"
           attribution="<a href='https://www.kartverket.no/'>Kartverket</a>"
+        />
+        <WMSTileLayer
+          url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"
+          attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
+          layers="Vegbilder_2020"
+          format="image/png"
+          transparent={true}
         />
       </Map>
     );
