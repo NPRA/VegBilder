@@ -1,13 +1,15 @@
-import React from "react";
-import { Grid, Image } from "semantic-ui-react";
+import React, { useState } from "react";
+import { Grid } from "semantic-ui-react";
 
 import MapView from "./MapView/MapView";
+import ImageView from "./ImageView/ImageView";
 
 function App() {
+  const [currentImage, setCurrentImage] = useState(null);
   return (
     <Grid columns={2}>
       <Grid.Column>
-        <Image src="https://react.semantic-ui.com/images/wireframe/image.png" />
+        <ImageView currentImage={currentImage} />
       </Grid.Column>
       <Grid.Column>
         <MapView />
