@@ -3,6 +3,7 @@ import { Map, TileLayer, WMSTileLayer } from "react-leaflet";
 import { render } from "@testing-library/react";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
+import SelectedImagePoint from "../SelectedImagePoint/SelectedImagePoint";
 
 const MapView = () => {
   const renderMap = () => {
@@ -19,6 +20,7 @@ const MapView = () => {
           format="image/png"
           transparent={true}
         />
+        <SelectedImagePoint />
       </Map>
     );
   };
