@@ -18,9 +18,9 @@ const getFeature = async (latlng) => {
     typenames: typename,
     typename: typename,
     startindex: 0,
-    count: 1,
+    count: 10000,
     srsname: srsname,
-    bbox: `${bbox.west},${bbox.south},${bbox.east},${bbox.north},${srsname}`,
+    bbox: `${bbox.south},${bbox.west},${bbox.north},${bbox.east},${srsname}`,
     outputformat: "application/json",
   };
 
