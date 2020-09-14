@@ -25,6 +25,7 @@ const getFeature = async (latlng) => {
   };
 
   const response = await vegbilderOGC.get("", { params: params });
+  return response;
 };
 
 export default getFeature;
