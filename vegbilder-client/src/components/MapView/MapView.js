@@ -5,7 +5,7 @@ import "leaflet/dist/leaflet.css";
 import "./MapView.css";
 import SelectedImagePoint from "../SelectedImagePoint/SelectedImagePoint";
 
-const MapView = () => {
+const MapView = ({ currentImagePoint, setCurrentImagePoint }) => {
   const renderMap = () => {
     return (
       <Map center={[63.430515, 10.395053]} zoom={12}>
@@ -20,7 +20,10 @@ const MapView = () => {
           format="image/png"
           transparent={true}
         />
-        <SelectedImagePoint />
+        <SelectedImagePoint
+          currentImagePoint={currentImagePoint}
+          setCurrentImagePoint={setCurrentImagePoint}
+        />
       </Map>
     );
   };

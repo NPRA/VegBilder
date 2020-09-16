@@ -5,14 +5,17 @@ import MapView from "./MapView/MapView";
 import ImageView from "./ImageView/ImageView";
 
 function App() {
-  const [currentImage, setCurrentImage] = useState(null);
+  const [currentImagePoint, setCurrentImagePoint] = useState(null);
   return (
     <Grid columns={2}>
       <Grid.Column>
-        <ImageView currentImage={currentImage} />
+        <ImageView currentImagePoint={currentImagePoint} />
       </Grid.Column>
       <Grid.Column>
-        <MapView />
+        <MapView
+          currentImagePoint={currentImagePoint}
+          setCurrentImagePoint={setCurrentImagePoint}
+        />
       </Grid.Column>
     </Grid>
   );

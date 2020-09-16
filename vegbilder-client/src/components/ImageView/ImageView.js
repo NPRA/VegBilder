@@ -2,11 +2,11 @@ import React from "react";
 import { Image } from "semantic-ui-react";
 
 const ImageView = (props) => {
-  const { currentImage } = props;
+  const { currentImagePoint } = props;
   const imageUrl =
-    currentImage === null
+    currentImagePoint === null
       ? "https://react.semantic-ui.com/images/wireframe/image.png"
-      : currentImage.Url;
+      : currentImagePoint.properties.Url;
   return <Image src={imageUrl} />;
 };
 
