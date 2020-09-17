@@ -6,7 +6,8 @@ const ImageView = (props) => {
   const imageUrl =
     currentImagePoint === null
       ? "https://react.semantic-ui.com/images/wireframe/image.png"
-      : currentImagePoint.properties.Url;
+      : currentImagePoint.properties.URL;
+  console.log(`About to render image: ${imageUrl}`);
   return <Image src={imageUrl} />;
 };
 
