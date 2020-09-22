@@ -9,10 +9,10 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
       ? "https://react.semantic-ui.com/images/wireframe/image.png"
       : currentImagePoint.properties.URL;
 
-  const {
+  const [
     nearbyImagePointsOnSameRoadAndLane,
     setNearbyImagePointsOnSameRoadAndLane,
-  } = useState(null);
+  ] = useState(null);
 
   useEffect(() => {
     const fetchNearbyImagePointsOnSameRoadAndLane = async () => {
