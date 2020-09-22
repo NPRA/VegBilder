@@ -1,13 +1,6 @@
 import vegbilderOGC from "./vegbilderOGC";
 
-const getFeature = async (latlng) => {
-  const { lat, lng } = latlng;
-  const bbox = {
-    west: lng - 0.0002,
-    south: lat - 0.0001,
-    east: lng + 0.0002,
-    north: lat + 0.0001,
-  };
+const getFeature = async (bbox) => {
   const srsname = "urn:ogc:def:crs:EPSG::4326";
   const typename = "vegbilder_1_0:Vegbilder_2020";
 

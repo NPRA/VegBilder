@@ -8,23 +8,27 @@ import getDistanceInMetersBetween from "../../utilities/latlngUtilities";
 
 const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
   const map = useLeafletMap();
-  const [bbox, setBbox] = useState(null);
+  const [clickBbox, setClickBbox] = useState(null);
 
   useEffect(() => {
     map.on("click", async (event) => {
       console.log(`Clicked on location ${event.latlng}`);
       const { lat, lng } = event.latlng;
-      setBbox({
+      const bbox = {
         west: lng - 0.0002,
         south: lat - 0.0001,
         east: lng + 0.0002,
         north: lat + 0.0001,
-      });
-      const featureResponse = await getFeature(event.latlng);
+      };
+      setClickBbox(bbox);
+      const featureResponse = await getFeature(bbox);
+      console.log(
+        `Found ${featureResponse.data.totalFeatures} image points near the click point. Selecting the closest one:`
+      );
       const imagePoints = featureResponse.data.features;
-      console.log(featureResponse.data.features);
       const nearestImagePoint = findNearestImagePoint(imagePoints, lat, lng);
       setCurrentImagePoint(nearestImagePoint);
+      console.log(nearestImagePoint);
     });
     return () => {
       map.off("click");
@@ -48,12 +52,12 @@ const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
   };
 
   const renderBbox = () => {
-    if (bbox) {
+    if (clickBbox) {
       return (
         <Rectangle
           bounds={[
-            [bbox.south, bbox.west],
-            [bbox.north, bbox.east],
+            [clickBbox.south, clickBbox.west],
+            [clickBbox.north, clickBbox.east],
           ]}
         />
       );
