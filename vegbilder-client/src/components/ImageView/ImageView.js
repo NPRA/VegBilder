@@ -15,18 +15,16 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
   } = useState(null);
 
   useEffect(() => {
-    const fetchData = async () => {
-      const roadCategory = currentImagePoint.properties.VEGKATEGORI;
-      const roadNumber = currentImagePoint.properties.VEGNUMMER;
-      const laneCode = currentImagePoint.properties.FELTKODE;
+    const fetchNearbyImagePointsOnSameRoadAndLane = async () => {
+      const { VEGKATEGORI, VEGNUMMER, FELTKODE } = currentImagePoint.properties;
       const [lng, lat] = currentImagePoint.geometry.coordinates;
       console.log(
-        `Fetching images for ${roadCategory}${roadNumber} - lane ${laneCode} near (${lat}, ${lng})`
+        `Fetching images for ${VEGKATEGORI}${VEGNUMMER} - lane ${FELTKODE} near (${lat}, ${lng})`
       );
       const imagePointsOnCurrentRoad = await getNearbyImagePointsForRoadAndLane(
-        roadCategory,
-        roadNumber,
-        laneCode,
+        VEGKATEGORI,
+        VEGNUMMER,
+        FELTKODE,
         lat,
         lng
       );
@@ -34,7 +32,7 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
     };
 
     if (currentImagePoint) {
-      fetchData();
+      fetchNearbyImagePointsOnSameRoadAndLane();
     }
   }, [currentImagePoint]);
 
