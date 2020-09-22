@@ -10,7 +10,10 @@ function App() {
   return (
     <Grid columns={2}>
       <Grid.Column>
-        <ImageView currentImagePoint={currentImagePoint} />
+        <ImageView
+          currentImagePoint={currentImagePoint}
+          setCurrentImagePoint={setCurrentImagePoint}
+        />
         <ImageMetadataView currentImagePoint={currentImagePoint} />
       </Grid.Column>
       <Grid.Column>
