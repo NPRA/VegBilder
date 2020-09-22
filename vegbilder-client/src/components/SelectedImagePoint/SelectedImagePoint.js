@@ -16,7 +16,7 @@ const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
 
   useEffect(() => {
     map.on("click", async (event) => {
-      console.log(`Clicked on location ${event.latlng}`);
+      //console.log(`Clicked on location ${event.latlng}`);
       const { lat, lng } = event.latlng;
       const bbox = {
         west: lng - 0.0002,
@@ -26,13 +26,11 @@ const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
       };
       setClickBbox(bbox);
       const featureResponse = await getFeature(bbox);
-      console.log(
-        `Found ${featureResponse.data.totalFeatures} image points near the click point. Selecting the closest one:`
-      );
+      //console.log(`Found ${featureResponse.data.totalFeatures} image points near the click point. Selecting the closest one:`);
       const imagePoints = featureResponse.data.features;
       const nearestImagePoint = findNearestImagePoint(imagePoints, lat, lng);
       setCurrentImagePoint(nearestImagePoint);
-      console.log(nearestImagePoint);
+      //console.log(nearestImagePoint);
     });
     return () => {
       map.off("click");
