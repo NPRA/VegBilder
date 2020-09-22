@@ -6,6 +6,10 @@ import { useLeafletMap } from "use-leaflet";
 import getFeature from "../../apis/VegbilderOGC/getFeature";
 import getDistanceInMetersBetween from "../../utilities/latlngUtilities";
 
+const settings = {
+  renderClickBbox: false,
+};
+
 const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
   const map = useLeafletMap();
   const [clickBbox, setClickBbox] = useState(null);
@@ -92,7 +96,7 @@ const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
 
   return (
     <>
-      {renderBbox()}
+      {settings.renderClickBbox && renderBbox()}
       {renderCurrentImagePoint()}
     </>
   );
