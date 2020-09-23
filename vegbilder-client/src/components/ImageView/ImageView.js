@@ -3,6 +3,10 @@ import { Image } from "semantic-ui-react";
 
 import getNearbyImagePointsForRoadAndLane from "../../apis/VegbilderOGC/getNearbyImagePointsForRoadAndLane";
 
+const settings = {
+  nearbyImagesBboxSizeInMeters: 200,
+};
+
 const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
   const imageUrl =
     currentImagePoint === null
@@ -26,7 +30,8 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
         VEGNUMMER,
         FELTKODE,
         lat,
-        lng
+        lng,
+        settings.nearbyImagesBboxSizeInMeters
       );
       console.log("Nearby image points on same road and lane:");
       console.log(imagePoints);
@@ -37,15 +42,15 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
       if (!nearbyImagePointsOnSameRoadAndLane) {
         fetchNearbyImagePointsOnSameRoadAndLane();
       } else {
-        const index = nearbyImagePointsOnSameRoadAndLane.findIndex(
+        const currentIndex = nearbyImagePointsOnSameRoadAndLane.findIndex(
           (imagePoint) => imagePoint.id === currentImagePoint.id
         );
         const distanceFromEndOfImagePointArray = Math.min(
-          index,
-          nearbyImagePointsOnSameRoadAndLane.length - 1 - index
+          currentIndex,
+          nearbyImagePointsOnSameRoadAndLane.length - 1 - currentIndex
         );
         console.log(
-          `Current index ${index} of ${nearbyImagePointsOnSameRoadAndLane.length} loaded imagePoints. Distance from end is ${distanceFromEndOfImagePointArray}`
+          `Current index ${currentIndex} of ${nearbyImagePointsOnSameRoadAndLane.length} loaded imagePoints. Distance from end is ${distanceFromEndOfImagePointArray}`
         );
         if (distanceFromEndOfImagePointArray < 3) {
           fetchNearbyImagePointsOnSameRoadAndLane();

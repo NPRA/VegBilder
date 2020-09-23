@@ -1,18 +1,15 @@
 import vegbilderOGC from "./vegbilderOGC";
+import { createSquareBboxAroundPoint } from "../../utilities/latlngUtilities";
 
 const getNearbyImagePointsForRoadAndLane = async (
   roadCategory,
   roadNumber,
   laneCode,
   lat,
-  lng
+  lng,
+  bboxSizeInMeters
 ) => {
-  const bbox = {
-    west: lng - 0.002,
-    south: lat - 0.001,
-    east: lng + 0.002,
-    north: lat + 0.001,
-  };
+  const bbox = createSquareBboxAroundPoint({ lat, lng }, bboxSizeInMeters);
   const srsname = "urn:ogc:def:crs:EPSG::4326";
   const typename = "vegbilder_1_0:Vegbilder_2020";
 
@@ -31,14 +28,14 @@ const getNearbyImagePointsForRoadAndLane = async (
   };
 
   const response = await vegbilderOGC.get("", { params: params });
-  const nearbyImagePointsOnSameRoadAndLane = response.data.features.filter(
+  const imagePoints = response.data.features.filter(
     (ip) =>
       ip.properties.VEGKATEGORI === roadCategory &&
       ip.properties.VEGNUMMER === roadNumber &&
       ip.properties.FELTKODE === laneCode &&
       laneCode
   );
-  return nearbyImagePointsOnSameRoadAndLane;
+  return imagePoints;
 };
 
 export default getNearbyImagePointsForRoadAndLane;

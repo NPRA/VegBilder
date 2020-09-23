@@ -10,4 +10,24 @@ const getDistanceInMetersBetween = (pointA, pointB) => {
   return Math.sqrt(dx * dx + dy * dy);
 };
 
-export default getDistanceInMetersBetween;
+const createSquareBboxAroundPoint = (centerPoint, sizeInMeters) => {
+  const dLat = dyToDlat(sizeInMeters / 2);
+  const dLng = dxToDlng(sizeInMeters / 2, centerPoint.lat);
+  const bbox = {
+    west: centerPoint.lng - dLng,
+    south: centerPoint.lat - dLat,
+    east: centerPoint.lng + dLng,
+    north: centerPoint.lat + dLat,
+  };
+  return bbox;
+};
+
+const dyToDlat = (dy) => {
+  return dy / metersPerDegreeLat;
+};
+
+const dxToDlng = (dx, lat) => {
+  return dx / (metersPerDegreeLat * Math.cos(degreesToRadians(lat)));
+};
+
+export { getDistanceInMetersBetween, createSquareBboxAroundPoint };
