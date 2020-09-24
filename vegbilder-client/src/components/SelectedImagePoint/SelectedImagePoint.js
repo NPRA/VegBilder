@@ -6,7 +6,7 @@ import { useLeafletMap } from "use-leaflet";
 import SelectImagePointOnMapClick from "./effects/SelectImagePointOnMapClick";
 
 const settings = {
-  renderClickBbox: true,
+  renderClickBbox: false,
 };
 
 const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
