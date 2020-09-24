@@ -31,7 +31,7 @@ const fetchNearbyImagePointsWhenNecessary = (
   if (
     currentImagePoint &&
     (!nearbyImagePointsOnSameRoadAndLane ||
-      isNearEndOfImagePointArray(
+      isOutsideOrNearEndOfImagePointArray(
         currentImagePoint,
         nearbyImagePointsOnSameRoadAndLane
       ))
@@ -40,7 +40,10 @@ const fetchNearbyImagePointsWhenNecessary = (
   }
 };
 
-const isNearEndOfImagePointArray = (currentImagePoint, imagePoints) => {
+const isOutsideOrNearEndOfImagePointArray = (
+  currentImagePoint,
+  imagePoints
+) => {
   const currentIndex = imagePoints.findIndex(
     (imagePoint) => imagePoint.id === currentImagePoint.id
   );
