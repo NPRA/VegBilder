@@ -38,26 +38,31 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
       setNearbyImagePointsOnSameRoadAndLane(imagePoints);
     };
 
-    if (currentImagePoint) {
-      if (!nearbyImagePointsOnSameRoadAndLane) {
-        fetchNearbyImagePointsOnSameRoadAndLane();
-      } else {
-        const currentIndex = nearbyImagePointsOnSameRoadAndLane.findIndex(
-          (imagePoint) => imagePoint.id === currentImagePoint.id
-        );
-        const distanceFromEndOfImagePointArray = Math.min(
-          currentIndex,
-          nearbyImagePointsOnSameRoadAndLane.length - 1 - currentIndex
-        );
-        console.log(
-          `Current index ${currentIndex} of ${nearbyImagePointsOnSameRoadAndLane.length} loaded imagePoints. Distance from end is ${distanceFromEndOfImagePointArray}`
-        );
-        if (distanceFromEndOfImagePointArray < 3) {
-          fetchNearbyImagePointsOnSameRoadAndLane();
-        }
-      }
+    if (
+      currentImagePoint &&
+      (!nearbyImagePointsOnSameRoadAndLane ||
+        isNearEndOfImagePointArray(
+          currentImagePoint,
+          nearbyImagePointsOnSameRoadAndLane
+        ))
+    ) {
+      fetchNearbyImagePointsOnSameRoadAndLane();
     }
   }, [currentImagePoint]);
+
+  const isNearEndOfImagePointArray = (currentImagePoint, imagePoints) => {
+    const currentIndex = imagePoints.findIndex(
+      (imagePoint) => imagePoint.id === currentImagePoint.id
+    );
+    const distanceFromEndOfImagePointArray = Math.min(
+      currentIndex,
+      nearbyImagePointsOnSameRoadAndLane.length - 1 - currentIndex
+    );
+    console.log(
+      `Current index ${currentIndex} of ${nearbyImagePointsOnSameRoadAndLane.length} loaded imagePoints. Distance from end is ${distanceFromEndOfImagePointArray}`
+    );
+    return distanceFromEndOfImagePointArray < 3;
+  };
 
   return (
     <div>
