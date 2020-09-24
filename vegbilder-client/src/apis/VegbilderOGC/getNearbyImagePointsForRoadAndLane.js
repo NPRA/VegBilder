@@ -32,8 +32,7 @@ const getNearbyImagePointsForRoadAndLane = async (
     (ip) =>
       ip.properties.VEGKATEGORI === roadCategory &&
       ip.properties.VEGNUMMER === roadNumber &&
-      ip.properties.FELTKODE === laneCode &&
-      laneCode
+      ip.properties.FELTKODE === laneCode
   );
   return imagePoints;
 };
