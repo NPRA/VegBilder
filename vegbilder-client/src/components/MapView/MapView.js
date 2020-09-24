@@ -7,7 +7,7 @@ import SelectedImagePoint from "../SelectedImagePoint/SelectedImagePoint";
 const MapView = ({ currentImagePoint, setCurrentImagePoint }) => {
   const renderMap = () => {
     return (
-      <Map center={[63.430515, 10.395053]} zoom={12}>
+      <Map center={[59.96, 11.05]} zoom={14}>
         <TileLayer
           url="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=norges_grunnkart&zoom={z}&x={x}&y={y}"
           attribution="<a href='https://www.kartverket.no/'>Kartverket</a>"
