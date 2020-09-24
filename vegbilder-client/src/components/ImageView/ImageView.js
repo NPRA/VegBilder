@@ -21,7 +21,7 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
         nearbyImagePointsOnSameRoadAndLane,
         setNearbyImagePointsOnSameRoadAndLane
       ),
-    [currentImagePoint]
+    [currentImagePoint, nearbyImagePointsOnSameRoadAndLane]
   );
 
   return (
