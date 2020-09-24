@@ -2,4 +2,8 @@ const degreesToRadians = (degrees) => {
   return (degrees * Math.PI) / 180;
 };
 
-export { degreesToRadians };
+const isEvenNumber = (integer) => {
+  return integer % 2 === 0;
+};
+
+export { degreesToRadians, isEvenNumber };

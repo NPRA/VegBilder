@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Image, Button } from "semantic-ui-react";
 
 import fetchNearbyImagePointsWhenNecessary from "./effects/fetchNearbyImagePointsWhenNecessary";
+import getNearestImagePointInOppositeDirection from "../../apis/VegbilderOGC/getNearestImagePointInOppositeDirection";
 
 const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
   const imageUrl =
@@ -63,11 +64,25 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
     setCurrentImagePoint(previousImagePoint);
   };
 
+  const goToNearestImagePointInOppositeDirection = async () => {
+    const imagePoint = await getNearestImagePointInOppositeDirection(
+      currentImagePoint.properties.VEGKATEGORI,
+      currentImagePoint.properties.VEGNUMMER,
+      currentImagePoint.properties.FELTKODE,
+      currentImagePoint.geometry.coordinates[1],
+      currentImagePoint.geometry.coordinates[0]
+    );
+    setCurrentImagePoint(imagePoint);
+  };
+
   return (
     <div>
       <Image src={imageUrl} />
       <Button onClick={goToPreviousImagePoint}>Bakover</Button>
       <Button onClick={goToNextImagePoint}>Fremover</Button>
+      <Button onClick={goToNearestImagePointInOppositeDirection}>
+        U-sving
+      </Button>
     </div>
   );
 };
