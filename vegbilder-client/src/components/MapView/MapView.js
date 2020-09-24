@@ -1,6 +1,5 @@
 import React from "react";
 import { Map, TileLayer, WMSTileLayer } from "react-leaflet";
-import { render } from "@testing-library/react";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
 import SelectedImagePoint from "../SelectedImagePoint/SelectedImagePoint";
