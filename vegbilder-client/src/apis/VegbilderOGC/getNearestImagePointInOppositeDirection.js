@@ -12,6 +12,10 @@ const getNearestImagePointInOppositeDirection = async (
   lat,
   lng
 ) => {
+  if (!roadNumber || !roadNumber || !laneCode || !lat || !lng) {
+    return null;
+  }
+
   const bbox = createSquareBboxAroundPoint({ lat, lng }, 50);
   const srsname = "urn:ogc:def:crs:EPSG::4326";
   const typename = "vegbilder_1_0:Vegbilder_2020";
@@ -34,15 +38,21 @@ const getNearestImagePointInOppositeDirection = async (
     (ip) =>
       ip.properties.VEGKATEGORI === roadCategory &&
       ip.properties.VEGNUMMER === roadNumber &&
-      ip.properties.FELTKODE === laneCodeOppsiteDirection(laneCode)
+      ip.properties.FELTKODE &&
+      ip.properties.FELTKODE[0] ===
+        firstCharOfLaneCodeOppsiteDirection(laneCode)
   );
   return findNearestImagePoint(imagePoints, { lat, lng });
 };
 
-const laneCodeOppsiteDirection = (laneCode) => {
-  const laneCodeAsInt = parseInt(laneCode, 10);
-  const laneCodeOppositeDirection = isEvenNumber(laneCodeAsInt) ? 1 : 2;
-  return `${laneCodeOppositeDirection}`;
+const firstCharOfLaneCodeOppsiteDirection = (laneCode) => {
+  const firstCharOfLaneCodeAsInt = parseInt(laneCode[0], 10);
+  const numberSignifyingOppositeDirection = isEvenNumber(
+    firstCharOfLaneCodeAsInt
+  )
+    ? 1
+    : 2;
+  return `${numberSignifyingOppositeDirection}`;
 };
 
 const findNearestImagePoint = (imagePoints, location) => {
