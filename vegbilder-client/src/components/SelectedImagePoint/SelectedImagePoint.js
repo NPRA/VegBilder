@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Icon } from "leaflet";
 import { Rectangle, Marker } from "react-leaflet";
 import { useLeafletMap } from "use-leaflet";
+import leafletrotatedmarker from "leaflet-rotatedmarker";
 
 import SelectImagePointOnMapClick from "./effects/SelectImagePointOnMapClick";
 
@@ -32,7 +33,7 @@ const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
     }
   };
 
-  const getMarkerIcon = () => {
+  const getNonDirectionalMarkerIcon = () => {
     return new Icon({
       iconUrl: "images/marker-current.png",
       iconSize: [15, 15],
@@ -40,15 +41,27 @@ const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
     });
   };
 
+  const getDirectionalMarkerIcon = () => {
+    return new Icon({
+      iconUrl: "images/marker-current-directional.png",
+      iconSize: [15, 22],
+      iconAnchor: [7, 11],
+    });
+  };
+
   const renderCurrentImagePoint = () => {
     if (currentImagePoint) {
       const lat = currentImagePoint.geometry.coordinates[1];
       const lng = currentImagePoint.geometry.coordinates[0];
+      const icon = currentImagePoint.properties.RETNING
+        ? getDirectionalMarkerIcon()
+        : getNonDirectionalMarkerIcon();
       return (
         <Marker
           key={currentImagePoint.id}
           position={[lat, lng]}
-          icon={getMarkerIcon()}
+          icon={icon}
+          rotationAngle={currentImagePoint.properties.RETNING}
         />
       );
     } else {
