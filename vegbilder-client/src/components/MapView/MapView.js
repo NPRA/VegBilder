@@ -3,14 +3,22 @@ import { Map, TileLayer, WMSTileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
 import SelectedImagePoint from "../SelectedImagePoint/SelectedImagePoint";
+import { crsUtm33N } from "./crs";
 
 const MapView = ({ currentImagePoint, setCurrentImagePoint }) => {
   const renderMap = () => {
     return (
-      <Map center={[59.96, 11.05]} zoom={14}>
+      <Map
+        center={[59.96, 11.05]}
+        zoom={14}
+        crs={crsUtm33N}
+        minZoom={4}
+        maxZoom={16}
+      >
         <TileLayer
-          url="https://opencache.statkart.no/gatekeeper/gk/gk.open_gmaps?layers=norges_grunnkart&zoom={z}&x={x}&y={y}"
-          attribution="<a href='https://www.kartverket.no/'>Kartverket</a>"
+          url="https://m{s}-nvdbcache.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
+          attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
+          subdomains="123456789"
         />
         <WMSTileLayer
           url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"
