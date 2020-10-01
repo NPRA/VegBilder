@@ -1,15 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Map, TileLayer, WMSTileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
 import SelectedImagePoint from "../SelectedImagePoint/SelectedImagePoint";
 import { crsUtm33N } from "./crs";
 
-const MapView = ({ currentImagePoint, setCurrentImagePoint }) => {
+const MapView = ({
+  currentLocation,
+  currentImagePoint,
+  setCurrentImagePoint,
+}) => {
   const renderMap = () => {
     return (
       <Map
-        center={[59.96, 11.05]}
+        center={[currentLocation.lat, currentLocation.lng]}
         zoom={14}
         crs={crsUtm33N}
         minZoom={4}

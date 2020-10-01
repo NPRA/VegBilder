@@ -7,6 +7,10 @@ import ImageMetadataView from "./ImageMetadataView/ImageMetadataView";
 import Search from "./Search/Search";
 
 function App() {
+  const [currentLocation, setCurrentLocation] = useState({
+    lat: 59.96,
+    lng: 11.05,
+  });
   const [currentImagePoint, setCurrentImagePoint] = useState(null);
   return (
     <Grid columns={2}>
@@ -18,8 +22,9 @@ function App() {
         <ImageMetadataView currentImagePoint={currentImagePoint} />
       </Grid.Column>
       <Grid.Column>
-        <Search></Search>
+        <Search setCurrentLocation={setCurrentLocation}></Search>
         <MapView
+          currentLocation={currentLocation}
           currentImagePoint={currentImagePoint}
           setCurrentImagePoint={setCurrentImagePoint}
         />

@@ -3,12 +3,16 @@ import { Form } from "semantic-ui-react";
 
 import getVegByVegsystemreferanse from "../../apis/NVDB/getVegByVegsystemreferanse";
 
-const Search = () => {
+const Search = ({ setCurrentLocation }) => {
   const onKeyDown = async (event) => {
     if (event.key === "Enter") {
-      console.log(`Searching for ${event.target.value}`);
-      const response = await performSearch(event.target.value);
-      console.log(response);
+      const vegsystemreferanse = event.target.value;
+      console.log(`Searching for ${vegsystemreferanse}`);
+      const coordinates = await getCoordinates(vegsystemreferanse);
+      console.log(coordinates);
+      if (coordinates) {
+        setCurrentLocation(coordinates);
+      }
     }
   };
 
@@ -24,9 +28,23 @@ const Search = () => {
   );
 };
 
-const performSearch = async (query) => {
-  const vegResponse = await getVegByVegsystemreferanse(query);
-  return vegResponse;
+const getCoordinates = async (vegsystemreferanse) => {
+  const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
+  if (vegResponse) {
+    const wkt = vegResponse.data?.geometri?.wkt;
+    return getCoordinatesFromWkt(wkt);
+  }
+};
+
+const getCoordinatesFromWkt = (wkt) => {
+  const split = wkt?.split(/[()]/);
+  const coordinateString = split[1];
+  if (!coordinateString) return null;
+  const coordinates = coordinateString.split(" ");
+  return {
+    lat: parseFloat(coordinates[0]),
+    lng: parseFloat(coordinates[1]),
+  };
 };
 
 export default Search;

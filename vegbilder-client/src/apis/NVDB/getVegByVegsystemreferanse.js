@@ -4,8 +4,10 @@ const getVegByVegsystemreferanse = async (vegsystemreferanse) => {
   const response = await nvdbApi.get("/veg", {
     params: {
       vegsystemreferanse: vegsystemreferanse,
+      srid: "4326",
     },
   });
+  return response;
 };
 
 
