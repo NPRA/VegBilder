@@ -4,13 +4,17 @@ import {
   createSquareBboxAroundPoint,
 } from "../../../utilities/latlngUtilities";
 
-const SelectImagePointOnMapClick = (
+const selectImagePointOnMapClick = (
   map,
   setCurrentImagePoint,
   setClickBbox
 ) => {
   const onMapClick = async (event) => {
-    await selectImagePointNearClick(event, setCurrentImagePoint, setClickBbox);
+    await selectImagePointNearLocation(
+      event.latlng,
+      setCurrentImagePoint,
+      setClickBbox
+    );
   };
 
   map.on("click", onMapClick);
@@ -19,30 +23,26 @@ const SelectImagePointOnMapClick = (
   };
 };
 
-const selectImagePointNearClick = async (
-  event,
+const selectImagePointNearLocation = async (
+  latlng,
   setCurrentImagePoint,
   setClickBbox
 ) => {
-  //console.log(`Clicked on location ${event.latlng}`);
-  const clickedPoint = event.latlng;
-  const bbox = createSquareBboxAroundPoint(clickedPoint, 30);
+  const bbox = createSquareBboxAroundPoint(latlng, 30);
   setClickBbox(bbox);
   const featureResponse = await getFeature(bbox);
-  //console.log(`Found ${featureResponse.data.totalFeatures} image points near the click point. Selecting the closest one:`);
   const imagePoints = featureResponse.data.features;
-  const nearestImagePoint = findNearestImagePoint(imagePoints, clickedPoint);
+  const nearestImagePoint = findNearestImagePoint(imagePoints, latlng);
   setCurrentImagePoint(nearestImagePoint);
-  //console.log(nearestImagePoint);
 };
 
-const findNearestImagePoint = (imagePoints, clickedPoint) => {
+const findNearestImagePoint = (imagePoints, latlng) => {
   let nearestPoint = { distance: 100000000, imagePoint: null };
   imagePoints.forEach((ip) => {
     const imageLat = ip.geometry.coordinates[1];
     const imageLng = ip.geometry.coordinates[0];
     const distance = getDistanceInMetersBetween(
-      { lat: clickedPoint.lat, lng: clickedPoint.lng },
+      { lat: latlng.lat, lng: latlng.lng },
       { lat: imageLat, lng: imageLng }
     );
     if (distance < nearestPoint.distance) {
@@ -52,4 +52,4 @@ const findNearestImagePoint = (imagePoints, clickedPoint) => {
   return nearestPoint.imagePoint;
 };
 
-export default SelectImagePointOnMapClick;
+export { selectImagePointOnMapClick, selectImagePointNearLocation };

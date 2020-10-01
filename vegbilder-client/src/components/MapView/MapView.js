@@ -34,6 +34,7 @@ const MapView = ({
         <SelectedImagePoint
           currentImagePoint={currentImagePoint}
           setCurrentImagePoint={setCurrentImagePoint}
+          currentLocation={currentLocation}
         />
       </Map>
     );

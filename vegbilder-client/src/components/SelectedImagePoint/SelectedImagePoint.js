@@ -4,19 +4,34 @@ import { Rectangle, Marker } from "react-leaflet";
 import { useLeafletMap } from "use-leaflet";
 import leafletrotatedmarker from "leaflet-rotatedmarker";
 
-import SelectImagePointOnMapClick from "./effects/SelectImagePointOnMapClick";
+import {
+  selectImagePointOnMapClick,
+  selectImagePointNearLocation,
+} from "./effects/selectImagePoint";
 
 const settings = {
   renderClickBbox: false,
 };
 
-const SelectedImagePoint = ({ currentImagePoint, setCurrentImagePoint }) => {
+const SelectedImagePoint = ({
+  currentImagePoint,
+  setCurrentImagePoint,
+  currentLocation,
+}) => {
   const map = useLeafletMap();
   const [clickBbox, setClickBbox] = useState(null);
 
   useEffect(() => {
-    SelectImagePointOnMapClick(map, setCurrentImagePoint, setClickBbox);
+    selectImagePointOnMapClick(map, setCurrentImagePoint, setClickBbox);
   }, [map, setCurrentImagePoint]);
+
+  useEffect(() => {
+    selectImagePointNearLocation(
+      currentLocation,
+      setCurrentImagePoint,
+      setClickBbox
+    );
+  }, [currentLocation, setCurrentImagePoint]);
 
   const renderBbox = () => {
     if (clickBbox) {
