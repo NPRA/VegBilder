@@ -2,9 +2,11 @@ import vegbilderOGC from "./vegbilderOGC";
 import { createSquareBboxAroundPoint } from "../../utilities/latlngUtilities";
 
 const getNearbyImagePointsForRoadAndLane = async (
-  roadCategory,
-  roadNumber,
-  laneCode,
+  vegkategori,
+  vegnummer,
+  kryssdel,
+  sideanleggsdel,
+  feltkode,
   lat,
   lng,
   bboxSizeInMeters
@@ -24,15 +26,17 @@ const getNearbyImagePointsForRoadAndLane = async (
     srsname: srsname,
     bbox: `${bbox.south},${bbox.west},${bbox.north},${bbox.east},${srsname}`,
     outputformat: "application/json",
-    //CQL_FILTER: `(VEGKATEGORI='${roadCategory}' AND VEGNUMMER='${roadNumber}' AND FELTKODE='${laneCode}')`,
+    //CQL_FILTER: `(VEGKATEGORI='${vegkategori}' AND VEGNUMMER='${vegnummer}' AND KRYSSDEL='${kryssdel} AND SIDEANLEGGSDEL='${sideanleggsdel}'' AND FELTKODE='${feltkode}')`,
   };
 
   const response = await vegbilderOGC.get("", { params: params });
   const imagePoints = response.data.features.filter(
     (ip) =>
-      ip.properties.VEGKATEGORI === roadCategory &&
-      ip.properties.VEGNUMMER === roadNumber &&
-      ip.properties.FELTKODE === laneCode
+      ip.properties.VEGKATEGORI === vegkategori &&
+      ip.properties.VEGNUMMER === vegnummer &&
+      ip.properties.KRYSSDEL === kryssdel &&
+      ip.properties.SIDEANLEGGSDEL === sideanleggsdel &&
+      ip.properties.FELTKODE === feltkode
   );
   return imagePoints;
 };

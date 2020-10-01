@@ -10,14 +10,24 @@ const fetchNearbyImagePointsWhenNecessary = (
   setNearbyImagePointsOnSameRoadAndLane
 ) => {
   const fetchNearbyImagePointsOnSameRoadAndLane = async () => {
-    const { VEGKATEGORI, VEGNUMMER, FELTKODE } = currentImagePoint.properties;
+    const {
+      VEGKATEGORI,
+      VEGNUMMER,
+      KRYSSDEL,
+      SIDEANLEGGSDEL,
+      FELTKODE,
+    } = currentImagePoint.properties;
     const [lng, lat] = currentImagePoint.geometry.coordinates;
     console.log(
-      `Fetching images for ${VEGKATEGORI}${VEGNUMMER} - lane ${FELTKODE} near (${lat}, ${lng})`
+      `Fetching images for ${VEGKATEGORI}${VEGNUMMER} ${
+        KRYSSDEL ? "KD" + KRYSSDEL : SIDEANLEGGSDEL ? "SD" + SIDEANLEGGSDEL : ""
+      } - lane ${FELTKODE} near (${lat}, ${lng})`
     );
     const imagePoints = await getNearbyImagePointsForRoadAndLane(
       VEGKATEGORI,
       VEGNUMMER,
+      KRYSSDEL,
+      SIDEANLEGGSDEL,
       FELTKODE,
       lat,
       lng,
