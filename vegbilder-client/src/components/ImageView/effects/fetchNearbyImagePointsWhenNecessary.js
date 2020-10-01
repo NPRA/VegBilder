@@ -1,7 +1,7 @@
 import getNearbyImagePointsForRoadAndLane from "../../../apis/VegbilderOGC/getNearbyImagePointsForRoadAndLane";
 
 const settings = {
-  nearbyImagesBboxSizeInMeters: 200,
+  nearbyImagesBboxSizeInMeters: 1000,
 };
 
 const fetchNearbyImagePointsWhenNecessary = (
