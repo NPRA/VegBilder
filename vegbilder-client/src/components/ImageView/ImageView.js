@@ -68,6 +68,8 @@ const ImageView = ({ currentImagePoint, setCurrentImagePoint }) => {
     const imagePoint = await getNearestImagePointInOppositeDirection(
       currentImagePoint.properties.VEGKATEGORI,
       currentImagePoint.properties.VEGNUMMER,
+      currentImagePoint.properties.KRYSSDEL,
+      currentImagePoint.properties.SIDEANLEGGSDEL,
       currentImagePoint.properties.FELTKODE,
       currentImagePoint.geometry.coordinates[1],
       currentImagePoint.geometry.coordinates[0]

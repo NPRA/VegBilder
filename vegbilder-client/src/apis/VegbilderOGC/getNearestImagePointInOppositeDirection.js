@@ -6,13 +6,15 @@ import {
 import { isEvenNumber } from "../../utilities/mathUtilities";
 
 const getNearestImagePointInOppositeDirection = async (
-  roadCategory,
-  roadNumber,
-  laneCode,
+  vegkategori,
+  vegnummer,
+  kryssdel,
+  sideanleggsdel,
+  feltkode,
   lat,
   lng
 ) => {
-  if (!roadNumber || !roadNumber || !laneCode || !lat || !lng) {
+  if (!vegnummer || !vegnummer || !feltkode || !lat || !lng) {
     return null;
   }
 
@@ -36,16 +38,18 @@ const getNearestImagePointInOppositeDirection = async (
   const response = await vegbilderOGC.get("", { params: params });
   const imagePoints = response.data.features.filter(
     (ip) =>
-      ip.properties.VEGKATEGORI === roadCategory &&
-      ip.properties.VEGNUMMER === roadNumber &&
+      ip.properties.VEGKATEGORI === vegkategori &&
+      ip.properties.VEGNUMMER === vegnummer &&
+      ip.properties.KRYSSDEL === kryssdel &&
+      ip.properties.SIDEANLEGGSDEL === sideanleggsdel &&
       ip.properties.FELTKODE &&
       ip.properties.FELTKODE[0] ===
-        firstCharOfLaneCodeOppsiteDirection(laneCode)
+        firstCharOfFeltkodeOppsiteDirection(feltkode)
   );
   return findNearestImagePoint(imagePoints, { lat, lng });
 };
 
-const firstCharOfLaneCodeOppsiteDirection = (laneCode) => {
+const firstCharOfFeltkodeOppsiteDirection = (laneCode) => {
   const firstCharOfLaneCodeAsInt = parseInt(laneCode[0], 10);
   const numberSignifyingOppositeDirection = isEvenNumber(
     firstCharOfLaneCodeAsInt
