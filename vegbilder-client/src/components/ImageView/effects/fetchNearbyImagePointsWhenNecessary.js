@@ -1,4 +1,7 @@
+import _ from "lodash";
 import getNearbyImagePointsForRoadAndLane from "../../../apis/VegbilderOGC/getNearbyImagePointsForRoadAndLane";
+import { isEvenNumber } from "../../../utilities/mathUtilities";
+import { firstCharOfFeltkodeAsInt } from "../../../utilities/vegdataUtilities";
 
 const settings = {
   nearbyImagesBboxSizeInMeters: 1000,
@@ -33,9 +36,12 @@ const fetchNearbyImagePointsWhenNecessary = (
       lng,
       settings.nearbyImagesBboxSizeInMeters
     );
+
+    const imagePointsSorted = sortImagePoints(imagePoints, FELTKODE);
+
     console.log("Nearby image points on same road and lane:");
-    console.log(imagePoints);
-    setNearbyImagePointsOnSameRoadAndLane(imagePoints);
+    console.log(imagePointsSorted);
+    setNearbyImagePointsOnSameRoadAndLane(imagePointsSorted);
   };
 
   if (
@@ -48,6 +54,16 @@ const fetchNearbyImagePointsWhenNecessary = (
   ) {
     fetchNearbyImagePointsOnSameRoadAndLane();
   }
+};
+
+const sortImagePoints = (imagePoints, feltkode) => {
+  const primaryFeltkode = firstCharOfFeltkodeAsInt(feltkode);
+  const order = isEvenNumber(primaryFeltkode) ? "desc" : "asc"; // Feltkode is odd in the metering direction and even in the opposite direction
+  return _.orderBy(
+    imagePoints,
+    ["properties.STREKNING", "properties.DELSTREKNING", "properties.METER"],
+    [order, order, order]
+  );
 };
 
 const isOutsideOrNearEndOfImagePointArray = (

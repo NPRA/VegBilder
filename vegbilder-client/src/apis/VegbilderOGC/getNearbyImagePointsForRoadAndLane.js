@@ -1,8 +1,6 @@
 import vegbilderOGC from "./vegbilderOGC";
 import { createSquareBboxAroundPoint } from "../../utilities/latlngUtilities";
 
-import _ from "lodash";
-
 const getNearbyImagePointsForRoadAndLane = async (
   vegkategori,
   vegnummer,
@@ -40,12 +38,7 @@ const getNearbyImagePointsForRoadAndLane = async (
       ip.properties.SIDEANLEGGSDEL === sideanleggsdel &&
       ip.properties.FELTKODE === feltkode
   );
-  const imagePointsSorted = _.sortBy(imagePoints, [
-    "properties.STREKNING",
-    "properties.DELSTREKNING",
-    "properties.METER",
-  ]);
-  return imagePointsSorted;
+  return imagePoints;
 };
 
 export default getNearbyImagePointsForRoadAndLane;

@@ -4,6 +4,7 @@ import {
   getDistanceInMetersBetween,
 } from "../../utilities/latlngUtilities";
 import { isEvenNumber } from "../../utilities/mathUtilities";
+import { firstCharOfFeltkodeAsInt } from "../../utilities/vegdataUtilities";
 
 const getNearestImagePointInOppositeDirection = async (
   vegkategori,
@@ -49,11 +50,10 @@ const getNearestImagePointInOppositeDirection = async (
   return findNearestImagePoint(imagePoints, { lat, lng });
 };
 
-const firstCharOfFeltkodeOppsiteDirection = (laneCode) => {
-  const firstCharOfLaneCodeAsInt = parseInt(laneCode[0], 10);
-  const numberSignifyingOppositeDirection = isEvenNumber(
-    firstCharOfLaneCodeAsInt
-  )
+const firstCharOfFeltkodeOppsiteDirection = (feltkode) => {
+  if (!feltkode) return null;
+  const primaryFeltkode = firstCharOfFeltkodeAsInt(feltkode);
+  const numberSignifyingOppositeDirection = isEvenNumber(primaryFeltkode)
     ? 1
     : 2;
   return `${numberSignifyingOppositeDirection}`;
