@@ -1,4 +1,4 @@
-import getFeature from "../../../apis/VegbilderOGC/getFeature";
+import getImagePointsInBbox from "../../../apis/VegbilderOGC/getImagePointsInBbox";
 import {
   getDistanceInMetersBetween,
   createSquareBboxAroundPoint,
@@ -30,7 +30,7 @@ const selectImagePointNearLocation = async (
 ) => {
   const bbox = createSquareBboxAroundPoint(latlng, 30);
   setClickBbox(bbox);
-  const featureResponse = await getFeature(bbox);
+  const featureResponse = await getImagePointsInBbox(bbox);
   const imagePoints = featureResponse.data.features;
   const nearestImagePoint = findNearestImagePoint(imagePoints, latlng);
   setCurrentImagePoint(nearestImagePoint);

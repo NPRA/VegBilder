@@ -1,6 +1,6 @@
 import vegbilderOGC from "./vegbilderOGC";
 
-const getFeature = async (bbox) => {
+const getImagePointsInBbox = async (bbox) => {
   const srsname = "urn:ogc:def:crs:EPSG::4326";
   const typename = "vegbilder_1_0:Vegbilder_2020";
 
@@ -21,4 +21,4 @@ const getFeature = async (bbox) => {
   return response;
 };
 
-export default getFeature;
+export default getImagePointsInBbox;
