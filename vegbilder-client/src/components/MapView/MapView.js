@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { Map, TileLayer, WMSTileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
+import MapLayersWrapper from "../MapLayersWrapper/MapLayersWrapper";
 import SelectedImagePoint from "../SelectedImagePoint/SelectedImagePoint";
 import { crsUtm33N } from "./crs";
 
@@ -31,6 +32,7 @@ const MapView = ({
           format="image/png"
           transparent={true}
         />
+        <MapLayersWrapper />
         <SelectedImagePoint
           currentImagePoint={currentImagePoint}
           setCurrentImagePoint={setCurrentImagePoint}
