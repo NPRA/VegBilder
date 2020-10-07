@@ -1,3 +1,4 @@
+import _ from "lodash";
 import getImagePointsInBbox from "./getImagePointsInBbox";
 import {
   roundDownToNearest,
@@ -20,8 +21,7 @@ const getImagePointsInVisibleMapArea = async (mapBbox) => {
     north: roundUpToNearest(north, bboxSizeInDegrees),
     east: roundUpToNearest(east, bboxSizeInDegrees),
   };
-  const bboxes = [];
-  const imagePointSets = [];
+  const fetchedBboxes = [];
   for (let i = expandedBoundary.west; i < east; i += bboxSizeInDegrees) {
     for (let j = expandedBoundary.south; j < north; j += bboxSizeInDegrees) {
       const bbox = {
@@ -30,17 +30,21 @@ const getImagePointsInVisibleMapArea = async (mapBbox) => {
         north: (j + bboxSizeInDegrees).toFixed(bboxSizeDecimals),
         east: (i + bboxSizeInDegrees).toFixed(bboxSizeDecimals),
       };
-      bboxes.push(bbox);
+      fetchedBboxes.push(bbox);
     }
   }
   console.log("Bboxes for fetching:");
-  console.log(bboxes);
-  for (const bbox of bboxes) {
-    const response = await getImagePointsInBbox(bbox);
-    const imagePoints = response.data.features;
-    imagePointSets.push({ bbox, imagePoints });
-  }
-  return imagePointSets;
+  console.log(fetchedBboxes);
+  const promises = fetchedBboxes.map(async (bbox) => {
+    return await getImagePointsInBbox(bbox);
+  });
+  const responses = await Promise.all(promises);
+  var imagePoints = _.chain(responses)
+    .map((response) => response.data.features)
+    .flatten()
+    .uniqBy((imagePoint) => imagePoint.id)
+    .value();
+  return { imagePoints, fetchedBboxes };
 };
 
 export default getImagePointsInVisibleMapArea;

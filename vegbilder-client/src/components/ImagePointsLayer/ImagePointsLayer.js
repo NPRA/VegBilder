@@ -13,12 +13,17 @@ const settings = {
 const ImagePointsLayer = () => {
   const [[south, west], [north, east]] = useLeafletBounds();
   const [imagePoints, setImagePoints] = useState([]);
+  const [fetchedBboxes, setFetchedBboxes] = useState([]);
 
   useEffect(() => {
     (async () => {
       const bbox = createBboxForVisibleMapArea();
-      const imagePointSets = await getImagePointsInVisibleMapArea(bbox);
-      setImagePoints(imagePointSets);
+      const {
+        imagePoints,
+        fetchedBboxes,
+      } = await getImagePointsInVisibleMapArea(bbox);
+      setImagePoints(imagePoints);
+      setFetchedBboxes(fetchedBboxes);
     })();
   }, [south, west, north, east]);
 
@@ -59,20 +64,16 @@ const ImagePointsLayer = () => {
   };
 
   const renderFetchBboxes = () => {
-    if (imagePoints) {
-      return (
-        <>
-          {imagePoints.map((imagePointSet) => renderBbox(imagePointSet.bbox))}
-        </>
-      );
+    if (fetchedBboxes) {
+      return <>{fetchedBboxes.map((bbox) => renderBbox(bbox))}</>;
     }
   };
 
   const getNonDirectionalMarkerIcon = () => {
     return new Icon({
       iconUrl: "images/marker.png",
-      iconSize: [15, 15],
-      iconAnchor: [7, 7],
+      iconSize: [10, 10],
+      iconAnchor: [5, 5],
     });
   };
 
@@ -80,18 +81,16 @@ const ImagePointsLayer = () => {
     if (imagePoints) {
       return (
         <>
-          {imagePoints.map((imagePointSet) =>
-            imagePointSet.imagePoints.map((imagePoint) => (
-              <Marker
-                key={imagePoint.id}
-                position={[
-                  imagePoint.geometry.coordinates[1],
-                  imagePoint.geometry.coordinates[0],
-                ]}
-                icon={getNonDirectionalMarkerIcon()}
-              />
-            ))
-          )}
+          {imagePoints.map((imagePoint) => (
+            <Marker
+              key={imagePoint.id}
+              position={[
+                imagePoint.geometry.coordinates[1],
+                imagePoint.geometry.coordinates[0],
+              ]}
+              icon={getNonDirectionalMarkerIcon()}
+            />
+          ))}
         </>
       );
     }
