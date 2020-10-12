@@ -11,7 +11,7 @@ const getImagePointsInBbox = async (bbox) => {
     typenames: typename,
     typename: typename,
     startindex: 0,
-    count: 1000,
+    count: 10000,
     srsname: srsname,
     bbox: `${bbox.south},${bbox.west},${bbox.north},${bbox.east},${srsname}`,
     outputformat: "application/json",
