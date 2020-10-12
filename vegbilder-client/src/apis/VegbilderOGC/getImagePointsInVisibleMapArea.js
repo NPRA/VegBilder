@@ -43,8 +43,20 @@ const getImagePointsInVisibleMapArea = async (mapBbox) => {
     .map((response) => response.data.features)
     .flatten()
     .uniqBy((imagePoint) => imagePoint.id)
+    .filter((imagePoint) => isWithinBbox(imagePoint, mapBbox))
     .value();
   return { imagePoints, fetchedBboxes };
+};
+
+const isWithinBbox = (imagePoint, bbox) => {
+  const lat = imagePoint.geometry.coordinates[1];
+  const lng = imagePoint.geometry.coordinates[0];
+  return (
+    lat >= bbox.south &&
+    lat <= bbox.north &&
+    lng >= bbox.west &&
+    lng <= bbox.east
+  );
 };
 
 export default getImagePointsInVisibleMapArea;
