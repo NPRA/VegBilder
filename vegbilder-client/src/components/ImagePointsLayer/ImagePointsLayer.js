@@ -77,20 +77,33 @@ const ImagePointsLayer = () => {
     });
   };
 
+  const getDirectionalMarkerIcon = () => {
+    return new Icon({
+      iconUrl: "images/marker-directional.png",
+      iconSize: [10, 10],
+      iconAnchor: [5, 5],
+    });
+  };
+
   const renderImagePoints = () => {
     if (imagePoints) {
       return (
         <>
-          {imagePoints.map((imagePoint) => (
-            <Marker
-              key={imagePoint.id}
-              position={[
-                imagePoint.geometry.coordinates[1],
-                imagePoint.geometry.coordinates[0],
-              ]}
-              icon={getNonDirectionalMarkerIcon()}
-            />
-          ))}
+          {imagePoints.map((imagePoint) => {
+            const lat = imagePoint.geometry.coordinates[1];
+            const lng = imagePoint.geometry.coordinates[0];
+            const icon = imagePoint.properties.RETNING
+              ? getDirectionalMarkerIcon()
+              : getNonDirectionalMarkerIcon();
+            return (
+              <Marker
+                key={imagePoint.id}
+                position={[lat, lng]}
+                icon={icon}
+                rotationAngle={imagePoint.properties.RETNING}
+              />
+            );
+          })}
         </>
       );
     }
