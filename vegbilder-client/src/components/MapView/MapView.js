@@ -1,9 +1,8 @@
 import React, { useEffect } from "react";
-import { Map, TileLayer, WMSTileLayer } from "react-leaflet";
+import { Map, TileLayer } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import "./MapView.css";
-import MapLayersWrapper from "../MapLayersWrapper/MapLayersWrapper";
-import SelectedImagePoint from "../SelectedImagePoint/SelectedImagePoint";
+import ImagePointLayersWrapper from "../ImagePointLayersWrapper/ImagePointsLayersWrapper";
 import { crsUtm33N } from "./crs";
 
 const MapView = ({
@@ -25,18 +24,10 @@ const MapView = ({
           attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
           subdomains="123456789"
         />
-        <WMSTileLayer
-          url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"
-          attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
-          layers="Vegbilder_2020"
-          format="image/png"
-          transparent={true}
-        />
-        <MapLayersWrapper />
-        <SelectedImagePoint
+        <ImagePointLayersWrapper
+          currentLocation={currentLocation}
           currentImagePoint={currentImagePoint}
           setCurrentImagePoint={setCurrentImagePoint}
-          currentLocation={currentLocation}
         />
       </Map>
     );
