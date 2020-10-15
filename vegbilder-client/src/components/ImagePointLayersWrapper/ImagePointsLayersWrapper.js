@@ -26,6 +26,7 @@ const ImagePointLayersWrapper = ({
           layers="Vegbilder_2020"
           format="image/png"
           transparent={true}
+          opacity={0.6}
         />
       )}
     </>

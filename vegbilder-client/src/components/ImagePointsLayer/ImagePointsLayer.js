@@ -106,6 +106,7 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
                 onclick={() => setCurrentImagePoint(imagePoint)}
+                opacity={0.8}
               />
             );
           })}
