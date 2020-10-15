@@ -10,7 +10,7 @@ const settings = {
   drawBboxes: false,
 };
 
-const ImagePointsLayer = () => {
+const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
   const [imagePoints, setImagePoints] = useState([]);
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
@@ -69,20 +69,20 @@ const ImagePointsLayer = () => {
     }
   };
 
-  const getNonDirectionalMarkerIcon = () => {
-    return new Icon({
-      iconUrl: "images/marker.png",
-      iconSize: [10, 10],
-      iconAnchor: [5, 5],
-    });
-  };
+  const getMarkerIcon = (isDirectional, isSelected) => {
+    const iconUrl = `images/marker${isDirectional ? "-directional" : ""}${
+      isSelected ? "-selected" : ""
+    }.png`;
 
-  const getDirectionalMarkerIcon = () => {
-    return new Icon({
-      iconUrl: "images/marker-directional.png",
-      iconSize: [10, 10],
-      iconAnchor: [5, 5],
-    });
+    const iconOptions = {
+      iconUrl: iconUrl,
+      iconSize: [15, 15],
+      iconAnchor: [7, 7],
+    };
+    if (isSelected) {
+      console.log(iconOptions);
+    }
+    return new Icon(iconOptions);
   };
 
   const renderImagePoints = () => {
@@ -92,15 +92,17 @@ const ImagePointsLayer = () => {
           {imagePoints.map((imagePoint) => {
             const lat = imagePoint.geometry.coordinates[1];
             const lng = imagePoint.geometry.coordinates[0];
-            const icon = imagePoint.properties.RETNING
-              ? getDirectionalMarkerIcon()
-              : getNonDirectionalMarkerIcon();
+            const isDirectional = imagePoint.properties.RETNING !== undefined;
+            const isSelected =
+              currentImagePoint && currentImagePoint.id === imagePoint.id;
+            const icon = getMarkerIcon(isDirectional, isSelected);
             return (
               <Marker
                 key={imagePoint.id}
                 position={[lat, lng]}
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
+                onclick={() => setCurrentImagePoint(imagePoint)}
               />
             );
           })}

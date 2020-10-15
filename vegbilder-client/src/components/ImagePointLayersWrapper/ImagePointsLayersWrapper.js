@@ -14,19 +14,20 @@ const ImagePointLayersWrapper = ({
 
   return (
     <>
-      <WMSTileLayer
-        url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"
-        attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
-        layers="Vegbilder_2020"
-        format="image/png"
-        transparent={true}
-      />
-      {zoom > 13 && <ImagePointsLayer />}
-      <SelectedImagePoint
-        currentImagePoint={currentImagePoint}
-        setCurrentImagePoint={setCurrentImagePoint}
-        currentLocation={currentLocation}
-      />
+      {zoom > 14 ? (
+        <ImagePointsLayer
+          currentImagePoint={currentImagePoint}
+          setCurrentImagePoint={setCurrentImagePoint}
+        />
+      ) : (
+        <WMSTileLayer
+          url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"
+          attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
+          layers="Vegbilder_2020"
+          format="image/png"
+          transparent={true}
+        />
+      )}
     </>
   );
 };
