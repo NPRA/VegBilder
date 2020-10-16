@@ -4,6 +4,7 @@ import {
   roundDownToNearest,
   roundUpToNearest,
 } from "./../../utilities/mathUtilities";
+import { isWithinBbox } from "./../../utilities/latlngUtilities";
 
 const settings = {
   bboxSizeInDegrees: 0.02,
@@ -43,20 +44,15 @@ const getImagePointsInVisibleMapArea = async (mapBbox) => {
     .map((response) => response.data.features)
     .flatten()
     .uniqBy((imagePoint) => imagePoint.id)
-    .filter((imagePoint) => isWithinBbox(imagePoint, mapBbox))
+    .filter((imagePoint) => imagePointIsWithinBbox(imagePoint, mapBbox))
     .value();
   return { imagePoints, fetchedBboxes };
 };
 
-const isWithinBbox = (imagePoint, bbox) => {
+const imagePointIsWithinBbox = (imagePoint, bbox) => {
   const lat = imagePoint.geometry.coordinates[1];
   const lng = imagePoint.geometry.coordinates[0];
-  return (
-    lat >= bbox.south &&
-    lat <= bbox.north &&
-    lng >= bbox.west &&
-    lng <= bbox.east
-  );
+  return isWithinBbox({ lat, lng }, bbox);
 };
 
 export default getImagePointsInVisibleMapArea;

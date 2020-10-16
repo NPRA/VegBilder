@@ -30,4 +30,13 @@ const dxToDlng = (dx, lat) => {
   return dx / (metersPerDegreeLat * Math.cos(degreesToRadians(lat)));
 };
 
-export { getDistanceInMetersBetween, createSquareBboxAroundPoint };
+const isWithinBbox = (latlng, bbox) => {
+  const lat = latlng.lat;
+  const lng = latlng.lng;
+  return (
+    lat >= bbox.south &&
+    lat <= bbox.north &&
+    lng >= bbox.west &&
+    lng <= bbox.east
+  );
+};
