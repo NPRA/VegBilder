@@ -39,13 +39,13 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
       };
     } else {
       // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
-      const paddingX = (west - east) * 0.1;
+      const paddingX = (east - west) * 0.1;
       const paddingY = (north - south) * 0.1;
       return {
         south: south - paddingY,
-        west: west + paddingX,
+        west: west - paddingX,
         north: north + paddingY,
-        east: east - paddingX,
+        east: east + paddingX,
       };
     }
   };
