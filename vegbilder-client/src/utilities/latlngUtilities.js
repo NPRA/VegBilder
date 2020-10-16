@@ -40,3 +40,18 @@ const isWithinBbox = (latlng, bbox) => {
     lng <= bbox.east
   );
 };
+
+const isOutsideBbox = (latlng, bbox) => {
+  const lat = latlng.lat;
+  const lng = latlng.lng;
+  return (
+    lat < bbox.south || lat > bbox.north || lng < bbox.west || lng > bbox.east
+  );
+};
+
+export {
+  getDistanceInMetersBetween,
+  createSquareBboxAroundPoint,
+  isWithinBbox,
+  isOutsideBbox,
+};

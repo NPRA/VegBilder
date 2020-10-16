@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "leaflet";
-import { useLeafletBounds } from "use-leaflet";
+import { useLeafletBounds, useLeafletMap } from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
 
 import getImagePointsInVisibleMapArea from "../../apis/VegbilderOGC/getImagePointsInVisibleMapArea";
+import { isOutsideBbox } from "../../utilities/latlngUtilities";
 
 const settings = {
   useSmallerMapAreaBbox: false,
@@ -12,9 +13,11 @@ const settings = {
 
 const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
+  const map = useLeafletMap();
   const [imagePoints, setImagePoints] = useState([]);
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
 
+  // Fetch image points in the visible map area whenever the map bounds change
   useEffect(() => {
     (async () => {
       const bbox = createBboxForVisibleMapArea();
@@ -26,6 +29,19 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
       setFetchedBboxes(fetchedBboxes);
     })();
   }, [south, west, north, east]);
+
+  // Pan to the currently selected image point if it is near the edge of the visible map area
+  useEffect(() => {
+    if (currentImagePoint) {
+      const lat = currentImagePoint.geometry.coordinates[1];
+      const lng = currentImagePoint.geometry.coordinates[0];
+      const bbox = createPanningBbox();
+      if (isOutsideBbox({ lat, lng }, bbox)) {
+        console.log(`Panning to ${lat}, ${lng}`);
+        map.panTo({ lat, lng });
+      }
+    }
+  }, [currentImagePoint]);
 
   const createBboxForVisibleMapArea = () => {
     if (settings.useSmallerMapAreaBbox) {
@@ -50,6 +66,17 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
     }
   };
 
+  const createPanningBbox = () => {
+    const paddingX = (east - west) * 0.1;
+    const paddingY = (north - south) * 0.1;
+    return {
+      south: south + paddingY,
+      west: west + paddingX,
+      north: north - paddingY,
+      east: east - paddingX,
+    };
+  };
+
   const renderBbox = (bbox) => {
     return (
       <Rectangle
@@ -66,6 +93,11 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
     return renderBbox(bbox);
   };
 
+  const renderPanningBbox = () => {
+    const bbox = createPanningBbox(south, west, north, east);
+    return renderBbox(bbox);
+  };
+
   const renderFetchBboxes = () => {
     if (fetchedBboxes) {
       return <>{fetchedBboxes.map((bbox) => renderBbox(bbox))}</>;
@@ -76,16 +108,11 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
     const iconUrl = `images/marker${isDirectional ? "-directional" : ""}${
       isSelected ? "-selected" : ""
     }.png`;
-
-    const iconOptions = {
+    return new Icon({
       iconUrl: iconUrl,
       iconSize: [15, 15],
       iconAnchor: [7, 7],
-    };
-    if (isSelected) {
-      console.log(iconOptions);
-    }
-    return new Icon(iconOptions);
+    });
   };
 
   const renderImagePoints = () => {
@@ -118,6 +145,7 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
   return (
     <>
       {settings.drawBboxes && renderMapAreaBbox()}
+      {settings.drawBboxes && renderPanningBbox()}
       {settings.drawBboxes && renderFetchBboxes()}
       {renderImagePoints()}
     </>
