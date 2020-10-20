@@ -1,10 +1,8 @@
 import vegbilderOGC from "./vegbilderOGC";
-import {
-  createSquareBboxAroundPoint,
-  getDistanceInMetersBetween,
-} from "../../utilities/latlngUtilities";
+import { createSquareBboxAroundPoint } from "../../utilities/latlngUtilities";
 import { isEvenNumber } from "../../utilities/mathUtilities";
 import { firstCharOfFeltkodeAsInt } from "../../utilities/vegdataUtilities";
+import { findNearestImagePoint } from "../../utilities/imagePointUtilities";
 
 const getNearestImagePointInOppositeDirection = async (
   vegkategori,
@@ -57,22 +55,6 @@ const firstCharOfFeltkodeOppsiteDirection = (feltkode) => {
     ? 1
     : 2;
   return `${numberSignifyingOppositeDirection}`;
-};
-
-const findNearestImagePoint = (imagePoints, location) => {
-  let nearestPoint = { distance: 100000000, imagePoint: null };
-  imagePoints.forEach((ip) => {
-    const imageLat = ip.geometry.coordinates[1];
-    const imageLng = ip.geometry.coordinates[0];
-    const distance = getDistanceInMetersBetween(location, {
-      lat: imageLat,
-      lng: imageLng,
-    });
-    if (distance < nearestPoint.distance) {
-      nearestPoint = { distance: distance, imagePoint: ip };
-    }
-  });
-  return nearestPoint.imagePoint;
 };
 
 export default getNearestImagePointInOppositeDirection;
