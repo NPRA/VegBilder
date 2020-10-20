@@ -22,7 +22,10 @@ function App() {
         <ImageMetadataView currentImagePoint={currentImagePoint} />
       </Grid.Column>
       <Grid.Column>
-        <Search setCurrentLocation={setCurrentLocation}></Search>
+        <Search
+          setCurrentLocation={setCurrentLocation}
+          setCurrentImagePoint={setCurrentImagePoint}
+        ></Search>
         <MapView
           currentLocation={currentLocation}
           currentImagePoint={currentImagePoint}

@@ -2,18 +2,25 @@ import React from "react";
 import { Form } from "semantic-ui-react";
 
 import getVegByVegsystemreferanse from "../../apis/NVDB/getVegByVegsystemreferanse";
+import getNearestImagePoint from "../../apis/VegbilderOGC/getNearestImagePoint";
 
-const Search = ({ setCurrentLocation }) => {
+const Search = ({ setCurrentLocation, setCurrentImagePoint }) => {
   const onKeyDown = async (event) => {
     if (event.key === "Enter") {
       const vegsystemreferanse = event.target.value;
       console.log(`Searching for ${vegsystemreferanse}`);
-      const coordinates = await getCoordinates(vegsystemreferanse);
-      console.log(coordinates);
-      if (coordinates) {
-        setCurrentLocation(coordinates);
+      const latlng = await getCoordinates(vegsystemreferanse);
+      console.log(latlng);
+      if (latlng) {
+        selectImagePointNearLocation(latlng);
+        setCurrentLocation(latlng);
       }
     }
+  };
+
+  const selectImagePointNearLocation = async (latlng) => {
+    const nearestImagePoint = await getNearestImagePoint(latlng);
+    setCurrentImagePoint(nearestImagePoint);
   };
 
   return (
