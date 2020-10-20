@@ -125,6 +125,7 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
             const isDirectional = imagePoint.properties.RETNING !== undefined;
             const isSelected =
               currentImagePoint && currentImagePoint.id === imagePoint.id;
+            const opacity = isSelected ? 1 : 0.8;
             const icon = getMarkerIcon(isDirectional, isSelected);
             return (
               <Marker
@@ -133,7 +134,7 @@ const ImagePointsLayer = ({ currentImagePoint, setCurrentImagePoint }) => {
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
                 onclick={() => setCurrentImagePoint(imagePoint)}
-                opacity={0.8}
+                opacity={opacity}
               />
             );
           })}
