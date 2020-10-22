@@ -7,13 +7,7 @@ import { crsUtm33N } from "./crs";
 
 export default function MapContainer() {
   return (
-    <Map
-      center={[63.415854, 10.394951]}
-      zoom={14}
-      crs={crsUtm33N}
-      minZoom={4}
-      maxZoom={16}
-    >
+    <Map center={[65, 15]} zoom={4} crs={crsUtm33N} minZoom={4} maxZoom={16}>
       <TileLayer
         url="https://m{s}-nvdbcache.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
