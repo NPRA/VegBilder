@@ -4,7 +4,7 @@ import { Toolbar } from "@material-ui/core";
 
 export default function Header() {
   return (
-    <AppBar position="fixed" color="primary">
+    <AppBar position="fixed" color="primary" elevation={0}>
       <Toolbar>Vegbilder</Toolbar>
     </AppBar>
   );
