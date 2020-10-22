@@ -8,12 +8,15 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
+    "axios": "^0.20.0",
     "leaflet": "^1.7.1",
+    "leaflet-rotatedmarker": "^0.2.0",
     "proj4leaflet": "^1.0.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-leaflet": "^2.8.0",
-    "react-scripts": "3.4.4"
+    "react-scripts": "3.4.4",
+    "use-leaflet": "^1.6.1"
   },
   "scripts": {
     "start": "react-scripts start",
