@@ -4,6 +4,7 @@ import "leaflet/dist/leaflet.css";
 
 import "./MapContainer.css";
 import { crsUtm33N } from "./crs";
+import ImagePointLayersWrapper from "../ImagePointsLayersWrapper/ImagePointsLayersWrapper";
 
 export default function MapContainer() {
   return (
@@ -13,6 +14,7 @@ export default function MapContainer() {
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
         subdomains="123456789"
       />
+      <ImagePointLayersWrapper />
     </Map>
   );
 }
