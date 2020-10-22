@@ -9,6 +9,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "leaflet": "^1.7.1",
+    "proj4leaflet": "^1.0.2",
     "react": "^17.0.0",
     "react-dom": "^17.0.0",
     "react-leaflet": "^2.8.0",
