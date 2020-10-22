@@ -1,15 +1,15 @@
 import React from "react";
 import { ThemeProvider } from "@material-ui/core";
 
-import Header from "./Header";
-import Map from "./Map";
+import Header from "./Header/Header";
+import MapContainer from "./MapContainer/MapContainer";
 import theme from "../theme/Theme";
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <Header>Vegbilder</Header>
-      <Map></Map>
+      <MapContainer></MapContainer>
     </ThemeProvider>
   );
 }
