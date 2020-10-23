@@ -3,6 +3,7 @@ import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
 import CurrentImagePointContext from "../../contexts/CurrentImagePointContext";
+import leafletrotatedmarker from "leaflet-rotatedmarker";
 
 import getImagePointsInVisibleMapArea from "../../apis/VegbilderOGC/getImagePointsInVisibleMapArea";
 
