@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
-import leafletrotatedmarker from "leaflet-rotatedmarker";
+import CurrentImagePointContext from "../../contexts/CurrentImagePointContext";
 
 import getImagePointsInVisibleMapArea from "../../apis/VegbilderOGC/getImagePointsInVisibleMapArea";
 
@@ -74,8 +74,10 @@ const ImagePointsLayer = () => {
     }
   };
 
-  const getMarkerIcon = (isDirectional) => {
-    const iconUrl = `images/marker${isDirectional ? "-directional" : ""}.png`;
+  const getMarkerIcon = (isDirectional, isSelected) => {
+    const iconUrl = `images/marker${isDirectional ? "-directional" : ""}${
+      isSelected ? "-selected" : ""
+    }.png`;
     return new Icon({
       iconUrl: iconUrl,
       iconSize: [15, 15],
@@ -83,7 +85,7 @@ const ImagePointsLayer = () => {
     });
   };
 
-  const renderImagePoints = () => {
+  const renderImagePoints = (currentImagePoint, setCurrentImagePoint) => {
     if (imagePoints) {
       return (
         <>
@@ -91,13 +93,16 @@ const ImagePointsLayer = () => {
             const lat = imagePoint.geometry.coordinates[1];
             const lng = imagePoint.geometry.coordinates[0];
             const isDirectional = imagePoint.properties.RETNING !== undefined;
-            const icon = getMarkerIcon(isDirectional);
+            const isSelected =
+              currentImagePoint && currentImagePoint.id === imagePoint.id;
+            const icon = getMarkerIcon(isDirectional, isSelected);
             return (
               <Marker
                 key={imagePoint.id}
                 position={[lat, lng]}
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
+                onclick={() => setCurrentImagePoint(imagePoint)}
               />
             );
           })}
@@ -110,7 +115,11 @@ const ImagePointsLayer = () => {
     <>
       {settings.drawBboxes && renderMapAreaBbox()}
       {settings.drawBboxes && renderFetchBboxes()}
-      {renderImagePoints()}
+      <CurrentImagePointContext.Consumer>
+        {({ currentImagePoint, setCurrentImagePoint }) =>
+          renderImagePoints(currentImagePoint, setCurrentImagePoint)
+        }
+      </CurrentImagePointContext.Consumer>
     </>
   );
 };
