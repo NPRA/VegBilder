@@ -137,4 +137,8 @@ s3gateway-0.0.1-1  vegfoto  openjdk8    29s       4 days ago      Complete
 
 ## Rulla ut ny versjon:
 
+```
 ac perform rolling deploy vegbilder -e utvikling -v 0.1.1
+```
+
+
