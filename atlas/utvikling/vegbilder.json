@@ -1,0 +1,21 @@
+{
+  "schemaVersion": "v1",
+  "type": "Deployment",
+  "spec": {
+    "route": {
+      "spec": {
+        "hostname": "vegbilder.utv.atlas.vegvesen.no",
+        "termination": "edge",
+        "expose": "internal"
+      }
+    },
+    "probes": {
+      "readiness": {
+        "type": "HttpProbe",
+        "spec": {
+          "path": "/ready"
+        }
+      }
+    }
+  }
+}

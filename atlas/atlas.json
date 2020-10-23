@@ -1,0 +1,8 @@
+{
+  "schemaVersion": "v1",
+  "type": "Deployment",
+  "spec": {
+    "name": "vegbilder",
+    "iktlosning": "vegfoto"
+  }
+}
