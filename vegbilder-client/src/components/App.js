@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/styles";
 import Header from "./Header/Header";
 import MapContainer from "./MapContainer/MapContainer";
 import { CurrentImagePointStore } from "../contexts/CurrentImagePointContext";
+import { CurrentLocationStore } from "../contexts/CurrentLocationContext";
 import theme from "../theme/Theme";
 
 const useStyles = makeStyles({
@@ -23,16 +24,18 @@ function App() {
   const classes = useStyles();
   return (
     <ThemeProvider theme={theme}>
-      <CurrentImagePointStore>
-        <Grid container direction="column" className={classes.gridRoot}>
-          <Grid item className={classes.header}>
-            <Header>Vegbilder</Header>
+      <CurrentLocationStore>
+        <CurrentImagePointStore>
+          <Grid container direction="column" className={classes.gridRoot}>
+            <Grid item className={classes.header}>
+              <Header>Vegbilder</Header>
+            </Grid>
+            <Grid item className={classes.content}>
+              <MapContainer></MapContainer>
+            </Grid>
           </Grid>
-          <Grid item className={classes.content}>
-            <MapContainer></MapContainer>
-          </Grid>
-        </Grid>
-      </CurrentImagePointStore>
+        </CurrentImagePointStore>
+      </CurrentLocationStore>
     </ThemeProvider>
   );
 }

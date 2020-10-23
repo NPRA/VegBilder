@@ -5,10 +5,17 @@ import "leaflet/dist/leaflet.css";
 import "./MapContainer.css";
 import { crsUtm33N } from "./crs";
 import ImagePointLayersWrapper from "../ImagePointsLayersWrapper/ImagePointsLayersWrapper";
+import CurrentLocationContext from "../../contexts/CurrentLocationContext";
 
-export default function MapContainer() {
+function renderMap(currentLocation) {
   return (
-    <Map center={[65, 15]} zoom={4} crs={crsUtm33N} minZoom={4} maxZoom={16}>
+    <Map
+      center={currentLocation}
+      zoom={4}
+      crs={crsUtm33N}
+      minZoom={4}
+      maxZoom={16}
+    >
       <TileLayer
         url="https://m{s}-nvdbcache.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
@@ -16,5 +23,13 @@ export default function MapContainer() {
       />
       <ImagePointLayersWrapper />
     </Map>
+  );
+}
+
+export default function MapContainer() {
+  return (
+    <CurrentLocationContext.Consumer>
+      {({ currentLocation }) => renderMap(currentLocation)}
+    </CurrentLocationContext.Consumer>
   );
 }
