@@ -28,7 +28,7 @@ function App() {
         <CurrentImagePointStore>
           <Grid container direction="column" className={classes.gridRoot}>
             <Grid item className={classes.header}>
-              <Header>Vegbilder</Header>
+              <Header />
             </Grid>
             <Grid item className={classes.content}>
               <MapContainer></MapContainer>
