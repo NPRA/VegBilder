@@ -1,0 +1,17 @@
+{
+  "schemaVersion": "v1",
+  "type": "Deployment",
+  "spec": {
+    "name": "vegbilder",
+    "replicas": 1,
+    "image": {
+      "type": "GavImageDescriptor",
+      "spec": {
+        "artifactId": "vegbilder",
+        "groupid": "no.vegvesen.vegfoto",
+        "version": "0.1.0",
+        "port": 8080
+      }
+    }
+  }
+}
