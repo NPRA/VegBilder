@@ -8,10 +8,13 @@ import ImagePointLayersWrapper from "../ImagePointsLayersWrapper/ImagePointsLaye
 import CurrentLocationContext from "../../contexts/CurrentLocationContext";
 
 function renderMap(currentLocation) {
+  console.log(
+    `Render map. Current location is (${currentLocation.latlng.lat}, ${currentLocation.latlng.lng})`
+  );
   return (
     <Map
-      center={currentLocation}
-      zoom={4}
+      center={currentLocation.latlng}
+      zoom={currentLocation.zoom}
       crs={crsUtm33N}
       minZoom={4}
       maxZoom={16}
