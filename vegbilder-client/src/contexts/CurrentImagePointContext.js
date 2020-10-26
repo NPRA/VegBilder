@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const Context = React.createContext(null);
+const Context = React.createContext();
 
 export function CurrentImagePointStore(props) {
   const [currentImagePoint, setCurrentImagePoint] = useState(null);
