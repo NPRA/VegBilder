@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
-import { Rectangle, Marker } from "react-leaflet";
+import { Rectangle, Marker, Popup } from "react-leaflet";
 import CurrentImagePointContext from "../../contexts/CurrentImagePointContext";
 import leafletrotatedmarker from "leaflet-rotatedmarker";
 
@@ -104,7 +104,11 @@ const ImagePointsLayer = () => {
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
                 onclick={() => setCurrentImagePoint(imagePoint)}
-              />
+              >
+                <Popup>
+                  <img src={imagePoint.properties.URL} width={"300px"}></img>
+                </Popup>
+              </Marker>
             );
           })}
         </>
