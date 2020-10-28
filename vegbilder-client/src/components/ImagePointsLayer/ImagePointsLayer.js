@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
 import { Rectangle, Marker, Popup } from "react-leaflet";
-import CurrentImagePointContext from "../../contexts/CurrentImagePointContext";
+import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import leafletrotatedmarker from "leaflet-rotatedmarker";
 
 import getImagePointsInVisibleMapArea from "../../apis/VegbilderOGC/getImagePointsInVisibleMapArea";
@@ -16,6 +16,7 @@ const ImagePointsLayer = () => {
   const [[south, west], [north, east]] = useLeafletBounds();
   const [imagePoints, setImagePoints] = useState([]);
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
+  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
 
   // Fetch image points in the visible map area whenever the map bounds change
   useEffect(() => {
@@ -86,7 +87,7 @@ const ImagePointsLayer = () => {
     });
   };
 
-  const renderImagePoints = (currentImagePoint, setCurrentImagePoint) => {
+  const renderImagePoints = () => {
     if (imagePoints) {
       return (
         <>
@@ -122,11 +123,7 @@ const ImagePointsLayer = () => {
     <>
       {settings.drawBboxes && renderMapAreaBbox()}
       {settings.drawBboxes && renderFetchBboxes()}
-      <CurrentImagePointContext.Consumer>
-        {({ currentImagePoint, setCurrentImagePoint }) =>
-          renderImagePoints(currentImagePoint, setCurrentImagePoint)
-        }
-      </CurrentImagePointContext.Consumer>
+      {renderImagePoints()}
     </>
   );
 };

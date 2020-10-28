@@ -1,15 +1,25 @@
 import React, { useState } from "react";
 
-const Context = React.createContext();
+const CurrentImagePointContext = React.createContext();
 
-export function CurrentImagePointStore(props) {
+function useCurrentImagePoint() {
+  const context = React.useContext(CurrentImagePointContext);
+  if (!context) {
+    throw new Error(
+      "useCurrentImagePoint must be used within a CurrentImagePointProvider"
+    );
+  }
+  return context;
+}
+
+function CurrentImagePointProvider(props) {
   const [currentImagePoint, setCurrentImagePoint] = useState(null);
-
   return (
-    <Context.Provider value={{ currentImagePoint, setCurrentImagePoint }}>
-      {props.children}
-    </Context.Provider>
+    <CurrentImagePointContext.Provider
+      value={{ currentImagePoint, setCurrentImagePoint }}
+      {...props}
+    />
   );
 }
 
-export default Context;
+export { CurrentImagePointProvider, useCurrentImagePoint };

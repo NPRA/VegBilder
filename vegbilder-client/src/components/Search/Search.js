@@ -3,7 +3,7 @@ import InputBase from "@material-ui/core/InputBase";
 import SearchIcon from "@material-ui/icons/Search";
 import { fade, makeStyles } from "@material-ui/core/styles";
 
-import CurrentLocationContext from "../../contexts/CurrentLocationContext";
+import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import getVegByVegsystemreferanse from "../../apis/NVDB/getVegByVegsystemreferanse";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,48 +51,41 @@ const useStyles = makeStyles((theme) => ({
 const Search = () => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState("");
+  const { setCurrentCoordinates } = useCurrentCoordinates();
 
-  const handleChange = (event) => {
+  const onChange = (event) => {
     setSearchString(event.target.value);
   };
 
-  const onKeyDown = async (event, setCurrentLocation) => {
+  const onKeyDown = async (event) => {
     if (event.key === "Enter") {
       console.log(`Searching for ${searchString}`);
       const latlng = await getCoordinates(searchString);
       console.log(latlng);
       if (latlng) {
-        setCurrentLocation({ latlng: latlng, zoom: 16 });
+        setCurrentCoordinates({ latlng: latlng, zoom: 16 });
       }
     }
   };
 
-  const renderSearchField = (setCurrentLocation) => {
-    return (
-      <React.Fragment>
-        <div className={classes.search}>
-          <div className={classes.searchIcon}>
-            <SearchIcon />
-          </div>
-          <InputBase
-            placeholder="Søk etter vegreferanse, fylke eller stedsnavn"
-            classes={{
-              root: classes.inputRoot,
-              input: classes.inputInput,
-            }}
-            inputProps={{ "aria-label": "search" }}
-            onChange={handleChange}
-            onKeyDown={(event) => onKeyDown(event, setCurrentLocation)}
-          />
-        </div>
-      </React.Fragment>
-    );
-  };
-
   return (
-    <CurrentLocationContext.Consumer>
-      {({ setCurrentLocation }) => renderSearchField(setCurrentLocation)}
-    </CurrentLocationContext.Consumer>
+    <React.Fragment>
+      <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <SearchIcon />
+        </div>
+        <InputBase
+          placeholder="Søk etter vegreferanse, fylke eller stedsnavn"
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          inputProps={{ "aria-label": "search" }}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
+        />
+      </div>
+    </React.Fragment>
   );
 };
 

@@ -5,16 +5,14 @@ import "leaflet/dist/leaflet.css";
 import "./MapContainer.css";
 import { crsUtm33N } from "./crs";
 import ImagePointLayersWrapper from "../ImagePointsLayersWrapper/ImagePointsLayersWrapper";
-import CurrentLocationContext from "../../contexts/CurrentLocationContext";
+import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 
-function renderMap(currentLocation) {
-  console.log(
-    `Render map. Current location is (${currentLocation.latlng.lat}, ${currentLocation.latlng.lng})`
-  );
+export default function MapContainer() {
+  const { currentCoordinates } = useCurrentCoordinates();
   return (
     <Map
-      center={currentLocation.latlng}
-      zoom={currentLocation.zoom}
+      center={currentCoordinates.latlng}
+      zoom={currentCoordinates.zoom}
       crs={crsUtm33N}
       minZoom={4}
       maxZoom={16}
@@ -26,13 +24,5 @@ function renderMap(currentLocation) {
       />
       <ImagePointLayersWrapper />
     </Map>
-  );
-}
-
-export default function MapContainer() {
-  return (
-    <CurrentLocationContext.Consumer>
-      {({ currentLocation }) => renderMap(currentLocation)}
-    </CurrentLocationContext.Consumer>
   );
 }
