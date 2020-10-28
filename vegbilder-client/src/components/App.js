@@ -1,9 +1,11 @@
 import React from "react";
 import { ThemeProvider, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
+import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import Header from "./Header/Header";
 import MapContainer from "./MapContainer/MapContainer";
+import ImageViewer from "./ImageViewer/ImageViewer";
 import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext";
 import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
 import theme from "../theme/Theme";
@@ -26,14 +28,25 @@ function App() {
     <ThemeProvider theme={theme}>
       <CurrentCoordinatesProvider>
         <CurrentImagePointProvider>
-          <Grid container direction="column" className={classes.gridRoot}>
-            <Grid item className={classes.header}>
-              <Header />
+          <BrowserRouter>
+            <Grid container direction="column" className={classes.gridRoot}>
+              <Grid item className={classes.header}>
+                <Header />
+              </Grid>
+              <Switch>
+                <Route path="/bilde">
+                  <Grid item className={classes.content}>
+                    <ImageViewer />
+                  </Grid>
+                </Route>
+                <Route path="/">
+                  <Grid item className={classes.content}>
+                    <MapContainer />
+                  </Grid>
+                </Route>
+              </Switch>
             </Grid>
-            <Grid item className={classes.content}>
-              <MapContainer></MapContainer>
-            </Grid>
-          </Grid>
+          </BrowserRouter>
         </CurrentImagePointProvider>
       </CurrentCoordinatesProvider>
     </ThemeProvider>
