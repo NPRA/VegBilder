@@ -103,6 +103,8 @@ const ImagePointsLayer = () => {
                 position={[lat, lng]}
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
+                onmouseover={(event) => event.target.openPopup()}
+                onmouseout={(event) => event.target.closePopup()}
                 onclick={() => setCurrentImagePoint(imagePoint)}
               >
                 <Popup>
