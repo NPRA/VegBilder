@@ -3,6 +3,7 @@ import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
 import { Rectangle, Marker, Popup } from "react-leaflet";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
+import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import leafletrotatedmarker from "leaflet-rotatedmarker";
 import { useHistory } from "react-router-dom";
 
@@ -19,6 +20,7 @@ const ImagePointsLayer = () => {
   const [imagePoints, setImagePoints] = useState([]);
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const { setCurrentCoordinates } = useCurrentCoordinates();
 
   // Fetch image points in the visible map area whenever the map bounds change
   useEffect(() => {
@@ -110,6 +112,7 @@ const ImagePointsLayer = () => {
                 onmouseout={(event) => event.target.closePopup()}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
+                  setCurrentCoordinates({ latlng: { lat, lng }, zoom: 16 });
                   history.push("/bilde");
                 }}
               >

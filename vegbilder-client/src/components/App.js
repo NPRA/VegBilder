@@ -5,6 +5,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 
 import Header from "./Header/Header";
 import MapContainer from "./MapContainer/MapContainer";
+import SmallMapContainer from "./MapContainer/SmallMapContainer";
 import ImageViewer from "./ImageViewer/ImageViewer";
 import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext";
 import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
@@ -25,6 +26,11 @@ const useStyles = makeStyles({
   footer: {
     flex: "0 1 auto",
   },
+  smallMap: {
+    position: "absolute",
+    width: "300px",
+    height: "300px",
+  },
 });
 
 function App() {
@@ -41,6 +47,9 @@ function App() {
               <Switch>
                 <Route path="/bilde">
                   <Grid item className={classes.content}>
+                    <div className={classes.smallMap}>
+                      <SmallMapContainer />
+                    </div>
                     <ImageViewer />
                   </Grid>
                   <Grid item className={classes.footer}>
