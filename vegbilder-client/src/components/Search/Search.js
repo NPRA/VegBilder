@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import InputBase from "@material-ui/core/InputBase";
-import SearchIcon from "@material-ui/icons/Search";
+import { MagnifyingGlassIcon } from "../Icons/Icons";
 import { fade, makeStyles } from "@material-ui/core/styles";
 
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
@@ -72,7 +72,7 @@ const Search = () => {
     <React.Fragment>
       <div className={classes.search}>
         <div className={classes.searchIcon}>
-          <SearchIcon />
+          <MagnifyingGlassIcon />
         </div>
         <InputBase
           placeholder="Søk etter vegreferanse, fylke eller stedsnavn"

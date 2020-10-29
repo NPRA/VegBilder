@@ -31,7 +31,7 @@ function HistoryIcon() {
 }
 
 function MagnifyingGlassIcon() {
-  return <SvgIcon component={MagnifyingGlassSvg} viewBox="8 8 24 24" />;
+  return <SvgIcon component={MagnifyingGlassSvg} viewBox="-5 -5 30 30" />;
 }
 
 function MapIcon() {
