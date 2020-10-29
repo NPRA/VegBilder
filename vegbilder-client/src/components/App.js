@@ -22,6 +22,7 @@ const useStyles = makeStyles({
   },
   content: {
     flex: "1 1 auto", // Allow the grid item containing the main content to grow and shrink to fill the available height.
+    position: "relative", // Needed for the small map to be positioned correctly relative to the top left corner of the content container
   },
   footer: {
     flex: "0 1 auto",
@@ -30,6 +31,8 @@ const useStyles = makeStyles({
     position: "absolute",
     width: "300px",
     height: "300px",
+    left: "20px",
+    top: "20px",
   },
 });
 
