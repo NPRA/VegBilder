@@ -9,6 +9,7 @@ import ImageViewer from "./ImageViewer/ImageViewer";
 import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext";
 import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
 import theme from "../theme/Theme";
+import Footer from "./Footer/Footer";
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -19,6 +20,9 @@ const useStyles = makeStyles({
   },
   content: {
     flex: "1 1 auto", // Allow the grid item containing the main content to grow and shrink to fill the available height.
+  },
+  footer: {
+    flex: "0 1 auto",
   },
 });
 
@@ -37,6 +41,9 @@ function App() {
                 <Route path="/bilde">
                   <Grid item className={classes.content}>
                     <ImageViewer />
+                  </Grid>
+                  <Grid item className={classes.footer}>
+                    <Footer />
                   </Grid>
                 </Route>
                 <Route path="/">
