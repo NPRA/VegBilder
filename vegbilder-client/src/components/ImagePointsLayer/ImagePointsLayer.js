@@ -4,6 +4,7 @@ import { useLeafletBounds } from "use-leaflet";
 import { Rectangle, Marker, Popup } from "react-leaflet";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import leafletrotatedmarker from "leaflet-rotatedmarker";
+import { useHistory } from "react-router-dom";
 
 import getImagePointsInVisibleMapArea from "../../apis/VegbilderOGC/getImagePointsInVisibleMapArea";
 
@@ -13,6 +14,7 @@ const settings = {
 };
 
 const ImagePointsLayer = () => {
+  const history = useHistory();
   const [[south, west], [north, east]] = useLeafletBounds();
   const [imagePoints, setImagePoints] = useState([]);
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
@@ -106,7 +108,10 @@ const ImagePointsLayer = () => {
                 rotationAngle={imagePoint.properties.RETNING}
                 onmouseover={(event) => event.target.openPopup()}
                 onmouseout={(event) => event.target.closePopup()}
-                onclick={() => setCurrentImagePoint(imagePoint)}
+                onclick={() => {
+                  setCurrentImagePoint(imagePoint);
+                  history.push("/bilde");
+                }}
               >
                 <Popup>
                   <img src={imagePoint.properties.URL} width={"300px"}></img>

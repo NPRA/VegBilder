@@ -8,6 +8,10 @@ const useStyles = makeStyles((theme) => ({
     height: "100%",
     backgroundColor: theme.palette.primary.main,
   },
+  image: {
+    maxHeight: "100%",
+    maxWidth: "100%",
+  },
 }));
 
 export default function ImageViewer() {
@@ -15,6 +19,9 @@ export default function ImageViewer() {
   const { currentImagePoint } = useCurrentImagePoint();
   return (
     <div className={classes.imageContainer}>
+      {currentImagePoint && (
+        <img src={currentImagePoint.properties.URL} className={classes.image} />
+      )}
     </div>
   );
 }
