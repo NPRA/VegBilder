@@ -6,7 +6,7 @@ const useStyles = makeStyles((theme) => ({
   imageContainer: {
     width: "100vw",
     height: "100%",
-    backgroundColor: "blue",
+    backgroundColor: theme.palette.primary.main,
   },
 }));
 

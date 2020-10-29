@@ -18,7 +18,7 @@ const useStyles = makeStyles({
 export default function Header() {
   const classes = useStyles();
   return (
-    <AppBar position="static" color="primary" elevation={0}>
+    <AppBar position="static" color="primary" elevation={3}>
       <Toolbar>
         <Grid
           container
