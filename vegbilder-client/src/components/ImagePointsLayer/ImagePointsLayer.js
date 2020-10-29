@@ -14,7 +14,7 @@ const settings = {
   drawBboxes: false,
 };
 
-const ImagePointsLayer = () => {
+const ImagePointsLayer = ({ withPopups }) => {
   const history = useHistory();
   const [[south, west], [north, east]] = useLeafletBounds();
   const [imagePoints, setImagePoints] = useState([]);
@@ -116,9 +116,11 @@ const ImagePointsLayer = () => {
                   history.push("/bilde");
                 }}
               >
-                <Popup>
-                  <img src={imagePoint.properties.URL} width={"300px"}></img>
-                </Popup>
+                {withPopups && (
+                  <Popup>
+                    <img src={imagePoint.properties.URL} width={"300px"}></img>
+                  </Popup>
+                )}
               </Marker>
             );
           })}

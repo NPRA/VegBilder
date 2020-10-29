@@ -26,7 +26,7 @@ export default function SmallMapContainer() {
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
         subdomains="123456789"
       />
-      <ImagePointsLayer allowPopups={false} />
+      <ImagePointsLayer withPopups={false} />
     </Map>
   );
 }
