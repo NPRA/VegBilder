@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     borderTop: `1px solid ${theme.palette.common.grayDark}`,
     width: "100vw",
-    height: "10em",
+    height: "5em",
   },
   imageMetadata: {
     width: "10em",
