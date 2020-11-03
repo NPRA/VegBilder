@@ -4,7 +4,7 @@ import "leaflet/dist/leaflet.css";
 
 import "./MapContainer.css";
 import { crsUtm33N } from "./crs";
-import ImagePointsLayer from "../ImagePointsLayer/ImagePointsLayer";
+import ImagePointsLayerSmallMap from "../ImagePointsLayer/ImagePointsLayerSmallMap";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 
 export default function SmallMapContainer() {
@@ -26,7 +26,7 @@ export default function SmallMapContainer() {
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
         subdomains="123456789"
       />
-      <ImagePointsLayer withPopups={false} />
+      <ImagePointsLayerSmallMap />
     </Map>
   );
 }

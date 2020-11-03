@@ -9,7 +9,7 @@ const ImagePointLayersWrapper = () => {
   return (
     <React.Fragment>
       {zoom > 14 ? (
-        <ImagePointsLayer withPopups={true} />
+        <ImagePointsLayer />
       ) : (
         <WMSTileLayer
           url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"

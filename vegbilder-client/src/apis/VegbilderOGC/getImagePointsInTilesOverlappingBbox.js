@@ -3,28 +3,26 @@ import getImagePointsInBbox from "./getImagePointsInBbox";
 import {
   roundDownToNearest,
   roundUpToNearest,
-} from "./../../utilities/mathUtilities";
-import { isWithinBbox } from "./../../utilities/latlngUtilities";
+} from "../../utilities/mathUtilities";
+import { isWithinBbox } from "../../utilities/latlngUtilities";
 
 const settings = {
-  bboxSizeInDegrees: 0.02,
-  bboxSizeDecimals: 2, // Make sure this equals the number of decimals in bboxSizeInDegrees
+  bboxSizeInDegrees: 0.005,
+  bboxSizeDecimals: 3, // Make sure this equals the number of decimals in bboxSizeInDegrees
 };
 
-const getImagePointsInVisibleMapArea = async (mapBbox) => {
-  console.log("Map bbox:");
-  console.log(mapBbox);
-  const { south, west, north, east } = mapBbox;
+const getImagePointsInTilesOverlappingBbox = async (bbox) => {
+  const { south, west, north, east } = bbox;
   const { bboxSizeInDegrees, bboxSizeDecimals } = settings;
-  const expandedBoundary = {
+  const expandedBbox = {
     south: roundDownToNearest(south, bboxSizeInDegrees),
     west: roundDownToNearest(west, bboxSizeInDegrees),
     north: roundUpToNearest(north, bboxSizeInDegrees),
     east: roundUpToNearest(east, bboxSizeInDegrees),
   };
   const fetchedBboxes = [];
-  for (let i = expandedBoundary.west; i < east; i += bboxSizeInDegrees) {
-    for (let j = expandedBoundary.south; j < north; j += bboxSizeInDegrees) {
+  for (let i = expandedBbox.west; i < east; i += bboxSizeInDegrees) {
+    for (let j = expandedBbox.south; j < north; j += bboxSizeInDegrees) {
       const bbox = {
         south: j.toFixed(bboxSizeDecimals),
         west: i.toFixed(bboxSizeDecimals),
@@ -34,8 +32,6 @@ const getImagePointsInVisibleMapArea = async (mapBbox) => {
       fetchedBboxes.push(bbox);
     }
   }
-  console.log("Bboxes for fetching:");
-  console.log(fetchedBboxes);
   const promises = fetchedBboxes.map(async (bbox) => {
     return await getImagePointsInBbox(bbox);
   });
@@ -44,15 +40,8 @@ const getImagePointsInVisibleMapArea = async (mapBbox) => {
     .map((response) => response.data.features)
     .flatten()
     .uniqBy((imagePoint) => imagePoint.id)
-    .filter((imagePoint) => imagePointIsWithinBbox(imagePoint, mapBbox))
     .value();
-  return { imagePoints, fetchedBboxes };
+  return { imagePoints, expandedBbox, fetchedBboxes };
 };
 
-const imagePointIsWithinBbox = (imagePoint, bbox) => {
-  const lat = imagePoint.geometry.coordinates[1];
-  const lng = imagePoint.geometry.coordinates[0];
-  return isWithinBbox({ lat, lng }, bbox);
-};
-
-export default getImagePointsInVisibleMapArea;
+export default getImagePointsInTilesOverlappingBbox;

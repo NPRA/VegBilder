@@ -49,9 +49,19 @@ const isOutsideBbox = (latlng, bbox) => {
   );
 };
 
+const isBboxWithinContainingBbox = (bbox, containingBbox) => {
+  return (
+    bbox.south > containingBbox.south &&
+    bbox.north < containingBbox.north &&
+    bbox.west > containingBbox.west &&
+    bbox.east < containingBbox.east
+  );
+};
+
 export {
   getDistanceInMetersBetween,
   createSquareBboxAroundPoint,
   isWithinBbox,
   isOutsideBbox,
+  isBboxWithinContainingBbox,
 };

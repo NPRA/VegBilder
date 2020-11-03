@@ -11,6 +11,7 @@ import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext"
 import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
 import theme from "../theme/Theme";
 import Footer from "./Footer/Footer";
+import { LoadedImagePointsProvider } from "../contexts/LoadedImagePointsContext";
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -29,8 +30,8 @@ const useStyles = makeStyles({
   },
   smallMap: {
     position: "absolute",
-    width: "300px",
-    height: "300px",
+    width: "900px", // Temporarily increased size for debugging purposes. TODO: Replace with proper size of about 300 px
+    height: "900px",
     left: "20px",
     top: "20px",
   },
@@ -42,31 +43,33 @@ function App() {
     <ThemeProvider theme={theme}>
       <CurrentCoordinatesProvider>
         <CurrentImagePointProvider>
-          <BrowserRouter>
-            <Grid container direction="column" className={classes.gridRoot}>
-              <Grid item className={classes.header}>
-                <Header />
+          <LoadedImagePointsProvider>
+            <BrowserRouter>
+              <Grid container direction="column" className={classes.gridRoot}>
+                <Grid item className={classes.header}>
+                  <Header />
+                </Grid>
+                <Switch>
+                  <Route path="/bilde">
+                    <Grid item className={classes.content}>
+                      <div className={classes.smallMap}>
+                        <SmallMapContainer />
+                      </div>
+                      <ImageViewer />
+                    </Grid>
+                    <Grid item className={classes.footer}>
+                      <Footer />
+                    </Grid>
+                  </Route>
+                  <Route path="/">
+                    <Grid item className={classes.content}>
+                      <MapContainer />
+                    </Grid>
+                  </Route>
+                </Switch>
               </Grid>
-              <Switch>
-                <Route path="/bilde">
-                  <Grid item className={classes.content}>
-                    <div className={classes.smallMap}>
-                      <SmallMapContainer />
-                    </div>
-                    <ImageViewer />
-                  </Grid>
-                  <Grid item className={classes.footer}>
-                    <Footer />
-                  </Grid>
-                </Route>
-                <Route path="/">
-                  <Grid item className={classes.content}>
-                    <MapContainer />
-                  </Grid>
-                </Route>
-              </Switch>
-            </Grid>
-          </BrowserRouter>
+            </BrowserRouter>
+          </LoadedImagePointsProvider>
         </CurrentImagePointProvider>
       </CurrentCoordinatesProvider>
     </ThemeProvider>

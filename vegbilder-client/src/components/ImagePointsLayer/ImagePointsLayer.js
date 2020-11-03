@@ -7,33 +7,39 @@ import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext"
 import leafletrotatedmarker from "leaflet-rotatedmarker";
 import { useHistory } from "react-router-dom";
 
-import getImagePointsInVisibleMapArea from "../../apis/VegbilderOGC/getImagePointsInVisibleMapArea";
+import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
+import { isWithinBbox } from "../../utilities/latlngUtilities";
+import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 
 const settings = {
   useSmallerMapAreaBbox: false,
   drawBboxes: false,
 };
 
-const ImagePointsLayer = ({ withPopups }) => {
+const ImagePointsLayer = () => {
   const history = useHistory();
   const [[south, west], [north, east]] = useLeafletBounds();
-  const [imagePoints, setImagePoints] = useState([]);
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
+  const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
 
-  // Fetch image points in the visible map area whenever the map bounds change
+  // Fetch image points in the target area whenever the map bounds change
   useEffect(() => {
     (async () => {
-      const bbox = createBboxForVisibleMapArea();
+      const targetBbox = createTargetBbox();
       const {
         imagePoints,
         fetchedBboxes,
-      } = await getImagePointsInVisibleMapArea(bbox);
-      setImagePoints(imagePoints);
+      } = await getImagePointsInTilesOverlappingBbox(targetBbox);
+      setLoadedImagePoints({ imagePoints, bbox: targetBbox });
       setFetchedBboxes(fetchedBboxes);
     })();
   }, [south, west, north, east]);
+
+  const createTargetBbox = () => {
+    return createBboxForVisibleMapArea();
+  };
 
   const createBboxForVisibleMapArea = () => {
     if (settings.useSmallerMapAreaBbox) {
@@ -69,8 +75,8 @@ const ImagePointsLayer = ({ withPopups }) => {
     );
   };
 
-  const renderMapAreaBbox = () => {
-    const bbox = createBboxForVisibleMapArea(south, west, north, east);
+  const renderTargetBbox = () => {
+    const bbox = createTargetBbox();
     return renderBbox(bbox);
   };
 
@@ -91,11 +97,21 @@ const ImagePointsLayer = ({ withPopups }) => {
     });
   };
 
+  const imagePointIsWithinBbox = (imagePoint, bbox) => {
+    const lat = imagePoint.geometry.coordinates[1];
+    const lng = imagePoint.geometry.coordinates[0];
+    return isWithinBbox({ lat, lng }, bbox);
+  };
+
   const renderImagePoints = () => {
-    if (imagePoints) {
+    if (loadedImagePoints?.imagePoints) {
+      const mapBbox = createBboxForVisibleMapArea();
+      const imagePointsToRender = loadedImagePoints.imagePoints.filter(
+        (imagePoint) => imagePointIsWithinBbox(imagePoint, mapBbox)
+      );
       return (
         <>
-          {imagePoints.map((imagePoint) => {
+          {imagePointsToRender.map((imagePoint) => {
             const lat = imagePoint.geometry.coordinates[1];
             const lng = imagePoint.geometry.coordinates[0];
             const isDirectional = imagePoint.properties.RETNING !== undefined;
@@ -116,11 +132,9 @@ const ImagePointsLayer = ({ withPopups }) => {
                   history.push("/bilde");
                 }}
               >
-                {withPopups && (
-                  <Popup>
-                    <img src={imagePoint.properties.URL} width={"300px"}></img>
-                  </Popup>
-                )}
+                <Popup>
+                  <img src={imagePoint.properties.URL} width={"300px"}></img>
+                </Popup>
               </Marker>
             );
           })}
@@ -131,7 +145,7 @@ const ImagePointsLayer = ({ withPopups }) => {
 
   return (
     <>
-      {settings.drawBboxes && renderMapAreaBbox()}
+      {settings.drawBboxes && renderTargetBbox()}
       {settings.drawBboxes && renderFetchBboxes()}
       {renderImagePoints()}
     </>
