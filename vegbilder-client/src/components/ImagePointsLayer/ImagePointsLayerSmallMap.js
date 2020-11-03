@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Icon } from "leaflet";
 import {
   useLeafletBounds,
@@ -6,8 +6,6 @@ import {
   useLeafletZoom,
 } from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
-import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import leafletrotatedmarker from "leaflet-rotatedmarker";
 
 import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
@@ -17,7 +15,8 @@ import {
   isBboxWithinContainingBbox,
 } from "../../utilities/latlngUtilities";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
-import { useCallback } from "react";
+import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
+import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 
 const settings = {
   targetBboxSize: 400,

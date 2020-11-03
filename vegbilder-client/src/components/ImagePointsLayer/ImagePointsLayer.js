@@ -2,14 +2,14 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
 import { Rectangle, Marker, Popup } from "react-leaflet";
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
-import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import leafletrotatedmarker from "leaflet-rotatedmarker";
 import { useHistory } from "react-router-dom";
 
 import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
 import { isWithinBbox } from "../../utilities/latlngUtilities";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
+import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
+import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 
 const settings = {
   useSmallerMapAreaBbox: false,

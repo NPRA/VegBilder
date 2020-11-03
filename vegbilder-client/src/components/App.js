@@ -9,9 +9,9 @@ import SmallMapContainer from "./MapContainer/SmallMapContainer";
 import ImageViewer from "./ImageViewer/ImageViewer";
 import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext";
 import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
-import theme from "../theme/Theme";
-import Footer from "./Footer/Footer";
 import { LoadedImagePointsProvider } from "../contexts/LoadedImagePointsContext";
+import Footer from "./Footer/Footer";
+import theme from "../theme/Theme";
 
 const useStyles = makeStyles({
   gridRoot: {
