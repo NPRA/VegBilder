@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { Icon } from "leaflet";
-import { useLeafletBounds, useLeafletCenter } from "use-leaflet";
+import {
+  useLeafletBounds,
+  useLeafletCenter,
+  useLeafletZoom,
+} from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
@@ -23,6 +27,7 @@ const settings = {
 const ImagePointsLayerSmallMap = () => {
   const [[south, west], [north, east]] = useLeafletBounds();
   const mapCenter = useLeafletCenter();
+  const zoom = useLeafletZoom();
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const [targetBbox, setTargetBbox] = useState(null);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
@@ -120,7 +125,7 @@ const ImagePointsLayerSmallMap = () => {
                 onmouseout={(event) => event.target.closePopup()}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
-                  setCurrentCoordinates({ latlng: { lat, lng }, zoom: 16 });
+                  setCurrentCoordinates({ latlng: { lat, lng }, zoom: zoom });
                 }}
               />
             );
