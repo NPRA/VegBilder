@@ -17,7 +17,7 @@ import { useCallback } from "react";
 
 const settings = {
   targetBboxSize: 400,
-  drawBboxes: true,
+  debugMode: true,
 };
 
 const ImagePointsLayerSmallMap = () => {
@@ -31,18 +31,14 @@ const ImagePointsLayerSmallMap = () => {
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
-    /*const paddingX = (east - west) * 0.1;
-    const paddingY = (north - south) * 0.1;
-    return {
-      south: south - paddingY,
-      west: west - paddingX,
-      north: north + paddingY,
-      east: east + paddingX,
-    };*/
+    let paddingX = (east - west) * 0.1;
+    let paddingY = (north - south) * 0.1;
+    if (settings.debugMode) {
+      // Simulate a smaller visible map area for debugging purposes.
+      paddingX = (west - east) * 0.4;
+      paddingY = (south - north) * 0.4;
+    }
 
-    // Temporarily simulate a smaller visible map area for debugging purposes. TODO: Replace with proper padding
-    const paddingX = (west - east) * 0.4;
-    const paddingY = (south - north) * 0.4;
     return {
       south: south - paddingY,
       west: west - paddingX,
@@ -50,20 +46,6 @@ const ImagePointsLayerSmallMap = () => {
       east: east + paddingX,
     };
   }, [south, west, north, east]);
-
-  const renderBbox = (bbox, color) => {
-    if (bbox) {
-      return (
-        <Rectangle
-          bounds={[
-            [bbox.south, bbox.west],
-            [bbox.north, bbox.east],
-          ]}
-          color={color}
-        />
-      );
-    }
-  };
 
   // Fetch image points in new target area whenever the map bounds exceed the currently fetched area
   useEffect(() => {
@@ -148,6 +130,20 @@ const ImagePointsLayerSmallMap = () => {
     }
   };
 
+  const renderBbox = (bbox, color) => {
+    if (bbox) {
+      return (
+        <Rectangle
+          bounds={[
+            [bbox.south, bbox.west],
+            [bbox.north, bbox.east],
+          ]}
+          color={color}
+        />
+      );
+    }
+  };
+
   const renderTargetBbox = () => {
     return renderBbox(targetBbox, "red");
   };
@@ -170,7 +166,7 @@ const ImagePointsLayerSmallMap = () => {
   };
 
   const renderBboxes = () => {
-    if (settings.drawBboxes) {
+    if (settings.debugMode) {
       return (
         <>
           {renderTargetBbox()}
