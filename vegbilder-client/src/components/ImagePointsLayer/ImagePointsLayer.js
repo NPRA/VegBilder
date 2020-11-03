@@ -86,6 +86,17 @@ const ImagePointsLayer = () => {
     }
   };
 
+  const renderBboxes = () => {
+    if (settings.drawBboxes) {
+      return (
+        <>
+          {renderTargetBbox()}
+          {renderFetchBboxes()}
+        </>
+      );
+    }
+  };
+
   const getMarkerIcon = (isDirectional, isSelected) => {
     const iconUrl = `images/marker${isDirectional ? "-directional" : ""}${
       isSelected ? "-selected" : ""
@@ -145,8 +156,7 @@ const ImagePointsLayer = () => {
 
   return (
     <>
-      {settings.drawBboxes && renderTargetBbox()}
-      {settings.drawBboxes && renderFetchBboxes()}
+      {renderBboxes()}
       {renderImagePoints()}
     </>
   );

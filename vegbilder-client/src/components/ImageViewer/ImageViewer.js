@@ -19,9 +19,9 @@ export default function ImageViewer() {
   const { currentImagePoint } = useCurrentImagePoint();
   return (
     <div className={classes.imageContainer}>
-      {currentImagePoint && (
+      {currentImagePoint ? (
         <img src={currentImagePoint.properties.URL} className={classes.image} />
-      )}
+      ) : null}
     </div>
   );
 }
