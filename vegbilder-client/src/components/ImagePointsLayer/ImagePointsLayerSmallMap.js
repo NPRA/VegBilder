@@ -160,6 +160,7 @@ const ImagePointsLayerSmallMap = () => {
   };
 
   const renderLoadedBbox = () => {
+    // This bbox should correspond to the union of the fetchBboxes, so it will generelly not be visible
     if (loadedImagePoints) {
       return renderBbox(loadedImagePoints.bbox, "orange");
     }
