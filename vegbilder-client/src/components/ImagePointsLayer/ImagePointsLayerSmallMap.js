@@ -17,6 +17,7 @@ import {
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
+import { getImagePointLatLng } from "../../utilities/imagePointUtilities";
 
 const settings = {
   targetBboxSize: 400,
@@ -83,9 +84,8 @@ const ImagePointsLayerSmallMap = () => {
   ]);
 
   const imagePointIsWithinBbox = (imagePoint, bbox) => {
-    const lat = imagePoint.geometry.coordinates[1];
-    const lng = imagePoint.geometry.coordinates[0];
-    return isWithinBbox({ lat, lng }, bbox);
+    const latlng = getImagePointLatLng(imagePoint);
+    return isWithinBbox(latlng, bbox);
   };
 
   const getMarkerIcon = (isDirectional, isSelected) => {
@@ -108,8 +108,7 @@ const ImagePointsLayerSmallMap = () => {
       return (
         <>
           {imagePointsToRender.map((imagePoint) => {
-            const lat = imagePoint.geometry.coordinates[1];
-            const lng = imagePoint.geometry.coordinates[0];
+            const latlng = getImagePointLatLng(imagePoint);
             const isDirectional = imagePoint.properties.RETNING !== undefined;
             const isSelected =
               currentImagePoint && currentImagePoint.id === imagePoint.id;
@@ -117,14 +116,14 @@ const ImagePointsLayerSmallMap = () => {
             return (
               <Marker
                 key={imagePoint.id}
-                position={[lat, lng]}
+                position={latlng}
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
                 onmouseover={(event) => event.target.openPopup()}
                 onmouseout={(event) => event.target.closePopup()}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
-                  setCurrentCoordinates({ latlng: { lat, lng }, zoom: zoom });
+                  setCurrentCoordinates({ latlng: latlng, zoom: zoom });
                 }}
               />
             );

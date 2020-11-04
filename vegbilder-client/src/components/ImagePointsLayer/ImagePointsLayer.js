@@ -10,6 +10,7 @@ import { isWithinBbox } from "../../utilities/latlngUtilities";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
+import { getImagePointLatLng } from "../../utilities/imagePointUtilities";
 
 const settings = {
   useSmallerMapAreaBbox: false,
@@ -109,9 +110,8 @@ const ImagePointsLayer = () => {
   };
 
   const imagePointIsWithinBbox = (imagePoint, bbox) => {
-    const lat = imagePoint.geometry.coordinates[1];
-    const lng = imagePoint.geometry.coordinates[0];
-    return isWithinBbox({ lat, lng }, bbox);
+    const latlng = getImagePointLatLng(imagePoint);
+    return isWithinBbox(latlng, bbox);
   };
 
   const renderImagePoints = () => {
@@ -123,8 +123,7 @@ const ImagePointsLayer = () => {
       return (
         <>
           {imagePointsToRender.map((imagePoint) => {
-            const lat = imagePoint.geometry.coordinates[1];
-            const lng = imagePoint.geometry.coordinates[0];
+            const latlng = getImagePointLatLng(imagePoint);
             const isDirectional = imagePoint.properties.RETNING !== undefined;
             const isSelected =
               currentImagePoint && currentImagePoint.id === imagePoint.id;
@@ -132,14 +131,14 @@ const ImagePointsLayer = () => {
             return (
               <Marker
                 key={imagePoint.id}
-                position={[lat, lng]}
+                position={latlng}
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
                 onmouseover={(event) => event.target.openPopup()}
                 onmouseout={(event) => event.target.closePopup()}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
-                  setCurrentCoordinates({ latlng: { lat, lng }, zoom: 16 });
+                  setCurrentCoordinates({ latlng: latlng, zoom: 16 });
                   history.push("/bilde");
                 }}
               >
