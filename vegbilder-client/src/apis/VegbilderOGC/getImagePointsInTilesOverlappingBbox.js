@@ -7,8 +7,8 @@ import {
 import { isWithinBbox } from "../../utilities/latlngUtilities";
 
 const settings = {
-  bboxSizeInDegrees: 0.005, // Temporarily reduced for debugging purposes. TODO: Set to 0.02
-  bboxSizeDecimals: 3, // Make sure this equals the number of decimals in bboxSizeInDegrees
+  bboxSizeInDegrees: 0.02,
+  bboxSizeDecimals: 2, // Make sure this equals the number of decimals in bboxSizeInDegrees
 };
 
 const getImagePointsInTilesOverlappingBbox = async (bbox) => {

@@ -31,8 +31,8 @@ const useStyles = makeStyles({
   },
   smallMap: {
     position: "absolute",
-    width: "900px", // Temporarily increased size for debugging purposes. TODO: Replace with proper size of about 300 px
-    height: "900px",
+    width: "300px",
+    height: "300px",
     left: "20px",
     top: "20px",
   },

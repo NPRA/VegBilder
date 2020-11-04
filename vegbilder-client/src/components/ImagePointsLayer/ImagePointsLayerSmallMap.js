@@ -20,8 +20,8 @@ import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext"
 import { getImagePointLatLng } from "../../utilities/imagePointUtilities";
 
 const settings = {
-  targetBboxSize: 400,
-  debugMode: true,
+  targetBboxSize: 2000,
+  debugMode: false,
 };
 
 const ImagePointsLayerSmallMap = () => {
