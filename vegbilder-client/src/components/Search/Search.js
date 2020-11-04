@@ -59,9 +59,7 @@ const Search = () => {
 
   const onKeyDown = async (event) => {
     if (event.key === "Enter") {
-      console.log(`Searching for ${searchString}`);
       const latlng = await getCoordinates(searchString);
-      console.log(latlng);
       if (latlng) {
         setCurrentCoordinates({ latlng: latlng, zoom: 16 });
       }

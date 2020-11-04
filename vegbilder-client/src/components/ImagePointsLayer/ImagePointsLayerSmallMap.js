@@ -60,7 +60,6 @@ const ImagePointsLayerSmallMap = () => {
         !loadedImagePoints ||
         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
       ) {
-        console.log("Must get more data!");
         const [lat, lng] = mapCenter;
         const targetBbox = createSquareBboxAroundPoint(
           { lat, lng },

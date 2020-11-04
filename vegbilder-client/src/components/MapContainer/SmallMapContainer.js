@@ -12,10 +12,6 @@ export default function SmallMapContainer() {
   const minZoom = 14;
   const maxZoom = 16;
 
-  console.log(
-    `Current coordinates: { lat: ${currentCoordinates.latlng.lat}, lng: ${currentCoordinates.latlng.lat}, zoom: ${currentCoordinates.zoom} }`
-  );
-
   return (
     <Map
       center={currentCoordinates.latlng}
@@ -24,7 +20,6 @@ export default function SmallMapContainer() {
       minZoom={minZoom}
       maxZoom={maxZoom}
       onViewportChanged={({ center, zoom }) => {
-        console.log("Viewport changed");
         const latlng = { lat: center[0], lng: center[1] };
         setCurrentCoordinates({ latlng, zoom });
       }}

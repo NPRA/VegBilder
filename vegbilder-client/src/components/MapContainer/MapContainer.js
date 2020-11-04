@@ -10,10 +10,6 @@ import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext"
 export default function MapContainer() {
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
 
-  console.log(
-    `Current coordinates: { lat: ${currentCoordinates.latlng.lat}, lng: ${currentCoordinates.latlng.lat}, zoom: ${currentCoordinates.zoom} }`
-  );
-
   return (
     <Map
       center={currentCoordinates.latlng}
@@ -22,7 +18,6 @@ export default function MapContainer() {
       minZoom={4}
       maxZoom={16}
       onViewportChanged={({ center, zoom }) => {
-        console.log("Viewport changed");
         const latlng = { lat: center[0], lng: center[1] };
         setCurrentCoordinates({ latlng, zoom });
       }}
