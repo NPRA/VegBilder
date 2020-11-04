@@ -43,6 +43,9 @@ export default function ImageViewer() {
         kryssdel: currentImagePoint.properties.KRYSSDEL,
         sideanleggsdel: currentImagePoint.properties.SIDEANLEGGSDEL,
         feltkode: currentImagePoint.properties.FELTKODE,
+        strekning: currentImagePoint.properties.STREKNING,
+        delstrekning: currentImagePoint.properties.DELSTREKNING,
+        ankerpunkt: currentImagePoint.properties.ANKERPUNKT,
       });
     }
   }, [currentImagePoint]);
@@ -51,12 +54,26 @@ export default function ImageViewer() {
   useEffect(() => {
     function getSortedImagePointsForCurrentRoadContext() {
       const currentLaneImagePoints = loadedImagePoints.imagePoints.filter(
-        (ip) =>
-          ip.properties.VEGKATEGORI === currentRoadContext.vegkategori &&
-          ip.properties.VEGNUMMER === currentRoadContext.vegnummer &&
-          ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
-          ip.properties.SIDEANLEGGSDEL === currentRoadContext.sideanleggsdel &&
-          ip.properties.FELTKODE === currentRoadContext.feltkode
+        (ip) => {
+          let includeImagePoint =
+            ip.properties.VEGKATEGORI === currentRoadContext.vegkategori &&
+            ip.properties.VEGNUMMER === currentRoadContext.vegnummer &&
+            ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
+            ip.properties.SIDEANLEGGSDEL ===
+              currentRoadContext.sideanleggsdel &&
+            ip.properties.FELTKODE === currentRoadContext.feltkode;
+          if (ip.properties.KRYSSDEL || ip.properties.SIDEANLEGGSDEL) {
+            return (
+              includeImagePoint &&
+              ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
+              ip.properties.SIDEANLEGGSDEL ===
+                currentRoadContext.sideanleggsdel &&
+              ip.properties.ANKERPUNKT === currentRoadContext.ankerpunkt
+            );
+          } else {
+            return includeImagePoint;
+          }
+        }
       );
       const primaryFeltkode = parseInt(currentRoadContext.feltkode[0], 10);
       const sortOrder = isEvenNumber(primaryFeltkode) ? "desc" : "asc"; // Feltkode is odd in the metering direction and even in the opposite direction
