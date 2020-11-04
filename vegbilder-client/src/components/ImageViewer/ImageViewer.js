@@ -7,6 +7,7 @@ import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import { isEvenNumber } from "../../utilities/mathUtilities";
+import { getImagePointLatLng } from "../../utilities/imagePointUtilities";
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {
@@ -25,6 +26,7 @@ export default function ImageViewer() {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { loadedImagePoints } = useLoadedImagePoints();
   const { command, resetCommand } = useCommand();
+  const { setCurrentCoordinates } = useCurrentCoordinates();
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -101,14 +103,18 @@ export default function ImageViewer() {
   // Apply command if present
   useEffect(() => {
     if (command) {
+      let latlng;
       switch (command) {
         case commandTypes.goForwards:
+          latlng = getImagePointLatLng(nextImagePoint);
           setCurrentImagePoint(nextImagePoint);
           break;
         case commandTypes.goBackwards:
+          latlng = getImagePointLatLng(previousImagePoint);
           setCurrentImagePoint(previousImagePoint);
           break;
       }
+      setCurrentCoordinates({ latlng: latlng });
       resetCommand();
     }
   }, [command]);
