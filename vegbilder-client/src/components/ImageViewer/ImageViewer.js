@@ -103,18 +103,22 @@ export default function ImageViewer() {
   // Apply command if present
   useEffect(() => {
     if (command) {
-      let latlng;
       switch (command) {
         case commandTypes.goForwards:
-          latlng = getImagePointLatLng(nextImagePoint);
-          setCurrentImagePoint(nextImagePoint);
+          if (nextImagePoint) {
+            const latlng = getImagePointLatLng(nextImagePoint);
+            setCurrentImagePoint(nextImagePoint);
+            setCurrentCoordinates({ latlng: latlng });
+          }
           break;
         case commandTypes.goBackwards:
-          latlng = getImagePointLatLng(previousImagePoint);
-          setCurrentImagePoint(previousImagePoint);
+          if (previousImagePoint) {
+            const latlng = getImagePointLatLng(previousImagePoint);
+            setCurrentImagePoint(previousImagePoint);
+            setCurrentCoordinates({ latlng: latlng });
+          }
           break;
       }
-      setCurrentCoordinates({ latlng: latlng });
       resetCommand();
     }
   }, [command]);
