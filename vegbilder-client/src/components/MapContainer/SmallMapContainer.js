@@ -8,11 +8,14 @@ import ImagePointsLayerSmallMap from "../ImagePointsLayer/ImagePointsLayerSmallM
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 
 export default function SmallMapContainer() {
-  const { currentCoordinates } = useCurrentCoordinates();
+  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const minZoom = 14;
   const maxZoom = 16;
-  console.log("Koordinater:");
-  console.log(currentCoordinates);
+
+  console.log(
+    `Current coordinates: { lat: ${currentCoordinates.latlng.lat}, lng: ${currentCoordinates.latlng.lat}, zoom: ${currentCoordinates.zoom} }`
+  );
+
   return (
     <Map
       center={currentCoordinates.latlng}
@@ -20,6 +23,11 @@ export default function SmallMapContainer() {
       crs={crsUtm33N}
       minZoom={minZoom}
       maxZoom={maxZoom}
+      onViewportChanged={({ center, zoom }) => {
+        console.log("Viewport changed");
+        const latlng = { lat: center[0], lng: center[1] };
+        setCurrentCoordinates({ latlng, zoom });
+      }}
     >
       <TileLayer
         url="https://m{s}-nvdbcache.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
