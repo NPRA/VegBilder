@@ -28,18 +28,18 @@ export default function ControlBar() {
   return (
     <Toolbar>
       <IconButton
-        aria-label="Gå fremover"
-        className={classes.button}
-        onClick={() => setCommand(commandTypes.goForwards)}
-      >
-        <ArrowUpIcon />
-      </IconButton>
-      <IconButton
         aria-label="Gå bakover"
         className={classes.button}
         onClick={() => setCommand(commandTypes.goBackwards)}
       >
         <ArrowDownIcon />
+      </IconButton>
+      <IconButton
+        aria-label="Gå fremover"
+        className={classes.button}
+        onClick={() => setCommand(commandTypes.goForwards)}
+      >
+        <ArrowUpIcon />
       </IconButton>
       <IconButton aria-label="Bytt kjøreretning" className={classes.button}>
         <ArrowTurnIcon />
