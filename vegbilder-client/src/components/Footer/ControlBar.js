@@ -2,6 +2,8 @@ import React from "react";
 import { IconButton, Toolbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
+import { useCommand, commandTypes } from "../../contexts/CommandContext";
+
 import {
   ArrowDownIcon,
   ArrowTurnIcon,
@@ -21,12 +23,22 @@ const useStyles = makeStyles({
 
 export default function ControlBar() {
   const classes = useStyles();
+  const { setCommand } = useCommand();
+
   return (
     <Toolbar>
-      <IconButton aria-label="Neste bilde" className={classes.button}>
+      <IconButton
+        aria-label="Gå fremover"
+        className={classes.button}
+        onClick={() => setCommand(commandTypes.goForwards)}
+      >
         <ArrowUpIcon />
       </IconButton>
-      <IconButton aria-label="Forrige bilde" className={classes.button}>
+      <IconButton
+        aria-label="Gå bakover"
+        className={classes.button}
+        onClick={() => setCommand(commandTypes.goBackwards)}
+      >
         <ArrowDownIcon />
       </IconButton>
       <IconButton aria-label="Bytt kjøreretning" className={classes.button}>

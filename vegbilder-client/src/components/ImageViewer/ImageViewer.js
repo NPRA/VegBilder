@@ -5,6 +5,7 @@ import _ from "lodash";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
+import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import { isEvenNumber } from "../../utilities/mathUtilities";
 
 const useStyles = makeStyles((theme) => ({
@@ -21,8 +22,9 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ImageViewer() {
   const classes = useStyles();
-  const { currentImagePoint } = useCurrentImagePoint();
+  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { loadedImagePoints } = useLoadedImagePoints();
+  const { command, resetCommand } = useCommand();
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -95,6 +97,21 @@ export default function ImageViewer() {
       }
     }
   }, [currentImagePoint, currentLaneImagePoints]);
+
+  // Apply command if present
+  useEffect(() => {
+    if (command) {
+      switch (command) {
+        case commandTypes.goForwards:
+          setCurrentImagePoint(nextImagePoint);
+          break;
+        case commandTypes.goBackwards:
+          setCurrentImagePoint(previousImagePoint);
+          break;
+      }
+      resetCommand();
+    }
+  }, [command]);
 
   return (
     <div className={classes.imageContainer}>

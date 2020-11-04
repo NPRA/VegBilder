@@ -10,6 +10,7 @@ import ImageViewer from "./ImageViewer/ImageViewer";
 import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext";
 import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
 import { LoadedImagePointsProvider } from "../contexts/LoadedImagePointsContext";
+import { CommandProvider } from "../contexts/CommandContext";
 import Footer from "./Footer/Footer";
 import theme from "../theme/Theme";
 
@@ -51,15 +52,17 @@ function App() {
                 </Grid>
                 <Switch>
                   <Route path="/bilde">
-                    <Grid item className={classes.content}>
-                      <div className={classes.smallMap}>
-                        <SmallMapContainer />
-                      </div>
-                      <ImageViewer />
-                    </Grid>
-                    <Grid item className={classes.footer}>
-                      <Footer />
-                    </Grid>
+                    <CommandProvider>
+                      <Grid item className={classes.content}>
+                        <div className={classes.smallMap}>
+                          <SmallMapContainer />
+                        </div>
+                        <ImageViewer />
+                      </Grid>
+                      <Grid item className={classes.footer}>
+                        <Footer />
+                      </Grid>
+                    </CommandProvider>
                   </Route>
                   <Route path="/">
                     <Grid item className={classes.content}>
