@@ -68,6 +68,7 @@ const ImagePointsLayer = () => {
   const renderBbox = (bbox) => {
     return (
       <Rectangle
+        key={`${bbox.south}${bbox.west}${bbox.north}${bbox.east}`}
         bounds={[
           [bbox.south, bbox.west],
           [bbox.north, bbox.east],
