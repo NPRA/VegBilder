@@ -7,7 +7,10 @@ import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import { isEvenNumber } from "../../utilities/mathUtilities";
-import { getImagePointLatLng } from "../../utilities/imagePointUtilities";
+import {
+  getImagePointLatLng,
+  getImageUrl,
+} from "../../utilities/imagePointUtilities";
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {
@@ -143,7 +146,7 @@ export default function ImageViewer() {
   return (
     <div className={classes.imageContainer}>
       {currentImagePoint ? (
-        <img src={currentImagePoint.properties.URL} className={classes.image} />
+        <img src={getImageUrl(currentImagePoint)} className={classes.image} />
       ) : null}
     </div>
   );

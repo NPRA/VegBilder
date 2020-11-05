@@ -10,7 +10,10 @@ import { isWithinBbox } from "../../utilities/latlngUtilities";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
-import { getImagePointLatLng } from "../../utilities/imagePointUtilities";
+import {
+  getImagePointLatLng,
+  getImageUrl,
+} from "../../utilities/imagePointUtilities";
 
 const settings = {
   useSmallerMapAreaBbox: false,
@@ -144,7 +147,7 @@ const ImagePointsLayer = () => {
                 }}
               >
                 <Popup>
-                  <img src={imagePoint.properties.URL} width={"300px"}></img>
+                  <img src={getImageUrl(imagePoint)} width={"300px"}></img>
                 </Popup>
               </Marker>
             );

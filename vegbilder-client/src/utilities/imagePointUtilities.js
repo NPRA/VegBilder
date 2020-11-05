@@ -4,4 +4,8 @@ function getImagePointLatLng(imagePoint) {
   return { lat, lng };
 }
 
-export { getImagePointLatLng };
+function getImageUrl(imagepoint) {
+  return imagepoint.properties.URL;
+}
+
+export { getImagePointLatLng, getImageUrl };
