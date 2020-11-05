@@ -1,28 +1,31 @@
 import React from "react";
-import { Grid } from "@material-ui/core";
+import { AppBar, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
+import ImageMetadata from "./ImageMetadata";
 import ControlBar from "./ControlBar";
 
 const useStyles = makeStyles((theme) => ({
-  footer: {
+  appbar: {
     backgroundColor: theme.palette.primary.main,
     borderTop: `1px solid ${theme.palette.common.grayDark}`,
     width: "100vw",
-    height: "5em",
+    height: "5rem",
+    paddingLeft: "2rem",
+    paddingRight: "2rem",
   },
   imageMetadata: {
-    width: "10em",
+    width: "20rem",
   },
   rightItem: {
-    width: "10em",
+    width: "20rem",
   },
 }));
 
 export default function Footer() {
   const classes = useStyles();
   return (
-    <div className={classes.footer}>
+    <AppBar position="relative" className={classes.appbar}>
       <Grid
         container
         direction="row"
@@ -30,7 +33,9 @@ export default function Footer() {
         alignItems="center"
       >
         <Grid item>
-          <div className={classes.imageMetadata}>Image metadata</div>
+          <div className={classes.imageMetadata}>
+            <ImageMetadata />
+          </div>
         </Grid>
         <Grid item>
           <ControlBar />
@@ -39,6 +44,6 @@ export default function Footer() {
           <div className={classes.rightItem}></div>
         </Grid>
       </Grid>
-    </div>
+    </AppBar>
   );
 }

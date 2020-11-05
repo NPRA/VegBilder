@@ -28,6 +28,7 @@ const useStyles = makeStyles({
   },
   footer: {
     flex: "0 1 auto",
+    zIndex: "1000000",
   },
   smallMap: {
     position: "absolute",
