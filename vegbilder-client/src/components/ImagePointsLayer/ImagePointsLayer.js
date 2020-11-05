@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
 import { Rectangle, Marker, Popup } from "react-leaflet";
-import leafletrotatedmarker from "leaflet-rotatedmarker";
+import leafletrotatedmarker from "leaflet-rotatedmarker"; // Your linter may report this as unused, but it is required for the rotationAngle property of Marker to work
 import { useHistory } from "react-router-dom";
 
 import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
@@ -25,7 +25,7 @@ const ImagePointsLayer = () => {
   const [[south, west], [north, east]] = useLeafletBounds();
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
-  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
+  const { setCurrentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
 
   // Fetch image points in the target area whenever the map bounds change

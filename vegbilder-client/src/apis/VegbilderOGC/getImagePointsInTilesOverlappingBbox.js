@@ -4,7 +4,6 @@ import {
   roundDownToNearest,
   roundUpToNearest,
 } from "../../utilities/mathUtilities";
-import { isWithinBbox } from "../../utilities/latlngUtilities";
 
 const settings = {
   bboxSizeInDegrees: 0.02,

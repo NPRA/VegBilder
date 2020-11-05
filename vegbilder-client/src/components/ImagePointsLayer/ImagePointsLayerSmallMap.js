@@ -6,7 +6,7 @@ import {
   useLeafletZoom,
 } from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
-import leafletrotatedmarker from "leaflet-rotatedmarker";
+import leafletrotatedmarker from "leaflet-rotatedmarker"; // Your linter may report this as unused, but it is required for the rotationAngle property of Marker to work
 
 import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
 import {
