@@ -147,7 +147,11 @@ const ImagePointsLayer = () => {
                 }}
               >
                 <Popup>
-                  <img src={getImageUrl(imagePoint)} width={"300px"}></img>
+                  <img
+                    src={getImageUrl(imagePoint)}
+                    alt="vegbilde"
+                    width={"300px"}
+                  ></img>
                 </Popup>
               </Marker>
             );

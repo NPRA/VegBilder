@@ -217,7 +217,11 @@ export default function ImageViewer() {
   return (
     <div className={classes.imageContainer}>
       {currentImagePoint ? (
-        <img src={getImageUrl(currentImagePoint)} className={classes.image} />
+        <img
+          src={getImageUrl(currentImagePoint)}
+          alt="vegbilde"
+          className={classes.image}
+        />
       ) : null}
     </div>
   );

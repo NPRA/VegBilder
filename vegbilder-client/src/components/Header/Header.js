@@ -27,7 +27,11 @@ export default function Header() {
           alignItems="center"
         >
           <Grid item>
-            <img src="images/svv-logo.svg" className={classes.logo} />
+            <img
+              src="images/svv-logo.svg"
+              alt="Logo - Statens vegvesen"
+              className={classes.logo}
+            />
           </Grid>
           <Grid item>
             <Search />
