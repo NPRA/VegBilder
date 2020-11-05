@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import _ from "lodash";
 
@@ -47,7 +47,7 @@ export default function ImageViewer() {
     return `${numberSignifyingOppositeDirection}`;
   }
 
-  function goToNearestImagePointInOppositeLane() {
+  const goToNearestImagePointInOppositeLane = useCallback(() => {
     if (!currentImagePoint) return;
     const imagePointsInOppositeLane = loadedImagePoints.imagePoints.filter(
       (ip) =>
@@ -63,7 +63,12 @@ export default function ImageViewer() {
     const latlng = getImagePointLatLng(nearestImagePointInOppositeLane);
     setCurrentImagePoint(nearestImagePointInOppositeLane);
     setCurrentCoordinates(latlng);
-  }
+  }, [
+    currentImagePoint,
+    loadedImagePoints,
+    setCurrentImagePoint,
+    setCurrentCoordinates,
+  ]);
 
   // Set road context based on current image point
   useEffect(() => {
@@ -174,7 +179,15 @@ export default function ImageViewer() {
       }
       resetCommand();
     }
-  }, [command]);
+  }, [
+    command,
+    resetCommand,
+    nextImagePoint,
+    previousImagePoint,
+    setCurrentCoordinates,
+    setCurrentImagePoint,
+    goToNearestImagePointInOppositeLane,
+  ]);
 
   return (
     <div className={classes.imageContainer}>
