@@ -10,6 +10,7 @@ import { isEvenNumber } from "../../utilities/mathUtilities";
 import {
   getImagePointLatLng,
   getImageUrl,
+  findNearestImagePoint,
 } from "../../utilities/imagePointUtilities";
 
 const useStyles = makeStyles((theme) => ({
@@ -36,6 +37,33 @@ export default function ImageViewer() {
 
   const [currentRoadContext, setCurrentRoadContext] = useState(null);
   const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState([]);
+
+  function firstCharOfFeltkodeOppsiteDirection(feltkode) {
+    if (!feltkode) return null;
+    const primaryFeltkode = parseInt(feltkode[0], 10);
+    const numberSignifyingOppositeDirection = isEvenNumber(primaryFeltkode)
+      ? 1
+      : 2;
+    return `${numberSignifyingOppositeDirection}`;
+  }
+
+  function goToNearestImagePointInOppositeLane() {
+    if (!currentImagePoint) return;
+    const imagePointsInOppositeLane = loadedImagePoints.imagePoints.filter(
+      (ip) =>
+        ip.properties.FELTKODE ===
+        firstCharOfFeltkodeOppsiteDirection(
+          currentImagePoint.properties.FELTKODE
+        )
+    );
+    const nearestImagePointInOppositeLane = findNearestImagePoint(
+      imagePointsInOppositeLane,
+      getImagePointLatLng(currentImagePoint)
+    );
+    const latlng = getImagePointLatLng(nearestImagePointInOppositeLane);
+    setCurrentImagePoint(nearestImagePointInOppositeLane);
+    setCurrentCoordinates(latlng);
+  }
 
   // Set road context based on current image point
   useEffect(() => {
@@ -138,6 +166,11 @@ export default function ImageViewer() {
             setCurrentCoordinates({ latlng: latlng });
           }
           break;
+        case commandTypes.turnAround:
+          goToNearestImagePointInOppositeLane();
+          break;
+        default:
+        // Any other commands do not apply to this component and will be ignored
       }
       resetCommand();
     }

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 const commandTypes = {
   goForwards: "goForwards",
   goBackwards: "goBackwards",
+  turnAround: "turnAround",
 };
 
 const CommandContext = React.createContext();
@@ -22,6 +23,7 @@ function CommandProvider(props) {
     switch (command) {
       case commandTypes.goForwards:
       case commandTypes.goBackwards:
+      case commandTypes.turnAround:
         setCommandInternal(command);
         break;
       default:

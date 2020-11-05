@@ -3,7 +3,6 @@ import { IconButton, Toolbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
-
 import {
   ArrowDownIcon,
   ArrowTurnIcon,
@@ -41,7 +40,11 @@ export default function ControlBar() {
       >
         <ArrowUpIcon />
       </IconButton>
-      <IconButton aria-label="Bytt kjøreretning" className={classes.button}>
+      <IconButton
+        aria-label="Bytt kjøreretning"
+        className={classes.button}
+        onClick={() => setCommand(commandTypes.turnAround)}
+      >
         <ArrowTurnIcon />
       </IconButton>
       <IconButton aria-label="Start animasjon" className={classes.button}>
