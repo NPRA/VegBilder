@@ -43,17 +43,17 @@ function App() {
   const classes = useStyles();
   return (
     <ThemeProvider theme={theme}>
-      <CurrentCoordinatesProvider>
-        <CurrentImagePointProvider>
-          <LoadedImagePointsProvider>
-            <BrowserRouter>
-              <Grid container direction="column" className={classes.gridRoot}>
-                <Grid item className={classes.header}>
-                  <Header />
-                </Grid>
-                <Switch>
-                  <Route path="/bilde">
-                    <CommandProvider>
+      <CommandProvider>
+        <CurrentCoordinatesProvider>
+          <CurrentImagePointProvider>
+            <LoadedImagePointsProvider>
+              <BrowserRouter>
+                <Grid container direction="column" className={classes.gridRoot}>
+                  <Grid item className={classes.header}>
+                    <Header />
+                  </Grid>
+                  <Switch>
+                    <Route path="/bilde">
                       <Grid item className={classes.content}>
                         <div className={classes.smallMap}>
                           <SmallMapContainer />
@@ -63,19 +63,19 @@ function App() {
                       <Grid item className={classes.footer}>
                         <Footer />
                       </Grid>
-                    </CommandProvider>
-                  </Route>
-                  <Route path="/">
-                    <Grid item className={classes.content}>
-                      <MapContainer />
-                    </Grid>
-                  </Route>
-                </Switch>
-              </Grid>
-            </BrowserRouter>
-          </LoadedImagePointsProvider>
-        </CurrentImagePointProvider>
-      </CurrentCoordinatesProvider>
+                    </Route>
+                    <Route path="/">
+                      <Grid item className={classes.content}>
+                        <MapContainer />
+                      </Grid>
+                    </Route>
+                  </Switch>
+                </Grid>
+              </BrowserRouter>
+            </LoadedImagePointsProvider>
+          </CurrentImagePointProvider>
+        </CurrentCoordinatesProvider>
+      </CommandProvider>
     </ThemeProvider>
   );
 }

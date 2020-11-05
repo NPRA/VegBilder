@@ -4,6 +4,7 @@ const commandTypes = {
   goForwards: "goForwards",
   goBackwards: "goBackwards",
   turnAround: "turnAround",
+  selectNearestImagePoint: "selectNearestImagePoint",
 };
 
 const CommandContext = React.createContext();
@@ -24,6 +25,7 @@ function CommandProvider(props) {
       case commandTypes.goForwards:
       case commandTypes.goBackwards:
       case commandTypes.turnAround:
+      case commandTypes.selectNearestImagePoint:
         setCommandInternal(command);
         break;
       default:

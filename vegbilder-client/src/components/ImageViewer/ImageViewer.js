@@ -30,7 +30,7 @@ export default function ImageViewer() {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { loadedImagePoints } = useLoadedImagePoints();
   const { command, resetCommand } = useCommand();
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -69,6 +69,16 @@ export default function ImageViewer() {
     setCurrentImagePoint,
     setCurrentCoordinates,
   ]);
+
+  const selectNearestImagePointToCurrentCoordinates = useCallback(() => {
+    if (!loadedImagePoints || !currentCoordinates) return false;
+    const nearestImagePoint = findNearestImagePoint(
+      loadedImagePoints.imagePoints,
+      currentCoordinates.latlng
+    );
+    setCurrentImagePoint(nearestImagePoint);
+    return true;
+  }, [loadedImagePoints, currentCoordinates, setCurrentImagePoint]);
 
   // Set road context based on current image point
   useEffect(() => {
@@ -156,6 +166,7 @@ export default function ImageViewer() {
   // Apply command if present
   useEffect(() => {
     if (command) {
+      let resetCommandAfterExecution = true;
       switch (command) {
         case commandTypes.goForwards:
           if (nextImagePoint) {
@@ -174,10 +185,23 @@ export default function ImageViewer() {
         case commandTypes.turnAround:
           goToNearestImagePointInOppositeLane();
           break;
+        case commandTypes.selectNearestImagePoint:
+          /* Attempt to select the image point nearest to the current coordinates. This is done
+           * after a search for vegsystemreferanse in the Search component, but there may
+           * also be other uses for it. It is possible that there are no loaded image points,
+           * so that no nearest image point can be found. In that case, the command should
+           * not be reset, as we want to rerun it on the next render, which may be triggered
+           * by loadedImagePoints being populated.
+           */
+          const wasSuccessful = selectNearestImagePointToCurrentCoordinates();
+          resetCommandAfterExecution = wasSuccessful;
+          break;
         default:
         // Any other commands do not apply to this component and will be ignored
       }
-      resetCommand();
+      if (resetCommandAfterExecution) {
+        resetCommand();
+      }
     }
   }, [
     command,
@@ -187,6 +211,7 @@ export default function ImageViewer() {
     setCurrentCoordinates,
     setCurrentImagePoint,
     goToNearestImagePointInOppositeLane,
+    selectNearestImagePointToCurrentCoordinates,
   ]);
 
   return (
