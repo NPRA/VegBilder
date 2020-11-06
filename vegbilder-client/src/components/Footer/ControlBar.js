@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { IconButton, Toolbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
@@ -23,6 +23,24 @@ const useStyles = makeStyles({
 export default function ControlBar() {
   const classes = useStyles();
   const { setCommand } = useCommand();
+
+  useEffect(() => {
+    document.body.addEventListener("keydown", (event) => {
+      switch (event.key) {
+        case "ArrowDown":
+          setCommand(commandTypes.goBackwards);
+          break;
+        case "ArrowUp":
+          setCommand(commandTypes.goForwards);
+          break;
+        default:
+        // Ignore other key presses
+      }
+    });
+    return function cleanUp() {
+      document.body.removeEventListener("keydown");
+    };
+  }, []);
 
   return (
     <Toolbar>
