@@ -13,6 +13,7 @@ import { LoadedImagePointsProvider } from "../contexts/LoadedImagePointsContext"
 import { CommandProvider } from "../contexts/CommandContext";
 import Footer from "./Footer/Footer";
 import theme from "../theme/Theme";
+import { MiniMapProvider } from "../contexts/MiniMapContext";
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -29,13 +30,6 @@ const useStyles = makeStyles({
   footer: {
     flex: "0 1 auto",
     zIndex: "1000000",
-  },
-  smallMap: {
-    position: "absolute",
-    width: "300px",
-    height: "300px",
-    left: "20px",
-    top: "20px",
   },
 });
 
@@ -54,15 +48,15 @@ function App() {
                   </Grid>
                   <Switch>
                     <Route path="/bilde">
-                      <Grid item className={classes.content}>
-                        <div className={classes.smallMap}>
+                      <MiniMapProvider>
+                        <Grid item className={classes.content}>
                           <SmallMapContainer />
-                        </div>
-                        <ImageViewer />
-                      </Grid>
-                      <Grid item className={classes.footer}>
-                        <Footer />
-                      </Grid>
+                          <ImageViewer />
+                        </Grid>
+                        <Grid item className={classes.footer}>
+                          <Footer />
+                        </Grid>
+                      </MiniMapProvider>
                     </Route>
                     <Route path="/">
                       <Grid item className={classes.content}>

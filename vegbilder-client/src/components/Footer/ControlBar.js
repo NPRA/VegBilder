@@ -3,6 +3,7 @@ import { IconButton, Toolbar } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
+import { useMiniMap } from "../../contexts/MiniMapContext";
 import {
   ArrowDownIcon,
   ArrowTurnIcon,
@@ -10,6 +11,7 @@ import {
   DotsHorizontalIcon,
   HistoryIcon,
   MapIcon,
+  MapDisabledIcon,
   MeasureIcon,
   PlayIcon,
 } from "../Icons/Icons";
@@ -23,6 +25,7 @@ const useStyles = makeStyles({
 export default function ControlBar() {
   const classes = useStyles();
   const { setCommand } = useCommand();
+  const { miniMapVisible, setMiniMapVisible } = useMiniMap();
 
   useEffect(() => {
     document.body.addEventListener("keydown", (event) => {
@@ -68,9 +71,23 @@ export default function ControlBar() {
       <IconButton aria-label="Start animasjon" className={classes.button}>
         <PlayIcon />
       </IconButton>
-      <IconButton aria-label="Skjul kart" className={classes.button}>
-        <MapIcon />
-      </IconButton>
+      {miniMapVisible ? (
+        <IconButton
+          aria-label="Skjul kart"
+          className={classes.button}
+          onClick={() => setMiniMapVisible(false)}
+        >
+          <MapIcon />
+        </IconButton>
+      ) : (
+        <IconButton
+          aria-label="Vis kart"
+          className={classes.button}
+          onClick={() => setMiniMapVisible(true)}
+        >
+          <MapDisabledIcon />
+        </IconButton>
+      )}
       <IconButton aria-label="Mål avstand" className={classes.button}>
         <MeasureIcon />
       </IconButton>

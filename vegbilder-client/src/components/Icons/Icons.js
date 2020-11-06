@@ -7,6 +7,7 @@ import { ReactComponent as DotsHorizontalSvg } from "./Dots-horizontal.svg";
 import { ReactComponent as HistorySvg } from "./History.svg";
 import { ReactComponent as MagnifyingGlassSvg } from "./Magnifying-glass.svg";
 import { ReactComponent as MapSvg } from "./Map.svg";
+import { ReactComponent as MapDisabledSvg } from "./Map-disabled.svg";
 import { ReactComponent as MeasureSvg } from "./Measure.svg";
 import { ReactComponent as PlaySvg } from "./Play.svg";
 
@@ -38,6 +39,10 @@ function MapIcon() {
   return <SvgIcon component={MapSvg} viewBox="8 8 24 24" />;
 }
 
+function MapDisabledIcon() {
+  return <SvgIcon component={MapDisabledSvg} viewBox="8 8 24 24" />;
+}
+
 function MeasureIcon() {
   return <SvgIcon component={MeasureSvg} viewBox="8 8 24 24" />;
 }
@@ -54,6 +59,7 @@ export {
   HistoryIcon,
   MagnifyingGlassIcon,
   MapIcon,
+  MapDisabledIcon,
   MeasureIcon,
   PlayIcon,
 };
