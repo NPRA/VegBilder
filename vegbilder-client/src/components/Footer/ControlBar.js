@@ -28,7 +28,7 @@ export default function ControlBar() {
   const { miniMapVisible, setMiniMapVisible } = useMiniMap();
 
   useEffect(() => {
-    document.body.addEventListener("keydown", (event) => {
+    const onKeyDown = (event) => {
       switch (event.key) {
         case "ArrowDown":
           setCommand(commandTypes.goBackwards);
@@ -39,11 +39,12 @@ export default function ControlBar() {
         default:
         // Ignore other key presses
       }
-    });
-    return function cleanUp() {
-      document.body.removeEventListener("keydown");
     };
-  }, []);
+    document.body.addEventListener("keydown", onKeyDown);
+    return function cleanUp() {
+      document.body.removeEventListener("keydown", onKeyDown);
+    };
+  }, [setCommand]);
 
   return (
     <Toolbar>
