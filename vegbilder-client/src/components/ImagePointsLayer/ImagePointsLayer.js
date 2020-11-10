@@ -138,22 +138,12 @@ const ImagePointsLayer = () => {
                 position={latlng}
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
-                onmouseover={(event) => event.target.openPopup()}
-                onmouseout={(event) => event.target.closePopup()}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
                   setCurrentCoordinates({ latlng: latlng, zoom: 16 });
                   history.push("/bilde");
                 }}
-              >
-                <Popup>
-                  <img
-                    src={getImageUrl(imagePoint)}
-                    alt="vegbilde"
-                    width={"300px"}
-                  ></img>
-                </Popup>
-              </Marker>
+              />
             );
           })}
         </>
