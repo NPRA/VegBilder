@@ -42,7 +42,12 @@ function App() {
           <CurrentImagePointProvider>
             <LoadedImagePointsProvider>
               <BrowserRouter>
-                <Grid container direction="column" className={classes.gridRoot}>
+                <Grid
+                  container
+                  direction="column"
+                  className={classes.gridRoot}
+                  wrap="nowrap"
+                >
                   <Grid item className={classes.header}>
                     <Header />
                   </Grid>
