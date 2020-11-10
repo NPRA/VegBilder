@@ -9,6 +9,10 @@ const useStyles = makeStyles({
   headerBar: {
     height: "100%",
   },
+  logoContainer: {
+    display: "flex",
+    alignContent: "center",
+  },
   logo: {
     width: "7.5rem",
   },
@@ -33,7 +37,7 @@ export default function Header() {
           justify="space-between"
           alignItems="center"
         >
-          <Grid item>
+          <Grid item className={classes.logoContainer}>
             <img
               src="images/svv-logo.svg"
               alt="Logo - Statens vegvesen"
