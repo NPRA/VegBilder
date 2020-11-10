@@ -15,13 +15,17 @@ import {
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {
-    width: "100vw",
+    width: "100%",
     height: "100%",
+    maxHeight: "100%",
     backgroundColor: theme.palette.primary.main,
+    display: "flex",
+    justifyContent: "center",
   },
   image: {
-    maxHeight: "100%",
+    maxHeight: "calc(100vh - 9.5rem)",
     maxWidth: "100%",
+    objectFit: "contain",
   },
 }));
 
@@ -83,6 +87,7 @@ export default function ImageViewer() {
   // Set road context based on current image point
   useEffect(() => {
     if (currentImagePoint) {
+      console.log(currentImagePoint.properties);
       setCurrentRoadContext({
         vegkategori: currentImagePoint.properties.VEGKATEGORI,
         vegnummer: currentImagePoint.properties.VEGNUMMER,

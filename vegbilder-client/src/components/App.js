@@ -20,7 +20,7 @@ const useStyles = makeStyles({
     height: "100%",
   },
   header: {
-    flex: "0 1 auto", // Do not allow the grid item containing the header to grow. Height depends on content
+    flex: "0 1 5rem", // Do not allow the grid item containing the header to grow. Height depends on content
     zIndex: "1000000",
   },
   content: {
@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     position: "relative", // Needed for the small map to be positioned correctly relative to the top left corner of the content container
   },
   footer: {
-    flex: "0 1 auto",
+    flex: "0 1 4.5rem",
     zIndex: "1000000",
   },
 });

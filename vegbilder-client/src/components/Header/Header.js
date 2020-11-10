@@ -6,20 +6,27 @@ import { makeStyles } from "@material-ui/styles";
 import Search from "../Search/Search";
 
 const useStyles = makeStyles({
+  headerBar: {
+    height: "100%",
+  },
   logo: {
-    padding: "0.5em",
-    width: "9em",
+    width: "7.5rem",
   },
   rightItem: {
-    width: "10em",
+    width: "7.5rem",
   },
 });
 
 export default function Header() {
   const classes = useStyles();
   return (
-    <AppBar position="static" color="primary" elevation={3}>
-      <Toolbar>
+    <AppBar
+      position="static"
+      color="primary"
+      elevation={3}
+      className={classes.headerBar}
+    >
+      <Toolbar className={classes.headerBar}>
         <Grid
           container
           direction="row"
