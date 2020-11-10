@@ -15,10 +15,10 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: "2rem",
   },
   imageMetadata: {
-    width: "20rem",
+    flex: "0 1 20rem",
   },
   rightItem: {
-    width: "20rem",
+    flex: "0 1 20rem",
   },
 }));
 
@@ -31,18 +31,15 @@ export default function Footer() {
         direction="row"
         justify="space-between"
         alignItems="center"
+        wrap="nowrap"
       >
-        <Grid item>
-          <div className={classes.imageMetadata}>
-            <ImageMetadata />
-          </div>
+        <Grid item className={classes.imageMetadata}>
+          <ImageMetadata />
         </Grid>
         <Grid item>
           <ControlBar />
         </Grid>
-        <Grid item>
-          <div className={classes.rightItem}></div>
-        </Grid>
+        <Grid item className={classes.rightItem} />
       </Grid>
     </AppBar>
   );
