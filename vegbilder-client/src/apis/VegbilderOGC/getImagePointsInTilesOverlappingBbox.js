@@ -10,7 +10,7 @@ const settings = {
   bboxSizeDecimals: 2, // Make sure this equals the number of decimals in bboxSizeInDegrees
 };
 
-const getImagePointsInTilesOverlappingBbox = async (bbox) => {
+const getImagePointsInTilesOverlappingBbox = async (bbox, timePeriod) => {
   const { south, west, north, east } = bbox;
   const { bboxSizeInDegrees, bboxSizeDecimals } = settings;
   const expandedBbox = {
@@ -32,7 +32,7 @@ const getImagePointsInTilesOverlappingBbox = async (bbox) => {
     }
   }
   const promises = fetchedBboxes.map(async (bbox) => {
-    return await getImagePointsInBbox(bbox);
+    return await getImagePointsInBbox(bbox, timePeriod);
   });
   const responses = await Promise.all(promises);
   var imagePoints = _.chain(responses)

@@ -7,12 +7,7 @@ import { makeStyles, withStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { CalendarIcon } from "../Icons/Icons";
-
-const periods = {
-  twenty: "2020",
-  nineteen: "2019",
-  eightteen: "2018",
-};
+import { useTimePeriod, timePeriods } from "../../contexts/TimePeriodContext";
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -55,23 +50,25 @@ const CustomExpandMoreIcon = withStyles(iconStyles)(
 
 export default function TimePeriodSelector() {
   const classes = useStyles();
-  const [period, setPeriod] = React.useState(periods.twenty);
+  const { timePeriod, setTimePeriod } = useTimePeriod();
 
-  console.log(`Tidsperiode: ${period}`);
+  console.log(`Tidsperiode: ${timePeriod}`);
 
   return (
     <FormControl>
       <Select
         id="year-select"
-        value={period}
-        onChange={(event) => setPeriod(event.target.value)}
+        value={timePeriod}
+        onChange={(event) => setTimePeriod(event.target.value)}
         className={classes.timePeriodSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
       >
-        <MenuItem value={periods.twenty}>{periods.twenty}</MenuItem>
-        <MenuItem value={periods.nineteen}>{periods.nineteen}</MenuItem>
-        <MenuItem value={periods.eightteen}>{periods.eightteen}</MenuItem>
+        {timePeriods.map((tp) => (
+          <MenuItem key={tp} value={tp}>
+            {tp}
+          </MenuItem>
+        ))}
       </Select>
       <div className={classes.calendarIcon}>
         <CalendarIcon />

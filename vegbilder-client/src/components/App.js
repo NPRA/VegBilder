@@ -14,6 +14,7 @@ import { CommandProvider } from "../contexts/CommandContext";
 import Footer from "./Footer/Footer";
 import theme from "../theme/Theme";
 import { MiniMapProvider } from "../contexts/MiniMapContext";
+import { TimePeriodProvider } from "../contexts/TimePeriodContext";
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -37,42 +38,44 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CommandProvider>
-        <CurrentCoordinatesProvider>
-          <CurrentImagePointProvider>
-            <LoadedImagePointsProvider>
-              <BrowserRouter>
-                <Grid
-                  container
-                  direction="column"
-                  className={classes.gridRoot}
-                  wrap="nowrap"
-                >
-                  <Grid item className={classes.header}>
-                    <Header />
-                  </Grid>
-                  <Switch>
-                    <Route path="/bilde">
-                      <MiniMapProvider>
+        <TimePeriodProvider>
+          <CurrentCoordinatesProvider>
+            <CurrentImagePointProvider>
+              <LoadedImagePointsProvider>
+                <BrowserRouter>
+                  <Grid
+                    container
+                    direction="column"
+                    className={classes.gridRoot}
+                    wrap="nowrap"
+                  >
+                    <Grid item className={classes.header}>
+                      <Header />
+                    </Grid>
+                    <Switch>
+                      <Route path="/bilde">
+                        <MiniMapProvider>
+                          <Grid item className={classes.content}>
+                            <SmallMapContainer />
+                            <ImageViewer />
+                          </Grid>
+                          <Grid item className={classes.footer}>
+                            <Footer />
+                          </Grid>
+                        </MiniMapProvider>
+                      </Route>
+                      <Route path="/">
                         <Grid item className={classes.content}>
-                          <SmallMapContainer />
-                          <ImageViewer />
+                          <MapContainer />
                         </Grid>
-                        <Grid item className={classes.footer}>
-                          <Footer />
-                        </Grid>
-                      </MiniMapProvider>
-                    </Route>
-                    <Route path="/">
-                      <Grid item className={classes.content}>
-                        <MapContainer />
-                      </Grid>
-                    </Route>
-                  </Switch>
-                </Grid>
-              </BrowserRouter>
-            </LoadedImagePointsProvider>
-          </CurrentImagePointProvider>
-        </CurrentCoordinatesProvider>
+                      </Route>
+                    </Switch>
+                  </Grid>
+                </BrowserRouter>
+              </LoadedImagePointsProvider>
+            </CurrentImagePointProvider>
+          </CurrentCoordinatesProvider>
+        </TimePeriodProvider>
       </CommandProvider>
     </ThemeProvider>
   );

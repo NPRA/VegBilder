@@ -10,6 +10,7 @@ import { isWithinBbox } from "../../utilities/latlngUtilities";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
+import { timePeriods, useTimePeriod } from "../../contexts/TimePeriodContext";
 import {
   getImagePointLatLng,
   getImageUrl,
@@ -27,6 +28,7 @@ const ImagePointsLayer = () => {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
+  const { timePeriod } = useTimePeriod();
 
   // Fetch image points in the target area whenever the map bounds change
   useEffect(() => {
@@ -35,11 +37,11 @@ const ImagePointsLayer = () => {
       const {
         imagePoints,
         fetchedBboxes,
-      } = await getImagePointsInTilesOverlappingBbox(targetBbox);
+      } = await getImagePointsInTilesOverlappingBbox(targetBbox, timePeriod);
       setLoadedImagePoints({ imagePoints, bbox: targetBbox });
       setFetchedBboxes(fetchedBboxes);
     })();
-  }, [south, west, north, east]);
+  }, [south, west, north, east, timePeriod]);
 
   const createTargetBbox = () => {
     return createBboxForVisibleMapArea();

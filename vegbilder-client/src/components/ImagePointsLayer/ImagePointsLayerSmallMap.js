@@ -17,6 +17,7 @@ import {
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
+import { timePeriods, useTimePeriod } from "../../contexts/TimePeriodContext";
 import { getImagePointLatLng } from "../../utilities/imagePointUtilities";
 
 const settings = {
@@ -33,6 +34,7 @@ const ImagePointsLayerSmallMap = () => {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
+  const { timePeriod } = useTimePeriod();
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -58,6 +60,7 @@ const ImagePointsLayerSmallMap = () => {
       const bboxVisibleMapArea = createBboxForVisibleMapArea();
       if (
         !loadedImagePoints ||
+        loadedImagePoints.timePeriod !== timePeriod ||
         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
       ) {
         const [lat, lng] = mapCenter;
@@ -69,8 +72,8 @@ const ImagePointsLayerSmallMap = () => {
           imagePoints,
           expandedBbox,
           fetchedBboxes,
-        } = await getImagePointsInTilesOverlappingBbox(targetBbox);
-        setLoadedImagePoints({ imagePoints, bbox: expandedBbox });
+        } = await getImagePointsInTilesOverlappingBbox(targetBbox, timePeriod);
+        setLoadedImagePoints({ imagePoints, bbox: expandedBbox, timePeriod });
         setFetchedBboxes(fetchedBboxes);
         setTargetBbox(targetBbox);
       }
@@ -78,6 +81,7 @@ const ImagePointsLayerSmallMap = () => {
   }, [
     mapCenter,
     loadedImagePoints,
+    timePeriod,
     createBboxForVisibleMapArea,
     setLoadedImagePoints,
   ]);
