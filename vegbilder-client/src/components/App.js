@@ -21,7 +21,7 @@ const useStyles = makeStyles({
   },
   header: {
     flex: "0 1 5rem", // Do not allow the grid item containing the header to grow. Height depends on content
-    zIndex: "1000000",
+    zIndex: "1",
   },
   content: {
     flex: "1 1 auto", // Allow the grid item containing the main content to grow and shrink to fill the available height.
@@ -29,7 +29,6 @@ const useStyles = makeStyles({
   },
   footer: {
     flex: "0 1 4.5rem",
-    zIndex: "1000000",
   },
 });
 

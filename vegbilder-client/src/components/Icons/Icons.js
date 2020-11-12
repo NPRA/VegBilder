@@ -10,6 +10,7 @@ import { ReactComponent as MapSvg } from "./Map.svg";
 import { ReactComponent as MapDisabledSvg } from "./Map-disabled.svg";
 import { ReactComponent as MeasureSvg } from "./Measure.svg";
 import { ReactComponent as PlaySvg } from "./Play.svg";
+import { ReactComponent as CalendarSvg } from "./Calendar.svg";
 
 function ArrowDownIcon() {
   return <SvgIcon component={ArrowDownSvg} viewBox="8 8 24 24" />;
@@ -21,6 +22,10 @@ function ArrowTurnIcon() {
 
 function ArrowUpIcon() {
   return <SvgIcon component={ArrowUpSvg} viewBox="8 8 24 24" />;
+}
+
+function CalendarIcon() {
+  return <SvgIcon component={CalendarSvg} />;
 }
 
 function DotsHorizontalIcon() {
@@ -55,6 +60,7 @@ export {
   ArrowDownIcon,
   ArrowTurnIcon,
   ArrowUpIcon,
+  CalendarIcon,
   DotsHorizontalIcon,
   HistoryIcon,
   MagnifyingGlassIcon,

@@ -24,4 +24,18 @@ export default createMuiTheme({
       main: orangeDark,
     },
   },
+  overrides: {
+    // Styles for Select menu: <ul> element
+    MuiMenu: {
+      list: {
+        backgroundColor: grayDarker,
+        color: grayRegular,
+        border: `1px solid ${grayDark}`,
+      },
+    },
+    // Styles for Select menu: <li> elements
+    MuiMenuItem: {
+      root: {},
+    },
+  },
 });

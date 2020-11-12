@@ -4,6 +4,7 @@ import { Toolbar, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 import Search from "../Search/Search";
+import TimePeriodSelector from "../TimePeriodSelector/TimePeriodSelector";
 
 const useStyles = makeStyles({
   headerAppBar: {
@@ -11,12 +12,22 @@ const useStyles = makeStyles({
   },
   headerToolBar: {
     height: "100%",
-    paddingLeft: "4.125rem",
-    paddingRight: "4.125rem",
+    marginLeft: "4.125rem",
+    marginRight: "4.125rem",
   },
   logoContainer: {
     display: "flex",
-    alignContent: "center",
+    flex: "1 1 auto",
+    justifyContent: "flex-start",
+  },
+  timePeriodSelectorContainer: {
+    display: "flex",
+    flex: "1 1 auto",
+    justifyContent: "flex-start",
+  },
+  searchContainer: {
+    marginLeft: "1.125rem",
+    marginRight: "1.125rem",
   },
   logo: {
     width: "7.5rem",
@@ -49,11 +60,11 @@ export default function Header() {
               className={classes.logo}
             />
           </Grid>
-          <Grid item>
+          <Grid item className={classes.searchContainer}>
             <Search />
           </Grid>
-          <Grid item>
-            <div className={classes.rightItem}></div>
+          <Grid item className={classes.timePeriodSelectorContainer}>
+            <TimePeriodSelector />
           </Grid>
         </Grid>
       </Toolbar>
