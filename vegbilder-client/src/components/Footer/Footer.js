@@ -2,7 +2,7 @@ import React from "react";
 import { AppBar, Grid } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 
-import ImageMetadata from "./ImageMetadata";
+import ImageMetadata from "../ImageMetadata/ImageMetadata";
 import ControlBar from "./ControlBar";
 
 const useStyles = makeStyles((theme) => ({
