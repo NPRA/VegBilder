@@ -7,6 +7,7 @@ import Header from "./Header/Header";
 import MapContainer from "./MapContainer/MapContainer";
 import SmallMapContainer from "./MapContainer/SmallMapContainer";
 import ImageViewer from "./ImageViewer/ImageViewer";
+import ImagePreview from "./ImagePreview/ImagePreview";
 import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext";
 import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
 import { LoadedImagePointsProvider } from "../contexts/LoadedImagePointsContext";
@@ -67,6 +68,7 @@ function App() {
                       <Route path="/">
                         <Grid item className={classes.content}>
                           <MapContainer />
+                          <ImagePreview />
                         </Grid>
                       </Route>
                     </Switch>

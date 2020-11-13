@@ -142,8 +142,6 @@ const ImagePointsLayer = () => {
                 rotationAngle={imagePoint.properties.RETNING}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
-                  setCurrentCoordinates({ latlng: latlng, zoom: 16 });
-                  history.push("/bilde");
                 }}
               />
             );
