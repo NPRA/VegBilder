@@ -18,9 +18,19 @@ const useStyles = makeStyles((theme) => ({
     height: "12.5rem",
     margin: "2px 2px 0 2px",
   },
-  button: {
+  enlargeButton: {
     backgroundColor: theme.palette.common.grayDark,
-    borderRadius: "10px",
+    borderRadius: "0.625rem",
+  },
+  closeButton: {
+    position: "absolute",
+    top: "0.3125rem",
+    right: "0.3125rem",
+    backgroundColor: theme.palette.common.grayDark,
+    opacity: "50%",
+    color: theme.palette.primary.contrastText,
+    padding: "0.1875rem",
+    borderRadius: "0.625rem",
   },
 }));
 
@@ -54,10 +64,16 @@ export default function ImagePreview() {
             src={getImageUrl(currentImagePoint)}
             className={classes.image}
           ></img>
+          <IconButton
+            className={classes.closeButton}
+            onClick={() => setCurrentImagePoint(null)}
+          >
+            <CloseIcon />
+          </IconButton>
         </Box>
         <Box padding="0.75rem" display="flex" justifyContent="space-between">
           <ImageMetadata />
-          <IconButton className={classes.button} onClick={openImage}>
+          <IconButton className={classes.enlargeButton} onClick={openImage}>
             <EnlargeIcon />
           </IconButton>
         </Box>
