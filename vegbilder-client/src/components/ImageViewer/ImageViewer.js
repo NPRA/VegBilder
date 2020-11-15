@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import _ from "lodash";
+import { useHistory } from "react-router-dom";
 
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
@@ -12,6 +13,7 @@ import {
   getImageUrl,
   findNearestImagePoint,
 } from "../../utilities/imagePointUtilities";
+import { CloseButton } from "../Buttons/Buttons";
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {
@@ -31,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ImageViewer() {
   const classes = useStyles();
+  const history = useHistory();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { loadedImagePoints } = useLoadedImagePoints();
   const { command, resetCommand } = useCommand();
@@ -228,6 +231,7 @@ export default function ImageViewer() {
           className={classes.image}
         />
       ) : null}
+      <CloseButton onClick={() => history.push("/")} />
     </div>
   );
 }
