@@ -41,6 +41,7 @@ export default function SmallMapContainer() {
           const latlng = { lat: center[0], lng: center[1] };
           setCurrentCoordinates({ latlng, zoom });
         }}
+        attributionControl={false}
       >
         <TileLayer
           url="https://m{s}-nvdbcache.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
