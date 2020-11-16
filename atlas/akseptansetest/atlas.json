@@ -1,0 +1,7 @@
+{
+  "schemaVersion": "v1",
+  "type": "Deployment",
+  "spec": {
+    "environment": "akseptansetest"
+  }
+}
