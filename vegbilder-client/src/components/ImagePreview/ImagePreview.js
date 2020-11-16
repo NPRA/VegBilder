@@ -21,6 +21,13 @@ const useStyles = makeStyles((theme) => ({
   enlargeButton: {
     backgroundColor: theme.palette.common.grayDark,
     borderRadius: "0.625rem",
+    //padding: "3px",
+    "& span": {
+      "& svg": {
+        width: "21px",
+        height: "21px",
+      },
+    },
   },
 }));
 
