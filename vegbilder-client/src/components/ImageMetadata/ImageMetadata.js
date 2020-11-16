@@ -66,7 +66,7 @@ const ImageMetadata = () => {
   return metadata ? (
     <div>
       <span className={classes.vegsystemreferanse}>
-        {metadata.vegsystemreferanse} (f{metadata.feltkode})
+        {metadata.vegsystemreferanse} (F{metadata.feltkode})
       </span>
       <br />
       {metadata.dateTime.date} kl. {metadata.dateTime.time}
