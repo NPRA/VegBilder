@@ -3,7 +3,7 @@ import FormControl from "@material-ui/core/FormControl";
 import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
 import { InputBase } from "@material-ui/core";
-import { makeStyles, withStyles } from "@material-ui/core/styles";
+import { fade, makeStyles, withStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { CalendarIcon } from "../Icons/Icons";
@@ -11,7 +11,6 @@ import { useTimePeriod, timePeriods } from "../../contexts/TimePeriodContext";
 
 const CustomInput = withStyles((theme) => ({
   input: {
-    height: "1rem",
     paddingTop: "0.8125rem",
     paddingBottom: "0.8125rem",
     paddingLeft: "2.3125rem",
@@ -20,10 +19,13 @@ const CustomInput = withStyles((theme) => ({
 
 const useStyles = makeStyles((theme) => ({
   timePeriodSelect: {
-    borderRadius: "0.5rem",
-    backgroundColor: theme.palette.secondary.main,
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: fade(theme.palette.secondary.main, 0.8),
     color: theme.palette.secondary.contrastText,
     width: "8.5rem",
+    "&:hover": {
+      backgroundColor: fade(theme.palette.secondary.main, 1.0),
+    },
   },
   calendarIcon: {
     position: "absolute",

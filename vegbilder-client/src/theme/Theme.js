@@ -24,6 +24,9 @@ export default createMuiTheme({
       main: orangeDark,
     },
   },
+  shape: {
+    borderRadius: "0.5rem",
+  },
   overrides: {
     // Styles for Select menu: <ul> element
     MuiMenu: {
