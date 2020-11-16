@@ -58,11 +58,22 @@ export default function ImageViewer() {
     if (!currentImagePoint) return;
     const imagePointsInOppositeLane = loadedImagePoints.imagePoints.filter(
       (ip) =>
+        ip.properties.VEGKATEGORI ===
+          currentImagePoint.properties.VEGKATEGORI &&
+        ip.properties.VEGNUMMER === currentImagePoint.properties.VEGNUMMER &&
+        ip.properties.STREKNING === currentImagePoint.properties.STREKNING &&
+        ip.properties.DELSTREKNING ===
+          currentImagePoint.properties.DELSTREKNING &&
+        ip.properties.KRYSSDEL === currentImagePoint.properties.KRYSSDEL &&
+        ip.properties.SIDEANLEGGSDEL ===
+          currentImagePoint.properties.SIDEANLEGGSDEL &&
+        ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
         ip.properties.FELTKODE ===
-        firstCharOfFeltkodeOppsiteDirection(
-          currentImagePoint.properties.FELTKODE
-        )
+          firstCharOfFeltkodeOppsiteDirection(
+            currentImagePoint.properties.FELTKODE
+          )
     );
+    if (imagePointsInOppositeLane.length === 0) return;
     const nearestImagePointInOppositeLane = findNearestImagePoint(
       imagePointsInOppositeLane,
       getImagePointLatLng(currentImagePoint)
