@@ -141,14 +141,14 @@ const ImagePointsLayer = () => {
     }
   };
 
-  const getMarkerIcon = (isDirectional, isSelected) => {
-    const iconUrl = `images/marker${isDirectional ? "-directional" : ""}${
-      isSelected ? "-selected" : ""
-    }.png`;
+  const getMarkerIcon = (vegkategori, isDirectional) => {
+    const iconUrl = `images/marker-${vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"}-${timePeriod === "2020" ? "newest" : "older"}-${isDirectional ? "directional" : "nondirectional"}.svg`;
+    const iconSize = isDirectional ? [15, 25] : [10, 10];
+    const iconAnchor = isDirectional ? [7, 13] : [5, 5];
     return new Icon({
       iconUrl: iconUrl,
-      iconSize: [15, 15],
-      iconAnchor: [7, 7],
+      iconSize: iconSize,
+      iconAnchor: iconAnchor,
     });
   };
 
@@ -170,17 +170,19 @@ const ImagePointsLayer = () => {
             const isDirectional = imagePoint.properties.RETNING !== undefined;
             const isSelected =
               currentImagePoint && currentImagePoint.id === imagePoint.id;
-            const icon = getMarkerIcon(isDirectional, isSelected);
+            const icon = getMarkerIcon(imagePoint.properties.VEGKATEGORI, isDirectional);
             return (
-              <Marker
-                key={imagePoint.id}
-                position={latlng}
-                icon={icon}
-                rotationAngle={imagePoint.properties.RETNING}
-                onclick={() => {
-                  setCurrentImagePoint(imagePoint);
-                }}
-              />
+              <>
+                <Marker
+                  key={imagePoint.id}
+                  position={latlng}
+                  icon={icon}
+                  rotationAngle={imagePoint.properties.RETNING}
+                  onclick={() => {
+                    setCurrentImagePoint(imagePoint);
+                  }}
+                />
+              </>
             );
           })}
         </>
