@@ -75,7 +75,6 @@ const Search = () => {
          */
         setLoadedImagePoints(null);
         setCommand(commandTypes.selectNearestImagePoint);
-        history.push("/bilde");
       }
     }
   };

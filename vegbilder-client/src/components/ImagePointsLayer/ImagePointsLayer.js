@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
 import { Rectangle, Marker, Popup } from "react-leaflet";
@@ -11,9 +11,10 @@ import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import { timePeriods, useTimePeriod } from "../../contexts/TimePeriodContext";
+import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import {
   getImagePointLatLng,
-  getImageUrl,
+  findNearestImagePoint,
 } from "../../utilities/imagePointUtilities";
 
 const settings = {
@@ -26,9 +27,10 @@ const ImagePointsLayer = () => {
   const [[south, west], [north, east]] = useLeafletBounds();
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const { timePeriod } = useTimePeriod();
+  const { command, resetCommand } = useCommand();
 
   // Fetch image points in the target area whenever the map bounds change
   useEffect(() => {
@@ -46,6 +48,41 @@ const ImagePointsLayer = () => {
   const createTargetBbox = () => {
     return createBboxForVisibleMapArea();
   };
+
+  const selectNearestImagePointToCurrentCoordinates = useCallback(() => {
+    if (!loadedImagePoints || !currentCoordinates) return false;
+    const nearestImagePoint = findNearestImagePoint(
+      loadedImagePoints.imagePoints,
+      currentCoordinates.latlng
+    );
+    setCurrentImagePoint(nearestImagePoint);
+    return true;
+  }, [loadedImagePoints, currentCoordinates, setCurrentImagePoint]);
+
+  // Apply command if present
+  useEffect(() => {
+    if (command) {
+      let resetCommandAfterExecution = true;
+      switch (command) {
+        case commandTypes.selectNearestImagePoint:
+          /* Attempt to select the image point nearest to the current coordinates. This is done
+           * after a search for vegsystemreferanse in the Search component, but there may
+           * also be other uses for it. It is possible that there are no loaded image points,
+           * so that no nearest image point can be found. In that case, the command should
+           * not be reset, as we want to rerun it on the next render, which may be triggered
+           * by loadedImagePoints being populated.
+           */
+          const wasSuccessful = selectNearestImagePointToCurrentCoordinates();
+          resetCommandAfterExecution = wasSuccessful;
+          break;
+        default:
+        // Any other commands do not apply to this component and will be ignored
+      }
+      if (resetCommandAfterExecution) {
+        resetCommand();
+      }
+    }
+  }, [command, resetCommand, selectNearestImagePointToCurrentCoordinates]);
 
   const createBboxForVisibleMapArea = () => {
     if (settings.useSmallerMapAreaBbox) {
