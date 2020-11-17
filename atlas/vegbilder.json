@@ -9,7 +9,7 @@
       "spec": {
         "artifactId": "vegbilder",
         "groupid": "no.vegvesen.vegfoto",
-        "version": "0.1.0",
+        "version": "0.1.11",
         "port": 8080
       }
     }

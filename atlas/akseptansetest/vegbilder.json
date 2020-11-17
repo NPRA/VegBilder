@@ -1,0 +1,38 @@
+{
+  "schemaVersion": "v1",
+  "type": "Deployment",
+  "spec": {
+    "replicas": 2,
+    "resources": [
+      {
+        "type": "MemResources",
+        "spec": {
+          "min": "300M",
+          "max": "1000M"
+        }
+      },
+      {
+        "type": "CpuResources",
+        "spec": {
+          "min": "50m",
+          "max": "500m"
+        }
+      }
+    ],
+    "route": {
+      "spec": {
+        "hostname": "vegbilder.test.atlas.vegvesen.no",
+        "termination": "edge",
+        "expose": "internal"
+      }
+    },
+    "probes": {
+      "readiness": {
+        "type": "HttpProbe",
+        "spec": {
+          "path": "/ready"
+        }
+      }
+    }
+  }
+}
