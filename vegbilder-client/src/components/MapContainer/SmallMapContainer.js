@@ -26,7 +26,7 @@ export default function SmallMapContainer() {
   const classes = useStyles();
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const { miniMapVisible } = useMiniMap();
-  const minZoom = 14;
+  const minZoom = 15;
   const maxZoom = 16;
 
   return (
