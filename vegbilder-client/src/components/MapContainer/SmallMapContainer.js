@@ -9,18 +9,19 @@ import ImagePointsLayerSmallMap from "../ImagePointsLayer/ImagePointsLayerSmallM
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import { useMiniMap } from "../../contexts/MiniMapContext";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   minimap: {
     position: "absolute",
     width: "300px",
     height: "300px",
     left: "20px",
     top: "20px",
+    border: `1px ${theme.palette.primary.main} solid`,
   },
   minimapHidden: {
     display: "none",
   },
-});
+}));
 
 export default function SmallMapContainer() {
   const classes = useStyles();
