@@ -142,15 +142,19 @@ const ImagePointsLayer = () => {
   };
 
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
-    const iconUrl = `images/marker-${vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"}-${timePeriod === "2020" ? "newest" : "older"}-${isDirectional ? "directional" : "nondirectional"}${isSelected ? "-selected" : ""}.svg`;
+    const iconUrl = `images/marker-${
+      vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"
+    }-${timePeriod === "2020" ? "newest" : "older"}-${
+      isDirectional ? "directional" : "nondirectional"
+    }${isSelected ? "-selected" : ""}.svg`;
     let iconSize, iconAnchor;
-      if (currentCoordinates.zoom >= 16) {
-        iconSize = isDirectional ? [15, 25] : [10, 10];
-        iconAnchor = isDirectional ? [7, 12] : [5, 5];
-      } else {
-        iconSize = isDirectional ? [12, 20] : [8, 8];
-        iconAnchor = isDirectional ? [6, 10] : [4, 4];
-      }
+    if (currentCoordinates.zoom >= 16) {
+      iconSize = isDirectional ? [15, 25] : [10, 10];
+      iconAnchor = isDirectional ? [7, 12] : [5, 5];
+    } else {
+      iconSize = isDirectional ? [12, 20] : [8, 8];
+      iconAnchor = isDirectional ? [6, 10] : [4, 4];
+    }
     return new Icon({
       iconUrl: iconUrl,
       iconSize: iconSize,
@@ -176,7 +180,11 @@ const ImagePointsLayer = () => {
             const isDirectional = imagePoint.properties.RETNING !== undefined;
             const isSelected =
               currentImagePoint && currentImagePoint.id === imagePoint.id;
-            const icon = getMarkerIcon(imagePoint.properties.VEGKATEGORI, isDirectional, isSelected);
+            const icon = getMarkerIcon(
+              imagePoint.properties.VEGKATEGORI,
+              isDirectional,
+              isSelected
+            );
             return (
               <>
                 <Marker
