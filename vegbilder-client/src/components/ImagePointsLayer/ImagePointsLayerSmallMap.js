@@ -94,7 +94,7 @@ const ImagePointsLayerSmallMap = () => {
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
     const iconUrl = `images/marker-${
       vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"
-    }-${timePeriod === "2020" ? "newest" : "older"}-${
+    }-${timePeriod === timePeriods[0] ? "newest" : "older"}-${
       isDirectional ? "directional" : "nondirectional"
     }${isSelected ? "-selected" : ""}.svg`;
     let iconSize, iconAnchor;
