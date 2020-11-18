@@ -15,13 +15,14 @@ import { CloseButton } from "../Buttons/Buttons";
 
 const useStyles = makeStyles((theme) => ({
   image: {
-    height: "12.5rem",
+    width: "30rem",
     margin: "2px 2px 0 2px",
   },
   enlargeButton: {
     backgroundColor: theme.palette.common.grayDark,
     borderRadius: "0.625rem",
-    //padding: "3px",
+    padding: "3px",
+    width: "37px",
     "& span": {
       "& svg": {
         width: "21px",
@@ -63,7 +64,11 @@ export default function ImagePreview() {
           ></img>
           <CloseButton onClick={() => setCurrentImagePoint(null)} />
         </Box>
-        <Box padding="0.75rem" display="flex" justifyContent="space-between">
+        <Box
+          padding="0.25rem 0.75rem 0.75rem 0.75rem"
+          display="flex"
+          justifyContent="space-between"
+        >
           <ImageMetadata />
           <IconButton className={classes.enlargeButton} onClick={openImage}>
             <EnlargeIcon />
