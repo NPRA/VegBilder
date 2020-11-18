@@ -1,9 +1,8 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Icon } from "leaflet";
 import { useLeafletBounds } from "use-leaflet";
-import { Rectangle, Marker, Popup } from "react-leaflet";
+import { Rectangle, Marker } from "react-leaflet";
 import leafletrotatedmarker from "leaflet-rotatedmarker"; // Your linter may report this as unused, but it is required for the rotationAngle property of Marker to work
-import { useHistory } from "react-router-dom";
 
 import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
 import { isWithinBbox } from "../../utilities/latlngUtilities";
@@ -23,7 +22,6 @@ const settings = {
 };
 
 const ImagePointsLayer = () => {
-  const history = useHistory();
   const [[south, west], [north, east]] = useLeafletBounds();
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();

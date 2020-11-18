@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import InputBase from "@material-ui/core/InputBase";
 import { MagnifyingGlassIcon } from "../Icons/Icons";
 import { fade, makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
 
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
@@ -52,7 +51,6 @@ const useStyles = makeStyles((theme) => ({
 
 const Search = () => {
   const classes = useStyles();
-  const history = useHistory();
   const [searchString, setSearchString] = useState("");
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { setLoadedImagePoints } = useLoadedImagePoints();
