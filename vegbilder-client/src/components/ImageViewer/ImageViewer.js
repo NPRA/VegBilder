@@ -60,6 +60,7 @@ export default function ImageViewer() {
       (ip) =>
         ip.properties.VEGKATEGORI ===
           currentImagePoint.properties.VEGKATEGORI &&
+        ip.properties.VEGSTATUS === currentImagePoint.properties.VEGSTATUS &&
         ip.properties.VEGNUMMER === currentImagePoint.properties.VEGNUMMER &&
         ip.properties.STREKNING === currentImagePoint.properties.STREKNING &&
         ip.properties.DELSTREKNING ===
@@ -104,6 +105,7 @@ export default function ImageViewer() {
       console.log(currentImagePoint.properties);
       setCurrentRoadContext({
         vegkategori: currentImagePoint.properties.VEGKATEGORI,
+        vegstatus: currentImagePoint.properties.VEGSTATUS,
         vegnummer: currentImagePoint.properties.VEGNUMMER,
         kryssdel: currentImagePoint.properties.KRYSSDEL,
         sideanleggsdel: currentImagePoint.properties.SIDEANLEGGSDEL,
@@ -122,6 +124,7 @@ export default function ImageViewer() {
         (ip) => {
           let includeImagePoint =
             ip.properties.VEGKATEGORI === currentRoadContext.vegkategori &&
+            ip.properties.VEGSTATUS === currentRoadContext.vegstatus &&
             ip.properties.VEGNUMMER === currentRoadContext.vegnummer &&
             ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
             ip.properties.SIDEANLEGGSDEL ===
