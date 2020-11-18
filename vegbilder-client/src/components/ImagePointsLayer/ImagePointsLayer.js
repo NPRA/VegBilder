@@ -177,7 +177,7 @@ const ImagePointsLayer = () => {
         <>
           {imagePointsToRender.map((imagePoint) => {
             const latlng = getImagePointLatLng(imagePoint);
-            const isDirectional = imagePoint.properties.RETNING !== undefined;
+            const isDirectional = imagePoint.properties.RETNING != null;
             const isSelected =
               currentImagePoint && currentImagePoint.id === imagePoint.id;
             const icon = getMarkerIcon(
