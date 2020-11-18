@@ -32,7 +32,7 @@ const ImagePointsLayerSmallMap = () => {
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const [targetBbox, setTargetBbox] = useState(null);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const { timePeriod } = useTimePeriod();
 
@@ -91,14 +91,24 @@ const ImagePointsLayerSmallMap = () => {
     return isWithinBbox(latlng, bbox);
   };
 
-  const getMarkerIcon = (isDirectional, isSelected) => {
-    const iconUrl = `images/marker${isDirectional ? "-directional" : ""}${
-      isSelected ? "-selected" : ""
-    }.png`;
+  const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
+    const iconUrl = `images/marker-${
+      vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"
+    }-${timePeriod === "2020" ? "newest" : "older"}-${
+      isDirectional ? "directional" : "nondirectional"
+    }${isSelected ? "-selected" : ""}.svg`;
+    let iconSize, iconAnchor;
+    if (currentCoordinates.zoom >= 16) {
+      iconSize = isDirectional ? [15, 25] : [10, 10];
+      iconAnchor = isDirectional ? [7, 12] : [5, 5];
+    } else {
+      iconSize = isDirectional ? [12, 20] : [8, 8];
+      iconAnchor = isDirectional ? [6, 10] : [4, 4];
+    }
     return new Icon({
       iconUrl: iconUrl,
-      iconSize: [15, 15],
-      iconAnchor: [7, 7],
+      iconSize: iconSize,
+      iconAnchor: iconAnchor,
     });
   };
 
@@ -115,7 +125,11 @@ const ImagePointsLayerSmallMap = () => {
             const isDirectional = imagePoint.properties.RETNING !== undefined;
             const isSelected =
               currentImagePoint && currentImagePoint.id === imagePoint.id;
-            const icon = getMarkerIcon(isDirectional, isSelected);
+            const icon = getMarkerIcon(
+              imagePoint.properties.VEGKATEGORI,
+              isDirectional,
+              isSelected
+            );
             return (
               <Marker
                 key={imagePoint.id}
