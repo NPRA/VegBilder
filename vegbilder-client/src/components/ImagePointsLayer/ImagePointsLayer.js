@@ -140,7 +140,7 @@ const ImagePointsLayer = () => {
   };
 
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
-    const iconUrl = `images/marker-${
+    const iconUrl = `images/markers/marker-${
       vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"
     }-${timePeriod === timePeriods[0] ? "newest" : "older"}-${
       isDirectional ? "directional" : "nondirectional"
