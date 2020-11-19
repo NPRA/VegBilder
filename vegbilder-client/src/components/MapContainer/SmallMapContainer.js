@@ -38,6 +38,7 @@ export default function SmallMapContainer() {
         crs={crsUtm33N}
         minZoom={minZoom}
         maxZoom={maxZoom}
+        zoomControl={false}
         onViewportChanged={({ center, zoom }) => {
           const latlng = { lat: center[0], lng: center[1] };
           setCurrentCoordinates({ latlng, zoom });
