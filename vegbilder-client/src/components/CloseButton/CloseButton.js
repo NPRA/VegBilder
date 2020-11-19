@@ -8,7 +8,9 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: "0.3125rem",
     right: "0.3125rem",
-    opacity: "50%",
+    width: "1.875rem",
+    height: "1.875rem",
+    opacity: "80%",
   },
 }));
 
