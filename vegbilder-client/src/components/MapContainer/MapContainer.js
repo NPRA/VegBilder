@@ -5,6 +5,7 @@ import "leaflet/dist/leaflet.css";
 import "./MapContainer.css";
 import { crsUtm33N } from "./crs";
 import ImagePointLayersWrapper from "../ImagePointsLayersWrapper/ImagePointsLayersWrapper";
+import MapControls from "../MapControls/MapControls";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 
 export default function MapContainer() {
@@ -17,6 +18,7 @@ export default function MapContainer() {
       crs={crsUtm33N}
       minZoom={4}
       maxZoom={16}
+      zoomControl={false}
       onViewportChanged={({ center, zoom }) => {
         const latlng = { lat: center[0], lng: center[1] };
         setCurrentCoordinates({ latlng, zoom });
@@ -28,6 +30,7 @@ export default function MapContainer() {
         subdomains="123456789"
       />
       <ImagePointLayersWrapper />
+      <MapControls />
     </Map>
   );
 }
