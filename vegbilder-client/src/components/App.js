@@ -8,6 +8,7 @@ import MapContainer from "./MapContainer/MapContainer";
 import SmallMapContainer from "./MapContainer/SmallMapContainer";
 import ImageViewer from "./ImageViewer/ImageViewer";
 import ImagePreview from "./ImagePreview/ImagePreview";
+import Splash from "./Splash/Splash";
 import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext";
 import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
 import { LoadedImagePointsProvider } from "../contexts/LoadedImagePointsContext";
@@ -79,6 +80,7 @@ function App() {
           </CurrentCoordinatesProvider>
         </TimePeriodProvider>
       </CommandProvider>
+      <Splash />
     </ThemeProvider>
   );
 }
