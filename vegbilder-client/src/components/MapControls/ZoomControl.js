@@ -12,19 +12,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.common.grayDark,
     borderRadius: "0.625rem",
   },
-  button: {
-    borderRadius: "0.625rem",
-    borderStyle: "none",
-    backgroundColor: theme.palette.common.grayDark,
-    color: theme.palette.common.grayIcons,
-    fontSize: "1.8rem",
-    width: "2.3125rem",
-    height: "2.1875rem",
-    padding: "0",
-    "&:hover": {
-      backgroundColor: theme.palette.common.charcoalLighter,
-    },
-  },
   zoomInButton: {
     borderBottomLeftRadius: "0",
     borderBottomRightRadius: "0",
@@ -57,17 +44,11 @@ export default function ZoomControl() {
 
   return (
     <div className={classes.zoomControl}>
-      <IconButton
-        className={clsx(classes.button, classes.zoomInButton)}
-        onClick={zoomIn}
-      >
+      <IconButton className={classes.zoomInButton} onClick={zoomIn}>
         <AddRounded />
       </IconButton>
       <div className={classes.divider}></div>
-      <IconButton
-        className={clsx(classes.button, classes.zoomOutButton)}
-        onClick={zoomOut}
-      >
+      <IconButton className={classes.zoomOutButton} onClick={zoomOut}>
         <RemoveRounded />
       </IconButton>
     </div>

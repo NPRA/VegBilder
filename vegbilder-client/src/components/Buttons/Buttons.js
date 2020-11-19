@@ -8,11 +8,7 @@ const useStyles = makeStyles((theme) => ({
     position: "absolute",
     top: "0.3125rem",
     right: "0.3125rem",
-    backgroundColor: theme.palette.common.grayDark,
     opacity: "50%",
-    color: theme.palette.primary.contrastText,
-    padding: "0.1875rem",
-    borderRadius: "0.625rem",
   },
 }));
 

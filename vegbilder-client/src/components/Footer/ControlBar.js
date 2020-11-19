@@ -18,7 +18,8 @@ import {
 
 const useStyles = makeStyles({
   button: {
-    margin: "0.2em",
+    margin: "1.25rem",
+    backgroundColor: "transparent",
   },
 });
 

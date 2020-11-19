@@ -43,5 +43,20 @@ export default createMuiTheme({
     MuiMenuItem: {
       root: {},
     },
+    MuiIconButton: {
+      root: {
+        borderRadius: "0.625rem",
+        borderStyle: "none",
+        backgroundColor: grayDark,
+        color: grayIcons,
+        fontSize: "1.8rem",
+        width: "2.3125rem",
+        height: "2.1875rem",
+        padding: "0",
+        "&:hover": {
+          backgroundColor: charcoalLighter,
+        },
+      },
+    },
   },
 });
