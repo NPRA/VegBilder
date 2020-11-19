@@ -11,7 +11,7 @@ import {
 } from "../../utilities/imagePointUtilities";
 import ImageMetadata from "../ImageMetadata/ImageMetadata";
 import { EnlargeIcon } from "../Icons/Icons";
-import { CloseButton } from "../Buttons/Buttons";
+import CloseButton from "../CloseButton/CloseButton";
 
 const useStyles = makeStyles((theme) => ({
   image: {

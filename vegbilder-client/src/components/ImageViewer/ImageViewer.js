@@ -13,7 +13,7 @@ import {
   getImageUrl,
   findNearestImagePoint,
 } from "../../utilities/imagePointUtilities";
-import { CloseButton } from "../Buttons/Buttons";
+import CloseButton from "../CloseButton/CloseButton";
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {

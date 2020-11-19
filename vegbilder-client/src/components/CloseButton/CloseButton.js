@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function CloseButton(props) {
+export default function CloseButton(props) {
   const classes = useStyles();
   return (
     <IconButton className={classes.closeButton} {...props}>
@@ -20,5 +20,3 @@ function CloseButton(props) {
     </IconButton>
   );
 }
-
-export { CloseButton };
