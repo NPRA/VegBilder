@@ -54,7 +54,22 @@ export default createMuiTheme({
         height: "2.1875rem",
         padding: "0",
         "&:hover": {
-          backgroundColor: charcoalLighter,
+          color: orangeDark,
+          backgroundColor: grayDark,
+          "& span": {
+            "& svg": {
+              "& path": {
+                fill: orangeDark,
+              },
+            },
+          },
+        },
+      },
+      label: {
+        "& svg": {
+          "& path": {
+            fill: grayIcons,
+          },
         },
       },
     },
