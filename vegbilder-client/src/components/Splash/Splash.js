@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { makeStyles } from "@material-ui/core";
+import { Checkbox, FormControlLabel, makeStyles } from "@material-ui/core";
 import ClickAwayListener from "@material-ui/core/ClickAwayListener";
 
 import CloseButton from "../CloseButton/CloseButton";
@@ -14,25 +14,41 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
   },
-  textContent: {
+  content: {
     margin: "2rem",
+  },
+  checkbox: {
+    backgroundColor: "transparent",
+    color: theme.palette.primary.contrastText,
   },
 }));
 
+const HIDE_SPLASH_ON_STARTUP = "HideSplashOnStartup";
+
 export default function Splash() {
   const classes = useStyles();
-  const [visible, setVisible] = useState(true);
+  const hideWasSet = localStorage.getItem(HIDE_SPLASH_ON_STARTUP) === "true";
+  const [visible, setVisible] = useState(!hideWasSet);
+  const [hideOnStartup, setHideOnStartup] = useState(hideWasSet);
   if (!visible) return null;
 
   function closeSplash() {
     setVisible(false);
   }
 
+  function handleStartupChange() {
+    hideOnStartup
+      ? localStorage.removeItem(HIDE_SPLASH_ON_STARTUP)
+      : localStorage.setItem(HIDE_SPLASH_ON_STARTUP, "true");
+    setHideOnStartup(!hideOnStartup);
+  }
+
+  if (!visible) return null;
   return (
     <ClickAwayListener onClickAway={closeSplash}>
       <div className={classes.splash}>
         <CloseButton onClick={closeSplash} />
-        <div className={classes.textContent}>
+        <div className={classes.content}>
           <h1>Velkommen til Vegbilder</h1>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu
@@ -42,7 +58,7 @@ export default function Splash() {
             primis in faucibus orci luctus et ultrices posuere cubilia curae;
             Curabitur facilisis sem quam, nec tempus justo tempus eu. Aenean
             congue urna sed lorem dictum tempor. Sed eget accumsan velit, in
-            ultricies urna. Pellentesque eu risus non velit maximus rutrum.{" "}
+            ultricies urna. Pellentesque eu risus non velit maximus rutrum.
           </p>
           <p>
             Nulla viverra neque eget suscipit suscipit. Nam eget volutpat orci,
@@ -57,6 +73,15 @@ export default function Splash() {
             Vestibulum sit amet lectus a diam sodales consequat. Morbi gravida
             risus libero, sit amet tincidunt turpis ullamcorper et.
           </p>
+          <FormControlLabel
+            control={
+              <Checkbox
+                className={classes.checkbox}
+                onChange={handleStartupChange}
+              />
+            }
+            label={"Ikke vis ved oppstart"}
+          ></FormControlLabel>
         </div>
       </div>
     </ClickAwayListener>
