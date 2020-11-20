@@ -81,7 +81,7 @@ export default function ImageViewer() {
     );
     const latlng = getImagePointLatLng(nearestImagePointInOppositeLane);
     setCurrentImagePoint(nearestImagePointInOppositeLane);
-    setCurrentCoordinates(latlng);
+    setCurrentCoordinates({ latlng });
   }, [
     currentImagePoint,
     loadedImagePoints,
