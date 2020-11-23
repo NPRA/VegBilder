@@ -2,27 +2,13 @@ import React from "react";
 import { makeStyles } from "@material-ui/core/styles";
 
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
+import { toLocaleDateAndTime } from "../../utilities/dateTimeUtilities";
 
 const useStyles = makeStyles({
   vegsystemreferanse: {
     fontWeight: "bold",
   },
 });
-
-function toLocaleDateAndTime(dateTimeString) {
-  const dateTime = new Date(dateTimeString);
-  const locale = "nb-NO";
-  const dateFormatOptions = {
-    year: "numeric",
-    month: "short",
-    day: "numeric",
-  };
-  const timeFormatOptions = { hour: "2-digit", minute: "2-digit" };
-  return {
-    date: dateTime.toLocaleDateString(locale, dateFormatOptions),
-    time: dateTime.toLocaleTimeString(locale, timeFormatOptions),
-  };
-}
 
 const ImageMetadata = () => {
   const classes = useStyles();
