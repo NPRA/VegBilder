@@ -5,7 +5,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import "./MapContainer.css";
 import { crsUtm33N } from "./crs";
-import ImagePointsLayerSmallMap from "../ImagePointsLayer/ImagePointsLayerSmallMap";
+import ImagePointsLayer from "../ImagePointsLayer/ImagePointsLayer";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import { useMiniMap } from "../../contexts/MiniMapContext";
 
@@ -50,7 +50,7 @@ export default function SmallMapContainer() {
           attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
           subdomains="123456789"
         />
-        <ImagePointsLayerSmallMap />
+        <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={false} />
       </Map>
     </div>
   );

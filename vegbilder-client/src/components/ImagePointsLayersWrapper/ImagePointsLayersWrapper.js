@@ -2,8 +2,8 @@ import React from "react";
 import { useLeafletZoom } from "use-leaflet";
 import { WMSTileLayer } from "react-leaflet";
 
-import ImagePointsLayer from "../ImagePointsLayer/ImagePointsLayer";
 import { useTimePeriod } from "../../contexts/TimePeriodContext";
+import ImagePointsLayer from "../ImagePointsLayer/ImagePointsLayer";
 
 const ImagePointLayersWrapper = () => {
   const zoom = useLeafletZoom();
@@ -11,7 +11,7 @@ const ImagePointLayersWrapper = () => {
   return (
     <React.Fragment>
       {zoom > 14 ? (
-        <ImagePointsLayer />
+        <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={true} />
       ) : (
         <WMSTileLayer
           url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"

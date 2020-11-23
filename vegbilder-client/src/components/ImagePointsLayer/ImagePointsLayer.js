@@ -1,11 +1,15 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { Icon } from "leaflet";
-import { useLeafletBounds } from "use-leaflet";
+import { useLeafletBounds, useLeafletCenter } from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
-import leafletrotatedmarker from "leaflet-rotatedmarker"; // Your linter may report this as unused, but it is required for the rotationAngle property of Marker to work
+import leafletrotatedmarker from "leaflet-rotatedmarker"; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
 
 import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
-import { isWithinBbox } from "../../utilities/latlngUtilities";
+import {
+  createSquareBboxAroundPoint,
+  isWithinBbox,
+  isBboxWithinContainingBbox,
+} from "../../utilities/latlngUtilities";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
@@ -17,35 +21,38 @@ import {
 } from "../../utilities/imagePointUtilities";
 
 const settings = {
-  useSmallerMapAreaBbox: false,
-  drawBboxes: false,
+  targetBboxSize: 2000,
+  debugMode: false,
 };
 
-const ImagePointsLayer = () => {
+const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
+  const mapCenter = useLeafletCenter();
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
+  const [targetBbox, setTargetBbox] = useState(null);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const { timePeriod } = useTimePeriod();
   const { command, resetCommand } = useCommand();
 
-  // Fetch image points in the target area whenever the map bounds change
-  useEffect(() => {
-    (async () => {
-      const targetBbox = createTargetBbox();
-      const {
-        imagePoints,
-        fetchedBboxes,
-      } = await getImagePointsInTilesOverlappingBbox(targetBbox, timePeriod);
-      setLoadedImagePoints({ imagePoints, bbox: targetBbox });
-      setFetchedBboxes(fetchedBboxes);
-    })();
-  }, [south, west, north, east, timePeriod]);
+  const createBboxForVisibleMapArea = useCallback(() => {
+    // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
+    let paddingX = (east - west) * 0.1;
+    let paddingY = (north - south) * 0.1;
+    if (settings.debugMode) {
+      // Simulate a smaller visible map area for debugging purposes.
+      paddingX = (west - east) * 0.2;
+      paddingY = (south - north) * 0.2;
+    }
 
-  const createTargetBbox = () => {
-    return createBboxForVisibleMapArea();
-  };
+    return {
+      south: south - paddingY,
+      west: west - paddingX,
+      north: north + paddingY,
+      east: east + paddingX,
+    };
+  }, [south, west, north, east]);
 
   const selectNearestImagePointToCurrentCoordinates = useCallback(() => {
     if (!loadedImagePoints || !currentCoordinates) return false;
@@ -57,86 +64,67 @@ const ImagePointsLayer = () => {
     return true;
   }, [loadedImagePoints, currentCoordinates, setCurrentImagePoint]);
 
+  // Fetch image points in new target area whenever the map bounds exceed the currently fetched area
+  useEffect(() => {
+    (async () => {
+      const bboxVisibleMapArea = createBboxForVisibleMapArea();
+      if (
+        !loadedImagePoints ||
+        loadedImagePoints.timePeriod !== timePeriod ||
+        !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
+      ) {
+        const [lat, lng] = mapCenter;
+        let targetBbox;
+        if (shouldUseMapBoundsAsTargetBbox) {
+          targetBbox = bboxVisibleMapArea;
+        } else {
+          targetBbox = createSquareBboxAroundPoint(
+            { lat, lng },
+            settings.targetBboxSize
+          );
+        }
+        const {
+          imagePoints,
+          expandedBbox,
+          fetchedBboxes,
+        } = await getImagePointsInTilesOverlappingBbox(targetBbox, timePeriod);
+        setLoadedImagePoints({ imagePoints, bbox: expandedBbox, timePeriod });
+        setFetchedBboxes(fetchedBboxes);
+        setTargetBbox(targetBbox);
+      }
+    })();
+  }, [
+    mapCenter,
+    loadedImagePoints,
+    timePeriod,
+    createBboxForVisibleMapArea,
+    setLoadedImagePoints,
+  ]);
+
   // Apply command if present
   useEffect(() => {
-    if (command) {
-      let resetCommandAfterExecution = true;
-      switch (command) {
-        case commandTypes.selectNearestImagePoint:
-          /* Attempt to select the image point nearest to the current coordinates. This is done
-           * after a search for vegsystemreferanse in the Search component, but there may
-           * also be other uses for it. It is possible that there are no loaded image points,
-           * so that no nearest image point can be found. In that case, the command should
-           * not be reset, as we want to rerun it on the next render, which may be triggered
-           * by loadedImagePoints being populated.
-           */
-          const wasSuccessful = selectNearestImagePointToCurrentCoordinates();
-          resetCommandAfterExecution = wasSuccessful;
-          break;
-        default:
-        // Any other commands do not apply to this component and will be ignored
-      }
-      if (resetCommandAfterExecution) {
-        resetCommand();
-      }
+    switch (command) {
+      case commandTypes.selectNearestImagePoint:
+        /* Attempt to select the image point nearest to the current coordinates. This is done
+         * after a search for vegsystemreferanse in the Search component, but there may
+         * also be other uses for it. It is possible that there are no loaded image points,
+         * so that no nearest image point can be found. In that case, the command should
+         * not be reset, as we want to rerun it on the next render, which may be triggered
+         * by loadedImagePoints being populated.
+         */
+        const wasSuccessful = selectNearestImagePointToCurrentCoordinates();
+        if (wasSuccessful) {
+          resetCommand();
+        }
+        break;
+      default:
+      // Any other commands do not apply to this component and will be ignored
     }
   }, [command, resetCommand, selectNearestImagePointToCurrentCoordinates]);
 
-  const createBboxForVisibleMapArea = () => {
-    if (settings.useSmallerMapAreaBbox) {
-      const dY = north - south;
-      const dX = east - west;
-      return {
-        south: south + dY / 4,
-        west: west + dX / 4,
-        north: north - dY / 4,
-        east: east - dX / 4,
-      };
-    } else {
-      // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
-      const paddingX = (east - west) * 0.1;
-      const paddingY = (north - south) * 0.1;
-      return {
-        south: south - paddingY,
-        west: west - paddingX,
-        north: north + paddingY,
-        east: east + paddingX,
-      };
-    }
-  };
-
-  const renderBbox = (bbox) => {
-    return (
-      <Rectangle
-        key={`${bbox.south}${bbox.west}${bbox.north}${bbox.east}`}
-        bounds={[
-          [bbox.south, bbox.west],
-          [bbox.north, bbox.east],
-        ]}
-      />
-    );
-  };
-
-  const renderTargetBbox = () => {
-    const bbox = createTargetBbox();
-    return renderBbox(bbox);
-  };
-
-  const renderFetchBboxes = () => {
-    if (fetchedBboxes) {
-      return <>{fetchedBboxes.map((bbox) => renderBbox(bbox))}</>;
-    }
-  };
-
-  const renderBboxes = () => {
-    if (settings.drawBboxes) {
-      return (
-        <>
-          {renderTargetBbox()}
-          {renderFetchBboxes()}
-        </>
-      );
-    }
+  const imagePointIsWithinBbox = (imagePoint, bbox) => {
+    const latlng = getImagePointLatLng(imagePoint);
+    return isWithinBbox(latlng, bbox);
   };
 
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
@@ -160,11 +148,6 @@ const ImagePointsLayer = () => {
     });
   };
 
-  const imagePointIsWithinBbox = (imagePoint, bbox) => {
-    const latlng = getImagePointLatLng(imagePoint);
-    return isWithinBbox(latlng, bbox);
-  };
-
   const renderImagePoints = () => {
     if (loadedImagePoints?.imagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
@@ -184,17 +167,16 @@ const ImagePointsLayer = () => {
               isSelected
             );
             return (
-              <>
-                <Marker
-                  key={imagePoint.id}
-                  position={latlng}
-                  icon={icon}
-                  rotationAngle={imagePoint.properties.RETNING}
-                  onclick={() => {
-                    setCurrentImagePoint(imagePoint);
-                  }}
-                />
-              </>
+              <Marker
+                key={imagePoint.id}
+                position={latlng}
+                icon={icon}
+                rotationAngle={imagePoint.properties.RETNING}
+                onclick={() => {
+                  setCurrentImagePoint(imagePoint);
+                  //setCurrentCoordinates({ latlng: latlng, zoom: zoom });
+                }}
+              />
             );
           })}
         </>
@@ -202,9 +184,57 @@ const ImagePointsLayer = () => {
     }
   };
 
+  const renderBbox = (bbox, color) => {
+    if (bbox) {
+      return (
+        <Rectangle
+          key={`${bbox.south}${bbox.west}${bbox.north}${bbox.east}`}
+          bounds={[
+            [bbox.south, bbox.west],
+            [bbox.north, bbox.east],
+          ]}
+          color={color}
+        />
+      );
+    }
+  };
+
+  const renderTargetBbox = () => {
+    return renderBbox(targetBbox, "red");
+  };
+
+  const renderFetchBboxes = () => {
+    if (fetchedBboxes) {
+      return <>{fetchedBboxes.map((bbox) => renderBbox(bbox, "blue"))}</>;
+    }
+  };
+
+  const renderLoadedBbox = () => {
+    // This bbox should correspond to the union of the fetchBboxes, so it will generelly not be visible
+    if (loadedImagePoints) {
+      return renderBbox(loadedImagePoints.bbox, "orange");
+    }
+  };
+
+  const renderMapAreaBbox = () => {
+    const bbox = createBboxForVisibleMapArea();
+    return renderBbox(bbox, "green");
+  };
+
+  const renderBboxes = () => {
+    return (
+      <>
+        {renderTargetBbox()}
+        {renderMapAreaBbox()}
+        {renderFetchBboxes()}
+        {renderLoadedBbox()}
+      </>
+    );
+  };
+
   return (
     <>
-      {renderBboxes()}
+      {settings.debugMode ? renderBboxes() : null}
       {renderImagePoints()}
     </>
   );
