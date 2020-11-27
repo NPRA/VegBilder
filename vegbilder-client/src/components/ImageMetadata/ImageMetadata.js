@@ -37,7 +37,7 @@ const ImageMetadata = () => {
     if (KRYSSDEL) {
       vegsystemreferanse = `${vegOgStrekning} M${ANKERPUNKT} KD${KRYSSDEL} m${meterRounded}`;
     } else if (SIDEANLEGGSDEL) {
-      vegsystemreferanse = `${vegOgStrekning} M${ANKERPUNKT} KD${KRYSSDEL} m${meterRounded}`;
+      vegsystemreferanse = `${vegOgStrekning} M${ANKERPUNKT} SD${SIDEANLEGGSDEL} m${meterRounded}`;
     } else {
       vegsystemreferanse = `${vegOgStrekning} M${meterRounded}`;
     }
