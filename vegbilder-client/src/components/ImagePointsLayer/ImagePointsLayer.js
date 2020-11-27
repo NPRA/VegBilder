@@ -3,6 +3,7 @@ import { Icon } from "leaflet";
 import { useLeafletBounds, useLeafletCenter } from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
 import leafletrotatedmarker from "leaflet-rotatedmarker"; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
+import _ from "lodash";
 
 import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
 import {
@@ -19,6 +20,7 @@ import {
   getImagePointLatLng,
   findNearestImagePoint,
 } from "../../utilities/imagePointUtilities";
+import { splitDateTimeString } from "../../utilities/dateTimeUtilities";
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -64,6 +66,40 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     return true;
   }, [loadedImagePoints, currentCoordinates, setCurrentImagePoint]);
 
+  function keepOnlyNewestWhereMultipleImageSeries(imagePoints) {
+    function roadContextString(imagePoint) {
+      let roadContext = `${imagePoint.properties.VEGKATEGORI}${imagePoint.properties.VEGSTATUS}${imagePoint.properties.VEGNUMMER} S${imagePoint.properties.STREKNING}D${imagePoint.properties.DELSTREKNING}`;
+      if (imagePoint.properties.KRYSSDEL) {
+        roadContext += ` KD${imagePoint.properties.KRYSSDEL}`;
+      }
+      if (imagePoint.properties.SIDEANLEGGSDEL) {
+        roadContext += ` SD${imagePoint.properties.SIDEANLEGGSDEL}`;
+      }
+      roadContext += `F${imagePoint.properties.FELTKODE}`;
+      return roadContext;
+    }
+    function getDate(imagePoint) {
+      return splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
+    }
+    let newestImagePoints = [];
+    const groupedByRoadContext = _.groupBy(imagePoints, roadContextString);
+    for (const [roadContext, imagePointsForRoadContext] of Object.entries(
+      groupedByRoadContext
+    )) {
+      const groupedByDate = _.groupBy(imagePointsForRoadContext, getDate);
+      let latestDate = "0001-01-01";
+      for (const [date] of Object.entries(groupedByDate)) {
+        if (date > latestDate) latestDate = date;
+      }
+      groupedByRoadContext[roadContext] = groupedByDate;
+      newestImagePoints = [...newestImagePoints, ...groupedByDate[latestDate]];
+    }
+    console.log("Grouped by road context and then date:");
+    console.log(groupedByRoadContext);
+
+    return newestImagePoints;
+  }
+
   // Fetch image points in new target area whenever the map bounds exceed the currently fetched area
   useEffect(() => {
     (async () => {
@@ -88,7 +124,14 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           expandedBbox,
           fetchedBboxes,
         } = await getImagePointsInTilesOverlappingBbox(targetBbox, timePeriod);
-        setLoadedImagePoints({ imagePoints, bbox: expandedBbox, timePeriod });
+        const filteredImagePoints = keepOnlyNewestWhereMultipleImageSeries(
+          imagePoints
+        );
+        setLoadedImagePoints({
+          imagePoints: filteredImagePoints,
+          bbox: expandedBbox,
+          timePeriod,
+        });
         setFetchedBboxes(fetchedBboxes);
         setTargetBbox(targetBbox);
       }
