@@ -100,7 +100,9 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     return newestImagePoints;
   }
 
-  // Fetch image points in new target area whenever the map bounds exceed the currently fetched area
+  /* Fetch image points in new target area whenever the map bounds exceed the currently fetched area
+   * or user has selected a new time period.
+   */
   useEffect(() => {
     (async () => {
       const bboxVisibleMapArea = createBboxForVisibleMapArea();
