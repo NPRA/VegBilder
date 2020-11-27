@@ -57,6 +57,7 @@ export default function ImagePreview() {
           <img
             src={getImageUrl(currentImagePoint)}
             className={classes.image}
+            alt="Bilde tatt langs veg"
           ></img>
           <CloseButton onClick={() => setCurrentImagePoint(null)} />
         </Box>
