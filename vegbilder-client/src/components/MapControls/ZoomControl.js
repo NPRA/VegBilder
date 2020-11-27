@@ -2,7 +2,6 @@ import React from "react";
 import { useLeaflet } from "react-leaflet";
 import { IconButton, makeStyles } from "@material-ui/core";
 import { AddRounded, RemoveRounded } from "@material-ui/icons";
-import clsx from "clsx";
 
 const useStyles = makeStyles((theme) => ({
   zoomControl: {

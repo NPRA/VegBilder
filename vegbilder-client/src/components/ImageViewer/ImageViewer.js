@@ -37,7 +37,7 @@ export default function ImageViewer() {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { loadedImagePoints } = useLoadedImagePoints();
   const { command, resetCommand } = useCommand();
-  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
+  const { setCurrentCoordinates } = useCurrentCoordinates();
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
