@@ -148,6 +148,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     timePeriod,
     isFetching,
     createBboxForVisibleMapArea,
+    shouldUseMapBoundsAsTargetBbox,
     setLoadedImagePoints,
   ]);
 
