@@ -32,6 +32,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const mapCenter = useLeafletCenter();
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const [targetBbox, setTargetBbox] = useState(null);
+  const [isFetching, setIsFetching] = useState(false);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
@@ -106,11 +107,13 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   useEffect(() => {
     (async () => {
       const bboxVisibleMapArea = createBboxForVisibleMapArea();
+      if (isFetching) return;
       if (
         !loadedImagePoints ||
         loadedImagePoints.timePeriod !== timePeriod ||
         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
       ) {
+        setIsFetching(true);
         const [lat, lng] = mapCenter;
         let targetBbox;
         if (shouldUseMapBoundsAsTargetBbox) {
@@ -136,12 +139,14 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
         });
         setFetchedBboxes(fetchedBboxes);
         setTargetBbox(targetBbox);
+        setIsFetching(false);
       }
     })();
   }, [
     mapCenter,
     loadedImagePoints,
     timePeriod,
+    isFetching,
     createBboxForVisibleMapArea,
     setLoadedImagePoints,
   ]);
