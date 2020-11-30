@@ -3,7 +3,6 @@ import { Icon } from "leaflet";
 import { useLeafletBounds, useLeafletCenter } from "use-leaflet";
 import { Rectangle, Marker } from "react-leaflet";
 import leafletrotatedmarker from "leaflet-rotatedmarker"; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
-import _ from "lodash";
 
 import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
 import {
@@ -20,7 +19,7 @@ import {
   getImagePointLatLng,
   findNearestImagePoint,
 } from "../../utilities/imagePointUtilities";
-import { splitDateTimeString } from "../../utilities/dateTimeUtilities";
+import { useImageSeries } from "../../contexts/ImageSeriesContext";
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -33,11 +32,16 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const [targetBbox, setTargetBbox] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
+  const [filteredImagePoints, setFilteredImagePoints] = useState([]);
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const { timePeriod } = useTimePeriod();
   const { command, resetCommand } = useCommand();
+  const {
+    currentImageSeriesRoadContext,
+    currentImageSeries,
+  } = useImageSeries();
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -58,48 +62,14 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   }, [south, west, north, east]);
 
   const selectNearestImagePointToCurrentCoordinates = useCallback(() => {
-    if (!loadedImagePoints || !currentCoordinates) return false;
+    if (!filteredImagePoints || !currentCoordinates) return false;
     const nearestImagePoint = findNearestImagePoint(
-      loadedImagePoints.imagePoints,
+      filteredImagePoints,
       currentCoordinates.latlng
     );
     setCurrentImagePoint(nearestImagePoint);
     return true;
-  }, [loadedImagePoints, currentCoordinates, setCurrentImagePoint]);
-
-  function keepOnlyNewestWhereMultipleImageSeries(imagePoints) {
-    function roadContextString(imagePoint) {
-      let roadContext = `${imagePoint.properties.VEGKATEGORI}${imagePoint.properties.VEGSTATUS}${imagePoint.properties.VEGNUMMER} S${imagePoint.properties.STREKNING}D${imagePoint.properties.DELSTREKNING}`;
-      if (imagePoint.properties.KRYSSDEL) {
-        roadContext += ` KD${imagePoint.properties.KRYSSDEL}`;
-      }
-      if (imagePoint.properties.SIDEANLEGGSDEL) {
-        roadContext += ` SD${imagePoint.properties.SIDEANLEGGSDEL}`;
-      }
-      roadContext += `F${imagePoint.properties.FELTKODE}`;
-      return roadContext;
-    }
-    function getDate(imagePoint) {
-      return splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
-    }
-    let newestImagePoints = [];
-    const groupedByRoadContext = _.groupBy(imagePoints, roadContextString);
-    for (const [roadContext, imagePointsForRoadContext] of Object.entries(
-      groupedByRoadContext
-    )) {
-      const groupedByDate = _.groupBy(imagePointsForRoadContext, getDate);
-      let latestDate = "0001-01-01";
-      for (const [date] of Object.entries(groupedByDate)) {
-        if (date > latestDate) latestDate = date;
-      }
-      groupedByRoadContext[roadContext] = groupedByDate;
-      newestImagePoints = [...newestImagePoints, ...groupedByDate[latestDate]];
-    }
-    console.log("Grouped by road context and then date:");
-    console.log(groupedByRoadContext);
-
-    return newestImagePoints;
-  }
+  }, [filteredImagePoints, currentCoordinates, setCurrentImagePoint]);
 
   /* Fetch image points in new target area whenever the map bounds exceed the currently fetched area
    * or user has selected a new time period.
@@ -129,13 +99,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           expandedBbox,
           fetchedBboxes,
         } = await getImagePointsInTilesOverlappingBbox(targetBbox, timePeriod);
-        const filteredImagePoints = keepOnlyNewestWhereMultipleImageSeries(
-          imagePoints
-        );
         setLoadedImagePoints({
-          imagePoints: filteredImagePoints,
+          imagePoints: imagePoints,
           bbox: expandedBbox,
-          timePeriod,
+          timePeriod: timePeriod,
         });
         setFetchedBboxes(fetchedBboxes);
         setTargetBbox(targetBbox);
@@ -151,6 +118,51 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     shouldUseMapBoundsAsTargetBbox,
     setLoadedImagePoints,
   ]);
+
+  /* Filter the loaded image points, so that only one image series is displayed for each
+   * road context (ie. each lane). The newest series is selected for each road context.
+   * For the current road context (corresponding to the currently selected image point)
+   * a different series may have been selected by the user (currentImageSeries), in which
+   * case we include the image points from that series instead of the newest one.
+   */
+  useEffect(() => {
+    if (loadedImagePoints?.imagePointsGroupedBySeries) {
+      let filteredImagePoints = [];
+      for (const [
+        roadContext,
+        availableImageSeriesForRoadContext,
+      ] of Object.entries(loadedImagePoints.imagePointsGroupedBySeries)) {
+        let imagePointsForRoadContext = [];
+        /* If this is the road context we are currently on (corresponding to the current image point),
+         * then choose the image series (date) which is currently selected.
+         * Otherwise, choose the latest image series for the road context.
+         */
+        if (
+          roadContext === currentImageSeriesRoadContext &&
+          currentImageSeries != null
+        ) {
+          imagePointsForRoadContext =
+            availableImageSeriesForRoadContext[currentImageSeries];
+        } else {
+          let latest = "0001-01-01";
+          for (const imageSeriesDate of Object.getOwnPropertyNames(
+            availableImageSeriesForRoadContext
+          )) {
+            if (imageSeriesDate > latest) {
+              latest = imageSeriesDate;
+            }
+          }
+          imagePointsForRoadContext =
+            availableImageSeriesForRoadContext[latest];
+        }
+        filteredImagePoints = [
+          ...filteredImagePoints,
+          ...imagePointsForRoadContext,
+        ];
+        setFilteredImagePoints(filteredImagePoints);
+      }
+    }
+  }, [loadedImagePoints, currentImageSeriesRoadContext, currentImageSeries]);
 
   // Apply command if present
   useEffect(() => {
@@ -200,10 +212,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   };
 
   const renderImagePoints = () => {
-    if (loadedImagePoints?.imagePoints) {
+    if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
-      const imagePointsToRender = loadedImagePoints.imagePoints.filter(
-        (imagePoint) => imagePointIsWithinBbox(imagePoint, mapBbox)
+      const imagePointsToRender = filteredImagePoints.filter((imagePoint) =>
+        imagePointIsWithinBbox(imagePoint, mapBbox)
       );
       return (
         <>

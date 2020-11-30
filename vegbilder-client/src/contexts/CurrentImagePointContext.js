@@ -1,5 +1,12 @@
 import React, { useState } from "react";
 
+import { useLoadedImagePoints } from "./LoadedImagePointsContext";
+import { useImageSeries } from "./ImageSeriesContext";
+import {
+  getRoadContextString,
+  getDateString,
+} from "../utilities/imagePointUtilities";
+
 const CurrentImagePointContext = React.createContext();
 
 function useCurrentImagePoint() {
@@ -13,7 +20,34 @@ function useCurrentImagePoint() {
 }
 
 function CurrentImagePointProvider(props) {
-  const [currentImagePoint, setCurrentImagePoint] = useState(null);
+  const [currentImagePoint, setCurrentImagePointInternal] = useState(null);
+  const { loadedImagePoints } = useLoadedImagePoints();
+  const {
+    setCurrentImageSeriesRoadContext,
+    setAvailableImageSeries,
+    setCurrentImageSeries,
+  } = useImageSeries();
+
+  function setCurrentImagePoint(imagePoint) {
+    setCurrentImagePointInternal(imagePoint);
+    const roadContext = getRoadContextString(imagePoint);
+    const date = getDateString(imagePoint);
+    const imagePointsForRoadContextGroupedByDate =
+      loadedImagePoints.imagePointsGroupedBySeries[roadContext];
+    let availableImageSeries = [];
+    if (imagePointsForRoadContextGroupedByDate) {
+      availableImageSeries = Object.getOwnPropertyNames(
+        imagePointsForRoadContextGroupedByDate
+      );
+    }
+    setCurrentImageSeriesRoadContext(roadContext);
+    setAvailableImageSeries(availableImageSeries);
+    setCurrentImageSeries(date);
+    console.log(imagePoint);
+    console.log("Road context for image series: " + roadContext);
+    console.log(availableImageSeries);
+    console.log("Current image series: " + date);
+  }
   return (
     <CurrentImagePointContext.Provider
       value={{ currentImagePoint, setCurrentImagePoint }}
