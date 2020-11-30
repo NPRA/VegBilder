@@ -6,8 +6,6 @@ import { InputBase } from "@material-ui/core";
 import { fade, makeStyles, withStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
-import { CalendarIcon } from "../Icons/Icons";
-import { useTimePeriod, timePeriods } from "../../contexts/TimePeriodContext";
 import { useImageSeries } from "../../contexts/ImageSeriesContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 
@@ -15,7 +13,7 @@ const CustomInput = withStyles((theme) => ({
   input: {
     paddingTop: "0.8125rem",
     paddingBottom: "0.8125rem",
-    paddingLeft: "2.3125rem",
+    paddingLeft: "0.8125rem",
   },
 }))(InputBase);
 
@@ -24,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.secondary.main, 0.8),
     color: theme.palette.secondary.contrastText,
-    width: "8.5rem",
+    width: "8rem",
     "&:hover": {
       backgroundColor: fade(theme.palette.secondary.main, 1.0),
     },

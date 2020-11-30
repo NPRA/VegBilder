@@ -1,6 +1,6 @@
 import React from "react";
 import AppBar from "@material-ui/core/AppBar";
-import { Toolbar, Grid } from "@material-ui/core";
+import { Toolbar, Grid, Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 import Search from "../Search/Search";
@@ -66,6 +66,7 @@ export default function Header() {
           </Grid>
           <Grid item className={classes.timePeriodSelectorContainer}>
             <TimePeriodSelector />
+            <Box width={"1.125rem"} />
             <ImageSeriesSelector />
           </Grid>
         </Grid>
