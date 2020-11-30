@@ -5,6 +5,7 @@ import { makeStyles } from "@material-ui/styles";
 
 import Search from "../Search/Search";
 import TimePeriodSelector from "../TimePeriodSelector/TimePeriodSelector";
+import ImageSeriesSelector from "../ImageSeriesSelector/ImageSeriesSelector";
 
 const useStyles = makeStyles({
   headerAppBar: {
@@ -65,6 +66,7 @@ export default function Header() {
           </Grid>
           <Grid item className={classes.timePeriodSelectorContainer}>
             <TimePeriodSelector />
+            <ImageSeriesSelector />
           </Grid>
         </Grid>
       </Toolbar>
