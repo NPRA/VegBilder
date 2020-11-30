@@ -167,7 +167,12 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
         setFilteredImagePoints(filteredImagePoints);
       }
     }
-  }, [loadedImagePoints, currentImageSeriesRoadContext, currentImageSeries]);
+  }, [
+    loadedImagePoints,
+    currentImageSeriesRoadContext,
+    currentImageSeries,
+    setFilteredImagePoints,
+  ]);
 
   // Apply command if present
   useEffect(() => {
