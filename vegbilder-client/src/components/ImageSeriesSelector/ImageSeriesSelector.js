@@ -9,6 +9,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { CalendarIcon } from "../Icons/Icons";
 import { useTimePeriod, timePeriods } from "../../contexts/TimePeriodContext";
 import { useImageSeries } from "../../contexts/ImageSeriesContext";
+import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -53,14 +54,18 @@ export default function ImageSeriesSelector() {
     currentImageSeries,
     setCurrentImageSeries,
   } = useImageSeries();
+  const { setCurrentImagePoint } = useCurrentImagePoint();
 
-  if (availableImageSeries.length === 0) return null;
+  if (availableImageSeries.length <= 1) return null;
   return (
     <FormControl>
       <Select
         id="imageseries-select"
         value={currentImageSeries}
-        onChange={(event) => setCurrentImageSeries(event.target.value)}
+        onChange={(event) => {
+          setCurrentImageSeries(event.target.value);
+          setCurrentImagePoint(null);
+        }}
         className={classes.imageSeriesSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}

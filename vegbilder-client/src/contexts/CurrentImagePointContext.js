@@ -30,24 +30,26 @@ function CurrentImagePointProvider(props) {
 
   function setCurrentImagePoint(imagePoint) {
     setCurrentImagePointInternal(imagePoint);
-    const roadContext = getRoadContextString(imagePoint);
-    const date = getDateString(imagePoint);
-    const imagePointsForRoadContextGroupedByDate =
-      loadedImagePoints.imagePointsGroupedBySeries[roadContext];
-    let availableImageSeries = [];
-    if (imagePointsForRoadContextGroupedByDate) {
-      availableImageSeries = Object.getOwnPropertyNames(
-        imagePointsForRoadContextGroupedByDate
-      );
-    }
-    setCurrentImageSeriesRoadContext(roadContext);
-    setCurrentImageSeries(date);
-    setAvailableImageSeries(availableImageSeries);
-
     console.log(imagePoint);
-    console.log("Road context for image series: " + roadContext);
-    console.log(availableImageSeries);
-    console.log("Current image series: " + date);
+    if (imagePoint) {
+      const roadContext = getRoadContextString(imagePoint);
+      const date = getDateString(imagePoint);
+      const imagePointsForRoadContextGroupedByDate =
+        loadedImagePoints.imagePointsGroupedBySeries[roadContext];
+      let availableImageSeries = [];
+      if (imagePointsForRoadContextGroupedByDate) {
+        availableImageSeries = Object.getOwnPropertyNames(
+          imagePointsForRoadContextGroupedByDate
+        );
+      }
+      setCurrentImageSeriesRoadContext(roadContext);
+      setCurrentImageSeries(date);
+      setAvailableImageSeries(availableImageSeries);
+
+      console.log("Road context for image series: " + roadContext);
+      console.log(availableImageSeries);
+      console.log("Current image series: " + date);
+    }
   }
   return (
     <CurrentImagePointContext.Provider

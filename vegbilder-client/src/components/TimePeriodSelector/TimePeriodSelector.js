@@ -8,6 +8,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { CalendarIcon } from "../Icons/Icons";
 import { useTimePeriod, timePeriods } from "../../contexts/TimePeriodContext";
+import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -53,6 +54,7 @@ const CustomExpandMoreIcon = withStyles(iconStyles)(
 export default function TimePeriodSelector() {
   const classes = useStyles();
   const { timePeriod, setTimePeriod } = useTimePeriod();
+  const { setCurrentImagePoint } = useCurrentImagePoint();
 
   console.log(`Tidsperiode: ${timePeriod}`);
 
@@ -61,7 +63,10 @@ export default function TimePeriodSelector() {
       <Select
         id="year-select"
         value={timePeriod}
-        onChange={(event) => setTimePeriod(event.target.value)}
+        onChange={(event) => {
+          setTimePeriod(event.target.value);
+          setCurrentImagePoint(null);
+        }}
         className={classes.timePeriodSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
