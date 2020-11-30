@@ -41,8 +41,9 @@ function CurrentImagePointProvider(props) {
       );
     }
     setCurrentImageSeriesRoadContext(roadContext);
-    setAvailableImageSeries(availableImageSeries);
     setCurrentImageSeries(date);
+    setAvailableImageSeries(availableImageSeries);
+
     console.log(imagePoint);
     console.log("Road context for image series: " + roadContext);
     console.log(availableImageSeries);

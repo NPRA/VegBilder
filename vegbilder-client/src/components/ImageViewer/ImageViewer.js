@@ -4,7 +4,7 @@ import _ from "lodash";
 import { useHistory } from "react-router-dom";
 
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
-import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
+import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import { isEvenNumber } from "../../utilities/mathUtilities";
@@ -35,7 +35,7 @@ export default function ImageViewer() {
   const classes = useStyles();
   const history = useHistory();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
-  const { loadedImagePoints } = useLoadedImagePoints();
+  const { filteredImagePoints } = useFilteredImagePoints();
   const { command, resetCommand } = useCommand();
   const { setCurrentCoordinates } = useCurrentCoordinates();
 
@@ -56,7 +56,7 @@ export default function ImageViewer() {
 
   const goToNearestImagePointInOppositeLane = useCallback(() => {
     if (!currentImagePoint) return;
-    const imagePointsInOppositeLane = loadedImagePoints.imagePoints.filter(
+    const imagePointsInOppositeLane = filteredImagePoints.filter(
       (ip) =>
         ip.properties.VEGKATEGORI ===
           currentImagePoint.properties.VEGKATEGORI &&
@@ -84,7 +84,7 @@ export default function ImageViewer() {
     setCurrentCoordinates({ latlng });
   }, [
     currentImagePoint,
-    loadedImagePoints,
+    filteredImagePoints,
     setCurrentImagePoint,
     setCurrentCoordinates,
   ]);
@@ -110,29 +110,26 @@ export default function ImageViewer() {
   // Get image points for current road context in correct order
   useEffect(() => {
     function getSortedImagePointsForCurrentRoadContext() {
-      const currentLaneImagePoints = loadedImagePoints.imagePoints.filter(
-        (ip) => {
-          let includeImagePoint =
-            ip.properties.VEGKATEGORI === currentRoadContext.vegkategori &&
-            ip.properties.VEGSTATUS === currentRoadContext.vegstatus &&
-            ip.properties.VEGNUMMER === currentRoadContext.vegnummer &&
+      const currentLaneImagePoints = filteredImagePoints.filter((ip) => {
+        let includeImagePoint =
+          ip.properties.VEGKATEGORI === currentRoadContext.vegkategori &&
+          ip.properties.VEGSTATUS === currentRoadContext.vegstatus &&
+          ip.properties.VEGNUMMER === currentRoadContext.vegnummer &&
+          ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
+          ip.properties.SIDEANLEGGSDEL === currentRoadContext.sideanleggsdel &&
+          ip.properties.FELTKODE === currentRoadContext.feltkode;
+        if (ip.properties.KRYSSDEL || ip.properties.SIDEANLEGGSDEL) {
+          return (
+            includeImagePoint &&
             ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
             ip.properties.SIDEANLEGGSDEL ===
               currentRoadContext.sideanleggsdel &&
-            ip.properties.FELTKODE === currentRoadContext.feltkode;
-          if (ip.properties.KRYSSDEL || ip.properties.SIDEANLEGGSDEL) {
-            return (
-              includeImagePoint &&
-              ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
-              ip.properties.SIDEANLEGGSDEL ===
-                currentRoadContext.sideanleggsdel &&
-              ip.properties.ANKERPUNKT === currentRoadContext.ankerpunkt
-            );
-          } else {
-            return includeImagePoint;
-          }
+            ip.properties.ANKERPUNKT === currentRoadContext.ankerpunkt
+          );
+        } else {
+          return includeImagePoint;
         }
-      );
+      });
       const primaryFeltkode = parseInt(currentRoadContext.feltkode[0], 10);
       const sortOrder = isEvenNumber(primaryFeltkode) ? "desc" : "asc"; // Feltkode is odd in the metering direction and even in the opposite direction
       return _.orderBy(
@@ -141,11 +138,11 @@ export default function ImageViewer() {
         [sortOrder, sortOrder, sortOrder]
       );
     }
-    if (loadedImagePoints && currentRoadContext) {
+    if (filteredImagePoints && currentRoadContext) {
       const sortedImagePointsForCurrentLane = getSortedImagePointsForCurrentRoadContext();
       setCurrentLaneImagePoints(sortedImagePointsForCurrentLane);
     }
-  }, [loadedImagePoints, currentRoadContext]);
+  }, [filteredImagePoints, currentRoadContext]);
 
   // Set next and previous image points
   useEffect(() => {

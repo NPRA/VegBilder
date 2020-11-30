@@ -20,6 +20,7 @@ import {
   findNearestImagePoint,
 } from "../../utilities/imagePointUtilities";
 import { useImageSeries } from "../../contexts/ImageSeriesContext";
+import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -32,7 +33,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const [targetBbox, setTargetBbox] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
-  const [filteredImagePoints, setFilteredImagePoints] = useState([]);
+  const {
+    filteredImagePoints,
+    setFilteredImagePoints,
+  } = useFilteredImagePoints();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
@@ -139,7 +143,8 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
          */
         if (
           roadContext === currentImageSeriesRoadContext &&
-          currentImageSeries != null
+          currentImageSeries != null &&
+          availableImageSeriesForRoadContext.hasOwnProperty(currentImageSeries) // Need this check because currentImageSeries may still be from a previous road context at this point (if user clicked on a new road, for instance)
         ) {
           imagePointsForRoadContext =
             availableImageSeriesForRoadContext[currentImageSeries];
