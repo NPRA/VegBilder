@@ -9,6 +9,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import { CalendarIcon } from "../Icons/Icons";
 import { useYearFilter, years } from "../../contexts/YearFilterContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
+import { useImageSeries } from "../../contexts/ImageSeriesContext";
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -55,6 +56,11 @@ export default function YearSelector() {
   const classes = useStyles();
   const { year, setYear } = useYearFilter();
   const { setCurrentImagePoint } = useCurrentImagePoint();
+  const {
+    setCurrentImageSeriesRoadContext,
+    setAvailableImageSeries,
+    setCurrentImageSeries,
+  } = useImageSeries();
 
   return (
     <FormControl>
@@ -63,6 +69,9 @@ export default function YearSelector() {
         value={year}
         onChange={(event) => {
           setYear(event.target.value);
+          setCurrentImageSeriesRoadContext(null);
+          setAvailableImageSeries([]);
+          setCurrentImageSeries(null);
           setCurrentImagePoint(null);
         }}
         className={classes.yearSelect}
