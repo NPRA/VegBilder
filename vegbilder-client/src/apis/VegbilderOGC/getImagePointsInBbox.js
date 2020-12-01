@@ -1,8 +1,8 @@
 import vegbilderOGC from "./vegbilderOGC";
 
-const getImagePointsInBbox = async (bbox, timePeriod) => {
+const getImagePointsInBbox = async (bbox, year) => {
   const srsname = "urn:ogc:def:crs:EPSG::4326";
-  const typename = `vegbilder_1_0:Vegbilder_${timePeriod}`;
+  const typename = `vegbilder_1_0:Vegbilder_${year}`;
 
   const params = {
     service: "WFS",

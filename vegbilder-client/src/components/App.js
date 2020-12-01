@@ -16,7 +16,7 @@ import { CommandProvider } from "../contexts/CommandContext";
 import Footer from "./Footer/Footer";
 import theme from "../theme/Theme";
 import { MiniMapProvider } from "../contexts/MiniMapContext";
-import { TimePeriodProvider } from "../contexts/TimePeriodContext";
+import { YearFilterProvider } from "../contexts/YearFilterContext";
 import { ImageSeriesProvider } from "../contexts/ImageSeriesContext";
 import { FilteredImagePointsProvider } from "../contexts/FilteredImagePointsContext";
 
@@ -42,7 +42,7 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CommandProvider>
-        <TimePeriodProvider>
+        <YearFilterProvider>
           <CurrentCoordinatesProvider>
             <LoadedImagePointsProvider>
               <ImageSeriesProvider>
@@ -84,7 +84,7 @@ function App() {
               </ImageSeriesProvider>
             </LoadedImagePointsProvider>
           </CurrentCoordinatesProvider>
-        </TimePeriodProvider>
+        </YearFilterProvider>
       </CommandProvider>
       <Splash />
     </ThemeProvider>

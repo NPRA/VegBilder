@@ -4,7 +4,7 @@ import { Toolbar, Grid, Box } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
 
 import Search from "../Search/Search";
-import TimePeriodSelector from "../TimePeriodSelector/TimePeriodSelector";
+import YearSelector from "../YearSelector/YearSelector";
 import ImageSeriesSelector from "../ImageSeriesSelector/ImageSeriesSelector";
 
 const useStyles = makeStyles({
@@ -21,7 +21,7 @@ const useStyles = makeStyles({
     flex: "1 1 auto",
     justifyContent: "flex-start",
   },
-  timePeriodSelectorContainer: {
+  yearSelectorContainer: {
     display: "flex",
     flex: "1 1 auto",
     justifyContent: "flex-start",
@@ -64,8 +64,8 @@ export default function Header() {
           <Grid item className={classes.searchContainer}>
             <Search />
           </Grid>
-          <Grid item className={classes.timePeriodSelectorContainer}>
-            <TimePeriodSelector />
+          <Grid item className={classes.yearSelectorContainer}>
+            <YearSelector />
             <Box width={"1.125rem"} />
             <ImageSeriesSelector />
           </Grid>

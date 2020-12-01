@@ -13,7 +13,7 @@ import {
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
-import { timePeriods, useTimePeriod } from "../../contexts/TimePeriodContext";
+import { years, useYearFilter } from "../../contexts/YearFilterContext";
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import {
   getImagePointLatLng,
@@ -40,7 +40,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const { timePeriod } = useTimePeriod();
+  const { year } = useYearFilter();
   const { command, resetCommand } = useCommand();
   const {
     currentImageSeriesRoadContext,
@@ -76,7 +76,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   }, [filteredImagePoints, currentCoordinates, setCurrentImagePoint]);
 
   /* Fetch image points in new target area whenever the map bounds exceed the currently fetched area
-   * or user has selected a new time period.
+   * or user has selected a new year.
    */
   useEffect(() => {
     (async () => {
@@ -84,7 +84,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       if (isFetching) return;
       if (
         !loadedImagePoints ||
-        loadedImagePoints.timePeriod !== timePeriod ||
+        loadedImagePoints.year !== year ||
         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
       ) {
         setIsFetching(true);
@@ -102,11 +102,11 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           imagePoints,
           expandedBbox,
           fetchedBboxes,
-        } = await getImagePointsInTilesOverlappingBbox(targetBbox, timePeriod);
+        } = await getImagePointsInTilesOverlappingBbox(targetBbox, year);
         setLoadedImagePoints({
           imagePoints: imagePoints,
           bbox: expandedBbox,
-          timePeriod: timePeriod,
+          year: year,
         });
         setFetchedBboxes(fetchedBboxes);
         setTargetBbox(targetBbox);
@@ -116,7 +116,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   }, [
     mapCenter,
     loadedImagePoints,
-    timePeriod,
+    year,
     isFetching,
     createBboxForVisibleMapArea,
     shouldUseMapBoundsAsTargetBbox,
@@ -203,7 +203,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
     const iconUrl = `images/markers/marker-${
       vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"
-    }-${timePeriod === timePeriods[0] ? "newest" : "older"}-${
+    }-${year === years[0] ? "newest" : "older"}-${
       isDirectional ? "directional" : "nondirectional"
     }${isSelected ? "-selected" : ""}.svg`;
     let iconSize, iconAnchor;

@@ -26,8 +26,8 @@ function LoadedImagePointsProvider(props) {
     if (!imagePoints.bbox) {
       throw new Error("Must set bbox for loadedImagePoints");
     }
-    if (!imagePoints.timePeriod) {
-      throw new Error("Must set timePeriod for loadedImagePoints");
+    if (!imagePoints.year) {
+      throw new Error("Must set year for loadedImagePoints");
     }
     imagePoints.imagePointsGroupedBySeries = groupBySeries(
       imagePoints.imagePoints
