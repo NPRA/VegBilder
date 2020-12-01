@@ -185,8 +185,8 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
          * not be reset, as we want to rerun it on the next render, which may be triggered
          * by loadedImagePoints being populated.
          */
-        const wasSuccessful = selectNearestImagePointToCurrentCoordinates();
-        if (wasSuccessful) {
+        const commandWasExecuted = selectNearestImagePointToCurrentCoordinates();
+        if (commandWasExecuted) {
           resetCommand();
         }
         break;
