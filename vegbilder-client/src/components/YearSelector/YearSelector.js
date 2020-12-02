@@ -55,12 +55,6 @@ const CustomExpandMoreIcon = withStyles(iconStyles)(
 export default function YearSelector() {
   const classes = useStyles();
   const { year, setYear } = useYearFilter();
-  const { setCurrentImagePoint } = useCurrentImagePoint();
-  const {
-    setCurrentImageSeriesRoadContext,
-    setAvailableImageSeries,
-    setCurrentImageSeries,
-  } = useImageSeries();
 
   return (
     <FormControl>
@@ -69,10 +63,6 @@ export default function YearSelector() {
         value={year}
         onChange={(event) => {
           setYear(event.target.value);
-          setCurrentImageSeriesRoadContext(null);
-          setAvailableImageSeries([]);
-          setCurrentImageSeries(null);
-          setCurrentImagePoint(null);
         }}
         className={classes.yearSelect}
         input={<CustomInput />}

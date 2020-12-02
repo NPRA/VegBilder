@@ -7,7 +7,6 @@ import { fade, makeStyles, withStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { useImageSeries } from "../../contexts/ImageSeriesContext";
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -52,17 +51,19 @@ export default function ImageSeriesSelector() {
     currentImageSeries,
     setCurrentImageSeries,
   } = useImageSeries();
-  const { setCurrentImagePoint } = useCurrentImagePoint();
 
   if (availableImageSeries.length <= 1) return null;
   return (
     <FormControl>
       <Select
         id="imageseries-select"
-        value={currentImageSeries}
+        value={currentImageSeries.date}
         onChange={(event) => {
-          setCurrentImageSeries(event.target.value);
-          setCurrentImagePoint(null);
+          const selectedSeries = {
+            roadReference: currentImageSeries.roadReference, // All the image series which can be selected have the same road reference. Only the date differs.
+            date: event.target.value,
+          };
+          setCurrentImageSeries(selectedSeries);
         }}
         className={classes.imageSeriesSelect}
         input={<CustomInput />}

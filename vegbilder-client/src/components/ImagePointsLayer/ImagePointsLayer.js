@@ -19,7 +19,6 @@ import {
   getImagePointLatLng,
   findNearestImagePoint,
 } from "../../utilities/imagePointUtilities";
-import { useImageSeries } from "../../contexts/ImageSeriesContext";
 import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
 
 const settings = {
@@ -33,19 +32,12 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [fetchedBboxes, setFetchedBboxes] = useState([]);
   const [targetBbox, setTargetBbox] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
-  const {
-    filteredImagePoints,
-    setFilteredImagePoints,
-  } = useFilteredImagePoints();
+  const { filteredImagePoints } = useFilteredImagePoints();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const { year } = useYearFilter();
   const { command, resetCommand } = useCommand();
-  const {
-    currentImageSeriesRoadContext,
-    currentImageSeries,
-  } = useImageSeries();
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -121,57 +113,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     createBboxForVisibleMapArea,
     shouldUseMapBoundsAsTargetBbox,
     setLoadedImagePoints,
-  ]);
-
-  /* Filter the loaded image points, so that only one image series is displayed for each
-   * road context (ie. each lane). The newest series is selected for each road context.
-   * For the current road context (corresponding to the currently selected image point)
-   * a different series may have been selected by the user (currentImageSeries), in which
-   * case we include the image points from that series instead of the newest one.
-   */
-  useEffect(() => {
-    if (loadedImagePoints?.imagePointsGroupedBySeries) {
-      let filteredImagePoints = [];
-      for (const [
-        roadContext,
-        availableImageSeriesForRoadContext,
-      ] of Object.entries(loadedImagePoints.imagePointsGroupedBySeries)) {
-        let imagePointsForRoadContext = [];
-        /* If this is the road context we are currently on (corresponding to the current image point),
-         * then choose the image series (date) which is currently selected.
-         * Otherwise, choose the latest image series for the road context.
-         */
-        if (
-          roadContext === currentImageSeriesRoadContext &&
-          currentImageSeries != null &&
-          availableImageSeriesForRoadContext.hasOwnProperty(currentImageSeries) // Need this check because currentImageSeries may still be from a previous road context at this point (if user clicked on a new road, for instance)
-        ) {
-          imagePointsForRoadContext =
-            availableImageSeriesForRoadContext[currentImageSeries];
-        } else {
-          let latest = "0001-01-01";
-          for (const imageSeriesDate of Object.getOwnPropertyNames(
-            availableImageSeriesForRoadContext
-          )) {
-            if (imageSeriesDate > latest) {
-              latest = imageSeriesDate;
-            }
-          }
-          imagePointsForRoadContext =
-            availableImageSeriesForRoadContext[latest];
-        }
-        filteredImagePoints = [
-          ...filteredImagePoints,
-          ...imagePointsForRoadContext,
-        ];
-        setFilteredImagePoints(filteredImagePoints);
-      }
-    }
-  }, [
-    loadedImagePoints,
-    currentImageSeriesRoadContext,
-    currentImageSeries,
-    setFilteredImagePoints,
   ]);
 
   // Apply command if present

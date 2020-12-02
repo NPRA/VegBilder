@@ -45,8 +45,8 @@ function App() {
         <YearFilterProvider>
           <CurrentCoordinatesProvider>
             <LoadedImagePointsProvider>
-              <ImageSeriesProvider>
-                <CurrentImagePointProvider>
+              <CurrentImagePointProvider>
+                <ImageSeriesProvider>
                   <FilteredImagePointsProvider>
                     <BrowserRouter>
                       <Grid
@@ -80,8 +80,8 @@ function App() {
                       </Grid>
                     </BrowserRouter>
                   </FilteredImagePointsProvider>
-                </CurrentImagePointProvider>
-              </ImageSeriesProvider>
+                </ImageSeriesProvider>
+              </CurrentImagePointProvider>
             </LoadedImagePointsProvider>
           </CurrentCoordinatesProvider>
         </YearFilterProvider>
