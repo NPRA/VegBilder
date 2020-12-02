@@ -41,8 +41,6 @@ export default function ImageViewer() {
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
-
-  const [currentRoadContext, setCurrentRoadContext] = useState(null);
   const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState([]);
 
   function firstCharOfFeltkodeOppsiteDirection(feltkode) {
@@ -89,48 +87,31 @@ export default function ImageViewer() {
     setCurrentCoordinates,
   ]);
 
-  // Set road context based on current image point
+  // Get image points for current the current lane in correct order
   useEffect(() => {
-    if (currentImagePoint) {
-      console.log(currentImagePoint.properties);
-      setCurrentRoadContext({
-        vegkategori: currentImagePoint.properties.VEGKATEGORI,
-        vegstatus: currentImagePoint.properties.VEGSTATUS,
-        vegnummer: currentImagePoint.properties.VEGNUMMER,
-        kryssdel: currentImagePoint.properties.KRYSSDEL,
-        sideanleggsdel: currentImagePoint.properties.SIDEANLEGGSDEL,
-        feltkode: currentImagePoint.properties.FELTKODE,
-        strekning: currentImagePoint.properties.STREKNING,
-        delstrekning: currentImagePoint.properties.DELSTREKNING,
-        ankerpunkt: currentImagePoint.properties.ANKERPUNKT,
-      });
-    }
-  }, [currentImagePoint]);
-
-  // Get image points for current road context in correct order
-  useEffect(() => {
-    function getSortedImagePointsForCurrentRoadContext() {
+    function getSortedImagePointsForCurrentLane() {
       const currentLaneImagePoints = filteredImagePoints.filter((ip) => {
         let includeImagePoint =
-          ip.properties.VEGKATEGORI === currentRoadContext.vegkategori &&
-          ip.properties.VEGSTATUS === currentRoadContext.vegstatus &&
-          ip.properties.VEGNUMMER === currentRoadContext.vegnummer &&
-          ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
-          ip.properties.SIDEANLEGGSDEL === currentRoadContext.sideanleggsdel &&
-          ip.properties.FELTKODE === currentRoadContext.feltkode;
+          ip.properties.VEGKATEGORI ===
+            currentImagePoint.properties.VEGKATEGORI &&
+          ip.properties.VEGSTATUS === currentImagePoint.properties.VEGSTATUS &&
+          ip.properties.VEGNUMMER === currentImagePoint.properties.VEGNUMMER &&
+          ip.properties.FELTKODE === currentImagePoint.properties.FELTKODE;
         if (ip.properties.KRYSSDEL || ip.properties.SIDEANLEGGSDEL) {
-          return (
+          includeImagePoint =
             includeImagePoint &&
-            ip.properties.KRYSSDEL === currentRoadContext.kryssdel &&
+            ip.properties.KRYSSDEL === currentImagePoint.properties.KRYSSDEL &&
             ip.properties.SIDEANLEGGSDEL ===
-              currentRoadContext.sideanleggsdel &&
-            ip.properties.ANKERPUNKT === currentRoadContext.ankerpunkt
-          );
-        } else {
-          return includeImagePoint;
+              currentImagePoint.properties.SIDEANLEGGSDEL &&
+            ip.properties.ANKERPUNKT ===
+              currentImagePoint.properties.ANKERPUNKT;
         }
+        return includeImagePoint;
       });
-      const primaryFeltkode = parseInt(currentRoadContext.feltkode[0], 10);
+      const primaryFeltkode = parseInt(
+        currentImagePoint.properties.FELTKODE[0],
+        10
+      );
       const sortOrder = isEvenNumber(primaryFeltkode) ? "desc" : "asc"; // Feltkode is odd in the metering direction and even in the opposite direction
       return _.orderBy(
         currentLaneImagePoints,
@@ -138,11 +119,11 @@ export default function ImageViewer() {
         [sortOrder, sortOrder, sortOrder]
       );
     }
-    if (filteredImagePoints && currentRoadContext) {
-      const sortedImagePointsForCurrentLane = getSortedImagePointsForCurrentRoadContext();
+    if (filteredImagePoints && currentImagePoint) {
+      const sortedImagePointsForCurrentLane = getSortedImagePointsForCurrentLane();
       setCurrentLaneImagePoints(sortedImagePointsForCurrentLane);
     }
-  }, [filteredImagePoints, currentRoadContext]);
+  }, [filteredImagePoints, currentImagePoint]);
 
   // Set next and previous image points
   useEffect(() => {
