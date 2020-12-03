@@ -88,27 +88,40 @@ export default function ImageViewer() {
     setCurrentCoordinates,
   ]);
 
-  // Get image points for current the current lane in correct order
+  // Get image points for the current lane in correct order
   useEffect(() => {
-    function getSortedImagePointsForCurrentLane() {
-      const currentLaneImagePoints = filteredImagePoints.filter((ip) => {
-        let includeImagePoint =
-          ip.properties.VEGKATEGORI ===
-            currentImagePoint.properties.VEGKATEGORI &&
-          ip.properties.VEGSTATUS === currentImagePoint.properties.VEGSTATUS &&
-          ip.properties.VEGNUMMER === currentImagePoint.properties.VEGNUMMER &&
-          ip.properties.FELTKODE === currentImagePoint.properties.FELTKODE;
-        if (ip.properties.KRYSSDEL || ip.properties.SIDEANLEGGSDEL) {
-          includeImagePoint =
-            includeImagePoint &&
-            ip.properties.KRYSSDEL === currentImagePoint.properties.KRYSSDEL &&
-            ip.properties.SIDEANLEGGSDEL ===
-              currentImagePoint.properties.SIDEANLEGGSDEL &&
-            ip.properties.ANKERPUNKT ===
-              currentImagePoint.properties.ANKERPUNKT;
+    function shouldIncludeImagePoint(imagePoint, currentImagePoint) {
+      const currentProps = currentImagePoint.properties;
+      const ipProps = imagePoint.properties;
+      if (ipProps.VEGKATEGORI !== currentProps.VEGKATEGORI) return false;
+      if (ipProps.VEGSTATUS !== currentProps.VEGSTATUS) return false;
+      if (ipProps.VEGNUMMER !== currentProps.VEGNUMMER) return false;
+      if (ipProps.FELTKODE !== currentProps.FELTKODE) return false;
+      if (currentProps.KRYSSDEL || currentProps.SIDEANLEGGSDEL) {
+        if (
+          currentProps.KRYSSDEL &&
+          ipProps.KRYSSDEL !== currentProps.KRYSSDEL
+        ) {
+          return false;
+        } else if (
+          currentProps.SIDEANLEGGSDEL &&
+          ipProps.SIDEANLEGGSDEL !== currentProps.SIDEANLEGGSDEL
+        ) {
+          return false;
         }
-        return includeImagePoint;
-      });
+        if (ipProps.ANKERPUNKT !== currentProps.ANKERPUNKT) return false;
+        if (ipProps.STREKNING !== currentProps.STREKNING) return false;
+        if (ipProps.DELSTREKNING !== currentProps.DELSTREKNING) return false;
+      } else {
+        if (ipProps.KRYSSDEL || ipProps.SIDEANLEGGSDEL) return false;
+      }
+      return true;
+    }
+
+    function getSortedImagePointsForCurrentLane() {
+      const currentLaneImagePoints = filteredImagePoints.filter((ip) =>
+        shouldIncludeImagePoint(ip, currentImagePoint)
+      );
       const primaryFeltkode = parseInt(
         currentImagePoint.properties.FELTKODE[0],
         10
