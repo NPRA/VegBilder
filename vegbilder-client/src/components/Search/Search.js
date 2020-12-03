@@ -67,12 +67,13 @@ const Search = () => {
         setCurrentCoordinates({ latlng: latlng, zoom: 16 });
         /* Since a search usually entails a big jump in location, the currently loaded image points
          * will most likely no longer be useful. We need to clear them in order for the
-         * selectNearestImagePoint command to work. (Otherwise it will select an image point near
-         * the previous coordinates.) See related comment in the ImageViewer component where the
-         * selectNearestImagePoint command is consumed and acted upon.
+         * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
+         * the nearest of image points in the previous location.) See related comment in the
+         * ImageViewer component where the selectNearestImagePointToCurrentCoordinates command is
+         * consumed and acted upon.
          */
         setLoadedImagePoints(null);
-        setCommand(commandTypes.selectNearestImagePoint);
+        setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
     }
   };

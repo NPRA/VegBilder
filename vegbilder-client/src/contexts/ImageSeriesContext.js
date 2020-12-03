@@ -28,8 +28,7 @@ function ImageSeriesProvider(props) {
    * this road reference) based on the loaded image points and the currently selected
    * image point. Note that we are using meterless road references here. So a road
    * reference in this case refers to a particular lane in a section of the road
-   * (delstrekning for image series from 2020 and later, hovedparsell for image series
-   * from 2019 and earlier).
+   * (delstrekning or hovedparsell).
    */
   useEffect(() => {
     if (loadedImagePoints && currentImagePoint) {

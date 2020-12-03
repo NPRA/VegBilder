@@ -118,7 +118,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   // Apply command if present
   useEffect(() => {
     switch (command) {
-      case commandTypes.selectNearestImagePoint:
+      case commandTypes.selectNearestImagePointToCurrentCoordinates:
         /* Attempt to select the image point nearest to the current coordinates. This is done
          * after a search for vegsystemreferanse in the Search component, but there may
          * also be other uses for it. It is possible that there are no loaded image points,
