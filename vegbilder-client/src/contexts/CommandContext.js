@@ -6,6 +6,8 @@ const commandTypes = {
   turnAround: "turnAround",
   selectNearestImagePointToCurrentCoordinates:
     "selectNearestImagePointToCurrentCoordinates",
+  selectNearestImagePointToCurrentImagePoint:
+    "selectNearestImagePointToCurrentImagePoint",
 };
 
 const CommandContext = React.createContext();
@@ -27,6 +29,7 @@ function CommandProvider(props) {
       case commandTypes.goBackwards:
       case commandTypes.turnAround:
       case commandTypes.selectNearestImagePointToCurrentCoordinates:
+      case commandTypes.selectNearestImagePointToCurrentImagePoint:
         setCommandInternal(command);
         break;
       default:

@@ -69,6 +69,15 @@ function getRoadReference(imagePoint) {
     : createVegreferanse();
 }
 
+/* Returns a road reference which should be somewhat applicable across years (compatible with both
+ * the old vegreferanse and the new vegsystemreferanse). VEGKATEGORI, VEGSTATUS and VEGNUMMER are
+ * usually the same (but they do change occasionally). FELTKODE may also change. Use with care.
+ */
+function getGenericRoadReference(imagePoint) {
+  const { VEGKATEGORI, VEGSTATUS, VEGNUMMER, FELTKODE } = imagePoint.properties;
+  return `${VEGKATEGORI}${VEGSTATUS}${VEGNUMMER} F${FELTKODE}`;
+}
+
 function getDateString(imagePoint) {
   return splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
 }
@@ -107,6 +116,7 @@ export {
   getImageUrl,
   findNearestImagePoint,
   getRoadReference,
+  getGenericRoadReference,
   getDateString,
   groupBySeries,
 };

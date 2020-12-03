@@ -8,8 +8,9 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { CalendarIcon } from "../Icons/Icons";
 import { useYearFilter, years } from "../../contexts/YearFilterContext";
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
-import { useImageSeries } from "../../contexts/ImageSeriesContext";
+import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
+import { useCommand, commandTypes } from "../../contexts/CommandContext";
+import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -55,6 +56,9 @@ const CustomExpandMoreIcon = withStyles(iconStyles)(
 export default function YearSelector() {
   const classes = useStyles();
   const { year, setYear } = useYearFilter();
+  const { resetLoadedImagePoints } = useLoadedImagePoints();
+  const { resetFilteredImagePoints } = useFilteredImagePoints();
+  const { setCommand } = useCommand();
 
   return (
     <FormControl>
@@ -63,6 +67,9 @@ export default function YearSelector() {
         value={year}
         onChange={(event) => {
           setYear(event.target.value);
+          resetLoadedImagePoints();
+          resetFilteredImagePoints();
+          setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
         }}
         className={classes.yearSelect}
         input={<CustomInput />}

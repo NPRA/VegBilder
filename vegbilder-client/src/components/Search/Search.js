@@ -7,6 +7,7 @@ import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext"
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import getVegByVegsystemreferanse from "../../apis/NVDB/getVegByVegsystemreferanse";
+import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -53,7 +54,8 @@ const Search = () => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState("");
   const { setCurrentCoordinates } = useCurrentCoordinates();
-  const { setLoadedImagePoints } = useLoadedImagePoints();
+  const { resetLoadedImagePoints } = useLoadedImagePoints();
+  const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { setCommand } = useCommand();
 
   const onChange = (event) => {
@@ -68,11 +70,10 @@ const Search = () => {
         /* Since a search usually entails a big jump in location, the currently loaded image points
          * will most likely no longer be useful. We need to clear them in order for the
          * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
-         * the nearest of image points in the previous location.) See related comment in the
-         * ImageViewer component where the selectNearestImagePointToCurrentCoordinates command is
-         * consumed and acted upon.
+         * the nearest of the image points in the previous location.)
          */
-        setLoadedImagePoints(null);
+        resetLoadedImagePoints();
+        resetFilteredImagePoints();
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
     }

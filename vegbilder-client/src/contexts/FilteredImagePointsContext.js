@@ -17,9 +17,13 @@ function useFilteredImagePoints() {
 }
 
 function FilteredImagePointsProvider(props) {
-  const [filteredImagePoints, setFilteredImagePoints] = useState([]);
+  const [filteredImagePoints, setFilteredImagePoints] = useState(null);
   const { loadedImagePoints } = useLoadedImagePoints();
   const { currentImageSeries } = useImageSeries();
+
+  function resetFilteredImagePoints() {
+    setFilteredImagePoints(null);
+  }
 
   function findLatestImageSeries(availableImageSeries) {
     let latest = "0001-01-01";
@@ -40,7 +44,9 @@ function FilteredImagePointsProvider(props) {
    * so we include the image points from that series instead of the newest one.
    */
   useEffect(() => {
-    console.log("Current series: " + currentImageSeries);
+    console.log(
+      "Filtering image points. Current series: " + currentImageSeries?.date
+    );
     if (loadedImagePoints?.imagePointsGroupedBySeries) {
       let filteredImagePoints = [];
       for (const [
@@ -65,6 +71,7 @@ function FilteredImagePointsProvider(props) {
       value={{
         filteredImagePoints,
         setFilteredImagePoints,
+        resetFilteredImagePoints,
       }}
       {...props}
     />

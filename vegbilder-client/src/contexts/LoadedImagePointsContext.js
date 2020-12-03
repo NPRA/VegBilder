@@ -34,11 +34,17 @@ function LoadedImagePointsProvider(props) {
     );
     setLoadedImagePointsInternal(imagePoints);
   }
+
+  function resetLoadedImagePoints() {
+    setLoadedImagePointsInternal(null);
+  }
+
   return (
     <LoadedImagePointsContext.Provider
       value={{
         loadedImagePoints,
         setLoadedImagePoints,
+        resetLoadedImagePoints,
       }}
       {...props}
     />

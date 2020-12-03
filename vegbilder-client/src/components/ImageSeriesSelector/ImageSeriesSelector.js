@@ -7,6 +7,8 @@ import { fade, makeStyles, withStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { useImageSeries } from "../../contexts/ImageSeriesContext";
+import { useCommand, commandTypes } from "../../contexts/CommandContext";
+import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -51,6 +53,8 @@ export default function ImageSeriesSelector() {
     currentImageSeries,
     setCurrentImageSeries,
   } = useImageSeries();
+  const { setCommand } = useCommand();
+  const { resetFilteredImagePoints } = useFilteredImagePoints();
 
   if (availableImageSeries.length <= 1) return null;
   return (
@@ -64,6 +68,8 @@ export default function ImageSeriesSelector() {
             date: event.target.value,
           };
           setCurrentImageSeries(selectedSeries);
+          resetFilteredImagePoints();
+          setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
         }}
         className={classes.imageSeriesSelect}
         input={<CustomInput />}

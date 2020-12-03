@@ -45,16 +45,12 @@ function ImageSeriesProvider(props) {
         }
         setAvailableImageSeries(availableDates);
         setCurrentImageSeries({ roadReference, date: currentImageDate });
-        console.log("Available image series:");
-        console.log(availableDates);
-        console.log("Current image series: " + currentImageDate);
       } else {
         // No change
       }
     } else {
       setAvailableImageSeries([]);
       setCurrentImageSeries(null);
-      console.log("No image series available");
     }
   }, [loadedImagePoints, currentImagePoint]);
 

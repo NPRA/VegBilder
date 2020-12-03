@@ -18,6 +18,8 @@ import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import {
   getImagePointLatLng,
   findNearestImagePoint,
+  getRoadReference,
+  getGenericRoadReference,
 } from "../../utilities/imagePointUtilities";
 import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
 
@@ -66,6 +68,32 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     setCurrentImagePoint(nearestImagePoint);
     return true;
   }, [filteredImagePoints, currentCoordinates, setCurrentImagePoint]);
+
+  const selectNearestImagePointToCurrentImagePoint = useCallback(() => {
+    if (!filteredImagePoints) return false;
+    if (!currentImagePoint) return true;
+    /* We want to find the nearest image point in the road reference of the current image point
+     * (The actually nearest image point may be in the opposite lane, for example.)
+     *
+     * Note the use of a generic (year independent) road reference. This is sufficient here;
+     * we are looking for a nearby image (by coordinates) on the same road, in the same lane.
+     * (Strekning/hovedparsell does not really matter.) Note that even the generic road reference
+     * is not necessarily stable from year to year, So we may not be able to find an image point
+     * this way, or we may end up finding an image point in the opposite lane because the metering
+     * direction of the road was changed, thus also changing the FELTKODE.
+     */
+    const sameRoadReferenceImagePoints = filteredImagePoints.filter((ip) => {
+      const roadRef = getGenericRoadReference(ip);
+      const currentRoadRef = getGenericRoadReference(currentImagePoint);
+      return roadRef === currentRoadRef;
+    });
+    const nearestImagePoint = findNearestImagePoint(
+      sameRoadReferenceImagePoints,
+      getImagePointLatLng(currentImagePoint)
+    );
+    setCurrentImagePoint(nearestImagePoint);
+    return true;
+  }, [filteredImagePoints, currentImagePoint, setCurrentImagePoint]);
 
   /* Fetch image points in new target area whenever the map bounds exceed the currently fetched area
    * or user has selected a new year.
@@ -117,6 +145,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
 
   // Apply command if present
   useEffect(() => {
+    let commandWasExecuted = false;
     switch (command) {
       case commandTypes.selectNearestImagePointToCurrentCoordinates:
         /* Attempt to select the image point nearest to the current coordinates. This is done
@@ -126,13 +155,20 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
          * not be reset, as we want to rerun it on the next render, which may be triggered
          * by loadedImagePoints being populated.
          */
-        const commandWasExecuted = selectNearestImagePointToCurrentCoordinates();
-        if (commandWasExecuted) {
-          resetCommand();
-        }
+        commandWasExecuted = selectNearestImagePointToCurrentCoordinates();
+        break;
+      case commandTypes.selectNearestImagePointToCurrentImagePoint:
+        /* Attempt to select the image point nearest to the current image point, in the same
+         * road reference (ie. the same lane) as the current image point. This is done after
+         * switching year or image series within a year.
+         */
+        commandWasExecuted = selectNearestImagePointToCurrentImagePoint();
         break;
       default:
       // Any other commands do not apply to this component and will be ignored
+    }
+    if (commandWasExecuted) {
+      resetCommand();
     }
   }, [command, resetCommand, selectNearestImagePointToCurrentCoordinates]);
 
