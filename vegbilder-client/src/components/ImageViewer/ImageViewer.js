@@ -153,30 +153,67 @@ export default function ImageViewer() {
 
   // Set next and previous image points
   useEffect(() => {
-    if (currentImagePoint && currentLaneImagePoints) {
-      const currentIndex = currentLaneImagePoints.findIndex(
-        (ip) => ip.id === currentImagePoint.id
-      );
-      if (currentIndex === -1) {
-        setNextImagePoint(null);
-        setPreviousImagePoint(null);
-        return;
-      }
-      const nextIndex = currentIndex + 1;
-      const previousIndex = currentIndex - 1;
-
-      if (nextIndex >= currentLaneImagePoints.length) {
-        setNextImagePoint(null);
-      } else {
-        setNextImagePoint(currentLaneImagePoints[nextIndex]);
-      }
-
-      if (previousIndex < 0) {
-        setPreviousImagePoint(null);
-      } else {
-        setPreviousImagePoint(currentLaneImagePoints[previousIndex]);
-      }
+    function areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2) {
+      const hp1 = imagePoint1.properties.HP;
+      const hp2 = imagePoint2.properties.HP;
+      if (hp1 == null && hp2 == null) return true;
+      if (hp1 == null || hp2 == null) return false;
+      return Math.abs(hp1 - hp2) <= 1;
     }
+
+    if (
+      !currentImagePoint ||
+      !currentLaneImagePoints ||
+      currentLaneImagePoints.length === 0
+    )
+      return;
+
+    const currentIndex = currentLaneImagePoints.findIndex(
+      (ip) => ip.id === currentImagePoint.id
+    );
+    if (currentIndex === -1) {
+      setNextImagePoint(null);
+      setPreviousImagePoint(null);
+      return;
+    }
+
+    const nextIndex = currentIndex + 1;
+    const previousIndex = currentIndex - 1;
+
+    /* Set the next and previous image points, while making sure we do not exceed the bounds
+     * of the currentLaneImagePoints array. Also, if we are dealing with image points which
+     * use the old vegreferanse (2019 and earlier) we need to beware of large jumps in the
+     * hovedparsell number. The main road will have consecutive hovedparsells, while cross
+     * parts and such will typically have much larger numbers. When we reach the end of the
+     * road, we don't want to make a sudden jump to such a part, which may be some distance
+     * away from the current point.
+     */
+
+    let nextImagePoint =
+      nextIndex < currentLaneImagePoints.length
+        ? currentLaneImagePoints[nextIndex]
+        : null;
+    if (nextImagePoint && usesOldVegreferanse(nextImagePoint)) {
+      nextImagePoint = areOnSameOrConsecutiveHovedparsells(
+        currentImagePoint,
+        nextImagePoint
+      )
+        ? nextImagePoint
+        : null;
+    }
+    setNextImagePoint(nextImagePoint);
+
+    let previousImagePoint =
+      previousIndex >= 0 ? currentLaneImagePoints[previousIndex] : null;
+    if (previousImagePoint && usesOldVegreferanse(previousImagePoint)) {
+      previousImagePoint = areOnSameOrConsecutiveHovedparsells(
+        currentImagePoint,
+        previousImagePoint
+      )
+        ? previousImagePoint
+        : null;
+    }
+    setPreviousImagePoint(previousImagePoint);
   }, [currentImagePoint, currentLaneImagePoints]);
 
   // Apply command if present
