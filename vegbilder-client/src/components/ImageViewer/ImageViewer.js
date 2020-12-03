@@ -12,6 +12,7 @@ import {
   getImagePointLatLng,
   getImageUrl,
   findNearestImagePoint,
+  usesOldVegreferanse,
 } from "../../utilities/imagePointUtilities";
 import CloseButton from "../CloseButton/CloseButton";
 
@@ -113,11 +114,23 @@ export default function ImageViewer() {
         10
       );
       const sortOrder = isEvenNumber(primaryFeltkode) ? "desc" : "asc"; // Feltkode is odd in the metering direction and even in the opposite direction
-      return _.orderBy(
-        currentLaneImagePoints,
-        ["properties.STREKNING", "properties.DELSTREKNING", "properties.METER"],
-        [sortOrder, sortOrder, sortOrder]
-      );
+      if (usesOldVegreferanse(currentImagePoint)) {
+        return _.orderBy(
+          currentLaneImagePoints,
+          ["properties.HP", "properties.METER"],
+          [sortOrder, sortOrder]
+        );
+      } else {
+        return _.orderBy(
+          currentLaneImagePoints,
+          [
+            "properties.STREKNING",
+            "properties.DELSTREKNING",
+            "properties.METER",
+          ],
+          [sortOrder, sortOrder, sortOrder]
+        );
+      }
     }
     if (filteredImagePoints && currentImagePoint) {
       const sortedImagePointsForCurrentLane = getSortedImagePointsForCurrentLane();

@@ -78,6 +78,10 @@ function getGenericRoadReference(imagePoint) {
   return `${VEGKATEGORI}${VEGSTATUS}${VEGNUMMER} F${FELTKODE}`;
 }
 
+function usesOldVegreferanse(imagePoint) {
+  return imagePoint.properties.AAR < 2020;
+}
+
 function getDateString(imagePoint) {
   return splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
 }
@@ -117,6 +121,7 @@ export {
   findNearestImagePoint,
   getRoadReference,
   getGenericRoadReference,
+  usesOldVegreferanse,
   getDateString,
   groupBySeries,
 };
