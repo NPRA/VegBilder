@@ -18,7 +18,6 @@ import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import {
   getImagePointLatLng,
   findNearestImagePoint,
-  getRoadReference,
   getGenericRoadReference,
 } from "../../utilities/imagePointUtilities";
 import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
@@ -170,7 +169,12 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     if (commandWasExecuted) {
       resetCommand();
     }
-  }, [command, resetCommand, selectNearestImagePointToCurrentCoordinates]);
+  }, [
+    command,
+    resetCommand,
+    selectNearestImagePointToCurrentCoordinates,
+    selectNearestImagePointToCurrentImagePoint,
+  ]);
 
   const imagePointIsWithinBbox = (imagePoint, bbox) => {
     const latlng = getImagePointLatLng(imagePoint);
