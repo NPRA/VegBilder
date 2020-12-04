@@ -44,9 +44,6 @@ function FilteredImagePointsProvider(props) {
    * so we include the image points from that series instead of the newest one.
    */
   useEffect(() => {
-    console.log(
-      "Filtering image points. Current series: " + currentImageSeries?.date
-    );
     if (loadedImagePoints?.imagePointsGroupedBySeries) {
       let filteredImagePoints = [];
       for (const [
