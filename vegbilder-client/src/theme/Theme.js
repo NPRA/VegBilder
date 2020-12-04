@@ -6,6 +6,7 @@ const charcoalLighter = "#646A70";
 const grayDark = "#444F55";
 const grayDarker = "#2E3539";
 const orangeDark = "#F67F00";
+const blueRegular = "#077197";
 
 export default createMuiTheme({
   palette: {
@@ -24,7 +25,7 @@ export default createMuiTheme({
       contrastText: grayRegular,
     },
     info: {
-      main: orangeDark,
+      main: blueRegular,
     },
   },
   shape: {

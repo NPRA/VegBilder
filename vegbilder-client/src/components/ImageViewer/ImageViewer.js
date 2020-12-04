@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { makeStyles } from "@material-ui/core/styles";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import _ from "lodash";
 import { useHistory } from "react-router-dom";
 
@@ -30,7 +32,24 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "100%",
     objectFit: "contain",
   },
+  snackbar: {
+    opacity: "85%",
+    bottom: "5.75rem",
+    "& div": {
+      "& button": {
+        backgroundColor: "transparent",
+        color: "white",
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+      },
+    },
+  },
 }));
+
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
 
 export default function ImageViewer() {
   const classes = useStyles();
@@ -43,6 +62,8 @@ export default function ImageViewer() {
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
   const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState([]);
+  const [alertVisible, setAlertVisible] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
 
   function firstCharOfFeltkodeOppsiteDirection(feltkode) {
     if (!feltkode) return null;
@@ -226,6 +247,11 @@ export default function ImageViewer() {
             const latlng = getImagePointLatLng(nextImagePoint);
             setCurrentImagePoint(nextImagePoint);
             setCurrentCoordinates({ latlng: latlng });
+          } else {
+            setAlertMessage(
+              "Dette er siste bilde i serien. Velg nytt bildepunkt i kartet."
+            );
+            setAlertVisible(true);
           }
           break;
         case commandTypes.goBackwards:
@@ -233,6 +259,11 @@ export default function ImageViewer() {
             const latlng = getImagePointLatLng(previousImagePoint);
             setCurrentImagePoint(previousImagePoint);
             setCurrentCoordinates({ latlng: latlng });
+          } else {
+            setAlertMessage(
+              "Dette er første bilde i serien. Velg nytt bildepunkt i kartet."
+            );
+            setAlertVisible(true);
           }
           break;
         case commandTypes.turnAround:
@@ -256,6 +287,13 @@ export default function ImageViewer() {
     goToNearestImagePointInOppositeLane,
   ]);
 
+  const handleAlertClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setAlertVisible(false);
+  };
+
   return (
     <div className={classes.imageContainer}>
       {currentImagePoint ? (
@@ -266,6 +304,16 @@ export default function ImageViewer() {
         />
       ) : null}
       <CloseButton onClick={() => history.push("/")} />
+      <Snackbar
+        open={alertVisible}
+        autoHideDuration={5000}
+        onClose={handleAlertClose}
+        className={classes.snackbar}
+      >
+        <Alert onClose={handleAlertClose} severity="info">
+          {alertMessage}
+        </Alert>
+      </Snackbar>
     </div>
   );
 }
