@@ -187,14 +187,22 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     }-${year === years[0] ? "newest" : "older"}-${
       isDirectional ? "directional" : "nondirectional"
     }${isSelected ? "-selected" : ""}.svg`;
-    let iconSize, iconAnchor;
-    if (currentCoordinates.zoom >= 16) {
-      iconSize = isDirectional ? [15, 25] : [10, 10];
-      iconAnchor = isDirectional ? [7, 12] : [5, 5];
+    let iconSizeX, iconSizeY;
+
+    if (isDirectional) {
+      iconSizeX = isSelected ? 21 : 15;
+      iconSizeY = isSelected ? 35 : 25;
     } else {
-      iconSize = isDirectional ? [12, 20] : [8, 8];
-      iconAnchor = isDirectional ? [6, 10] : [4, 4];
+      iconSizeX = isSelected ? 14 : 10;
+      iconSizeY = iconSizeX;
     }
+    if (currentCoordinates.zoom < 16) {
+      iconSizeX *= 0.8;
+      iconSizeY *= 0.8;
+    }
+
+    const iconSize = [iconSizeX, iconSizeY];
+    const iconAnchor = [iconSizeX / 2, iconSizeY / 2];
     return new Icon({
       iconUrl: iconUrl,
       iconSize: iconSize,
@@ -226,6 +234,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
                 position={latlng}
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
+                rotationOrigin={"center center"}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
                   //setCurrentCoordinates({ latlng: latlng, zoom: zoom });
