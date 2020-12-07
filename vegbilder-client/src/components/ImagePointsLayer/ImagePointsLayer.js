@@ -235,6 +235,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
                 rotationOrigin={"center center"}
+                zIndexOffset={isSelected ? 10000 : 0}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
                   //setCurrentCoordinates({ latlng: latlng, zoom: zoom });
