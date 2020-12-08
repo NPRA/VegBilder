@@ -8,11 +8,12 @@ import ImagePointsLayer from "../ImagePointsLayer/ImagePointsLayer";
 const ImagePointLayersWrapper = () => {
   const zoom = useLeafletZoom();
   const { year } = useYearFilter();
-  return (
-    <React.Fragment>
-      {zoom > 14 ? (
-        <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={true} />
-      ) : (
+
+  function renderImagePointsLayer() {
+    if (zoom > 14) {
+      return <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={true} />;
+    } else if (zoom > 9) {
+      return (
         <WMSTileLayer
           url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"
           attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
@@ -21,9 +22,21 @@ const ImagePointLayersWrapper = () => {
           transparent={true}
           opacity={0.6}
         />
-      )}
-    </React.Fragment>
-  );
+      );
+    } else {
+      return (
+        <WMSTileLayer
+          url="https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows"
+          attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
+          layers={`Vegbilder_oversikt_${year}`}
+          format="image/png"
+          transparent={true}
+          opacity={0.6}
+        />
+      );
+    }
+  }
+  return renderImagePointsLayer();
 };
 
 export default ImagePointLayersWrapper;
