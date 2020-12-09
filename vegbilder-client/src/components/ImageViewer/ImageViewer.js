@@ -20,9 +20,7 @@ import CloseButton from "../CloseButton/CloseButton";
 
 const useStyles = makeStyles((theme) => ({
   imageContainer: {
-    width: "100%",
     height: "100%",
-    maxHeight: "100%",
     backgroundColor: theme.palette.primary.main,
     display: "flex",
     justifyContent: "center",
