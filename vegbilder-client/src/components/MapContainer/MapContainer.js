@@ -20,8 +20,11 @@ export default function MapContainer() {
       maxZoom={16}
       zoomControl={false}
       onViewportChanged={({ center, zoom }) => {
-        const latlng = { lat: center[0], lng: center[1] };
-        setCurrentCoordinates({ latlng, zoom });
+        if (center && zoom) {
+          // Center and zoom is not defined immediately after rendering, for some reason, so the above if check is necessary. (Or the app would crash if you start dragging the map immediately after rendering.)
+          const latlng = { lat: center[0], lng: center[1] };
+          setCurrentCoordinates({ latlng, zoom });
+        }
       }}
     >
       <TileLayer
