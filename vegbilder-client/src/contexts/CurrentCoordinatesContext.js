@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import useQueryParamState from "../hooks/useQueryParamState";
 
 const CurrentCoordinatesContext = React.createContext();
 
@@ -13,17 +14,22 @@ function useCurrentCoordinates() {
 }
 
 function CurrentCoordinatesProvider(props) {
-  const [currentCoordinates, setCurrentCoordinatesInternal] = useState({
-    latlng: { lat: 65, lng: 15 },
-    zoom: 4,
-  });
+  const [
+    currentCoordinateString,
+    setCurrentCoordinateString,
+  ] = useQueryParamState("coordinates", "65,15,4");
+  const [currentCoordinates, setCurrentCoordinatesInternal] = useState(
+    parseCoordinateString(currentCoordinateString)
+  );
 
   function setCurrentCoordinates({ latlng, zoom }) {
     const newCoordinates = {
       latlng: latlng,
       zoom: zoom ?? currentCoordinates.zoom,
     };
+    const newCoordinateString = `${newCoordinates.latlng.lat},${newCoordinates.latlng.lng},${newCoordinates.zoom}`;
     setCurrentCoordinatesInternal(newCoordinates);
+    setCurrentCoordinateString(newCoordinateString);
   }
 
   return (
@@ -32,6 +38,19 @@ function CurrentCoordinatesProvider(props) {
       {...props}
     />
   );
+}
+
+function parseCoordinateString(coordinateString) {
+  const regexp = /^(\d*(\.\d*)?,){2}\d{1,2}$/;
+  if (regexp.test(coordinateString)) {
+    const split = coordinateString.split(",");
+    const lat = parseFloat(split[0], 10);
+    const lng = parseFloat(split[1], 10);
+    const zoom = parseInt(split[2], 10);
+    return { latlng: { lat, lng }, zoom };
+  } else {
+    throw new Error(`Invalid coordinates query parameter: ${coordinateString}`);
+  }
 }
 
 export { CurrentCoordinatesProvider, useCurrentCoordinates };
