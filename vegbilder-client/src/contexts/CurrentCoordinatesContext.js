@@ -17,7 +17,7 @@ function CurrentCoordinatesProvider(props) {
   const [
     currentCoordinateString,
     setCurrentCoordinateString,
-  ] = useQueryParamState("coordinates", "65,15,4");
+  ] = useQueryParamState("coordinates", "65,15,4", isValidCoordinateString);
   const [currentCoordinates, setCurrentCoordinatesInternal] = useState(
     parseCoordinateString(currentCoordinateString)
   );
@@ -40,17 +40,17 @@ function CurrentCoordinatesProvider(props) {
   );
 }
 
-function parseCoordinateString(coordinateString) {
+function isValidCoordinateString(coordinateString) {
   const regexp = /^(\d*(\.\d*)?,){2}\d{1,2}$/;
-  if (regexp.test(coordinateString)) {
-    const split = coordinateString.split(",");
-    const lat = parseFloat(split[0], 10);
-    const lng = parseFloat(split[1], 10);
-    const zoom = parseInt(split[2], 10);
-    return { latlng: { lat, lng }, zoom };
-  } else {
-    throw new Error(`Invalid coordinates query parameter: ${coordinateString}`);
-  }
+  return regexp.test(coordinateString);
+}
+
+function parseCoordinateString(coordinateString) {
+  const split = coordinateString.split(",");
+  const lat = parseFloat(split[0], 10);
+  const lng = parseFloat(split[1], 10);
+  const zoom = parseInt(split[2], 10);
+  return { latlng: { lat, lng }, zoom };
 }
 
 export { CurrentCoordinatesProvider, useCurrentCoordinates };

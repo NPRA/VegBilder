@@ -1,10 +1,20 @@
 import React from "react";
 
-export default function useQueryParamState(name, defaultValue) {
+export default function useQueryParamState(name, defaultValue, validate) {
   const searchParams = new URLSearchParams(window.location.search);
   const [state, setState] = React.useState(
-    searchParams.get(name) || defaultValue
+    getValidatedSearchParam(name) || defaultValue
   );
+
+  function getValidatedSearchParam(name) {
+    const searchParam = searchParams.get(name);
+    if (validate(searchParam) === false) {
+      throw new Error(
+        `Invalid value of query parameter ${name}: ${searchParam}`
+      );
+    }
+    return searchParam;
+  }
 
   React.useEffect(() => {
     const newSearchParams = new URLSearchParams(window.location.search);

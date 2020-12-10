@@ -34,9 +34,17 @@ const views = {
   imageView: "image",
 };
 
+function isValidView(view) {
+  return view === views.mapView || view === views.imageView;
+}
+
 function ComponentsWrapper() {
   const classes = useStyles();
-  const [view, setView] = useQueryParamState("view", views.mapView);
+  const [view, setView] = useQueryParamState(
+    "view",
+    views.mapView,
+    isValidView
+  );
 
   function renderMapView() {
     return (
