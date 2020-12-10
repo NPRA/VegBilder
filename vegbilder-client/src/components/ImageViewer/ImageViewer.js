@@ -3,7 +3,6 @@ import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
 import _ from "lodash";
-import { useHistory } from "react-router-dom";
 
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
@@ -49,9 +48,8 @@ function Alert(props) {
   return <MuiAlert elevation={6} variant="filled" {...props} />;
 }
 
-export default function ImageViewer() {
+export default function ImageViewer({ exitImageView }) {
   const classes = useStyles();
-  const history = useHistory();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
   const { command, resetCommand } = useCommand();
@@ -301,7 +299,7 @@ export default function ImageViewer() {
           className={classes.image}
         />
       ) : null}
-      <CloseButton onClick={() => history.push("/")} />
+      <CloseButton onClick={exitImageView} />
       <Snackbar
         open={alertVisible}
         autoHideDuration={5000}

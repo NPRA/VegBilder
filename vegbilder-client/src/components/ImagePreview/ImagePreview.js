@@ -1,7 +1,6 @@
 import React from "react";
 import { Box, IconButton } from "@material-ui/core";
 import { makeStyles } from "@material-ui/styles";
-import { useHistory } from "react-router-dom";
 
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
@@ -28,17 +27,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ImagePreview() {
+export default function ImagePreview({ openImageView }) {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { setCurrentCoordinates } = useCurrentCoordinates();
-  const history = useHistory();
 
   if (currentImagePoint) {
     const latlng = getImagePointLatLng(currentImagePoint);
+
     function openImage() {
       setCurrentCoordinates({ latlng: latlng, zoom: 16 });
-      history.push("/bilde");
+      openImageView();
     }
 
     return (
