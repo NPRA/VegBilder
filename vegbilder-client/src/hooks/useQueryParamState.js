@@ -8,6 +8,7 @@ export default function useQueryParamState(name, defaultValue, validate) {
 
   function getValidatedSearchParam(name) {
     const searchParam = searchParams.get(name);
+    if (!searchParam) return null;
     if (validate(searchParam) === false) {
       throw new Error(
         `Invalid value of query parameter ${name}: ${searchParam}`
