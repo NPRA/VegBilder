@@ -1,5 +1,7 @@
 import React from "react";
-import { Grid } from "@material-ui/core";
+import Grid from "@material-ui/core/Grid";
+import Snackbar from "@material-ui/core/Snackbar";
+import MuiAlert from "@material-ui/lab/Alert";
 import { makeStyles } from "@material-ui/styles";
 
 import Header from "./Header/Header";
@@ -27,6 +29,19 @@ const useStyles = makeStyles({
   footer: {
     flex: "0 1 4.5rem",
   },
+  snackbar: {
+    opacity: "85%",
+    bottom: "5.75rem",
+    "& div": {
+      "& button": {
+        backgroundColor: "transparent",
+        color: "white",
+        "&:hover": {
+          backgroundColor: "transparent",
+        },
+      },
+    },
+  },
 });
 
 const views = {
@@ -38,6 +53,10 @@ function isValidView(view) {
   return view === views.mapView || view === views.imageView;
 }
 
+function Alert(props) {
+  return <MuiAlert elevation={6} variant="filled" {...props} />;
+}
+
 function ComponentsWrapper() {
   const classes = useStyles();
   const [view, setView] = useQueryParamState(
@@ -45,6 +64,20 @@ function ComponentsWrapper() {
     views.mapView,
     isValidView
   );
+  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
+  const [snackbarMessage, setSnackbarMessage] = React.useState(null);
+
+  const handleSnackbarClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbarVisible(false);
+  };
+
+  function showSnackbarMessage(message) {
+    setSnackbarMessage(message);
+    setSnackbarVisible(true);
+  }
 
   function renderMapView() {
     return (
@@ -68,6 +101,7 @@ function ComponentsWrapper() {
             exitImageView={() => {
               setView(views.mapView);
             }}
+            showMessage={showSnackbarMessage}
           />
         </Grid>
         <Grid item className={classes.footer}>
@@ -103,6 +137,16 @@ function ComponentsWrapper() {
         </Grid>
         {renderContent()}
       </Grid>
+      <Snackbar
+        open={snackbarVisible}
+        autoHideDuration={5000}
+        onClose={handleSnackbarClose}
+        className={classes.snackbar}
+      >
+        <Alert onClose={handleSnackbarClose} severity="info">
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <Splash />
     </>
   );

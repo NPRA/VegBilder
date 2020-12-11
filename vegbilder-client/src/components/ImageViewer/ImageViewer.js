@@ -29,26 +29,9 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "100%",
     objectFit: "contain",
   },
-  snackbar: {
-    opacity: "85%",
-    bottom: "5.75rem",
-    "& div": {
-      "& button": {
-        backgroundColor: "transparent",
-        color: "white",
-        "&:hover": {
-          backgroundColor: "transparent",
-        },
-      },
-    },
-  },
 }));
 
-function Alert(props) {
-  return <MuiAlert elevation={6} variant="filled" {...props} />;
-}
-
-export default function ImageViewer({ exitImageView }) {
+export default function ImageViewer({ exitImageView, showMessage }) {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -58,8 +41,6 @@ export default function ImageViewer({ exitImageView }) {
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
   const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState([]);
-  const [alertVisible, setAlertVisible] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
 
   function hasOppositeParity(feltkode1, feltkode2) {
     if (!feltkode1 || !feltkode2) return null;
@@ -242,10 +223,9 @@ export default function ImageViewer({ exitImageView }) {
             setCurrentImagePoint(nextImagePoint);
             setCurrentCoordinates({ latlng: latlng });
           } else {
-            setAlertMessage(
+            showMessage(
               "Dette er siste bilde i serien. Velg nytt bildepunkt i kartet."
             );
-            setAlertVisible(true);
           }
           break;
         case commandTypes.goBackwards:
@@ -254,10 +234,9 @@ export default function ImageViewer({ exitImageView }) {
             setCurrentImagePoint(previousImagePoint);
             setCurrentCoordinates({ latlng: latlng });
           } else {
-            setAlertMessage(
+            showMessage(
               "Dette er første bilde i serien. Velg nytt bildepunkt i kartet."
             );
-            setAlertVisible(true);
           }
           break;
         case commandTypes.turnAround:
@@ -281,13 +260,6 @@ export default function ImageViewer({ exitImageView }) {
     goToNearestImagePointInOppositeLane,
   ]);
 
-  const handleAlertClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setAlertVisible(false);
-  };
-
   return (
     <div className={classes.imageContainer}>
       {currentImagePoint ? (
@@ -298,16 +270,6 @@ export default function ImageViewer({ exitImageView }) {
         />
       ) : null}
       <CloseButton onClick={exitImageView} />
-      <Snackbar
-        open={alertVisible}
-        autoHideDuration={5000}
-        onClose={handleAlertClose}
-        className={classes.snackbar}
-      >
-        <Alert onClose={handleAlertClose} severity="info">
-          {alertMessage}
-        </Alert>
-      </Snackbar>
     </div>
   );
 }
