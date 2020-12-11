@@ -25,7 +25,7 @@ import {
   PlayIcon,
 } from "../Icons/Icons";
 import useCopyToClipboard from "../../hooks/useCopyToClipboard";
-import {getShareableUrlForImage} from "../../utilities/urlUtilities";
+import { getShareableUrlForImage } from "../../utilities/urlUtilities";
 
 const useStyles = makeStyles({
   button: {
@@ -34,13 +34,13 @@ const useStyles = makeStyles({
   },
 });
 
-export default function ControlBar() {
+export default function ControlBar({ showMessage }) {
   const classes = useStyles();
   const { setCommand } = useCommand();
   const { miniMapVisible, setMiniMapVisible } = useMiniMap();
   const { currentImagePoint } = useCurrentImagePoint();
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = React.useState(null);
-  const [isCopied, handleCopy] = useCopyToClipboard();
+  const [isCopied, setCopied, handleCopy] = useCopyToClipboard();
 
   const handleMoreControlsClick = (event) => {
     setMoreControlsAnchorEl(event.currentTarget);
@@ -73,6 +73,13 @@ export default function ControlBar() {
       document.body.removeEventListener("keydown", onKeyDown);
     };
   }, [setCommand]);
+
+  useEffect(() => {
+    if (isCopied) {
+      showMessage("Lenke kopiert til utklippstavle");
+      setCopied(false);
+    }
+  }, [isCopied, setCopied, showMessage]);
 
   return (
     <>
@@ -156,7 +163,12 @@ export default function ControlBar() {
           </ListItemIcon>
           <ListItemText primary="Meld feil" />
         </MenuItem>
-        <MenuItem onClick={copyShareableUrlToClipboard}>
+        <MenuItem
+          onClick={() => {
+            copyShareableUrlToClipboard();
+            handleMoreControlsClose();
+          }}
+        >
           <ListItemIcon>
             <ShareIcon />
           </ListItemIcon>

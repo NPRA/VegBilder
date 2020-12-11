@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Footer() {
+export default function Footer({ showMessage }) {
   const classes = useStyles();
   return (
     <AppBar position="relative" className={classes.appbar}>
@@ -37,7 +37,7 @@ export default function Footer() {
           <ImageMetadata />
         </Grid>
         <Grid item>
-          <ControlBar />
+          <ControlBar showMessage={showMessage} />
         </Grid>
         <Grid item className={classes.rightItem} />
       </Grid>

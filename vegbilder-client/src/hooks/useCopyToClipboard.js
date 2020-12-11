@@ -18,5 +18,5 @@ export default function useCopyToClipboard() {
     }
   }
 
-  return [isCopied, handleCopy];
+  return [isCopied, setCopied, handleCopy];
 }

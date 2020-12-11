@@ -105,7 +105,7 @@ function ComponentsWrapper() {
           />
         </Grid>
         <Grid item className={classes.footer}>
-          <Footer />
+          <Footer showMessage={showSnackbarMessage} />
         </Grid>
       </MiniMapProvider>
     );
