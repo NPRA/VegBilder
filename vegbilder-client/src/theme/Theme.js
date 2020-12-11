@@ -74,5 +74,20 @@ export default createMuiTheme({
         },
       },
     },
+    MuiListItemIcon: {
+      root: {
+        color: grayRegular,
+      },
+    },
+    MuiListItem: {
+      root: {
+        "&:hover": {
+          backgroundColor: grayDark,
+          "& .MuiListItemIcon-root, & .MuiListItemText-primary": {
+            color: orangeDark,
+          },
+        },
+      },
+    },
   },
 });
