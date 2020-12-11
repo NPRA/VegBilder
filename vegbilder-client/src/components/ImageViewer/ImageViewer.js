@@ -61,13 +61,11 @@ export default function ImageViewer({ exitImageView }) {
   const [alertVisible, setAlertVisible] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
 
-  function firstCharOfFeltkodeOppsiteDirection(feltkode) {
-    if (!feltkode) return null;
-    const primaryFeltkode = parseInt(feltkode[0], 10);
-    const numberSignifyingOppositeDirection = isEvenNumber(primaryFeltkode)
-      ? 1
-      : 2;
-    return `${numberSignifyingOppositeDirection}`;
+  function hasOppositeParity(feltkode1, feltkode2) {
+    if (!feltkode1 || !feltkode2) return null;
+    const primaryFeltkode1 = parseInt(feltkode1[0], 10);
+    const primaryFeltkode2 = parseInt(feltkode2[0], 10);
+    return isEvenNumber(primaryFeltkode1) !== isEvenNumber(primaryFeltkode2);
   }
 
   const goToNearestImagePointInOppositeLane = useCallback(() => {
@@ -85,10 +83,10 @@ export default function ImageViewer({ exitImageView }) {
         ip.properties.SIDEANLEGGSDEL ===
           currentImagePoint.properties.SIDEANLEGGSDEL &&
         ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
-        ip.properties.FELTKODE ===
-          firstCharOfFeltkodeOppsiteDirection(
-            currentImagePoint.properties.FELTKODE
-          )
+        hasOppositeParity(
+          ip.properties.FELTKODE,
+          currentImagePoint.properties.FELTKODE
+        )
     );
     if (imagePointsInOppositeLane.length === 0) return;
     const nearestImagePointInOppositeLane = findNearestImagePoint(
