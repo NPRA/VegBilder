@@ -6,7 +6,7 @@ import {
 } from "../../utilities/mathUtilities";
 
 const settings = {
-  bboxSizeInDegrees: 0.02,
+  bboxSizeInDegrees: 0.01,
   bboxSizeDecimals: 2, // Make sure this equals the number of decimals in bboxSizeInDegrees
 };
 
