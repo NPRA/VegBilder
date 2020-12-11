@@ -11,6 +11,7 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.20.0",
+    "copy-to-clipboard": "^3.3.1",
     "leaflet": "^1.7.1",
     "leaflet-rotatedmarker": "^0.2.0",
     "proj4leaflet": "^1.0.2",

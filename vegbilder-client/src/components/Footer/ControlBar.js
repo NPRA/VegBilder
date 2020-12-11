@@ -12,6 +12,7 @@ import GetAppIcon from "@material-ui/icons/GetApp";
 
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import { useMiniMap } from "../../contexts/MiniMapContext";
+import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import {
   ArrowDownIcon,
   ArrowTurnIcon,
@@ -23,6 +24,8 @@ import {
   MeasureIcon,
   PlayIcon,
 } from "../Icons/Icons";
+import useCopyToClipboard from "../../hooks/useCopyToClipboard";
+import {getShareableUrlForImage} from "../../utilities/urlUtilities";
 
 const useStyles = makeStyles({
   button: {
@@ -35,7 +38,9 @@ export default function ControlBar() {
   const classes = useStyles();
   const { setCommand } = useCommand();
   const { miniMapVisible, setMiniMapVisible } = useMiniMap();
+  const { currentImagePoint } = useCurrentImagePoint();
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = React.useState(null);
+  const [isCopied, handleCopy] = useCopyToClipboard();
 
   const handleMoreControlsClick = (event) => {
     setMoreControlsAnchorEl(event.currentTarget);
@@ -44,6 +49,11 @@ export default function ControlBar() {
   const handleMoreControlsClose = () => {
     setMoreControlsAnchorEl(null);
   };
+
+  function copyShareableUrlToClipboard() {
+    const shareableUrl = getShareableUrlForImage(currentImagePoint);
+    handleCopy(shareableUrl);
+  }
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -146,7 +156,7 @@ export default function ControlBar() {
           </ListItemIcon>
           <ListItemText primary="Meld feil" />
         </MenuItem>
-        <MenuItem>
+        <MenuItem onClick={copyShareableUrlToClipboard}>
           <ListItemIcon>
             <ShareIcon />
           </ListItemIcon>
