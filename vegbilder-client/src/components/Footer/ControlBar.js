@@ -26,6 +26,8 @@ import {
 } from "../Icons/Icons";
 import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 import { getShareableUrlForImage } from "../../utilities/urlUtilities";
+import { createMailtoHrefForReporting } from "../../utilities/mailtoUtilities";
+import { Browser } from "leaflet";
 
 const useStyles = makeStyles({
   button: {
@@ -53,6 +55,11 @@ export default function ControlBar({ showMessage }) {
   function copyShareableUrlToClipboard() {
     const shareableUrl = getShareableUrlForImage(currentImagePoint);
     handleCopy(shareableUrl);
+  }
+
+  function openPrefilledEmailInDefaultEmailClient() {
+    window.open(createMailtoHrefForReporting(currentImagePoint), "_self");
+    showMessage("Åpner e-post-klient");
   }
 
   useEffect(() => {
@@ -157,7 +164,12 @@ export default function ControlBar({ showMessage }) {
           horizontal: "center",
         }}
       >
-        <MenuItem>
+        <MenuItem
+          onClick={() => {
+            openPrefilledEmailInDefaultEmailClient();
+            handleMoreControlsClose();
+          }}
+        >
           <ListItemIcon>
             <ReportIcon />
           </ListItemIcon>
