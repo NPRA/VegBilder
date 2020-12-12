@@ -8,7 +8,7 @@ import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
 import ReportIcon from "@material-ui/icons/Report";
 import ShareIcon from "@material-ui/icons/Share";
-import GetAppIcon from "@material-ui/icons/GetApp";
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import { useMiniMap } from "../../contexts/MiniMapContext";
@@ -28,6 +28,7 @@ import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 import { getShareableUrlForImage } from "../../utilities/urlUtilities";
 import { createMailtoHrefForReporting } from "../../utilities/mailtoUtilities";
 import { Browser } from "leaflet";
+import { getImageUrl } from "../../utilities/imagePointUtilities";
 
 const useStyles = makeStyles({
   button: {
@@ -149,50 +150,57 @@ export default function ControlBar({ showMessage }) {
           <DotsHorizontalIcon />
         </IconButton>
       </Toolbar>
-      <Menu
-        id="more-controls-menu"
-        anchorEl={moreControlsAnchorEl}
-        keepMounted
-        open={Boolean(moreControlsAnchorEl)}
-        onClose={handleMoreControlsClose}
-        anchorOrigin={{
-          vertical: "top",
-          horizontal: "center",
-        }}
-        transformOrigin={{
-          vertical: "bottom",
-          horizontal: "center",
-        }}
-      >
-        <MenuItem
-          onClick={() => {
-            openPrefilledEmailInDefaultEmailClient();
-            handleMoreControlsClose();
+      {currentImagePoint ? (
+        <Menu
+          id="more-controls-menu"
+          anchorEl={moreControlsAnchorEl}
+          keepMounted
+          open={Boolean(moreControlsAnchorEl)}
+          onClose={handleMoreControlsClose}
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          transformOrigin={{
+            vertical: "bottom",
+            horizontal: "center",
           }}
         >
-          <ListItemIcon>
-            <ReportIcon />
-          </ListItemIcon>
-          <ListItemText primary="Meld feil" />
-        </MenuItem>
-        <MenuItem
-          onClick={() => {
-            copyShareableUrlToClipboard();
-            handleMoreControlsClose();
-          }}
-        >
-          <ListItemIcon>
-            <ShareIcon />
-          </ListItemIcon>
-          <ListItemText primary="Del" />
-        </MenuItem>
-        <MenuItem>
-          <ListItemIcon>
-            <GetAppIcon />
-          </ListItemIcon>
-          <ListItemText primary="Last ned" />
-        </MenuItem>
-      </Menu>
+          <MenuItem
+            onClick={() => {
+              openPrefilledEmailInDefaultEmailClient();
+              handleMoreControlsClose();
+            }}
+          >
+            <ListItemIcon>
+              <ReportIcon />
+            </ListItemIcon>
+            <ListItemText primary="Meld feil" />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              copyShareableUrlToClipboard();
+              handleMoreControlsClose();
+            }}
+          >
+            <ListItemIcon>
+              <ShareIcon />
+            </ListItemIcon>
+            <ListItemText primary="Del" />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              window.open(getImageUrl(currentImagePoint), "_blank", "noopener");
+              handleMoreControlsClose();
+            }}
+          >
+            <ListItemIcon>
+              <OpenInNewIcon />
+            </ListItemIcon>
+            <ListItemText primary="Åpne bilde i ny fane" />
+          </MenuItem>
+        </Menu>
+      ) : null}
     </>
   );
 }
