@@ -107,9 +107,11 @@ export default function ControlBar({ showMessage }) {
         >
           <ArrowTurnIcon />
         </IconButton>
+        {/*
         <IconButton aria-label="Start animasjon" className={classes.button}>
           <PlayIcon />
         </IconButton>
+        */}
         {miniMapVisible ? (
           <IconButton
             aria-label="Skjul kart"
@@ -127,15 +129,20 @@ export default function ControlBar({ showMessage }) {
             <MapDisabledIcon />
           </IconButton>
         )}
+        {/*
         <IconButton aria-label="Mål avstand" className={classes.button}>
           <MeasureIcon />
         </IconButton>
+        */}
+        {/*
         <IconButton
           aria-label="Finn bilder herfra på andre datoer"
           className={classes.button}
         >
+
           <HistoryIcon />
         </IconButton>
+        */}
         <IconButton
           aria-label="Flere funksjoner"
           onClick={handleMoreControlsClick}
