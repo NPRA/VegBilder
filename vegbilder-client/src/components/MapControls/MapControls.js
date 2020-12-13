@@ -2,7 +2,7 @@ import React from "react";
 import { Box, makeStyles } from "@material-ui/core";
 
 import ZoomControl from "./ZoomControl";
-import LayersControl from "./LayersControl";
+//import LayersControl from "./LayersControl";
 
 const useStyles = makeStyles({
   buttonWithBottomMargin: {
@@ -22,7 +22,7 @@ export default function MapControls() {
       right={"1rem"}
       zIndex={10000}
     >
-      <LayersControl className={classes.buttonWithBottomMargin} />
+      {/* <LayersControl className={classes.buttonWithBottomMargin} /> */}
       <ZoomControl />
     </Box>
   );
