@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ImagePreview({ openImageView }) {
   const classes = useStyles();
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const { currentImagePoint, unsetCurrentImagePoint } = useCurrentImagePoint();
   const { setCurrentCoordinates } = useCurrentCoordinates();
 
   if (currentImagePoint) {
@@ -58,7 +58,7 @@ export default function ImagePreview({ openImageView }) {
             className={classes.image}
             alt="Bilde tatt langs veg"
           ></img>
-          <CloseButton onClick={() => setCurrentImagePoint(null)} />
+          <CloseButton onClick={unsetCurrentImagePoint} />
         </Box>
         <Box
           padding="0.25rem 0.75rem 0.75rem 0.75rem"

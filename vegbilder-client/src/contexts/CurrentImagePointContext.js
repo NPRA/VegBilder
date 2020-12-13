@@ -26,9 +26,20 @@ function CurrentImagePointProvider(props) {
   const [currentImagePoint, setCurrentImagePointInternal] = useState(null);
 
   function setCurrentImagePoint(imagePoint) {
+    if (!imagePoint) {
+      console.error(
+        "Tried to set current image point to null or undefined. Use unsetCurrentImagePoint if you mean to do this."
+      );
+      return;
+    }
     setCurrentImagePointInternal(imagePoint);
     setCurrentImageId(imagePoint.id);
     console.log(imagePoint);
+  }
+
+  function unsetCurrentImagePoint() {
+    setCurrentImagePointInternal(null);
+    setCurrentImageId("");
   }
 
   /* Initialize current image point based on currentImageId (from query param) once loadedImagePoints
@@ -50,7 +61,11 @@ function CurrentImagePointProvider(props) {
 
   return (
     <CurrentImagePointContext.Provider
-      value={{ currentImagePoint, setCurrentImagePoint }}
+      value={{
+        currentImagePoint,
+        setCurrentImagePoint,
+        unsetCurrentImagePoint,
+      }}
       {...props}
     />
   );
