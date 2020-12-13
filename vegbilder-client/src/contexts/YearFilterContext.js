@@ -1,13 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import useQueryParamState from "../hooks/useQueryParamState";
+import { availableYears, defaultYear } from "../configuration/config";
 
 const YearFilterContext = React.createContext();
 
-const years = [2020, 2019];
-
 function isValidYear(yearString) {
   const year = parseInt(yearString, 10);
-  return year && years.includes(year);
+  return Number.isFinite(year) && availableYears.includes(year);
 }
 
 function useYearFilter() {
@@ -21,12 +20,12 @@ function useYearFilter() {
 function YearFilterProvider(props) {
   const [year, setYearInternal] = useQueryParamState(
     "year",
-    years[0],
+    defaultYear,
     isValidYear
   );
 
   function setYear(year) {
-    if (years.indexOf(year) !== -1) {
+    if (availableYears.includes(year)) {
       setYearInternal(year);
     } else {
       throw new Error(`Tried to set invalid year: ${year}`);
@@ -35,4 +34,4 @@ function YearFilterProvider(props) {
   return <YearFilterContext.Provider value={{ year, setYear }} {...props} />;
 }
 
-export { YearFilterProvider, useYearFilter, years };
+export { YearFilterProvider, useYearFilter };

@@ -13,7 +13,7 @@ import {
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
-import { years, useYearFilter } from "../../contexts/YearFilterContext";
+import { useYearFilter } from "../../contexts/YearFilterContext";
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import {
   getImagePointLatLng,
@@ -21,6 +21,7 @@ import {
   getGenericRoadReference,
 } from "../../utilities/imagePointUtilities";
 import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
+import { availableYears } from "../../configuration/config";
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -184,7 +185,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
     const iconUrl = `images/markers/marker-${
       vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"
-    }-${year === years[0] ? "newest" : "older"}-${
+    }-${year === availableYears[0] ? "newest" : "older"}-${
       isDirectional ? "directional" : "nondirectional"
     }${isSelected ? "-selected" : ""}.svg`;
     let iconSizeX, iconSizeY;

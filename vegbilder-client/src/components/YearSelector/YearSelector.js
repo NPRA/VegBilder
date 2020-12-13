@@ -7,10 +7,11 @@ import { fade, makeStyles, withStyles } from "@material-ui/core/styles";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 
 import { CalendarIcon } from "../Icons/Icons";
-import { useYearFilter, years } from "../../contexts/YearFilterContext";
+import { useYearFilter } from "../../contexts/YearFilterContext";
 import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
+import { availableYears } from "../../configuration/config";
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -75,7 +76,7 @@ export default function YearSelector() {
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
       >
-        {years.map((tp) => (
+        {availableYears.map((tp) => (
           <MenuItem key={tp} value={tp}>
             {tp}
           </MenuItem>
