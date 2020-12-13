@@ -43,7 +43,7 @@ export default function ControlBar({ showMessage }) {
   const { miniMapVisible, setMiniMapVisible } = useMiniMap();
   const { currentImagePoint } = useCurrentImagePoint();
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = React.useState(null);
-  const [isCopied, setCopied, handleCopy] = useCopyToClipboard();
+  const { copyToClipboard } = useCopyToClipboard();
 
   const handleMoreControlsClick = (event) => {
     setMoreControlsAnchorEl(event.currentTarget);
@@ -55,7 +55,8 @@ export default function ControlBar({ showMessage }) {
 
   function copyShareableUrlToClipboard() {
     const shareableUrl = getShareableUrlForImage(currentImagePoint);
-    handleCopy(shareableUrl);
+    copyToClipboard(shareableUrl);
+    showMessage("Lenke kopiert til utklippstavle");
   }
 
   function openPrefilledEmailInDefaultEmailClient() {
@@ -81,13 +82,6 @@ export default function ControlBar({ showMessage }) {
       document.body.removeEventListener("keydown", onKeyDown);
     };
   }, [setCommand]);
-
-  useEffect(() => {
-    if (isCopied) {
-      showMessage("Lenke kopiert til utklippstavle");
-      setCopied(false);
-    }
-  }, [isCopied, setCopied, showMessage]);
 
   return (
     <>

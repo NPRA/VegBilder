@@ -6,7 +6,7 @@ import copy from "copy-to-clipboard";
 export default function useCopyToClipboard() {
   const [isCopied, setCopied] = React.useState(false);
 
-  function handleCopy(text) {
+  function copyToClipboard(text) {
     if (typeof text === "string" || typeof text == "number") {
       copy(text.toString());
       setCopied(true);
@@ -18,5 +18,5 @@ export default function useCopyToClipboard() {
     }
   }
 
-  return [isCopied, setCopied, handleCopy];
+  return { isCopied, copyToClipboard };
 }
