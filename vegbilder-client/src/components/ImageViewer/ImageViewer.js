@@ -258,6 +258,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     setCurrentCoordinates,
     setCurrentImagePoint,
     goToNearestImagePointInOppositeLane,
+    showMessage,
   ]);
 
   return (
