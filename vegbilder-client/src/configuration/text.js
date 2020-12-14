@@ -1,5 +1,5 @@
 const reportEmailTemplateText = {
-  emailAddress: "trond.furstenberg@vegvesen.no",
+  emailAddress: "vegbilder@vegvesen.no",
   subject: "Melding om feil på vegbilde med id",
   body: {
     line1: "Jeg vil melde fra om feil på følgende vegbilde:",
