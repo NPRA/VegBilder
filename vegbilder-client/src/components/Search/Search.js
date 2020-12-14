@@ -52,7 +52,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Search = () => {
+const Search = ({ showMessage }) => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState("");
   const { setCurrentCoordinates } = useCurrentCoordinates();
@@ -70,6 +70,7 @@ const Search = () => {
       const validSearchString = matchAndPadVegsystemreferanse(searchString);
       if (validSearchString == null) {
         console.warn(`Invalid search query: ${searchString}`);
+        showMessage("Det der så ikke ut som en vegsystemreferanse");
         return;
       }
       setSearchString(validSearchString);
@@ -96,7 +97,7 @@ const Search = () => {
           <MagnifyingGlassIcon />
         </div>
         <InputBase
-          placeholder="Søk etter vegreferanse, fylke eller stedsnavn"
+          placeholder="Søk etter vegsystemreferanse"
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,

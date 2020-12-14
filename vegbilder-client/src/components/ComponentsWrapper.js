@@ -133,7 +133,7 @@ function ComponentsWrapper() {
         wrap="nowrap"
       >
         <Grid item className={classes.header}>
-          <Header />
+          <Header showMessage={showSnackbarMessage} />
         </Grid>
         {renderContent()}
       </Grid>

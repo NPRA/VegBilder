@@ -38,7 +38,7 @@ const useStyles = makeStyles({
   },
 });
 
-export default function Header() {
+export default function Header({ showMessage }) {
   const classes = useStyles();
   return (
     <AppBar
@@ -62,7 +62,7 @@ export default function Header() {
             />
           </Grid>
           <Grid item className={classes.searchContainer}>
-            <Search />
+            <Search showMessage={showMessage} />
           </Grid>
           <Grid item className={classes.yearSelectorContainer}>
             <YearSelector />
