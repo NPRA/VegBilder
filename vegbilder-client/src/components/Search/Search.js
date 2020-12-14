@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import InputBase from "@material-ui/core/InputBase";
 import { MagnifyingGlassIcon } from "../Icons/Icons";
 import { fade, makeStyles } from "@material-ui/core/styles";
@@ -8,6 +8,8 @@ import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import getVegByVegsystemreferanse from "../../apis/NVDB/getVegByVegsystemreferanse";
 import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
+import { matchAndPadVegsystemreferanse } from "../../utilities/vegsystemreferanseUtilities";
+import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,6 +58,7 @@ const Search = () => {
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
+  const { unsetCurrentImagePoint } = useCurrentImagePoint();
   const { setCommand } = useCommand();
 
   const onChange = (event) => {
@@ -64,7 +67,13 @@ const Search = () => {
 
   const onKeyDown = async (event) => {
     if (event.key === "Enter") {
-      const latlng = await getCoordinates(searchString);
+      const validSearchString = matchAndPadVegsystemreferanse(searchString);
+      if (validSearchString == null) {
+        console.warn(`Invalid search query: ${searchString}`);
+        return;
+      }
+      setSearchString(validSearchString);
+      const latlng = await getCoordinates(validSearchString);
       if (latlng) {
         setCurrentCoordinates({ latlng: latlng, zoom: 16 });
         /* Since a search usually entails a big jump in location, the currently loaded image points
@@ -74,6 +83,7 @@ const Search = () => {
          */
         resetLoadedImagePoints();
         resetFilteredImagePoints();
+        unsetCurrentImagePoint();
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
     }
@@ -94,6 +104,7 @@ const Search = () => {
           inputProps={{ "aria-label": "search" }}
           onChange={onChange}
           onKeyDown={onKeyDown}
+          value={searchString}
         />
       </div>
     </React.Fragment>

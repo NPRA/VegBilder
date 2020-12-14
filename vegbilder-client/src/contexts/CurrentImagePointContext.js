@@ -47,7 +47,11 @@ function CurrentImagePointProvider(props) {
    * points.
    */
   useEffect(() => {
-    if (currentImagePoint == null && currentImageId !== "") {
+    if (
+      loadedImagePoints?.imagePoints &&
+      currentImagePoint == null &&
+      currentImageId !== ""
+    ) {
       const imagePoint = _.find(
         loadedImagePoints.imagePoints,
         (ip) => ip.id === currentImageId

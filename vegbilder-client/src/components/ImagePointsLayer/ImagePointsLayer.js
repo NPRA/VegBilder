@@ -65,7 +65,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       filteredImagePoints,
       currentCoordinates.latlng
     );
-    setCurrentImagePoint(nearestImagePoint);
+    if (nearestImagePoint) {
+      setCurrentImagePoint(nearestImagePoint);
+    }
+
     return true;
   }, [filteredImagePoints, currentCoordinates, setCurrentImagePoint]);
 
