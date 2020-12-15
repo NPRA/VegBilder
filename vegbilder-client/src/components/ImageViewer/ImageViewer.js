@@ -33,9 +33,7 @@ const useStyles = makeStyles((theme) => ({
   canvas: {
     position: "absolute",
     top: "50%",
-    border: "2px solid red",
     transform: "translateY(-50%)",
-    boxSizing: "border-box",
     maxWidth: "100%",
     maxHeight: "100%",
   },
