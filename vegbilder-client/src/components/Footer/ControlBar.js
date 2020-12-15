@@ -19,10 +19,12 @@ import {
   ArrowUpIcon,
   DotsHorizontalIcon,
   HistoryIcon,
+  //HistoryIcon,
   MapIcon,
   MapDisabledIcon,
   MeasureIcon,
   PlayIcon,
+  //PlayIcon,
 } from "../Icons/Icons";
 import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 import { getShareableUrlForImage } from "../../utilities/urlUtilities";
