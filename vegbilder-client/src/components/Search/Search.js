@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useState } from "react";
 import InputBase from "@material-ui/core/InputBase";
 import { MagnifyingGlassIcon } from "../Icons/Icons";
 import { fade, makeStyles } from "@material-ui/core/styles";

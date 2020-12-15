@@ -1,7 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
-import Snackbar from "@material-ui/core/Snackbar";
-import MuiAlert from "@material-ui/lab/Alert";
 import _ from "lodash";
 
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
