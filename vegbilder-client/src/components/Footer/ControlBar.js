@@ -18,18 +18,16 @@ import {
   ArrowTurnIcon,
   ArrowUpIcon,
   DotsHorizontalIcon,
-  HistoryIcon,
   //HistoryIcon,
   MapIcon,
   MapDisabledIcon,
   MeasureIcon,
-  PlayIcon,
+  MeasureDisabledIcon,
   //PlayIcon,
 } from "../Icons/Icons";
 import useCopyToClipboard from "../../hooks/useCopyToClipboard";
 import { getShareableUrlForImage } from "../../utilities/urlUtilities";
 import { createMailtoHrefForReporting } from "../../utilities/mailtoUtilities";
-import { Browser } from "leaflet";
 import { getImageUrl } from "../../utilities/imagePointUtilities";
 
 const useStyles = makeStyles({
@@ -42,7 +40,12 @@ const useStyles = makeStyles({
 export default function ControlBar({ showMessage }) {
   const classes = useStyles();
   const { setCommand } = useCommand();
-  const { miniMapVisible, setMiniMapVisible } = useToggles();
+  const {
+    miniMapVisible,
+    meterLineVisible,
+    setMiniMapVisible,
+    setMeterLineVisible,
+  } = useToggles();
   const { currentImagePoint } = useCurrentImagePoint();
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
   const { copyToClipboard } = useCopyToClipboard();
@@ -131,11 +134,23 @@ export default function ControlBar({ showMessage }) {
             <MapDisabledIcon />
           </IconButton>
         )}
-        {/*
-        <IconButton aria-label="Mål avstand" className={classes.button}>
-          <MeasureIcon />
-        </IconButton>
-        */}
+        {meterLineVisible ? (
+          <IconButton
+            aria-label="Mål avstand"
+            className={classes.button}
+            onClick={() => setMeterLineVisible(false)}
+          >
+            <MeasureIcon />
+          </IconButton>
+        ) : (
+          <IconButton
+            aria-label="Mål avstand"
+            className={classes.button}
+            onClick={() => setMeterLineVisible(true)}
+          >
+            <MeasureDisabledIcon />
+          </IconButton>
+        )}
         {/*
         <IconButton
           aria-label="Finn bilder herfra på andre datoer"

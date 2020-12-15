@@ -17,6 +17,7 @@ import {
 } from "../../utilities/imagePointUtilities";
 import CloseButton from "../CloseButton/CloseButton";
 import MeterLineCanvas from "./MeterLineCanvas";
+import { useToggles } from "../../contexts/TogglesContext";
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -45,6 +46,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
   const { filteredImagePoints } = useFilteredImagePoints();
   const { command, resetCommand } = useCommand();
   const { setCurrentCoordinates } = useCurrentCoordinates();
+  const { meterLineVisible } = useToggles();
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -292,7 +294,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
           width={imageElement.naturalWidth}
           height={imageElement.naturalHeight}
           className={classes.canvas}
-        ></MeterLineCanvas>
+        />
       );
     } else {
       return null;
@@ -310,7 +312,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
             ref={imgRef}
             onLoad={() => setImageLoaded(true)}
           />
-          {renderMeterLine()}
+          {meterLineVisible ? renderMeterLine() : null}
         </>
       ) : null}
       <CloseButton onClick={exitImageView} />

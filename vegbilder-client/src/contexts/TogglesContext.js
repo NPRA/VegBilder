@@ -12,9 +12,15 @@ function useToggles() {
 
 function TogglesProvider(props) {
   const [miniMapVisible, setMiniMapVisible] = useState(true);
+  const [meterLineVisible, setMeterLineVisible] = useState(false);
   return (
     <TogglesContext.Provider
-      value={{ miniMapVisible, setMiniMapVisible }}
+      value={{
+        miniMapVisible,
+        meterLineVisible,
+        setMiniMapVisible,
+        setMeterLineVisible,
+      }}
       {...props}
     />
   );

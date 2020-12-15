@@ -9,6 +9,7 @@ import { ReactComponent as MagnifyingGlassSvg } from "./Magnifying-glass.svg";
 import { ReactComponent as MapSvg } from "./Map.svg";
 import { ReactComponent as MapDisabledSvg } from "./Map-disabled.svg";
 import { ReactComponent as MeasureSvg } from "./Measure.svg";
+import { ReactComponent as MeasureDisabledSvg } from "./Measure-disabled.svg";
 import { ReactComponent as PlaySvg } from "./Play.svg";
 import { ReactComponent as CalendarSvg } from "./Calendar.svg";
 import { ReactComponent as EnlargeSvg } from "./Enlarge.svg";
@@ -56,6 +57,9 @@ function MapDisabledIcon() {
 function MeasureIcon() {
   return <SvgIcon component={MeasureSvg} viewBox="8 8 24 24" />;
 }
+function MeasureDisabledIcon() {
+  return <SvgIcon component={MeasureDisabledSvg} viewBox="8 8 24 24" />;
+}
 
 function PlayIcon() {
   return <SvgIcon component={PlaySvg} viewBox="8 8 24 24" />;
@@ -73,5 +77,6 @@ export {
   MapIcon,
   MapDisabledIcon,
   MeasureIcon,
+  MeasureDisabledIcon,
   PlayIcon,
 };
