@@ -115,10 +115,8 @@ function ComponentsWrapper() {
     switch (view) {
       case views.mapView:
         return renderMapView();
-        break;
       case views.imageView:
         return renderImageView();
-        break;
       default:
         throw Error("No valid view set");
     }
