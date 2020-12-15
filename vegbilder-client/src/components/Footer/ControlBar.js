@@ -99,6 +99,23 @@ export default function ControlBar({ showMessage }) {
   return (
     <>
       <Toolbar>
+        {miniMapVisible ? (
+          <IconButton
+            aria-label="Skjul kart"
+            className={classes.button}
+            onClick={() => setMiniMapVisible(false)}
+          >
+            <MapIcon />
+          </IconButton>
+        ) : (
+          <IconButton
+            aria-label="Vis kart"
+            className={classes.button}
+            onClick={() => setMiniMapVisible(true)}
+          >
+            <MapDisabledIcon />
+          </IconButton>
+        )}
         <IconButton
           aria-label="Gå bakover"
           className={classes.button}
@@ -125,23 +142,6 @@ export default function ControlBar({ showMessage }) {
           <PlayIcon />
         </IconButton>
         */}
-        {miniMapVisible ? (
-          <IconButton
-            aria-label="Skjul kart"
-            className={classes.button}
-            onClick={() => setMiniMapVisible(false)}
-          >
-            <MapIcon />
-          </IconButton>
-        ) : (
-          <IconButton
-            aria-label="Vis kart"
-            className={classes.button}
-            onClick={() => setMiniMapVisible(true)}
-          >
-            <MapDisabledIcon />
-          </IconButton>
-        )}
         {meterLineVisible ? (
           <IconButton
             aria-label="Mål avstand"
