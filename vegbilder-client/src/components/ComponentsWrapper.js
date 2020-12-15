@@ -96,13 +96,13 @@ function ComponentsWrapper() {
     return (
       <TogglesProvider>
         <Grid item className={classes.content}>
-          <SmallMapContainer />
           <ImageViewer
             exitImageView={() => {
               setView(views.mapView);
             }}
             showMessage={showSnackbarMessage}
           />
+          <SmallMapContainer />
         </Grid>
         <Grid item className={classes.footer}>
           <Footer showMessage={showSnackbarMessage} />
