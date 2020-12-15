@@ -16,6 +16,7 @@ import {
   usesOldVegreferanse,
 } from "../../utilities/imagePointUtilities";
 import CloseButton from "../CloseButton/CloseButton";
+import MeterLineCanvas from "./MeterLineCanvas";
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -292,11 +293,12 @@ export default function ImageViewer({ exitImageView, showMessage }) {
         `naturalWidth: ${imageElement.naturalWidth}, naturalHeight: ${imageElement.naturalHeight}`
       );
       return (
-        <canvas
+        <MeterLineCanvas
+          baseLineInfo={currentImagePoint.properties.BASELINEINFO}
           width={imageElement.naturalWidth}
           height={imageElement.naturalHeight}
           className={classes.canvas}
-        ></canvas>
+        ></MeterLineCanvas>
       );
     } else {
       return null;
