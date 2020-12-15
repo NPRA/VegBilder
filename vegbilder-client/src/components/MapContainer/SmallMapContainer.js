@@ -7,7 +7,7 @@ import "./MapContainer.css";
 import { crsUtm33N } from "./crs";
 import ImagePointsLayer from "../ImagePointsLayer/ImagePointsLayer";
 import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
-import { useMiniMap } from "../../contexts/MiniMapContext";
+import { useToggles } from "../../contexts/TogglesContext";
 
 const useStyles = makeStyles((theme) => ({
   minimap: {
@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
 export default function SmallMapContainer() {
   const classes = useStyles();
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
-  const { miniMapVisible } = useMiniMap();
+  const { miniMapVisible } = useToggles();
   const minZoom = 15;
   const maxZoom = 16;
 

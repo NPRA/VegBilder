@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import IconButton from "@material-ui/core/IconButton";
 import Toolbar from "@material-ui/core/Toolbar";
 import Menu from "@material-ui/core/Menu";
@@ -11,7 +11,7 @@ import ShareIcon from "@material-ui/icons/Share";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
-import { useMiniMap } from "../../contexts/MiniMapContext";
+import { useToggles } from "../../contexts/TogglesContext";
 import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
 import {
   ArrowDownIcon,
@@ -40,9 +40,9 @@ const useStyles = makeStyles({
 export default function ControlBar({ showMessage }) {
   const classes = useStyles();
   const { setCommand } = useCommand();
-  const { miniMapVisible, setMiniMapVisible } = useMiniMap();
+  const { miniMapVisible, setMiniMapVisible } = useToggles();
   const { currentImagePoint } = useCurrentImagePoint();
-  const [moreControlsAnchorEl, setMoreControlsAnchorEl] = React.useState(null);
+  const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
   const { copyToClipboard } = useCopyToClipboard();
 
   const handleMoreControlsClick = (event) => {

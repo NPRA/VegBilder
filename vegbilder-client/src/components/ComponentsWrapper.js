@@ -11,7 +11,7 @@ import SmallMapContainer from "./MapContainer/SmallMapContainer";
 import ImageViewer from "./ImageViewer/ImageViewer";
 import ImagePreview from "./ImagePreview/ImagePreview";
 import Splash from "./Splash/Splash";
-import { MiniMapProvider } from "../contexts/MiniMapContext";
+import { TogglesProvider } from "../contexts/TogglesContext";
 import useQueryParamState from "../hooks/useQueryParamState";
 
 const useStyles = makeStyles({
@@ -94,7 +94,7 @@ function ComponentsWrapper() {
 
   function renderImageView() {
     return (
-      <MiniMapProvider>
+      <TogglesProvider>
         <Grid item className={classes.content}>
           <SmallMapContainer />
           <ImageViewer
@@ -107,7 +107,7 @@ function ComponentsWrapper() {
         <Grid item className={classes.footer}>
           <Footer showMessage={showSnackbarMessage} />
         </Grid>
-      </MiniMapProvider>
+      </TogglesProvider>
     );
   }
 
