@@ -29,6 +29,15 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "100%",
     objectFit: "contain",
   },
+  canvas: {
+    position: "absolute",
+    top: "50%",
+    border: "2px solid red",
+    transform: "translateY(-50%)",
+    boxSizing: "border-box",
+    maxWidth: "100%",
+    maxHeight: "100%",
+  },
 }));
 
 export default function ImageViewer({ exitImageView, showMessage }) {
@@ -271,6 +280,28 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     goToNearestImagePointInOppositeLane,
     showMessage,
   ]);
+
+  function renderMeterLine() {
+    console.log(imageElement);
+    if (
+      imageElement &&
+      imageElement.naturalWidth !== 0 &&
+      imageElement.naturalHeight !== 0
+    ) {
+      console.log(
+        `naturalWidth: ${imageElement.naturalWidth}, naturalHeight: ${imageElement.naturalHeight}`
+      );
+      return (
+        <canvas
+          width={imageElement.naturalWidth}
+          height={imageElement.naturalHeight}
+          className={classes.canvas}
+        ></canvas>
+      );
+    } else {
+      return null;
+    }
+  }
 
   return (
     <div className={classes.imageArea}>
