@@ -53,8 +53,8 @@ export default function Splash() {
         <CloseButton onClick={closeSplash} />
         <div className={classes.content}>
           <h1>{splashScreenText.header}</h1>
-          {splashScreenText.paragraphs.map((paragraph) => (
-            <p>{paragraph}</p>
+          {splashScreenText.paragraphs.map((paragraph, index) => (
+            <p key={index}>{paragraph}</p>
           ))}
           <FormControlLabel
             control={
