@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import Snackbar from "@material-ui/core/Snackbar";
 import MuiAlert from "@material-ui/lab/Alert";
@@ -18,14 +18,14 @@ import {
 import CloseButton from "../CloseButton/CloseButton";
 
 const useStyles = makeStyles((theme) => ({
-  imageContainer: {
+  imageArea: {
     height: "100%",
     backgroundColor: theme.palette.primary.main,
     display: "flex",
     justifyContent: "center",
   },
   image: {
-    maxHeight: "calc(100vh - 9.5rem)",
+    maxHeight: "calc(100vh - 9.5rem)", // Total view height minus the height of the header and footer combined
     maxWidth: "100%",
     objectFit: "contain",
   },
@@ -41,6 +41,10 @@ export default function ImageViewer({ exitImageView, showMessage }) {
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
   const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState([]);
+  const [imageElement, setImageElement] = useState(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const imgRef = useRef();
 
   function hasOppositeParity(feltkode1, feltkode2) {
     if (!feltkode1 || !feltkode2) return null;
@@ -83,6 +87,13 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     setCurrentImagePoint,
     setCurrentCoordinates,
   ]);
+
+  useEffect(() => {
+    if (imageLoaded) {
+      const img = imgRef.current;
+      setImageElement(img);
+    }
+  }, [imageLoaded, setImageElement]);
 
   // Get image points for the current lane in correct order
   useEffect(() => {
@@ -262,13 +273,18 @@ export default function ImageViewer({ exitImageView, showMessage }) {
   ]);
 
   return (
-    <div className={classes.imageContainer}>
+    <div className={classes.imageArea}>
       {currentImagePoint ? (
-        <img
-          src={getImageUrl(currentImagePoint)}
-          alt="vegbilde"
-          className={classes.image}
-        />
+        <>
+          <img
+            src={getImageUrl(currentImagePoint)}
+            alt="vegbilde"
+            className={classes.image}
+            ref={imgRef}
+            onLoad={() => setImageLoaded(true)}
+          />
+          {renderMeterLine()}
+        </>
       ) : null}
       <CloseButton onClick={exitImageView} />
     </div>
