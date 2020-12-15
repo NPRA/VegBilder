@@ -76,7 +76,7 @@ function CurrentImagePointProvider(props) {
 }
 
 function isValidImageId(imageId) {
-  const regexp = /^[a-zA-Z\d-_\.]{1,100}$/;
+  const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
   return regexp.test(imageId);
 }
 
