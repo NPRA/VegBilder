@@ -9,6 +9,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import ReportIcon from "@material-ui/icons/Report";
 import ShareIcon from "@material-ui/icons/Share";
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+import clsx from "clsx";
 
 import { useCommand, commandTypes } from "../../contexts/CommandContext";
 import { useToggles } from "../../contexts/TogglesContext";
@@ -34,6 +35,13 @@ const useStyles = makeStyles({
   button: {
     margin: "1.25rem",
     backgroundColor: "transparent",
+  },
+  arrowTurnButton: {
+    "& .MuiIconButton-label": {
+      "& .MuiSvgIcon-root": {
+        width: "30px",
+      },
+    },
   },
 });
 
@@ -107,7 +115,7 @@ export default function ControlBar({ showMessage }) {
         </IconButton>
         <IconButton
           aria-label="Bytt kjøreretning"
-          className={classes.button}
+          className={clsx(classes.button, classes.arrowTurnButton)}
           onClick={() => setCommand(commandTypes.turnAround)}
         >
           <ArrowTurnIcon />
