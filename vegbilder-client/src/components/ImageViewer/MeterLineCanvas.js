@@ -1,5 +1,9 @@
 import React, { useEffect, useRef } from "react";
 
+/* Have to do some awkward string manipulation to extract the data from imagepoint.properties.BASELINEINFO,
+ * as it cannot be parsed as a json object in its current form. This function should be replaced as soon as
+ * BASELINEINFO gets appropriately formatted.
+ */
 function getBaseLineData(baseLineInfo) {
   let split = baseLineInfo.split("baseLineInfo: {");
   if (split.length !== 2) return null;
@@ -28,6 +32,13 @@ function getBaseLineData(baseLineInfo) {
         baseLineTickInterval: parseInt(values[1], 10),
         baseLineTickOffset: parseInt(values[2], 10),
         tiltPoint: parseInt(values[3], 10),
+        /* We currently do not use the final property, which is tilt.
+         * It is assumed to always be 0, which is usually correct. A
+         * non-zero (yet almost zero) tilt would give a slightly slanted
+         * meter line, which might put users off. We deemed it more important
+         * to render a nice-looking, almost entirely correct line, rather
+         * than a perfectly correct but ugly one.
+         */
       }
     : null;
 }
@@ -35,6 +46,7 @@ function getBaseLineData(baseLineInfo) {
 function MeterLineCanvas({ baseLineInfo, ...rest }) {
   const canvasRef = useRef(null);
 
+  // Draw the meter line on canvas
   useEffect(() => {
     if (baseLineInfo) {
       const baseLineData = getBaseLineData(baseLineInfo);
@@ -49,10 +61,10 @@ function MeterLineCanvas({ baseLineInfo, ...rest }) {
       context.beginPath();
 
       const meter = baseLineData.baseLineTickInterval;
-      const y = baseLineData.baseLinePosition;
-      let x = baseLineData.tiltPoint - 2.5 * meter;
 
       // Baseline
+      const y = baseLineData.baseLinePosition;
+      let x = baseLineData.tiltPoint - 2.5 * meter;
       context.moveTo(x, y);
       context.lineTo(x + 5 * meter, y);
       context.stroke();
