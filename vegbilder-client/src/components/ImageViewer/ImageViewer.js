@@ -281,15 +281,11 @@ export default function ImageViewer({ exitImageView, showMessage }) {
   ]);
 
   function renderMeterLine() {
-    console.log(imageElement);
     if (
       imageElement &&
       imageElement.naturalWidth !== 0 &&
       imageElement.naturalHeight !== 0
     ) {
-      console.log(
-        `naturalWidth: ${imageElement.naturalWidth}, naturalHeight: ${imageElement.naturalHeight}`
-      );
       return (
         <MeterLineCanvas
           baseLineInfo={currentImagePoint.properties.BASELINEINFO}
