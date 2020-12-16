@@ -5,42 +5,36 @@ import React, { useEffect, useRef } from "react";
  * BASELINEINFO gets appropriately formatted.
  */
 function getBaseLineData(baseLineInfo) {
-  let split = baseLineInfo.split("{");
-  if (split.length !== 2) return null;
+  let split = baseLineInfo.split(";");
+  if (split.length !== 5) {
+    return null;
+  }
+  const baseLinePosition = parseInt(split[0], 10);
+  const baseLineTickInterval = parseInt(split[1], 10);
+  const baseLineTickOffset = parseInt(split[2], 10);
+  const tiltPoint = parseInt(split[3], 10);
+  /* We currently do not use the final property, which is tilt.
+   * It is assumed to always be 0, which is usually correct. A
+   * non-zero (yet almost zero) tilt would give a slightly slanted
+   * meter line, which might put users off. We deemed it more important
+   * to render a nice-looking, almost entirely correct line, rather
+   * than a perfectly correct but ugly one.
+   */
 
-  let stripped = split[1];
-  split = stripped.split("}");
-  if (split.length !== 2) return null;
-
-  stripped = split[0];
-  const elements = stripped.split(",");
-  if (elements.length !== 5) return null;
-
-  let valid = true;
-  const values = elements.map((e) => {
-    const keyAndValue = e.split(": ");
-    if (keyAndValue.length !== 2) {
-      valid = false;
-      return null;
-    } else {
-      return keyAndValue[1];
-    }
-  });
-  return valid
-    ? {
-        baseLinePosition: parseInt(values[0], 10),
-        baseLineTickInterval: parseInt(values[1], 10),
-        baseLineTickOffset: parseInt(values[2], 10),
-        tiltPoint: parseInt(values[3], 10),
-        /* We currently do not use the final property, which is tilt.
-         * It is assumed to always be 0, which is usually correct. A
-         * non-zero (yet almost zero) tilt would give a slightly slanted
-         * meter line, which might put users off. We deemed it more important
-         * to render a nice-looking, almost entirely correct line, rather
-         * than a perfectly correct but ugly one.
-         */
-      }
-    : null;
+  if (
+    isNaN(baseLinePosition) ||
+    isNaN(baseLineTickInterval) ||
+    isNaN(baseLineTickOffset) ||
+    isNaN(tiltPoint)
+  ) {
+    return null;
+  }
+  return {
+    baseLinePosition,
+    baseLineTickInterval,
+    baseLineTickOffset,
+    tiltPoint,
+  };
 }
 
 function MeterLineCanvas({ baseLineInfo, ...rest }) {
@@ -51,7 +45,9 @@ function MeterLineCanvas({ baseLineInfo, ...rest }) {
     if (baseLineInfo) {
       const baseLineData = getBaseLineData(baseLineInfo);
       if (baseLineData == null) {
-        console.error("Could not parse BASELINEINFO for drawing meter line");
+        console.error(
+          `Could not parse BASELINEINFO for drawing meter line. BASELINEINFO was ${baseLineInfo}`
+        );
         return;
       }
       const canvas = canvasRef.current;
