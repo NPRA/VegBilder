@@ -21,7 +21,8 @@ function YearFilterProvider(props) {
   const [year, setYearInternal] = useQueryParamState(
     "year",
     defaultYear,
-    isValidYear
+    isValidYear,
+    true
   );
 
   function setYear(year) {

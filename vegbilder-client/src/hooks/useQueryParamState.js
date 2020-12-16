@@ -1,8 +1,13 @@
 import React from "react";
 
-export default function useQueryParamState(name, defaultValue, validate) {
+export default function useQueryParamState(
+  name,
+  defaultValue,
+  validate,
+  isInteger = false
+) {
   const searchParams = new URLSearchParams(window.location.search);
-  const [state, setState] = React.useState(
+  const [state, setStateInternal] = React.useState(
     getValidatedSearchParam(name) || defaultValue
   );
 
@@ -14,7 +19,7 @@ export default function useQueryParamState(name, defaultValue, validate) {
         `Invalid value of query parameter ${name}: ${searchParam}`
       );
     }
-    return searchParam;
+    return isInteger ? parseInt(searchParam, 10) : searchParam;
   }
 
   React.useEffect(() => {
@@ -22,6 +27,14 @@ export default function useQueryParamState(name, defaultValue, validate) {
     newSearchParams.set(name, state);
     window.history.replaceState(null, "", "?" + newSearchParams.toString());
   }, [name, state]);
+
+  function setState(newState) {
+    if (isInteger && isNaN(newState)) {
+      throw new Error("Tried to set invalid state. It should be an integer.");
+    } else {
+      setStateInternal(newState);
+    }
+  }
 
   return [state, setState];
 }
