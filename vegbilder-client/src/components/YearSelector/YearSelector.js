@@ -76,9 +76,9 @@ export default function YearSelector() {
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
       >
-        {availableYears.map((tp) => (
-          <MenuItem key={tp} value={tp}>
-            {tp}
+        {availableYears.map((y) => (
+          <MenuItem key={y} value={y}>
+            {y}
           </MenuItem>
         ))}
       </Select>
