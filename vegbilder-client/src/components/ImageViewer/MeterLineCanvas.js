@@ -5,7 +5,7 @@ import React, { useEffect, useRef } from "react";
  * BASELINEINFO gets appropriately formatted.
  */
 function getBaseLineData(baseLineInfo) {
-  let split = baseLineInfo.split("baseLineInfo: {");
+  let split = baseLineInfo.split("{");
   if (split.length !== 2) return null;
 
   let stripped = split[1];
