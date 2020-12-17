@@ -1,9 +1,5 @@
 import React, { useEffect, useRef } from "react";
 
-/* Have to do some awkward string manipulation to extract the data from imagepoint.properties.BASELINEINFO,
- * as it cannot be parsed as a json object in its current form. This function should be replaced as soon as
- * BASELINEINFO gets appropriately formatted.
- */
 function getBaseLineData(baseLineInfo) {
   let split = baseLineInfo.split(";");
   if (split.length !== 5) {
@@ -18,7 +14,7 @@ function getBaseLineData(baseLineInfo) {
    * non-zero (yet almost zero) tilt would give a slightly slanted
    * meter line, which might put users off. We deemed it more important
    * to render a nice-looking, almost entirely correct line, rather
-   * than a perfectly correct but ugly one.
+   * than a perfectly correct but jagged one.
    */
 
   if (
@@ -60,16 +56,29 @@ function MeterLineCanvas({ baseLineInfo, ...rest }) {
 
       // Baseline
       const y = baseLineData.baseLinePosition;
-      let x = baseLineData.tiltPoint - 2.5 * meter;
-      context.moveTo(x, y);
-      context.lineTo(x + 5 * meter, y);
+      let baseLineStartX = baseLineData.tiltPoint - 3 * meter;
+      let baseLineEndX = baseLineData.tiltPoint + 3 * meter;
+      context.moveTo(baseLineStartX, y);
+      context.lineTo(baseLineEndX, y);
       context.stroke();
 
       // Ticks
-      x = baseLineData.tiltPoint + baseLineData.baseLineTickOffset - 2 * meter;
-      for (let i = 0; i < 5; i++) {
-        context.moveTo(x + i * meter, y - 20);
-        context.lineTo(x + i * meter, y + 20);
+      const firstTickX =
+        baseLineData.tiltPoint + baseLineData.baseLineTickOffset;
+      let x = firstTickX;
+      while (x >= baseLineStartX) {
+        drawMeterTick(x, y);
+        x = x - meter;
+      }
+      x = firstTickX + meter;
+      while (x <= baseLineEndX) {
+        drawMeterTick(x, y);
+        x = x + meter;
+      }
+
+      function drawMeterTick(x, y) {
+        context.moveTo(x, y - 20);
+        context.lineTo(x, y + 20);
         context.stroke();
       }
     }
