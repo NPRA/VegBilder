@@ -70,7 +70,9 @@ const Search = ({ showMessage }) => {
       const validSearchString = matchAndPadVegsystemreferanse(searchString);
       if (validSearchString == null) {
         console.warn(`Invalid search query: ${searchString}`);
-        showMessage("Det der så ikke ut som en vegsystemreferanse");
+        showMessage(
+          "Det der ser ikke ut som en vegsystemreferanse for ERF-veg"
+        );
         return;
       }
       setSearchString(validSearchString);
@@ -97,7 +99,7 @@ const Search = ({ showMessage }) => {
           <MagnifyingGlassIcon />
         </div>
         <InputBase
-          placeholder="Søk etter vegsystemreferanse"
+          placeholder="Søk etter vegsystemreferanse (ERF-veger)"
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,

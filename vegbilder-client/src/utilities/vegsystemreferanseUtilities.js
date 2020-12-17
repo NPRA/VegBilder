@@ -1,6 +1,6 @@
 /*
 const regexParts = {
-  vegkategori: "[ERFKPSerfkps]",
+  vegkategori: "[ERFerf]",
   vegstatus: "[VAPFvapf]",
   vegnuMmer: "\\d{1,5}",
   strekningsnuMmer: "\\d{1,3}",
@@ -11,12 +11,12 @@ const regexParts = {
 };
 */
 
-const regexpVegsystemreferanseWithKryssOrSideanlegg = /^([ERFKPSerfkpsERFKPSerfkps])([VAPFvapfVAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})\s?[Dd](\d{1,3})\s?[Mm](\d{1,5})\s?([KSks])[Dd](\d{1,2})\s?[Mm](\d{1,5})/;
-const regexpVegsystemreferanseWithKryssOrSideanleggWithoutMeter = /^([ERFKPSerfkps])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})\s?[Dd](\d{1,3})\s?[Mm](\d{1,5})\s?([KSks])[Dd](\d{1,2})/;
-const regexpVegsystemreferanse = /^([ERFKPSerfkps])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})\s?[Dd](\d{1,3})\s?[Mm](\d{1,5})/;
-const regexpVegsystemreferanseWithoutMeter = /^([ERFKPSerfkps])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})\s?[Dd](\d{1,3})/;
-const regexpVegsystemreferanseWithoutDelstrekning = /^([ERFKPSerfkps])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})/;
-const regexpVegsystemreferanseWithoutStrekning = /^([ERFKPSerfkps])([VAPFvapf])(\d{1,5})/;
+const regexpVegsystemreferanseWithKryssOrSideanlegg = /^([ERFerf])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})\s?[Dd](\d{1,3})\s?[Mm](\d{1,5})\s?([KSks])[Dd](\d{1,2})\s?[Mm](\d{1,5})/;
+const regexpVegsystemreferanseWithKryssOrSideanleggWithoutMeter = /^([ERFerf])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})\s?[Dd](\d{1,3})\s?[Mm](\d{1,5})\s?([KSks])[Dd](\d{1,2})/;
+const regexpVegsystemreferanse = /^([ERFerf])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})\s?[Dd](\d{1,3})\s?[Mm](\d{1,5})/;
+const regexpVegsystemreferanseWithoutMeter = /^([ERFerf])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})\s?[Dd](\d{1,3})/;
+const regexpVegsystemreferanseWithoutDelstrekning = /^([ERFerf])([VAPFvapf])(\d{1,5})\s?[Ss](\d{1,3})/;
+const regexpVegsystemreferanseWithoutStrekning = /^([ERFerf])([VAPFvapf])(\d{1,5})/;
 
 function matchAndPadVegsystemreferanse(text) {
   const trimmedText = text.trim();
