@@ -50,7 +50,6 @@ export default function ImageViewer({ exitImageView, showMessage }) {
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
   const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState([]);
   const [imageElement, setImageElement] = useState(null);
-  const [imageLoaded, setImageLoaded] = useState(false);
 
   const imgRef = useRef();
 
@@ -59,6 +58,11 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     const primaryFeltkode1 = parseInt(feltkode1[0], 10);
     const primaryFeltkode2 = parseInt(feltkode2[0], 10);
     return isEvenNumber(primaryFeltkode1) !== isEvenNumber(primaryFeltkode2);
+  }
+
+  function onImageLoaded() {
+    const img = imgRef.current;
+    setImageElement(img);
   }
 
   const goToNearestImagePointInOppositeLane = useCallback(() => {
@@ -96,12 +100,14 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     setCurrentCoordinates,
   ]);
 
+  /* When currentImagePoint changes, we have to reset imageElement to null. Otherwise the imageElement
+   * will briefly contain an image with naturalWidth and naturalHeight of 0 (before the image has finished loading),
+   * which means we cannot render the MeterLineCanvas on top of the image. (The canvas dimensions are
+   * initialized from the image's naturalWidth and naturalHeight).
+   */
   useEffect(() => {
-    if (imageLoaded) {
-      const img = imgRef.current;
-      setImageElement(img);
-    }
-  }, [imageLoaded, setImageElement]);
+    setImageElement(null);
+  }, [currentImagePoint]);
 
   // Get image points for the current lane in correct order
   useEffect(() => {
@@ -198,7 +204,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     /* Set the next and previous image points, while making sure we do not exceed the bounds
      * of the currentLaneImagePoints array. Also, if we are dealing with image points which
      * use the old vegreferanse (2019 and earlier) we need to beware of large jumps in the
-     * hovedparsell number. The main road will have consecutive hovedparsells, while cross
+     * hovedparsell number. The main road will have consecutive hovedparsells, while intersection
      * parts and such will typically have much larger numbers. When we reach the end of the
      * road, we don't want to make a sudden jump to such a part, which may be some distance
      * away from the current point.
@@ -282,9 +288,10 @@ export default function ImageViewer({ exitImageView, showMessage }) {
 
   function renderMeterLine() {
     if (
+      meterLineVisible &&
       imageElement &&
-      imageElement.naturalWidth !== 0 &&
-      imageElement.naturalHeight !== 0
+      imageElement.naturalWidth > 0 &&
+      imageElement.naturalHeight > 0
     ) {
       return (
         <MeterLineCanvas
@@ -308,9 +315,9 @@ export default function ImageViewer({ exitImageView, showMessage }) {
             alt="vegbilde"
             className={classes.image}
             ref={imgRef}
-            onLoad={() => setImageLoaded(true)}
+            onLoad={onImageLoaded}
           />
-          {meterLineVisible ? renderMeterLine() : null}
+          {renderMeterLine()}
         </>
       ) : null}
       <CloseButton onClick={exitImageView} />
