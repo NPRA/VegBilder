@@ -12,6 +12,7 @@ import {
   getImageUrl,
   findNearestImagePoint,
   usesOldVegreferanse,
+  areOnSameOrConsecutiveRoadParts,
 } from "../../utilities/imagePointUtilities";
 import CloseButton from "../CloseButton/CloseButton";
 import MeterLineCanvas from "./MeterLineCanvas";
@@ -174,14 +175,6 @@ export default function ImageViewer({ exitImageView, showMessage }) {
 
   // Set next and previous image points
   useEffect(() => {
-    function areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2) {
-      const hp1 = imagePoint1.properties.HP;
-      const hp2 = imagePoint2.properties.HP;
-      if (hp1 == null && hp2 == null) return true;
-      if (hp1 == null || hp2 == null) return false;
-      return Math.abs(hp1 - hp2) <= 1;
-    }
-
     if (
       !currentImagePoint ||
       !currentLaneImagePoints ||
@@ -202,38 +195,42 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     const previousIndex = currentIndex - 1;
 
     /* Set the next and previous image points, while making sure we do not exceed the bounds
-     * of the currentLaneImagePoints array. Also, if we are dealing with image points which
-     * use the old vegreferanse (2019 and earlier) we need to beware of large jumps in the
-     * hovedparsell number. The main road will have consecutive hovedparsells, while intersection
-     * parts and such will typically have much larger numbers. When we reach the end of the
-     * road, we don't want to make a sudden jump to such a part, which may be some distance
-     * away from the current point.
+     * of the currentLaneImagePoints array. We also need to beware of image points which are
+     * not close together, even though they are next to each other in the sort order.
+     *
+     * Typical case for this: We reach the end of a road, which is for instance on strekning/delstrekning
+     * S8D1. We try to move forward and are transported to an image point on S8D100 or another large
+     * delstrekning-number, which is probably a pedestrian/bike road parallell to the main road.
+     *
+     * Similar case for older image points (using the old vegreferanse): We reach the end of a road, let's
+     * say on hovedparsell HP88. We try to move forward and are transported to an image point on HP1060 (or
+     * another large number), which is probably a ramp, roundabout or similar, which is somewhat nearby, but not
+     * directly next to where we were.
+     *
+     * Such jumps should be avoided.
      */
 
     let nextImagePoint =
       nextIndex < currentLaneImagePoints.length
         ? currentLaneImagePoints[nextIndex]
         : null;
-    if (nextImagePoint && usesOldVegreferanse(nextImagePoint)) {
-      nextImagePoint = areOnSameOrConsecutiveHovedparsells(
-        currentImagePoint,
-        nextImagePoint
-      )
-        ? nextImagePoint
-        : null;
+    if (
+      nextImagePoint &&
+      !areOnSameOrConsecutiveRoadParts(currentImagePoint, nextImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
+    ) {
+      nextImagePoint = null;
     }
-    setNextImagePoint(nextImagePoint);
 
     let previousImagePoint =
       previousIndex >= 0 ? currentLaneImagePoints[previousIndex] : null;
-    if (previousImagePoint && usesOldVegreferanse(previousImagePoint)) {
-      previousImagePoint = areOnSameOrConsecutiveHovedparsells(
-        currentImagePoint,
-        previousImagePoint
-      )
-        ? previousImagePoint
-        : null;
+    if (
+      previousImagePoint &&
+      !areOnSameOrConsecutiveRoadParts(currentImagePoint, previousImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
+    ) {
+      previousImagePoint = null;
     }
+
+    setNextImagePoint(nextImagePoint);
     setPreviousImagePoint(previousImagePoint);
   }, [currentImagePoint, currentLaneImagePoints]);
 

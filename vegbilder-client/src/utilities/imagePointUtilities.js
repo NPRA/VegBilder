@@ -115,6 +115,80 @@ function groupBySeries(imagePoints) {
   return groupedByRoadReference;
 }
 
+/* Check if two image points are on the same road part or consecutive road parts,
+ * where a road part is a:
+ *  - hovedparsell (HP) in the old vegreferanse (2019 and earlier)
+ *  - combination of strekning and delstrekning in the new vegsystemreferanse (2020 and later)
+ */
+function areOnSameOrConsecutiveRoadParts(imagePoint1, imagePoint2) {
+  if (usesOldVegreferanse(imagePoint1) && usesOldVegreferanse(imagePoint2)) {
+    return areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2);
+  } else if (
+    !usesOldVegreferanse(imagePoint1) &&
+    !usesOldVegreferanse(imagePoint2)
+  ) {
+    return areOnSameOrConsecutiveStrekningDelstrekning(
+      imagePoint1,
+      imagePoint2
+    );
+  } else {
+    console.error(
+      "Tried to compare new vegsystemreferanse with old vegreferanse. This should not happen."
+    );
+  }
+}
+
+function areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2) {
+  const hp1 = imagePoint1.properties.HP;
+  const hp2 = imagePoint2.properties.HP;
+  if (hp1 == null || hp2 == null) {
+    console.error(
+      `Could not compare hovedparsell for two image points because one or both was null. HP1: ${hp1}, HP2: ${hp2}`
+    );
+    return false;
+  }
+  return Math.abs(hp1 - hp2) <= 1;
+}
+
+function areOnSameOrConsecutiveStrekningDelstrekning(imagePoint1, imagePoint2) {
+  const sd1 = {
+    strekning: imagePoint1.properties.STREKNING,
+    delstrekning: imagePoint1.properties.DELSTREKNING,
+  };
+  const sd2 = {
+    strekning: imagePoint2.properties.STREKNING,
+    delstrekning: imagePoint2.properties.DELSTREKNING,
+  };
+  if (
+    sd1.strekning == null ||
+    sd1.delstrekning == null ||
+    sd2.strekning == null ||
+    sd2.delstrekning == null
+  ) {
+    console.error(
+      `Could not compare (strekning, delstrekning) for two image points because one or both was null. SD1: (${sd1.strekning}, ${sd1.delstrekning}), SD2: (${sd2.strekning}, ${sd2.delstrekning})`
+    );
+    return false;
+  }
+
+  const [first, second] =
+    sd1.strekning < sd2.strekning ||
+    (sd1.strekning === sd2.strekning && sd1.delstrekning < sd2.delstrekning)
+      ? [sd1, sd2]
+      : [sd2, sd1];
+
+  return (
+    // Same strekning and delstrekning
+    (second.strekning === first.strekning &&
+      second.delstrekning === first.delstrekning) ||
+    // Next delstrekning on same strekning
+    (second.strekning === first.strekning &&
+      second.delstrekning === first.delstrekning + 1) ||
+    // First delstrekning on next strekning
+    (second.strekning === first.strekning + 1 && second.delstrekning === 1)
+  );
+}
+
 export {
   getImagePointLatLng,
   getImageUrl,
@@ -124,4 +198,5 @@ export {
   usesOldVegreferanse,
   getDateString,
   groupBySeries,
+  areOnSameOrConsecutiveRoadParts,
 };
