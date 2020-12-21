@@ -14,10 +14,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CloseButton = () => {
+const CloseButton = ({ onClick }) => {
   const classes = useStyles();
   return (
-    <IconButton className={classes.closeButton}>
+    <IconButton className={classes.closeButton} onClick={onClick}>
       <CloseIcon />
     </IconButton>
   );

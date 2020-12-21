@@ -1,22 +1,22 @@
 // Source: https://reedbarger.com/how-to-create-a-custom-usecopytoclipboard-react-hook/
 
-import React from "react";
-import copy from "copy-to-clipboard";
+import { useState } from 'react';
+import copy from 'copy-to-clipboard';
 
-export default function useCopyToClipboard() {
-  const [isCopied, setCopied] = React.useState(false);
+const useCopyToClipboard = () => {
+  const [isCopied, setCopied] = useState(false);
 
-  function copyToClipboard(text) {
-    if (typeof text === "string" || typeof text == "number") {
+  const copyToClipboard = (text) => {
+    if (typeof text === 'string' || typeof text == 'number') {
       copy(text.toString());
       setCopied(true);
     } else {
       setCopied(false);
-      console.error(
-        `Cannot copy typeof ${typeof text} to clipboard, must be a string or number.`
-      );
+      console.error(`Cannot copy typeof ${typeof text} to clipboard, must be a string or number.`);
     }
-  }
+  };
 
   return { isCopied, copyToClipboard };
-}
+};
+
+export default useCopyToClipboard;

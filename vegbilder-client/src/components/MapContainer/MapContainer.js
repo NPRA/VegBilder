@@ -2,7 +2,6 @@ import React from 'react';
 import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
-import './MapContainer.css';
 import { crsUtm33N } from './crs';
 import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
 import MapControls from 'components/MapControls/MapControls';

@@ -1,7 +1,8 @@
-import _ from "lodash";
+import _ from 'lodash';
 
-import { getDistanceInMetersBetween } from "./latlngUtilities";
-import { splitDateTimeString } from "./dateTimeUtilities";
+import { getDistanceInMetersBetween } from './latlngUtilities';
+import { splitDateTimeString } from './dateTimeUtilities';
+import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
 function getImagePointLatLng(imagePoint) {
   const lat = imagePoint.geometry.coordinates[1];
@@ -10,7 +11,7 @@ function getImagePointLatLng(imagePoint) {
 }
 
 function getImageUrl(imagepoint) {
-  return imagepoint.properties.URL;
+  return rewriteUrlDomainToLocalhost(imagepoint.properties.URL);
 }
 
 function findNearestImagePoint(imagePoints, latlng) {
@@ -39,7 +40,7 @@ function getRoadReference(imagePoint) {
     SIDEANLEGGSDEL,
     ANKERPUNKT,
   } = imagePoint.properties;
-  const meterPart = isNaN(METER) ? "" : ` M${Math.round(METER)}`;
+  const meterPart = isNaN(METER) ? '' : ` M${Math.round(METER)}`;
   const feltPart = ` F${FELTKODE}`;
 
   function createVegsystemreferanse() {
@@ -64,9 +65,7 @@ function getRoadReference(imagePoint) {
     return { complete, withoutMeter };
   }
 
-  return imagePoint.properties.AAR >= 2020
-    ? createVegsystemreferanse()
-    : createVegreferanse();
+  return imagePoint.properties.AAR >= 2020 ? createVegsystemreferanse() : createVegreferanse();
 }
 
 /* Returns a road reference which should be somewhat applicable across years (compatible with both
@@ -102,10 +101,7 @@ function getDateString(imagePoint) {
  * points.
  */
 function groupBySeries(imagePoints) {
-  const groupedByRoadReference = _.groupBy(
-    imagePoints,
-    (ip) => getRoadReference(ip).withoutMeter
-  );
+  const groupedByRoadReference = _.groupBy(imagePoints, (ip) => getRoadReference(ip).withoutMeter);
   for (const [roadReference, imagePointsForRoadReference] of Object.entries(
     groupedByRoadReference
   )) {
@@ -123,17 +119,11 @@ function groupBySeries(imagePoints) {
 function areOnSameOrConsecutiveRoadParts(imagePoint1, imagePoint2) {
   if (usesOldVegreferanse(imagePoint1) && usesOldVegreferanse(imagePoint2)) {
     return areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2);
-  } else if (
-    !usesOldVegreferanse(imagePoint1) &&
-    !usesOldVegreferanse(imagePoint2)
-  ) {
-    return areOnSameOrConsecutiveStrekningDelstrekning(
-      imagePoint1,
-      imagePoint2
-    );
+  } else if (!usesOldVegreferanse(imagePoint1) && !usesOldVegreferanse(imagePoint2)) {
+    return areOnSameOrConsecutiveStrekningDelstrekning(imagePoint1, imagePoint2);
   } else {
     console.error(
-      "Tried to compare new vegsystemreferanse with old vegreferanse. This should not happen."
+      'Tried to compare new vegsystemreferanse with old vegreferanse. This should not happen.'
     );
   }
 }
@@ -179,11 +169,9 @@ function areOnSameOrConsecutiveStrekningDelstrekning(imagePoint1, imagePoint2) {
 
   return (
     // Same strekning and delstrekning
-    (second.strekning === first.strekning &&
-      second.delstrekning === first.delstrekning) ||
+    (second.strekning === first.strekning && second.delstrekning === first.delstrekning) ||
     // Next delstrekning on same strekning
-    (second.strekning === first.strekning &&
-      second.delstrekning === first.delstrekning + 1) ||
+    (second.strekning === first.strekning && second.delstrekning === first.delstrekning + 1) ||
     // First delstrekning on next strekning
     (second.strekning === first.strekning + 1 && second.delstrekning === 1)
   );

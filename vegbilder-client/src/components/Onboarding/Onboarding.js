@@ -3,10 +3,10 @@ import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import CloseButton from 'components/CloseButton/CloseButton';
-import { splashScreenText } from 'text/text';
+import { onboardingText } from 'constants/text';
 
 const useStyles = makeStyles((theme) => ({
-  splash: {
+  onboarding: {
     position: 'absolute',
     transform: 'translate(-50%, -50%)',
     top: '50%',
@@ -28,40 +28,39 @@ const useStyles = makeStyles((theme) => ({
 
 const HIDE_SPLASH_ON_STARTUP = 'HideSplashOnStartup';
 
-export default function Splash() {
+const Onboarding = () => {
   const classes = useStyles();
   const hideWasSet = localStorage.getItem(HIDE_SPLASH_ON_STARTUP) === 'true';
   const [visible, setVisible] = useState(!hideWasSet);
   const [hideOnStartup, setHideOnStartup] = useState(hideWasSet);
-  if (!visible) return null;
 
-  function closeSplash() {
-    setVisible(false);
-  }
+  const closeOnboarding = () => setVisible(false);
 
-  function handleStartupChange() {
+  const handleStartupChange = () => {
     hideOnStartup
       ? localStorage.removeItem(HIDE_SPLASH_ON_STARTUP)
       : localStorage.setItem(HIDE_SPLASH_ON_STARTUP, 'true');
     setHideOnStartup(!hideOnStartup);
-  }
+  };
 
   if (!visible) return null;
   return (
-    <ClickAwayListener onClickAway={closeSplash}>
-      <div className={classes.splash}>
-        <CloseButton onClick={closeSplash} />
+    <ClickAwayListener onClickAway={closeOnboarding}>
+      <div className={classes.onboarding}>
+        <CloseButton onClick={closeOnboarding} />
         <div className={classes.content}>
-          <h1>{splashScreenText.header}</h1>
-          {splashScreenText.paragraphs.map((paragraph, index) => (
+          <h1>{onboardingText.header}</h1>
+          {onboardingText.paragraphs.map((paragraph, index) => (
             <p key={index}>{paragraph}</p>
           ))}
           <FormControlLabel
             control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
             label={'Ikke vis ved oppstart'}
-          ></FormControlLabel>
+          />
         </div>
       </div>
     </ClickAwayListener>
   );
-}
+};
+
+export default Onboarding;

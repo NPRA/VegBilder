@@ -11,7 +11,7 @@ import { ImageSeriesProvider } from '../contexts/ImageSeriesContext';
 import { FilteredImagePointsProvider } from '../contexts/FilteredImagePointsContext';
 import ComponentsWrapper from './ComponentsWrapper';
 
-function App() {
+const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CurrentCoordinatesProvider>
@@ -31,6 +31,6 @@ function App() {
       </CurrentCoordinatesProvider>
     </ThemeProvider>
   );
-}
+};
 
 export default App;

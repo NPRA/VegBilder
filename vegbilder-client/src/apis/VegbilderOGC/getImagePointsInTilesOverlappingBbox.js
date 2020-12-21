@@ -1,9 +1,6 @@
-import _ from "lodash";
-import getImagePointsInBbox from "./getImagePointsInBbox";
-import {
-  roundDownToNearest,
-  roundUpToNearest,
-} from "../../utilities/mathUtilities";
+import _ from 'lodash';
+import getImagePointsInBbox from './getImagePointsInBbox';
+import { roundDownToNearest, roundUpToNearest } from 'utilities/mathUtilities';
 
 const settings = {
   bboxSizeInDegrees: 0.01,
@@ -13,13 +10,16 @@ const settings = {
 const getImagePointsInTilesOverlappingBbox = async (bbox, year) => {
   const { south, west, north, east } = bbox;
   const { bboxSizeInDegrees, bboxSizeDecimals } = settings;
+
   const expandedBbox = {
     south: roundDownToNearest(south, bboxSizeInDegrees),
     west: roundDownToNearest(west, bboxSizeInDegrees),
     north: roundUpToNearest(north, bboxSizeInDegrees),
     east: roundUpToNearest(east, bboxSizeInDegrees),
   };
+
   const fetchedBboxes = [];
+
   for (let i = expandedBbox.west; i < east; i += bboxSizeInDegrees) {
     for (let j = expandedBbox.south; j < north; j += bboxSizeInDegrees) {
       const bbox = {
@@ -31,11 +31,14 @@ const getImagePointsInTilesOverlappingBbox = async (bbox, year) => {
       fetchedBboxes.push(bbox);
     }
   }
+
   const promises = fetchedBboxes.map(async (bbox) => {
     return await getImagePointsInBbox(bbox, year);
   });
+
   const responses = await Promise.all(promises);
-  var imagePoints = _.chain(responses)
+
+  const imagePoints = _.chain(responses)
     .map((response) => response.data.features)
     .flatten()
     .uniqBy((imagePoint) => imagePoint.id)

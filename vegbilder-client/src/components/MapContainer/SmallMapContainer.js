@@ -1,32 +1,32 @@
-import React from "react";
-import { Map, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import { makeStyles } from "@material-ui/core/styles";
+import React from 'react';
+import { Map, TileLayer } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import { makeStyles } from '@material-ui/core/styles';
 
-import "./MapContainer.css";
-import { crsUtm33N } from "./crs";
-import ImagePointsLayer from "../ImagePointsLayer/ImagePointsLayer";
-import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
-import { useToggles } from "../../contexts/TogglesContext";
+import { crsUtm33N } from './crs';
+import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import { useToggles } from 'contexts/TogglesContext';
+import './MapContainer.css';
 
 const useStyles = makeStyles((theme) => ({
   minimap: {
-    position: "absolute",
-    width: "300px",
-    height: "300px",
-    left: "20px",
-    top: "20px",
+    position: 'absolute',
+    width: '300px',
+    height: '300px',
+    left: '20px',
+    top: '20px',
     border: `1px ${theme.palette.primary.main} solid`,
   },
   minimapHidden: {
-    display: "none",
+    display: 'none',
   },
 }));
 
-export default function SmallMapContainer() {
-  const classes = useStyles();
+const SmallMapContainer = () => {
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const { miniMapVisible } = useToggles();
+  const classes = useStyles();
   const minZoom = 15;
   const maxZoom = 16;
 
@@ -54,4 +54,6 @@ export default function SmallMapContainer() {
       </Map>
     </div>
   );
-}
+};
+
+export default SmallMapContainer;

@@ -10,7 +10,7 @@ import MapContainer from './MapContainer/MapContainer';
 import SmallMapContainer from './MapContainer/SmallMapContainer';
 import ImageViewer from './ImageViewer/ImageViewer';
 import ImagePreview from './ImagePreview/ImagePreview';
-import Splash from './Splash/Splash';
+import Onboarding from './Onboarding/Onboarding';
 import { TogglesProvider } from 'contexts/TogglesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 
@@ -132,7 +132,7 @@ const ComponentsWrapper = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <Splash />
+      <Onboarding />
     </>
   );
 };

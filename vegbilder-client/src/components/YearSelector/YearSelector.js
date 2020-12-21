@@ -6,12 +6,12 @@ import { InputBase } from '@material-ui/core';
 import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import { CalendarIcon } from '../Icons/Icons';
-import { useYearFilter } from '../../contexts/YearFilterContext';
-import { useLoadedImagePoints } from '../../contexts/LoadedImagePointsContext';
-import { useCommand, commandTypes } from '../../contexts/CommandContext';
-import { useFilteredImagePoints } from '../../contexts/FilteredImagePointsContext';
-import { availableYears } from '../../configuration/config';
+import { CalendarIcon } from 'components/Icons/Icons';
+import { useYearFilter } from 'contexts/YearFilterContext';
+import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
+import { useCommand, commandTypes } from 'contexts/CommandContext';
+import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
+import { availableYears } from 'configuration/config';
 
 const CustomInput = withStyles((theme) => ({
   input: {
