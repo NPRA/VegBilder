@@ -1,9 +1,9 @@
-import "proj4";
-import "proj4leaflet";
+import 'proj4';
+import 'proj4leaflet';
 
-const crsUtm33N = new window.L.Proj.CRS(
-  "EPSG:25833",
-  "+proj=utm +zone=33 +ellps=GRS80 +units=m +no_defs ",
+export const crsUtm33N = new window.L.Proj.CRS(
+  'EPSG:25833',
+  '+proj=utm +zone=33 +ellps=GRS80 +units=m +no_defs ',
   {
     resolutions: [
       21674.7100160867,
@@ -28,5 +28,3 @@ const crsUtm33N = new window.L.Proj.CRS(
     origin: [-2500000.0, 9045984.0],
   }
 );
-
-export { crsUtm33N };

@@ -1,45 +1,45 @@
-import React, { useEffect, useState, useCallback, useRef } from "react";
-import { makeStyles } from "@material-ui/core/styles";
-import _ from "lodash";
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { makeStyles } from '@material-ui/core/styles';
+import _ from 'lodash';
 
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
-import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
-import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
-import { useCommand, commandTypes } from "../../contexts/CommandContext";
-import { isEvenNumber } from "../../utilities/mathUtilities";
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import { useCommand, commandTypes } from 'contexts/CommandContext';
+import { isEvenNumber } from 'utilities/mathUtilities';
 import {
   getImagePointLatLng,
   getImageUrl,
   findNearestImagePoint,
   usesOldVegreferanse,
   areOnSameOrConsecutiveRoadParts,
-} from "../../utilities/imagePointUtilities";
-import CloseButton from "../CloseButton/CloseButton";
-import MeterLineCanvas from "./MeterLineCanvas";
-import { useToggles } from "../../contexts/TogglesContext";
+} from 'utilities/imagePointUtilities';
+import CloseButton from 'components/CloseButton/CloseButton';
+import MeterLineCanvas from './MeterLineCanvas';
+import { useToggles } from 'contexts/TogglesContext';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
-    height: "100%",
+    height: '100%',
     backgroundColor: theme.palette.primary.main,
-    display: "flex",
-    justifyContent: "center",
+    display: 'flex',
+    justifyContent: 'center',
   },
   image: {
-    maxHeight: "calc(100vh - 9.5rem)", // Total view height minus the height of the header and footer combined
-    maxWidth: "100%",
-    objectFit: "contain",
+    maxHeight: 'calc(100vh - 9.5rem)', // Total view height minus the height of the header and footer combined
+    maxWidth: '100%',
+    objectFit: 'contain',
   },
   canvas: {
-    position: "absolute",
-    top: "50%",
-    transform: "translateY(-50%)",
-    maxWidth: "100%",
-    maxHeight: "100%",
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    maxWidth: '100%',
+    maxHeight: '100%',
   },
 }));
 
-export default function ImageViewer({ exitImageView, showMessage }) {
+const ImageViewer = ({ exitImageView, showMessage }) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -54,37 +54,31 @@ export default function ImageViewer({ exitImageView, showMessage }) {
 
   const imgRef = useRef();
 
-  function hasOppositeParity(feltkode1, feltkode2) {
+  const hasOppositeParity = (feltkode1, feltkode2) => {
     if (!feltkode1 || !feltkode2) return null;
     const primaryFeltkode1 = parseInt(feltkode1[0], 10);
     const primaryFeltkode2 = parseInt(feltkode2[0], 10);
     return isEvenNumber(primaryFeltkode1) !== isEvenNumber(primaryFeltkode2);
-  }
+  };
 
-  function onImageLoaded() {
+  const onImageLoaded = () => {
     const img = imgRef.current;
     setImageElement(img);
-  }
+  };
 
   const goToNearestImagePointInOppositeLane = useCallback(() => {
     if (!currentImagePoint) return;
     const imagePointsInOppositeLane = filteredImagePoints.filter(
       (ip) =>
-        ip.properties.VEGKATEGORI ===
-          currentImagePoint.properties.VEGKATEGORI &&
+        ip.properties.VEGKATEGORI === currentImagePoint.properties.VEGKATEGORI &&
         ip.properties.VEGSTATUS === currentImagePoint.properties.VEGSTATUS &&
         ip.properties.VEGNUMMER === currentImagePoint.properties.VEGNUMMER &&
         ip.properties.STREKNING === currentImagePoint.properties.STREKNING &&
-        ip.properties.DELSTREKNING ===
-          currentImagePoint.properties.DELSTREKNING &&
+        ip.properties.DELSTREKNING === currentImagePoint.properties.DELSTREKNING &&
         ip.properties.KRYSSDEL === currentImagePoint.properties.KRYSSDEL &&
-        ip.properties.SIDEANLEGGSDEL ===
-          currentImagePoint.properties.SIDEANLEGGSDEL &&
+        ip.properties.SIDEANLEGGSDEL === currentImagePoint.properties.SIDEANLEGGSDEL &&
         ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
-        hasOppositeParity(
-          ip.properties.FELTKODE,
-          currentImagePoint.properties.FELTKODE
-        )
+        hasOppositeParity(ip.properties.FELTKODE, currentImagePoint.properties.FELTKODE)
     );
     if (imagePointsInOppositeLane.length === 0) return;
     const nearestImagePointInOppositeLane = findNearestImagePoint(
@@ -94,12 +88,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     const latlng = getImagePointLatLng(nearestImagePointInOppositeLane);
     setCurrentImagePoint(nearestImagePointInOppositeLane);
     setCurrentCoordinates({ latlng });
-  }, [
-    currentImagePoint,
-    filteredImagePoints,
-    setCurrentImagePoint,
-    setCurrentCoordinates,
-  ]);
+  }, [currentImagePoint, filteredImagePoints, setCurrentImagePoint, setCurrentCoordinates]);
 
   /* When currentImagePoint changes, we have to reset imageElement to null. Otherwise the imageElement
    * will briefly contain an image with naturalWidth and naturalHeight of 0 (before the image has finished loading),
@@ -120,10 +109,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
       if (ipProps.VEGNUMMER !== currentProps.VEGNUMMER) return false;
       if (ipProps.FELTKODE !== currentProps.FELTKODE) return false;
       if (currentProps.KRYSSDEL || currentProps.SIDEANLEGGSDEL) {
-        if (
-          currentProps.KRYSSDEL &&
-          ipProps.KRYSSDEL !== currentProps.KRYSSDEL
-        ) {
+        if (currentProps.KRYSSDEL && ipProps.KRYSSDEL !== currentProps.KRYSSDEL) {
           return false;
         } else if (
           currentProps.SIDEANLEGGSDEL &&
@@ -140,33 +126,26 @@ export default function ImageViewer({ exitImageView, showMessage }) {
       return true;
     }
 
-    function getSortedImagePointsForCurrentLane() {
+    const getSortedImagePointsForCurrentLane = () => {
       const currentLaneImagePoints = filteredImagePoints.filter((ip) =>
         shouldIncludeImagePoint(ip, currentImagePoint)
       );
-      const primaryFeltkode = parseInt(
-        currentImagePoint.properties.FELTKODE[0],
-        10
-      );
-      const sortOrder = isEvenNumber(primaryFeltkode) ? "desc" : "asc"; // Feltkode is odd in the metering direction and even in the opposite direction
+      const primaryFeltkode = parseInt(currentImagePoint.properties.FELTKODE[0], 10);
+      const sortOrder = isEvenNumber(primaryFeltkode) ? 'desc' : 'asc'; // Feltkode is odd in the metering direction and even in the opposite direction
       if (usesOldVegreferanse(currentImagePoint)) {
         return _.orderBy(
           currentLaneImagePoints,
-          ["properties.HP", "properties.METER"],
+          ['properties.HP', 'properties.METER'],
           [sortOrder, sortOrder]
         );
       } else {
         return _.orderBy(
           currentLaneImagePoints,
-          [
-            "properties.STREKNING",
-            "properties.DELSTREKNING",
-            "properties.METER",
-          ],
+          ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'],
           [sortOrder, sortOrder, sortOrder]
         );
       }
-    }
+    };
     if (filteredImagePoints && currentImagePoint) {
       const sortedImagePointsForCurrentLane = getSortedImagePointsForCurrentLane();
       setCurrentLaneImagePoints(sortedImagePointsForCurrentLane);
@@ -175,16 +154,10 @@ export default function ImageViewer({ exitImageView, showMessage }) {
 
   // Set next and previous image points
   useEffect(() => {
-    if (
-      !currentImagePoint ||
-      !currentLaneImagePoints ||
-      currentLaneImagePoints.length === 0
-    )
+    if (!currentImagePoint || !currentLaneImagePoints || currentLaneImagePoints.length === 0)
       return;
 
-    const currentIndex = currentLaneImagePoints.findIndex(
-      (ip) => ip.id === currentImagePoint.id
-    );
+    const currentIndex = currentLaneImagePoints.findIndex((ip) => ip.id === currentImagePoint.id);
     if (currentIndex === -1) {
       setNextImagePoint(null);
       setPreviousImagePoint(null);
@@ -211,9 +184,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
      */
 
     let nextImagePoint =
-      nextIndex < currentLaneImagePoints.length
-        ? currentLaneImagePoints[nextIndex]
-        : null;
+      nextIndex < currentLaneImagePoints.length ? currentLaneImagePoints[nextIndex] : null;
     if (
       nextImagePoint &&
       !areOnSameOrConsecutiveRoadParts(currentImagePoint, nextImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
@@ -221,8 +192,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
       nextImagePoint = null;
     }
 
-    let previousImagePoint =
-      previousIndex >= 0 ? currentLaneImagePoints[previousIndex] : null;
+    let previousImagePoint = previousIndex >= 0 ? currentLaneImagePoints[previousIndex] : null;
     if (
       previousImagePoint &&
       !areOnSameOrConsecutiveRoadParts(currentImagePoint, previousImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
@@ -245,9 +215,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
             setCurrentImagePoint(nextImagePoint);
             setCurrentCoordinates({ latlng: latlng });
           } else {
-            showMessage(
-              "Dette er siste bilde i serien. Velg nytt bildepunkt i kartet."
-            );
+            showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
           }
           break;
         case commandTypes.goBackwards:
@@ -256,9 +224,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
             setCurrentImagePoint(previousImagePoint);
             setCurrentCoordinates({ latlng: latlng });
           } else {
-            showMessage(
-              "Dette er første bilde i serien. Velg nytt bildepunkt i kartet."
-            );
+            showMessage('Dette er første bilde i serien. Velg nytt bildepunkt i kartet.');
           }
           break;
         case commandTypes.turnAround:
@@ -283,7 +249,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     showMessage,
   ]);
 
-  function renderMeterLine() {
+  const renderMeterLine = () => {
     if (
       meterLineVisible &&
       imageElement &&
@@ -301,7 +267,7 @@ export default function ImageViewer({ exitImageView, showMessage }) {
     } else {
       return null;
     }
-  }
+  };
 
   return (
     <div className={classes.imageArea}>
@@ -320,4 +286,6 @@ export default function ImageViewer({ exitImageView, showMessage }) {
       <CloseButton onClick={exitImageView} />
     </div>
   );
-}
+};
+
+export default ImageViewer;
