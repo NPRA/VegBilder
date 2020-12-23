@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Icon } from 'leaflet';
 import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 import { Rectangle, Marker } from 'react-leaflet';
+import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import {
