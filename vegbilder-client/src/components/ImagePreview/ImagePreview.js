@@ -1,33 +1,30 @@
-import React from "react";
-import { Box, IconButton } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
+import React from 'react';
+import { Box, IconButton } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
 
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
-import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
-import {
-  getImageUrl,
-  getImagePointLatLng,
-} from "../../utilities/imagePointUtilities";
-import ImageMetadata from "../ImageMetadata/ImageMetadata";
-import { EnlargeIcon } from "../Icons/Icons";
-import CloseButton from "../CloseButton/CloseButton";
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
+import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
+import { EnlargeIcon } from 'components/Icons/Icons';
+import CloseButton from 'components/CloseButton/CloseButton';
 
 const useStyles = makeStyles((theme) => ({
   image: {
-    width: "30rem",
-    margin: "2px 2px 0 2px",
+    width: '30rem',
+    margin: '2px 2px 0 2px',
   },
   enlargeButton: {
-    "& span": {
-      "& svg": {
-        width: "21px",
-        height: "21px",
+    '& span': {
+      '& svg': {
+        width: '21px',
+        height: '21px',
       },
     },
   },
 }));
 
-export default function ImagePreview({ openImageView }) {
+const ImagePreview = ({ openImageView }) => {
   const classes = useStyles();
   const { currentImagePoint, unsetCurrentImagePoint } = useCurrentImagePoint();
   const { setCurrentCoordinates } = useCurrentCoordinates();
@@ -35,10 +32,10 @@ export default function ImagePreview({ openImageView }) {
   if (currentImagePoint) {
     const latlng = getImagePointLatLng(currentImagePoint);
 
-    function openImage() {
+    const openImage = () => {
       setCurrentCoordinates({ latlng: latlng, zoom: 16 });
       openImageView();
-    }
+    };
 
     return (
       <Box
@@ -73,4 +70,6 @@ export default function ImagePreview({ openImageView }) {
       </Box>
     );
   } else return null;
-}
+};
+
+export default ImagePreview;

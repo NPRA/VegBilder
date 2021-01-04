@@ -1,14 +1,14 @@
 const reportEmailTemplateText = {
-  emailAddress: "vegbilder@vegvesen.no",
-  subject: "Melding om feil på vegbilde med id",
+  emailAddress: 'vegbilder@vegvesen.no',
+  subject: 'Melding om feil på vegbilde med id',
   body: {
-    line1: "Jeg vil melde fra om feil på følgende vegbilde:",
-    line2: "Beskrivelse: <Vennligst beskriv hva som er feil>",
+    line1: 'Jeg vil melde fra om feil på følgende vegbilde:',
+    line2: 'Beskrivelse: <Vennligst beskriv hva som er feil>',
   },
 };
 
-const splashScreenText = {
-  header: "Velkommen til Vegbilder",
+const onboardingText = {
+  header: 'Velkommen til Vegbilder',
   paragraphs: [
     `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu
      neque eget eros interdum condimentum sed rutrum orci. Etiam cursus
@@ -32,4 +32,4 @@ const splashScreenText = {
   ],
 };
 
-export { reportEmailTemplateText, splashScreenText };
+export { reportEmailTemplateText, onboardingText };

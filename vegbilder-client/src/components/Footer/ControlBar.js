@@ -1,19 +1,19 @@
-import React, { useEffect, useState } from "react";
-import IconButton from "@material-ui/core/IconButton";
-import Toolbar from "@material-ui/core/Toolbar";
-import Menu from "@material-ui/core/Menu";
-import MenuItem from "@material-ui/core/MenuItem";
-import { makeStyles } from "@material-ui/core/styles";
-import ListItemIcon from "@material-ui/core/ListItemIcon";
-import ListItemText from "@material-ui/core/ListItemText";
-import ReportIcon from "@material-ui/icons/Report";
-import ShareIcon from "@material-ui/icons/Share";
-import OpenInNewIcon from "@material-ui/icons/OpenInNew";
-import clsx from "clsx";
+import React, { useEffect, useState } from 'react';
+import IconButton from '@material-ui/core/IconButton';
+import Toolbar from '@material-ui/core/Toolbar';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import { makeStyles } from '@material-ui/core/styles';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ReportIcon from '@material-ui/icons/Report';
+import ShareIcon from '@material-ui/icons/Share';
+import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import clsx from 'clsx';
 
-import { useCommand, commandTypes } from "../../contexts/CommandContext";
-import { useToggles } from "../../contexts/TogglesContext";
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
+import { useCommand, commandTypes } from 'contexts/CommandContext';
+import { useToggles } from 'contexts/TogglesContext';
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
   ArrowDownIcon,
   ArrowTurnIcon,
@@ -25,35 +25,30 @@ import {
   MeasureIcon,
   MeasureDisabledIcon,
   //PlayIcon,
-} from "../Icons/Icons";
-import useCopyToClipboard from "../../hooks/useCopyToClipboard";
-import { getShareableUrlForImage } from "../../utilities/urlUtilities";
-import { createMailtoHrefForReporting } from "../../utilities/mailtoUtilities";
-import { getImageUrl } from "../../utilities/imagePointUtilities";
+} from '../Icons/Icons';
+import useCopyToClipboard from '../../hooks/useCopyToClipboard';
+import { getShareableUrlForImage } from '../../utilities/urlUtilities';
+import { createMailtoHrefForReporting } from '../../utilities/mailtoUtilities';
+import { getImageUrl } from '../../utilities/imagePointUtilities';
 
 const useStyles = makeStyles({
   button: {
-    margin: "1.25rem",
-    backgroundColor: "transparent",
+    margin: '1.25rem',
+    backgroundColor: 'transparent',
   },
   arrowTurnButton: {
-    "& .MuiIconButton-label": {
-      "& .MuiSvgIcon-root": {
-        width: "30px",
+    '& .MuiIconButton-label': {
+      '& .MuiSvgIcon-root': {
+        width: '30px',
       },
     },
   },
 });
 
-export default function ControlBar({ showMessage }) {
+const ControlBar = ({ showMessage }) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
-  const {
-    miniMapVisible,
-    meterLineVisible,
-    setMiniMapVisible,
-    setMeterLineVisible,
-  } = useToggles();
+  const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
   const { currentImagePoint } = useCurrentImagePoint();
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
   const { copyToClipboard } = useCopyToClipboard();
@@ -62,37 +57,35 @@ export default function ControlBar({ showMessage }) {
     setMoreControlsAnchorEl(event.currentTarget);
   };
 
-  const handleMoreControlsClose = () => {
-    setMoreControlsAnchorEl(null);
-  };
+  const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
 
-  function copyShareableUrlToClipboard() {
+  const copyShareableUrlToClipboard = () => {
     const shareableUrl = getShareableUrlForImage(currentImagePoint);
     copyToClipboard(shareableUrl);
-    showMessage("Lenke kopiert til utklippstavle");
-  }
+    showMessage('Lenke kopiert til utklippstavle');
+  };
 
-  function openPrefilledEmailInDefaultEmailClient() {
-    window.open(createMailtoHrefForReporting(currentImagePoint), "_self");
-    showMessage("Åpner e-post-klient");
-  }
+  const openPrefilledEmailInDefaultEmailClient = () => {
+    window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
+    showMessage('Åpner e-post-klient');
+  };
 
   useEffect(() => {
     const onKeyDown = (event) => {
       switch (event.key) {
-        case "ArrowDown":
+        case 'ArrowDown':
           setCommand(commandTypes.goBackwards);
           break;
-        case "ArrowUp":
+        case 'ArrowUp':
           setCommand(commandTypes.goForwards);
           break;
         default:
         // Ignore other key presses
       }
     };
-    document.body.addEventListener("keydown", onKeyDown);
+    document.body.addEventListener('keydown', onKeyDown);
     return function cleanUp() {
-      document.body.removeEventListener("keydown", onKeyDown);
+      document.body.removeEventListener('keydown', onKeyDown);
     };
   }, [setCommand]);
 
@@ -184,12 +177,12 @@ export default function ControlBar({ showMessage }) {
           open={Boolean(moreControlsAnchorEl)}
           onClose={handleMoreControlsClose}
           anchorOrigin={{
-            vertical: "top",
-            horizontal: "center",
+            vertical: 'top',
+            horizontal: 'center',
           }}
           transformOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
+            vertical: 'bottom',
+            horizontal: 'center',
           }}
         >
           <MenuItem
@@ -216,7 +209,7 @@ export default function ControlBar({ showMessage }) {
           </MenuItem>
           <MenuItem
             onClick={() => {
-              window.open(getImageUrl(currentImagePoint), "_blank", "noopener");
+              window.open(getImageUrl(currentImagePoint), '_blank', 'noopener');
               handleMoreControlsClose();
             }}
           >
@@ -229,4 +222,6 @@ export default function ControlBar({ showMessage }) {
       ) : null}
     </>
   );
-}
+};
+
+export default ControlBar;

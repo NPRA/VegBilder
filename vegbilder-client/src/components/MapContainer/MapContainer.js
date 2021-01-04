@@ -1,14 +1,13 @@
-import React from "react";
-import { Map, TileLayer } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
+import React from 'react';
+import { Map, TileLayer } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
 
-import "./MapContainer.css";
-import { crsUtm33N } from "./crs";
-import ImagePointLayersWrapper from "../ImagePointsLayersWrapper/ImagePointsLayersWrapper";
-import MapControls from "../MapControls/MapControls";
-import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
+import { crsUtm33N } from './crs';
+import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
+import MapControls from 'components/MapControls/MapControls';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 
-export default function MapContainer() {
+const MapContainer = () => {
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
 
   return (
@@ -36,4 +35,6 @@ export default function MapContainer() {
       <MapControls />
     </Map>
   );
-}
+};
+
+export default MapContainer;

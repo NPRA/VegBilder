@@ -1,19 +1,17 @@
-import _ from "lodash";
+import _ from 'lodash';
 
-import { getDistanceInMetersBetween } from "./latlngUtilities";
-import { splitDateTimeString } from "./dateTimeUtilities";
+import { getDistanceInMetersBetween } from './latlngUtilities';
+import { splitDateTimeString } from './dateTimeUtilities';
 
-function getImagePointLatLng(imagePoint) {
+const getImagePointLatLng = (imagePoint) => {
   const lat = imagePoint.geometry.coordinates[1];
   const lng = imagePoint.geometry.coordinates[0];
   return { lat, lng };
-}
+};
 
-function getImageUrl(imagepoint) {
-  return imagepoint.properties.URL;
-}
+const getImageUrl = (imagepoint) => imagepoint.properties.URL;
 
-function findNearestImagePoint(imagePoints, latlng) {
+const findNearestImagePoint = (imagePoints, latlng) => {
   let nearestPoint = { distance: 100000000, imagePoint: null };
   imagePoints.forEach((ip) => {
     const imageLatlng = getImagePointLatLng(ip);
@@ -23,9 +21,9 @@ function findNearestImagePoint(imagePoints, latlng) {
     }
   });
   return nearestPoint.imagePoint;
-}
+};
 
-function getRoadReference(imagePoint) {
+const getRoadReference = (imagePoint) => {
   const {
     VEGKATEGORI,
     VEGSTATUS,
@@ -39,10 +37,10 @@ function getRoadReference(imagePoint) {
     SIDEANLEGGSDEL,
     ANKERPUNKT,
   } = imagePoint.properties;
-  const meterPart = isNaN(METER) ? "" : ` M${Math.round(METER)}`;
+  const meterPart = isNaN(METER) ? '' : ` M${Math.round(METER)}`;
   const feltPart = ` F${FELTKODE}`;
 
-  function createVegsystemreferanse() {
+  const createVegsystemreferanse = () => {
     const vegOgStrekning = `${VEGKATEGORI}${VEGSTATUS}${VEGNUMMER} S${STREKNING}D${DELSTREKNING}`;
     let withoutMeter;
     if (KRYSSDEL) {
@@ -55,36 +53,30 @@ function getRoadReference(imagePoint) {
     const complete = withoutMeter + meterPart + feltPart;
     withoutMeter += feltPart;
     return { complete, withoutMeter };
-  }
+  };
 
-  function createVegreferanse() {
+  const createVegreferanse = () => {
     let withoutMeter = `${VEGKATEGORI}${VEGSTATUS}${VEGNUMMER} HP${HP}`;
     let complete = withoutMeter + meterPart + feltPart;
     withoutMeter += feltPart;
     return { complete, withoutMeter };
-  }
+  };
 
-  return imagePoint.properties.AAR >= 2020
-    ? createVegsystemreferanse()
-    : createVegreferanse();
-}
+  return imagePoint.properties.AAR >= 2020 ? createVegsystemreferanse() : createVegreferanse();
+};
 
 /* Returns a road reference which should be somewhat applicable across years (compatible with both
  * the old vegreferanse and the new vegsystemreferanse). VEGKATEGORI, VEGSTATUS and VEGNUMMER are
  * usually the same (but they do change occasionally). FELTKODE may also change. Use with care.
  */
-function getGenericRoadReference(imagePoint) {
+const getGenericRoadReference = (imagePoint) => {
   const { VEGKATEGORI, VEGSTATUS, VEGNUMMER, FELTKODE } = imagePoint.properties;
   return `${VEGKATEGORI}${VEGSTATUS}${VEGNUMMER} F${FELTKODE}`;
-}
+};
 
-function usesOldVegreferanse(imagePoint) {
-  return imagePoint.properties.AAR < 2020;
-}
+const usesOldVegreferanse = (imagePoint) => imagePoint.properties.AAR < 2020;
 
-function getDateString(imagePoint) {
-  return splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
-}
+const getDateString = (imagePoint) => splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
 
 /* Takes an array of image points and returns those image points grouped first by road reference
  * (vegsystemreferanse or vegreferanse) without the meter value, and then by date. So a
@@ -101,11 +93,8 @@ function getDateString(imagePoint) {
  * new object, under which each key is a date. The value for each of those is an array of image
  * points.
  */
-function groupBySeries(imagePoints) {
-  const groupedByRoadReference = _.groupBy(
-    imagePoints,
-    (ip) => getRoadReference(ip).withoutMeter
-  );
+const groupBySeries = (imagePoints) => {
+  const groupedByRoadReference = _.groupBy(imagePoints, (ip) => getRoadReference(ip).withoutMeter);
   for (const [roadReference, imagePointsForRoadReference] of Object.entries(
     groupedByRoadReference
   )) {
@@ -113,32 +102,26 @@ function groupBySeries(imagePoints) {
     groupedByRoadReference[roadReference] = groupedByDate;
   }
   return groupedByRoadReference;
-}
+};
 
 /* Check if two image points are on the same road part or consecutive road parts,
  * where a road part is a:
  *  - hovedparsell (HP) in the old vegreferanse (2019 and earlier)
  *  - combination of strekning and delstrekning in the new vegsystemreferanse (2020 and later)
  */
-function areOnSameOrConsecutiveRoadParts(imagePoint1, imagePoint2) {
+const areOnSameOrConsecutiveRoadParts = (imagePoint1, imagePoint2) => {
   if (usesOldVegreferanse(imagePoint1) && usesOldVegreferanse(imagePoint2)) {
     return areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2);
-  } else if (
-    !usesOldVegreferanse(imagePoint1) &&
-    !usesOldVegreferanse(imagePoint2)
-  ) {
-    return areOnSameOrConsecutiveStrekningDelstrekning(
-      imagePoint1,
-      imagePoint2
-    );
+  } else if (!usesOldVegreferanse(imagePoint1) && !usesOldVegreferanse(imagePoint2)) {
+    return areOnSameOrConsecutiveStrekningDelstrekning(imagePoint1, imagePoint2);
   } else {
     console.error(
-      "Tried to compare new vegsystemreferanse with old vegreferanse. This should not happen."
+      'Tried to compare new vegsystemreferanse with old vegreferanse. This should not happen.'
     );
   }
-}
+};
 
-function areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2) {
+const areOnSameOrConsecutiveHovedparsells = (imagePoint1, imagePoint2) => {
   const hp1 = imagePoint1.properties.HP;
   const hp2 = imagePoint2.properties.HP;
   if (hp1 == null || hp2 == null) {
@@ -148,9 +131,9 @@ function areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2) {
     return false;
   }
   return Math.abs(hp1 - hp2) <= 1;
-}
+};
 
-function areOnSameOrConsecutiveStrekningDelstrekning(imagePoint1, imagePoint2) {
+const areOnSameOrConsecutiveStrekningDelstrekning = (imagePoint1, imagePoint2) => {
   const sd1 = {
     strekning: imagePoint1.properties.STREKNING,
     delstrekning: imagePoint1.properties.DELSTREKNING,
@@ -179,15 +162,13 @@ function areOnSameOrConsecutiveStrekningDelstrekning(imagePoint1, imagePoint2) {
 
   return (
     // Same strekning and delstrekning
-    (second.strekning === first.strekning &&
-      second.delstrekning === first.delstrekning) ||
+    (second.strekning === first.strekning && second.delstrekning === first.delstrekning) ||
     // Next delstrekning on same strekning
-    (second.strekning === first.strekning &&
-      second.delstrekning === first.delstrekning + 1) ||
+    (second.strekning === first.strekning && second.delstrekning === first.delstrekning + 1) ||
     // First delstrekning on next strekning
     (second.strekning === first.strekning + 1 && second.delstrekning === 1)
   );
-}
+};
 
 export {
   getImagePointLatLng,

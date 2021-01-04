@@ -1,15 +1,15 @@
-import React from "react";
-import { useLeafletZoom } from "use-leaflet";
-import { WMSTileLayer } from "react-leaflet";
+import React from 'react';
+import { useLeafletZoom } from 'use-leaflet';
+import { WMSTileLayer } from 'react-leaflet';
 
-import { useYearFilter } from "../../contexts/YearFilterContext";
-import ImagePointsLayer from "../ImagePointsLayer/ImagePointsLayer";
+import { useYearFilter } from 'contexts/YearFilterContext';
+import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 
 const ImagePointLayersWrapper = () => {
   const zoom = useLeafletZoom();
   const { year } = useYearFilter();
 
-  function renderImagePointsLayer() {
+  const renderImagePointsLayer = () => {
     if (zoom > 14) {
       return <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={true} />;
     } else if (zoom > 9) {
@@ -35,7 +35,7 @@ const ImagePointLayersWrapper = () => {
         />
       );
     }
-  }
+  };
   return renderImagePointsLayer();
 };
 

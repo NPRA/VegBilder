@@ -1,17 +1,17 @@
-import React from "react";
-import { ThemeProvider } from "@material-ui/core";
+import React from 'react';
+import { ThemeProvider } from '@material-ui/core';
 
-import { CurrentImagePointProvider } from "../contexts/CurrentImagePointContext";
-import { CurrentCoordinatesProvider } from "../contexts/CurrentCoordinatesContext";
-import { LoadedImagePointsProvider } from "../contexts/LoadedImagePointsContext";
-import { CommandProvider } from "../contexts/CommandContext";
-import theme from "../theme/Theme";
-import { YearFilterProvider } from "../contexts/YearFilterContext";
-import { ImageSeriesProvider } from "../contexts/ImageSeriesContext";
-import { FilteredImagePointsProvider } from "../contexts/FilteredImagePointsContext";
-import ComponentsWrapper from "./ComponentsWrapper";
+import { CurrentImagePointProvider } from '../contexts/CurrentImagePointContext';
+import { CurrentCoordinatesProvider } from '../contexts/CurrentCoordinatesContext';
+import { LoadedImagePointsProvider } from '../contexts/LoadedImagePointsContext';
+import { CommandProvider } from '../contexts/CommandContext';
+import theme from '../theme/Theme';
+import { YearFilterProvider } from '../contexts/YearFilterContext';
+import { ImageSeriesProvider } from '../contexts/ImageSeriesContext';
+import { FilteredImagePointsProvider } from '../contexts/FilteredImagePointsContext';
+import ComponentsWrapper from './ComponentsWrapper';
 
-function App() {
+const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CurrentCoordinatesProvider>
@@ -31,6 +31,6 @@ function App() {
       </CurrentCoordinatesProvider>
     </ThemeProvider>
   );
-}
+};
 
 export default App;

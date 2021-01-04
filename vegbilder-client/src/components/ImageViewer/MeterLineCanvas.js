@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from 'react';
 
-function getBaseLineData(baseLineInfo) {
-  let split = baseLineInfo.split(";");
+const getBaseLineData = (baseLineInfo) => {
+  let split = baseLineInfo.split(';');
   if (split.length !== 5) {
     return null;
   }
@@ -31,9 +31,9 @@ function getBaseLineData(baseLineInfo) {
     baseLineTickOffset,
     tiltPoint,
   };
-}
+};
 
-function MeterLineCanvas({ baseLineInfo, ...rest }) {
+const MeterLineCanvas = ({ baseLineInfo, ...rest }) => {
   const canvasRef = useRef(null);
 
   // Draw the meter line on canvas
@@ -47,8 +47,8 @@ function MeterLineCanvas({ baseLineInfo, ...rest }) {
         return;
       }
       const canvas = canvasRef.current;
-      const context = canvas.getContext("2d");
-      context.strokeStyle = "#FFFFFF";
+      const context = canvas.getContext('2d');
+      context.strokeStyle = '#FFFFFF';
       context.lineWidth = 3;
       context.beginPath();
 
@@ -63,8 +63,7 @@ function MeterLineCanvas({ baseLineInfo, ...rest }) {
       context.stroke();
 
       // Ticks
-      const firstTickX =
-        baseLineData.tiltPoint + baseLineData.baseLineTickOffset;
+      const firstTickX = baseLineData.tiltPoint + baseLineData.baseLineTickOffset;
       let x = firstTickX;
       while (x >= baseLineStartX) {
         drawMeterTick(x, y);
@@ -85,6 +84,6 @@ function MeterLineCanvas({ baseLineInfo, ...rest }) {
   }, [baseLineInfo]);
 
   return <canvas {...rest} ref={canvasRef} />;
-}
+};
 
 export default MeterLineCanvas;

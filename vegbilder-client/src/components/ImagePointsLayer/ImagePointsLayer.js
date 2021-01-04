@@ -1,27 +1,27 @@
-import React, { useEffect, useState, useCallback } from "react";
-import { Icon } from "leaflet";
-import { useLeafletBounds, useLeafletCenter } from "use-leaflet";
-import { Rectangle, Marker } from "react-leaflet";
-import leafletrotatedmarker from "leaflet-rotatedmarker"; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
+import React, { useEffect, useState, useCallback } from 'react';
+import { Icon } from 'leaflet';
+import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
+import { Rectangle, Marker } from 'react-leaflet';
+import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
 
-import getImagePointsInTilesOverlappingBbox from "../../apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox";
+import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import {
   createSquareBboxAroundPoint,
   isWithinBbox,
   isBboxWithinContainingBbox,
-} from "../../utilities/latlngUtilities";
-import { useLoadedImagePoints } from "../../contexts/LoadedImagePointsContext";
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
-import { useCurrentCoordinates } from "../../contexts/CurrentCoordinatesContext";
-import { useYearFilter } from "../../contexts/YearFilterContext";
-import { useCommand, commandTypes } from "../../contexts/CommandContext";
+} from 'utilities/latlngUtilities';
+import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import { useYearFilter } from 'contexts/YearFilterContext';
+import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
   getImagePointLatLng,
   findNearestImagePoint,
   getGenericRoadReference,
-} from "../../utilities/imagePointUtilities";
-import { useFilteredImagePoints } from "../../contexts/FilteredImagePointsContext";
-import { availableYears } from "../../configuration/config";
+} from 'utilities/imagePointUtilities';
+import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
+import { availableYears } from 'configuration/config';
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -61,14 +61,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
 
   const selectNearestImagePointToCurrentCoordinates = useCallback(() => {
     if (!filteredImagePoints || !currentCoordinates) return false;
-    const nearestImagePoint = findNearestImagePoint(
-      filteredImagePoints,
-      currentCoordinates.latlng
-    );
+    const nearestImagePoint = findNearestImagePoint(filteredImagePoints, currentCoordinates.latlng);
     if (nearestImagePoint) {
       setCurrentImagePoint(nearestImagePoint);
     }
-
     return true;
   }, [filteredImagePoints, currentCoordinates, setCurrentImagePoint]);
 
@@ -90,6 +86,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       const currentRoadRef = getGenericRoadReference(currentImagePoint);
       return roadRef === currentRoadRef;
     });
+
     const nearestImagePoint = findNearestImagePoint(
       sameRoadReferenceImagePoints,
       getImagePointLatLng(currentImagePoint)
@@ -116,10 +113,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
         if (shouldUseMapBoundsAsTargetBbox) {
           targetBbox = bboxVisibleMapArea;
         } else {
-          targetBbox = createSquareBboxAroundPoint(
-            { lat, lng },
-            settings.targetBboxSize
-          );
+          targetBbox = createSquareBboxAroundPoint({ lat, lng }, settings.targetBboxSize);
         }
         const {
           imagePoints,
@@ -187,10 +181,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
 
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
     const iconUrl = `images/markers/marker-${
-      vegkategori === "E" || vegkategori === "R" ? "ER" : "FK"
-    }-${year === availableYears[0] ? "newest" : "older"}-${
-      isDirectional ? "directional" : "nondirectional"
-    }${isSelected ? "-selected" : ""}.svg`;
+      vegkategori === 'E' || vegkategori === 'R' ? 'ER' : 'FK'
+    }-${year === availableYears[0] ? 'newest' : 'older'}-${
+      isDirectional ? 'directional' : 'nondirectional'
+    }${isSelected ? '-selected' : ''}.svg`;
     let iconSizeX, iconSizeY;
 
     if (isDirectional) {
@@ -225,8 +219,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           {imagePointsToRender.map((imagePoint) => {
             const latlng = getImagePointLatLng(imagePoint);
             const isDirectional = imagePoint.properties.RETNING != null;
-            const isSelected =
-              currentImagePoint && currentImagePoint.id === imagePoint.id;
+            const isSelected = currentImagePoint && currentImagePoint.id === imagePoint.id;
             const icon = getMarkerIcon(
               imagePoint.properties.VEGKATEGORI,
               isDirectional,
@@ -238,7 +231,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
                 position={latlng}
                 icon={icon}
                 rotationAngle={imagePoint.properties.RETNING}
-                rotationOrigin={"center center"}
+                rotationOrigin={'center center'}
                 zIndexOffset={isSelected ? 10000 : 0}
                 onclick={() => {
                   setCurrentImagePoint(imagePoint);
@@ -268,25 +261,25 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   };
 
   const renderTargetBbox = () => {
-    return renderBbox(targetBbox, "red");
+    return renderBbox(targetBbox, 'red');
   };
 
   const renderFetchBboxes = () => {
     if (fetchedBboxes) {
-      return <>{fetchedBboxes.map((bbox) => renderBbox(bbox, "blue"))}</>;
+      return <>{fetchedBboxes.map((bbox) => renderBbox(bbox, 'blue'))}</>;
     }
   };
 
   const renderLoadedBbox = () => {
     // This bbox should correspond to the union of the fetchBboxes, so it will generelly not be visible
     if (loadedImagePoints) {
-      return renderBbox(loadedImagePoints.bbox, "orange");
+      return renderBbox(loadedImagePoints.bbox, 'orange');
     }
   };
 
   const renderMapAreaBbox = () => {
     const bbox = createBboxForVisibleMapArea();
-    return renderBbox(bbox, "green");
+    return renderBbox(bbox, 'green');
   };
 
   const renderBboxes = () => {

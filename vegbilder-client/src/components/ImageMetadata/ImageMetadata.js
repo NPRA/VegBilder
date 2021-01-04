@@ -1,13 +1,13 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import React from 'react';
+import { makeStyles } from '@material-ui/core/styles';
 
-import { useCurrentImagePoint } from "../../contexts/CurrentImagePointContext";
-import { toLocaleDateAndTime } from "../../utilities/dateTimeUtilities";
-import { getRoadReference } from "../../utilities/imagePointUtilities";
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
+import { getRoadReference } from 'utilities/imagePointUtilities';
 
 const useStyles = makeStyles({
   roadReference: {
-    fontWeight: "bold",
+    fontWeight: 'bold',
   },
 });
 
@@ -22,11 +22,11 @@ const ImageMetadata = () => {
   const dateAndTime = `${dateTime.date} kl. ${dateTime.time}`;
 
   return (
-    <div>
+    <>
       <span className={classes.roadReference}>{roadReference}</span>
       <br />
       {dateAndTime}
-    </div>
+    </>
   );
 };
 
