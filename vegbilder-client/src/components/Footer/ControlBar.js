@@ -24,12 +24,13 @@ import {
   MapDisabledIcon,
   MeasureIcon,
   MeasureDisabledIcon,
-  //PlayIcon,
+  PlayIcon,
+  StopIcon,
 } from '../Icons/Icons';
-import useCopyToClipboard from '../../hooks/useCopyToClipboard';
-import { getShareableUrlForImage } from '../../utilities/urlUtilities';
-import { createMailtoHrefForReporting } from '../../utilities/mailtoUtilities';
-import { getImageUrl } from '../../utilities/imagePointUtilities';
+import useCopyToClipboard from 'hooks/useCopyToClipboard';
+import { getShareableUrlForImage } from 'utilities/urlUtilities';
+import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
+import { getImageUrl } from 'utilities/imagePointUtilities';
 
 const useStyles = makeStyles({
   button: {
@@ -50,8 +51,10 @@ const ControlBar = ({ showMessage }) => {
   const { setCommand } = useCommand();
   const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
   const { currentImagePoint } = useCurrentImagePoint();
-  const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
   const { copyToClipboard } = useCopyToClipboard();
+
+  const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
+  const [playVideo, setPlayVideo] = useState(false);
 
   const handleMoreControlsClick = (event) => {
     setMoreControlsAnchorEl(event.currentTarget);
@@ -130,11 +133,25 @@ const ControlBar = ({ showMessage }) => {
         >
           <ArrowTurnIcon />
         </IconButton>
-        {/*
-        <IconButton aria-label="Start animasjon" className={classes.button}>
-          <PlayIcon />
-        </IconButton>
-        */}
+
+        {playVideo ? (
+          <IconButton
+            aria-label="Stopp animasjon"
+            className={classes.button}
+            onClick={() => setPlayVideo(false)}
+          >
+            <StopIcon />
+          </IconButton>
+        ) : (
+          <IconButton
+            aria-label="Start animasjon"
+            className={classes.button}
+            onClick={() => setPlayVideo(true)}
+          >
+            <PlayIcon />
+          </IconButton>
+        )}
+
         {meterLineVisible ? (
           <IconButton
             aria-label="Mål avstand"
