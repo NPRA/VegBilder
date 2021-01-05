@@ -32,4 +32,9 @@ const onboardingText = {
   ],
 };
 
-export { reportEmailTemplateText, onboardingText };
+const informationText = {
+  versionNumber: 'Versjonsnummer: 2.0.0',
+  contact: 'Kontakt: vegbilder@vegvesen.no',
+};
+
+export { reportEmailTemplateText, onboardingText, informationText };

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import { Toolbar, Grid, Box } from '@material-ui/core';
+import { Toolbar, Grid, Box, IconButton } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 import Search from 'components/Search/Search';
 import YearSelector from 'components/YearSelector/YearSelector';
 import ImageSeriesSelector from 'components/ImageSeriesSelector/ImageSeriesSelector';
+import { CircledHelpIcon } from 'components/Icons/Icons';
+import Information from './Information';
 
 const useStyles = makeStyles({
   headerAppBar: {
@@ -14,7 +16,7 @@ const useStyles = makeStyles({
   headerToolBar: {
     height: '100%',
     marginLeft: '4.125rem',
-    marginRight: '4.125rem',
+    marginRight: '1.125rem',
   },
   logoContainer: {
     display: 'flex',
@@ -36,10 +38,14 @@ const useStyles = makeStyles({
   rightItem: {
     width: '7.5rem',
   },
+  button: {
+    backgroundColor: 'transparent',
+  },
 });
 
 const Header = ({ showMessage }) => {
   const classes = useStyles();
+  const [showInformation, setShowInformation] = useState(false);
 
   return (
     <AppBar position="static" color="primary" elevation={3} className={classes.headerAppBar}>
@@ -56,8 +62,16 @@ const Header = ({ showMessage }) => {
             <Box width={'1.125rem'} />
             <ImageSeriesSelector />
           </Grid>
+          <IconButton
+            aria-label="Informasjon om versjonsnummer og kontaktinfo"
+            className={classes.button}
+            onClick={() => setShowInformation(!showInformation)}
+          >
+            <CircledHelpIcon />
+          </IconButton>
         </Grid>
       </Toolbar>
+      {showInformation && <Information setVisible={() => setShowInformation(!showInformation)} />}
     </AppBar>
   );
 };
