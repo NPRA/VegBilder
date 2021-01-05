@@ -17,6 +17,8 @@ import {
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { useToggles } from 'contexts/TogglesContext';
+import { useRecoilValue } from 'recoil';
+import { playVideoState } from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -43,9 +45,10 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
-  const { command, resetCommand } = useCommand();
+  const { command, setCommand, resetCommand } = useCommand();
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { meterLineVisible } = useToggles();
+  const autoPlay = useRecoilValue(playVideoState);
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -211,9 +214,11 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
       switch (command) {
         case commandTypes.goForwards:
           if (nextImagePoint) {
-            const latlng = getImagePointLatLng(nextImagePoint);
-            setCurrentImagePoint(nextImagePoint);
-            setCurrentCoordinates({ latlng: latlng });
+            sleep(100).then(() => {
+              const latlng = getImagePointLatLng(nextImagePoint);
+              setCurrentImagePoint(nextImagePoint);
+              setCurrentCoordinates({ latlng: latlng });
+            });
           } else {
             showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
           }
@@ -269,6 +274,12 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
     }
   };
 
+  useEffect(() => {
+    if (autoPlay) {
+      setCommand(commandTypes.goForwards);
+    }
+  }, [autoPlay, setCommand]);
+
   return (
     <div className={classes.imageArea}>
       {currentImagePoint ? (
@@ -287,5 +298,7 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
     </div>
   );
 };
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default ImageViewer;

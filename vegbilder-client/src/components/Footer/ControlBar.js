@@ -9,8 +9,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import clsx from 'clsx';
+import { useRecoilState } from 'recoil';
 
+import clsx from 'clsx';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useToggles } from 'contexts/TogglesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
@@ -31,6 +32,7 @@ import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
+import { playVideoState } from 'recoil/atoms';
 
 const useStyles = makeStyles({
   button: {
@@ -54,7 +56,7 @@ const ControlBar = ({ showMessage }) => {
   const { copyToClipboard } = useCopyToClipboard();
 
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
-  const [playVideo, setPlayVideo] = useState(false);
+  const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
 
   const handleMoreControlsClick = (event) => {
     setMoreControlsAnchorEl(event.currentTarget);
