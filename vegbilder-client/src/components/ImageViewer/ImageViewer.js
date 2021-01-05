@@ -273,24 +273,20 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
     }
   };
 
-  const update = useCallback(() => {
-    if (nextImagePoint) {
-      const latlng = getImagePointLatLng(nextImagePoint);
-      setCurrentImagePoint(nextImagePoint);
-      setCurrentCoordinates({ latlng: latlng });
-    } else {
-      showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
-    }
-  }, [nextImagePoint, setCurrentCoordinates, setCurrentImagePoint, showMessage]);
-
   useEffect(() => {
     if (autoPlay) {
-      sleep(timer).then(() => {
-        console.log(timer);
-        update();
-      });
+      if (nextImagePoint) {
+        sleep(timer).then(() => {
+          console.log(timer);
+          const latlng = getImagePointLatLng(nextImagePoint);
+          setCurrentImagePoint(nextImagePoint);
+          setCurrentCoordinates({ latlng: latlng });
+        });
+      } else {
+        showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
+      }
     }
-  }, [autoPlay, update, timer]);
+  }, [autoPlay, nextImagePoint, showMessage, timer]);
 
   return (
     <div className={classes.imageArea}>

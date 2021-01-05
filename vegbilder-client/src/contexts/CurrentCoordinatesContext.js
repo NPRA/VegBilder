@@ -1,28 +1,27 @@
-import React, { useState } from "react";
-import useQueryParamState from "../hooks/useQueryParamState";
+import React, { useState } from 'react';
+import useQueryParamState from '../hooks/useQueryParamState';
 
 const CurrentCoordinatesContext = React.createContext();
 
 function useCurrentCoordinates() {
   const context = React.useContext(CurrentCoordinatesContext);
   if (!context) {
-    throw new Error(
-      "useCurrentCoordinates must be used within a CurrentCoordinatesProvider"
-    );
+    throw new Error('useCurrentCoordinates must be used within a CurrentCoordinatesProvider');
   }
   return context;
 }
 
 function CurrentCoordinatesProvider(props) {
-  const [
-    currentCoordinateString,
-    setCurrentCoordinateString,
-  ] = useQueryParamState("coordinates", "65,15,4", isValidCoordinateString);
+  const [currentCoordinateString, setCurrentCoordinateString] = useQueryParamState(
+    'coordinates',
+    '65,15,4',
+    isValidCoordinateString
+  );
   const [currentCoordinates, setCurrentCoordinatesInternal] = useState(
     parseCoordinateString(currentCoordinateString)
   );
 
-  function setCurrentCoordinates({ latlng, zoom }) {
+  const setCurrentCoordinates = ({ latlng, zoom }) => {
     const newCoordinates = {
       latlng: latlng,
       zoom: zoom ?? currentCoordinates.zoom,
@@ -30,7 +29,7 @@ function CurrentCoordinatesProvider(props) {
     const newCoordinateString = `${newCoordinates.latlng.lat},${newCoordinates.latlng.lng},${newCoordinates.zoom}`;
     setCurrentCoordinatesInternal(newCoordinates);
     setCurrentCoordinateString(newCoordinateString);
-  }
+  };
 
   return (
     <CurrentCoordinatesContext.Provider
@@ -46,7 +45,7 @@ function isValidCoordinateString(coordinateString) {
 }
 
 function parseCoordinateString(coordinateString) {
-  const split = coordinateString.split(",");
+  const split = coordinateString.split(',');
   const lat = parseFloat(split[0], 10);
   const lng = parseFloat(split[1], 10);
   const zoom = parseInt(split[2], 10);
