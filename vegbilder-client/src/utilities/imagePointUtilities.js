@@ -2,14 +2,17 @@ import _ from 'lodash';
 
 import { getDistanceInMetersBetween } from './latlngUtilities';
 import { splitDateTimeString } from './dateTimeUtilities';
+import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
 const getImagePointLatLng = (imagePoint) => {
-  const lat = imagePoint.geometry.coordinates[1];
-  const lng = imagePoint.geometry.coordinates[0];
-  return { lat, lng };
+  if (imagePoint) {
+    const lat = imagePoint.geometry.coordinates[1];
+    const lng = imagePoint.geometry.coordinates[0];
+    return { lat, lng };
+  }
 };
 
-const getImageUrl = (imagepoint) => imagepoint.properties.URL;
+const getImageUrl = (imagepoint) => rewriteUrlDomainToLocalhost(imagepoint.properties.URL);
 
 const findNearestImagePoint = (imagePoints, latlng) => {
   let nearestPoint = { distance: 100000000, imagePoint: null };

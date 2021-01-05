@@ -17,6 +17,8 @@ import {
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { useToggles } from 'contexts/TogglesContext';
+import { useRecoilValue } from 'recoil';
+import { playVideoState, timerState } from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -46,6 +48,8 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
   const { command, resetCommand } = useCommand();
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { meterLineVisible } = useToggles();
+  const autoPlay = useRecoilValue(playVideoState);
+  const timer = useRecoilValue(timerState);
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -269,6 +273,21 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
     }
   };
 
+  useEffect(() => {
+    if (autoPlay) {
+      if (nextImagePoint) {
+        sleep(timer).then(() => {
+          console.log(timer);
+          const latlng = getImagePointLatLng(nextImagePoint);
+          setCurrentImagePoint(nextImagePoint);
+          setCurrentCoordinates({ latlng: latlng });
+        });
+      } else {
+        showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
+      }
+    }
+  }, [autoPlay, nextImagePoint, showMessage, timer]);
+
   return (
     <div className={classes.imageArea}>
       {currentImagePoint ? (
@@ -287,5 +306,7 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
     </div>
   );
 };
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default ImageViewer;

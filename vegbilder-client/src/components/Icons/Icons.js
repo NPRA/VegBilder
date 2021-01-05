@@ -1,69 +1,18 @@
-import React from "react";
-import SvgIcon from "@material-ui/core/SvgIcon";
-import { ReactComponent as ArrowDownSvg } from "./Arrow-down.svg";
-import { ReactComponent as ArrowTurnSvg } from "./Arrow-turn.svg";
-import { ReactComponent as ArrowUpSvg } from "./Arrow-up.svg";
-import { ReactComponent as DotsHorizontalSvg } from "./Dots-horizontal.svg";
-import { ReactComponent as HistorySvg } from "./History.svg";
-import { ReactComponent as MagnifyingGlassSvg } from "./Magnifying-glass.svg";
-import { ReactComponent as MapSvg } from "./Map.svg";
-import { ReactComponent as MapDisabledSvg } from "./Map-disabled.svg";
-import { ReactComponent as MeasureSvg } from "./Measure.svg";
-import { ReactComponent as MeasureDisabledSvg } from "./Measure-disabled.svg";
-import { ReactComponent as PlaySvg } from "./Play.svg";
-import { ReactComponent as CalendarSvg } from "./Calendar.svg";
-import { ReactComponent as EnlargeSvg } from "./Enlarge.svg";
-
-function ArrowDownIcon() {
-  return <SvgIcon component={ArrowDownSvg} viewBox="8 8 24 24" />;
-}
-
-function ArrowTurnIcon() {
-  return <SvgIcon component={ArrowTurnSvg} viewBox="8 8 24 24" />;
-}
-
-function ArrowUpIcon() {
-  return <SvgIcon component={ArrowUpSvg} viewBox="8 8 24 24" />;
-}
-
-function CalendarIcon() {
-  return <SvgIcon component={CalendarSvg} />;
-}
-
-function DotsHorizontalIcon() {
-  return <SvgIcon component={DotsHorizontalSvg} viewBox="8 8 24 24" />;
-}
-
-function EnlargeIcon() {
-  return <SvgIcon component={EnlargeSvg} viewBox="0 0 21 21" />;
-}
-
-function HistoryIcon() {
-  return <SvgIcon component={HistorySvg} viewBox="8 8 24 24" />;
-}
-
-function MagnifyingGlassIcon() {
-  return <SvgIcon component={MagnifyingGlassSvg} viewBox="-5 -5 30 30" />;
-}
-
-function MapIcon() {
-  return <SvgIcon component={MapSvg} viewBox="8 8 24 24" />;
-}
-
-function MapDisabledIcon() {
-  return <SvgIcon component={MapDisabledSvg} viewBox="8 8 24 24" />;
-}
-
-function MeasureIcon() {
-  return <SvgIcon component={MeasureSvg} viewBox="8 8 24 24" />;
-}
-function MeasureDisabledIcon() {
-  return <SvgIcon component={MeasureDisabledSvg} viewBox="8 8 24 24" />;
-}
-
-function PlayIcon() {
-  return <SvgIcon component={PlaySvg} viewBox="8 8 24 24" />;
-}
+import { ReactComponent as ArrowDownIcon } from './Arrow-down.svg';
+import { ReactComponent as ArrowTurnIcon } from './Arrow-turn.svg';
+import { ReactComponent as ArrowUpIcon } from './Arrow-up.svg';
+import { ReactComponent as DotsHorizontalIcon } from './Dots-horizontal.svg';
+import { ReactComponent as HistoryIcon } from './History.svg';
+import { ReactComponent as MagnifyingGlassIcon } from './Magnifying-glass.svg';
+import { ReactComponent as MapIcon } from './Map.svg';
+import { ReactComponent as MapDisabledIcon } from './Map-disabled.svg';
+import { ReactComponent as MeasureIcon } from './Measure.svg';
+import { ReactComponent as MeasureDisabledIcon } from './Measure-disabled.svg';
+import { ReactComponent as PlayIcon } from './Play.svg';
+import { ReactComponent as CalendarIcon } from './Calendar.svg';
+import { ReactComponent as EnlargeIcon } from './Enlarge.svg';
+import { ReactComponent as StopIcon } from './Stop.svg';
+import { ReactComponent as TimerIcon } from './timer.svg';
 
 export {
   ArrowDownIcon,
@@ -79,4 +28,6 @@ export {
   MeasureIcon,
   MeasureDisabledIcon,
   PlayIcon,
+  StopIcon,
+  TimerIcon,
 };

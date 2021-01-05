@@ -9,8 +9,9 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
-import clsx from 'clsx';
+import { useRecoilState } from 'recoil';
 
+import clsx from 'clsx';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useToggles } from 'contexts/TogglesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
@@ -24,12 +25,15 @@ import {
   MapDisabledIcon,
   MeasureIcon,
   MeasureDisabledIcon,
-  //PlayIcon,
+  PlayIcon,
+  StopIcon,
+  TimerIcon,
 } from '../Icons/Icons';
-import useCopyToClipboard from '../../hooks/useCopyToClipboard';
-import { getShareableUrlForImage } from '../../utilities/urlUtilities';
-import { createMailtoHrefForReporting } from '../../utilities/mailtoUtilities';
-import { getImageUrl } from '../../utilities/imagePointUtilities';
+import useCopyToClipboard from 'hooks/useCopyToClipboard';
+import { getShareableUrlForImage } from 'utilities/urlUtilities';
+import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
+import { getImageUrl } from 'utilities/imagePointUtilities';
+import { playVideoState, timerState } from 'recoil/atoms';
 
 const useStyles = makeStyles({
   button: {
@@ -50,14 +54,30 @@ const ControlBar = ({ showMessage }) => {
   const { setCommand } = useCommand();
   const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
   const { currentImagePoint } = useCurrentImagePoint();
-  const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
   const { copyToClipboard } = useCopyToClipboard();
+
+  const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
+  const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState(null);
+  const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
+  const [, setTime] = useRecoilState(timerState);
 
   const handleMoreControlsClick = (event) => {
     setMoreControlsAnchorEl(event.currentTarget);
   };
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
+
+  const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
+
+  const handleTimerOptionSelect = (time) => {
+    setPlayVideo(false);
+    setTime(time);
+    setPlayVideo(true);
+  };
+
+  const handleTimerOptionsClick = (event) => {
+    setTimerOptionsAnchorEl(event.currentTarget);
+  };
 
   const copyShareableUrlToClipboard = () => {
     const shareableUrl = getShareableUrlForImage(currentImagePoint);
@@ -130,11 +150,25 @@ const ControlBar = ({ showMessage }) => {
         >
           <ArrowTurnIcon />
         </IconButton>
-        {/*
-        <IconButton aria-label="Start animasjon" className={classes.button}>
-          <PlayIcon />
-        </IconButton>
-        */}
+
+        {playVideo ? (
+          <IconButton
+            aria-label="Stopp animasjon"
+            className={classes.button}
+            onClick={() => setPlayVideo(false)}
+          >
+            <StopIcon />
+          </IconButton>
+        ) : (
+          <IconButton
+            aria-label="Start animasjon"
+            className={classes.button}
+            onClick={() => setPlayVideo(true)}
+          >
+            <PlayIcon />
+          </IconButton>
+        )}
+
         {meterLineVisible ? (
           <IconButton
             aria-label="Mål avstand"
@@ -152,6 +186,54 @@ const ControlBar = ({ showMessage }) => {
             <MeasureDisabledIcon />
           </IconButton>
         )}
+
+        <IconButton
+          aria-label="Bytt tid"
+          onClick={handleTimerOptionsClick}
+          className={classes.button}
+        >
+          <TimerIcon />
+        </IconButton>
+        <Menu
+          id="timer-options"
+          anchorEl={timerOptionsAnchorEl}
+          keepMounted
+          open={Boolean(timerOptionsAnchorEl)}
+          onClose={handleTimerOptionsClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              handleTimerOptionSelect(1000);
+              handleTimerOptionsClose();
+            }}
+          >
+            <ListItemText primary="1 sekund" />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleTimerOptionSelect(2000);
+              handleTimerOptionsClose();
+            }}
+          >
+            <ListItemText primary="2 sekunder" />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleTimerOptionSelect(3000);
+              handleTimerOptionsClose();
+            }}
+          >
+            <ListItemText primary="3 sekunder" />
+          </MenuItem>
+        </Menu>
         {/*
         <IconButton
           aria-label="Finn bilder herfra på andre datoer"

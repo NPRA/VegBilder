@@ -10,6 +10,7 @@ import { YearFilterProvider } from '../contexts/YearFilterContext';
 import { ImageSeriesProvider } from '../contexts/ImageSeriesContext';
 import { FilteredImagePointsProvider } from '../contexts/FilteredImagePointsContext';
 import ComponentsWrapper from './ComponentsWrapper';
+import { RecoilRoot } from 'recoil';
 
 const App = () => {
   return (
@@ -21,7 +22,9 @@ const App = () => {
               <ImageSeriesProvider>
                 <FilteredImagePointsProvider>
                   <CommandProvider>
-                    <ComponentsWrapper />
+                    <RecoilRoot>
+                      <ComponentsWrapper />
+                    </RecoilRoot>
                   </CommandProvider>
                 </FilteredImagePointsProvider>
               </ImageSeriesProvider>
