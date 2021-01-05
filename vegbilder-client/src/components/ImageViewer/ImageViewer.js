@@ -45,7 +45,7 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
-  const { command, setCommand, resetCommand } = useCommand();
+  const { command, resetCommand } = useCommand();
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { meterLineVisible } = useToggles();
   const autoPlay = useRecoilValue(playVideoState);
@@ -214,11 +214,9 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
       switch (command) {
         case commandTypes.goForwards:
           if (nextImagePoint) {
-            sleep(100).then(() => {
-              const latlng = getImagePointLatLng(nextImagePoint);
-              setCurrentImagePoint(nextImagePoint);
-              setCurrentCoordinates({ latlng: latlng });
-            });
+            const latlng = getImagePointLatLng(nextImagePoint);
+            setCurrentImagePoint(nextImagePoint);
+            setCurrentCoordinates({ latlng: latlng });
           } else {
             showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
           }
@@ -276,9 +274,13 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
 
   useEffect(() => {
     if (autoPlay) {
-      setCommand(commandTypes.goForwards);
+      sleep(100).then(() => {
+        const latlng = getImagePointLatLng(nextImagePoint);
+        setCurrentImagePoint(nextImagePoint);
+        setCurrentCoordinates({ latlng: latlng });
+      });
     }
-  }, [autoPlay, setCommand]);
+  }, [autoPlay, nextImagePoint, setCurrentCoordinates, setCurrentImagePoint]);
 
   return (
     <div className={classes.imageArea}>
