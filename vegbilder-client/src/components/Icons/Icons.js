@@ -12,6 +12,7 @@ import { ReactComponent as PlayIcon } from './Play.svg';
 import { ReactComponent as CalendarIcon } from './Calendar.svg';
 import { ReactComponent as EnlargeIcon } from './Enlarge.svg';
 import { ReactComponent as StopIcon } from './Stop.svg';
+import { ReactComponent as TimerIcon } from './timer.svg';
 
 export {
   ArrowDownIcon,
@@ -28,4 +29,5 @@ export {
   MeasureDisabledIcon,
   PlayIcon,
   StopIcon,
+  TimerIcon,
 };

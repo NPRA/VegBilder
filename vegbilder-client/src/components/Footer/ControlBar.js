@@ -27,12 +27,13 @@ import {
   MeasureDisabledIcon,
   PlayIcon,
   StopIcon,
+  TimerIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
-import { playVideoState } from 'recoil/atoms';
+import { playVideoState, timerState } from 'recoil/atoms';
 
 const useStyles = makeStyles({
   button: {
@@ -56,13 +57,27 @@ const ControlBar = ({ showMessage }) => {
   const { copyToClipboard } = useCopyToClipboard();
 
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
+  const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
+  const [, setTime] = useRecoilState(timerState);
 
   const handleMoreControlsClick = (event) => {
     setMoreControlsAnchorEl(event.currentTarget);
   };
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
+
+  const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
+
+  const handleTimerOptionSelect = (time) => {
+    setPlayVideo(false);
+    setTime(time);
+    setPlayVideo(true);
+  };
+
+  const handleTimerOptionsClick = (event) => {
+    setTimerOptionsAnchorEl(event.currentTarget);
+  };
 
   const copyShareableUrlToClipboard = () => {
     const shareableUrl = getShareableUrlForImage(currentImagePoint);
@@ -171,6 +186,54 @@ const ControlBar = ({ showMessage }) => {
             <MeasureDisabledIcon />
           </IconButton>
         )}
+
+        <IconButton
+          aria-label="Bytt tid"
+          onClick={handleTimerOptionsClick}
+          className={classes.button}
+        >
+          <TimerIcon />
+        </IconButton>
+        <Menu
+          id="timer-options"
+          anchorEl={timerOptionsAnchorEl}
+          keepMounted
+          open={Boolean(timerOptionsAnchorEl)}
+          onClose={handleTimerOptionsClose}
+          anchorOrigin={{
+            vertical: 'top',
+            horizontal: 'center',
+          }}
+          transformOrigin={{
+            vertical: 'bottom',
+            horizontal: 'center',
+          }}
+        >
+          <MenuItem
+            onClick={() => {
+              handleTimerOptionSelect(1000);
+              handleTimerOptionsClose();
+            }}
+          >
+            <ListItemText primary="1 sekund" />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleTimerOptionSelect(2000);
+              handleTimerOptionsClose();
+            }}
+          >
+            <ListItemText primary="2 sekunder" />
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleTimerOptionSelect(3000);
+              handleTimerOptionsClose();
+            }}
+          >
+            <ListItemText primary="3 sekunder" />
+          </MenuItem>
+        </Menu>
         {/*
         <IconButton
           aria-label="Finn bilder herfra på andre datoer"
