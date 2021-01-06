@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import orderBy from 'lodash/orderBy';
+import { useRecoilValue } from 'recoil';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
@@ -17,7 +18,6 @@ import {
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { useToggles } from 'contexts/TogglesContext';
-import { useRecoilValue } from 'recoil';
 import { playVideoState, timerState } from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({

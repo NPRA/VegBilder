@@ -19,7 +19,7 @@ const useStyles = makeStyles({
 
 interface IImageViewProps {
   setView: () => void;
-  showSnackbarMessage: () => void;
+  showSnackbarMessage: (message: string) => void;
 }
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
