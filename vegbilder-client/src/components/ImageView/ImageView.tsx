@@ -4,7 +4,7 @@ import { makeStyles } from '@material-ui/styles';
 
 import Footer from 'components/Footer/Footer';
 import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
-import ImageViewer from 'components/ImageViewer/ImageViewer';
+import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
 
 const useStyles = makeStyles({
