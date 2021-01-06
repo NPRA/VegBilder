@@ -6,13 +6,12 @@ import { makeStyles } from '@material-ui/styles';
 
 import Header from './Header/Header';
 import Footer from './Footer/Footer';
-import MapContainer from './MapContainer/MapContainer';
 import SmallMapContainer from './MapContainer/SmallMapContainer';
 import ImageViewer from './ImageViewer/ImageViewer';
-import ImagePreview from './ImagePreview/ImagePreview';
 import Onboarding from './Onboarding/Onboarding';
 import { TogglesProvider } from 'contexts/TogglesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
+import MapView from './MapView/MapView';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -71,19 +70,6 @@ const ComponentsWrapper = () => {
     setSnackbarVisible(true);
   };
 
-  const renderMapView = () => {
-    return (
-      <Grid item className={classes.content}>
-        <MapContainer />
-        <ImagePreview
-          openImageView={() => {
-            setView(views.imageView);
-          }}
-        />
-      </Grid>
-    );
-  };
-
   const renderImageView = () => {
     return (
       <TogglesProvider>
@@ -106,7 +92,7 @@ const ComponentsWrapper = () => {
   const renderContent = () => {
     switch (view) {
       case views.mapView:
-        return renderMapView();
+        return <MapView setView={() => setView(views.imageView)} />;
       case views.imageView:
         return renderImageView();
       default:
