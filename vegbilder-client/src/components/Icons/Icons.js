@@ -13,6 +13,7 @@ import { ReactComponent as CalendarIcon } from './Calendar.svg';
 import { ReactComponent as EnlargeIcon } from './Enlarge.svg';
 import { ReactComponent as StopIcon } from './Stop.svg';
 import { ReactComponent as TimerIcon } from './timer.svg';
+import { ReactComponent as CircledHelpIcon } from './help-circle-outline.svg';
 
 export {
   ArrowDownIcon,
@@ -30,4 +31,5 @@ export {
   PlayIcon,
   StopIcon,
   TimerIcon,
+  CircledHelpIcon,
 };
