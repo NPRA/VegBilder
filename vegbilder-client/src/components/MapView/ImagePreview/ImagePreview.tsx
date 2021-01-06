@@ -24,7 +24,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImagePreview = ({ openImageView }) => {
+interface IImagePreviewProps {
+  openImageView: () => void;
+}
+
+const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
   const classes = useStyles();
   const { currentImagePoint, unsetCurrentImagePoint } = useCurrentImagePoint();
   const { setCurrentCoordinates } = useCurrentCoordinates();

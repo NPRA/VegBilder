@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import { chain } from 'lodash';
 import getImagePointsInBbox from './getImagePointsInBbox';
 import { roundDownToNearest, roundUpToNearest } from 'utilities/mathUtilities';
 
@@ -38,7 +38,7 @@ const getImagePointsInTilesOverlappingBbox = async (bbox, year) => {
 
   const responses = await Promise.all(promises);
 
-  const imagePoints = _.chain(responses)
+  const imagePoints = chain(responses)
     .map((response) => response.data.features)
     .flatten()
     .uniqBy((imagePoint) => imagePoint.id)

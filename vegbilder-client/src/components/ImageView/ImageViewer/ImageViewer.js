@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import _ from 'lodash';
+import orderBy from 'lodash/orderBy';
+import { useRecoilValue } from 'recoil';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
@@ -17,7 +18,6 @@ import {
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { useToggles } from 'contexts/TogglesContext';
-import { useRecoilValue } from 'recoil';
 import { playVideoState, timerState } from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({
@@ -137,13 +137,13 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
       const primaryFeltkode = parseInt(currentImagePoint.properties.FELTKODE[0], 10);
       const sortOrder = isEvenNumber(primaryFeltkode) ? 'desc' : 'asc'; // Feltkode is odd in the metering direction and even in the opposite direction
       if (usesOldVegreferanse(currentImagePoint)) {
-        return _.orderBy(
+        return orderBy(
           currentLaneImagePoints,
           ['properties.HP', 'properties.METER'],
           [sortOrder, sortOrder]
         );
       } else {
-        return _.orderBy(
+        return orderBy(
           currentLaneImagePoints,
           ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'],
           [sortOrder, sortOrder, sortOrder]
