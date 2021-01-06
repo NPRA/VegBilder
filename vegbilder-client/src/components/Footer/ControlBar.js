@@ -238,7 +238,10 @@ const ControlBar = ({ showMessage }) => {
               className={classes.speedMenuItem}
             >
               {option === currentTime && <CheckmarkIcon className={classes.iconStyle} />}
-              <ListItemText primary={(option / 1000).toString() + ' sekunder'} />
+              <ListItemText
+                primary={(option / 1000).toString() + ' sekunder'}
+                style={{ color: option === currentTime ? '#F67F00' : '' }}
+              />
             </MenuItem>
           ))}
         </Menu>
