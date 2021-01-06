@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 
 import MapContainer from 'components/MapContainer/MapContainer';
-import ImagePreview from 'components/ImagePreview/ImagePreview';
+import ImagePreview from './ImagePreview/ImagePreview';
 
 const useStyles = makeStyles({
   content: {
