@@ -1,17 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 
 import Header from './Header/Header';
-import Footer from './Footer/Footer';
-import SmallMapContainer from './MapContainer/SmallMapContainer';
-import ImageViewer from './ImageViewer/ImageViewer';
 import Onboarding from './Onboarding/Onboarding';
-import { TogglesProvider } from 'contexts/TogglesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 import MapView from './MapView/MapView';
+import ImageView from './ImageView/ImageView';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -55,8 +52,8 @@ const Alert = (props) => <MuiAlert elevation={6} variant="filled" {...props} />;
 const ComponentsWrapper = () => {
   const classes = useStyles();
   const [view, setView] = useQueryParamState('view', views.mapView, isValidView);
-  const [snackbarVisible, setSnackbarVisible] = React.useState(false);
-  const [snackbarMessage, setSnackbarMessage] = React.useState(null);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState(null);
 
   const handleSnackbarClose = (reason) => {
     if (reason === 'clickaway') {
@@ -70,31 +67,17 @@ const ComponentsWrapper = () => {
     setSnackbarVisible(true);
   };
 
-  const renderImageView = () => {
-    return (
-      <TogglesProvider>
-        <Grid item className={classes.content}>
-          <ImageViewer
-            exitImageView={() => {
-              setView(views.mapView);
-            }}
-            showMessage={showSnackbarMessage}
-          />
-          <SmallMapContainer />
-        </Grid>
-        <Grid item className={classes.footer}>
-          <Footer showMessage={showSnackbarMessage} />
-        </Grid>
-      </TogglesProvider>
-    );
-  };
-
   const renderContent = () => {
     switch (view) {
       case views.mapView:
         return <MapView setView={() => setView(views.imageView)} />;
       case views.imageView:
-        return renderImageView();
+        return (
+          <ImageView
+            setView={() => setView(views.mapView)}
+            showSnackbarMessage={showSnackbarMessage}
+          />
+        );
       default:
         throw Error('No valid view set');
     }
