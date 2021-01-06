@@ -28,6 +28,7 @@ import {
   PlayIcon,
   StopIcon,
   TimerIcon,
+  CheckmarkIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -35,7 +36,7 @@ import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
 import { playVideoState, timerState } from 'recoil/atoms';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   button: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
@@ -47,7 +48,24 @@ const useStyles = makeStyles({
       },
     },
   },
-});
+  speedHeading: {
+    color: theme.palette.common.grayIcons,
+    textTransform: 'uppercase',
+    paddingTop: '1.21875rem',
+    paddingLeft: '1.875rem',
+    paddingRight: '1.875rem',
+    paddingBottom: '0.75rem',
+    margin: 0,
+    fontWeight: 600,
+  },
+  speedMenuItem: {
+    color: theme.palette.common.grayIcons,
+    padding: '0.25rem 2.125rem',
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+    },
+  },
+}));
 
 const ControlBar = ({ showMessage }) => {
   const classes = useStyles();
@@ -59,7 +77,9 @@ const ControlBar = ({ showMessage }) => {
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
   const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
-  const [, setTime] = useRecoilState(timerState);
+  const [currentTime, setTime] = useRecoilState(timerState);
+
+  const timerOptions = [1000, 2000, 3000];
 
   const handleMoreControlsClick = (event) => {
     setMoreControlsAnchorEl(event.currentTarget);
@@ -70,9 +90,7 @@ const ControlBar = ({ showMessage }) => {
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
 
   const handleTimerOptionSelect = (time) => {
-    setPlayVideo(false);
     setTime(time);
-    setPlayVideo(true);
   };
 
   const handleTimerOptionsClick = (event) => {
@@ -200,6 +218,7 @@ const ControlBar = ({ showMessage }) => {
           keepMounted
           open={Boolean(timerOptionsAnchorEl)}
           onClose={handleTimerOptionsClose}
+          style={{ width: '10.9375rem' }}
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'center',
@@ -209,30 +228,20 @@ const ControlBar = ({ showMessage }) => {
             horizontal: 'center',
           }}
         >
-          <MenuItem
-            onClick={() => {
-              handleTimerOptionSelect(1000);
-              handleTimerOptionsClose();
-            }}
-          >
-            <ListItemText primary="1 sekund" />
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              handleTimerOptionSelect(2000);
-              handleTimerOptionsClose();
-            }}
-          >
-            <ListItemText primary="2 sekunder" />
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              handleTimerOptionSelect(3000);
-              handleTimerOptionsClose();
-            }}
-          >
-            <ListItemText primary="3 sekunder" />
-          </MenuItem>
+          <p className={classes.speedHeading}> Hastighet </p>
+
+          {timerOptions.map((option) => (
+            <MenuItem
+              onClick={() => {
+                handleTimerOptionSelect(option);
+                handleTimerOptionsClose();
+              }}
+              className={classes.speedMenuItem}
+            >
+              {/* {option === currentTime && <CheckmarkIcon />} */}
+              <ListItemText primary={(option / 1000).toString() + ' sekunder'} />
+            </MenuItem>
+          ))}
         </Menu>
         {/*
         <IconButton
