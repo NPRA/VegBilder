@@ -33,7 +33,7 @@ const onboardingText = {
 };
 
 const informationText = {
-  versionNumber: 'Versjonsnummer: 2.0.0',
+  versionNumber: 'Versjonsnummer: 0.1.20',
   contact: 'Kontakt: vegbilder@vegvesen.no',
 };
 
