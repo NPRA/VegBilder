@@ -250,7 +250,6 @@ const ControlBar = ({ showMessage }) => {
           aria-label="Finn bilder herfra på andre datoer"
           className={classes.button}
         >
-
           <HistoryIcon />
         </IconButton>
         */}

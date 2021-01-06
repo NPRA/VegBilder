@@ -44,10 +44,14 @@ const useStyles = makeStyles((theme) => ({
   },
   item: {
     color: theme.palette.common.grayIcons,
-    padding: '0.25rem 1.625rem',
+    padding: '0.25rem 2.125rem',
     '&:hover': {
       color: theme.palette.common.orangeDark,
     },
+  },
+  checkmarkStyle: {
+    position: 'absolute',
+    left: '0.75rem',
   },
 }));
 
@@ -90,8 +94,13 @@ const YearSelector = () => {
           Tidsperiode{' '}
         </option>
         {availableYears.map((y) => (
-          <MenuItem key={y} value={y} className={classes.item}>
-            {/* {y === year && <CheckmarkIcon />} */}
+          <MenuItem
+            key={y}
+            value={y}
+            className={classes.item}
+            style={{ color: y === year ? '#F67F00' : '' }}
+          >
+            {y === year && <CheckmarkIcon className={classes.checkmarkStyle} />}
             {y}
           </MenuItem>
         ))}
