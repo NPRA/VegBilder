@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import _ from 'lodash';
+import find from 'lodash/find';
 
 import useQueryParamState from '../hooks/useQueryParamState';
 import { useLoadedImagePoints } from './LoadedImagePointsContext';
@@ -41,7 +41,7 @@ function CurrentImagePointProvider(props) {
    */
   useEffect(() => {
     if (loadedImagePoints?.imagePoints && currentImagePoint == null && currentImageId !== '') {
-      const imagePoint = _.find(loadedImagePoints.imagePoints, (ip) => ip.id === currentImageId);
+      const imagePoint = find(loadedImagePoints.imagePoints, (ip) => ip.id === currentImageId);
       if (imagePoint) {
         setCurrentImagePointInternal(imagePoint);
         setCurrentImageId(imagePoint.id);

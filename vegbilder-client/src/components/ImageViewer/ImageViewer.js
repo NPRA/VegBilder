@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import _ from 'lodash';
+import orderBy from 'lodash/orderBy';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
@@ -137,13 +137,13 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
       const primaryFeltkode = parseInt(currentImagePoint.properties.FELTKODE[0], 10);
       const sortOrder = isEvenNumber(primaryFeltkode) ? 'desc' : 'asc'; // Feltkode is odd in the metering direction and even in the opposite direction
       if (usesOldVegreferanse(currentImagePoint)) {
-        return _.orderBy(
+        return orderBy(
           currentLaneImagePoints,
           ['properties.HP', 'properties.METER'],
           [sortOrder, sortOrder]
         );
       } else {
-        return _.orderBy(
+        return orderBy(
           currentLaneImagePoints,
           ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'],
           [sortOrder, sortOrder, sortOrder]

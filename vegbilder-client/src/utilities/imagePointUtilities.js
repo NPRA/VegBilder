@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import groupBy from 'lodash/groupBy';
 
 import { getDistanceInMetersBetween } from './latlngUtilities';
 import { splitDateTimeString } from './dateTimeUtilities';
@@ -97,11 +97,11 @@ const getDateString = (imagePoint) => splitDateTimeString(imagePoint.properties.
  * points.
  */
 const groupBySeries = (imagePoints) => {
-  const groupedByRoadReference = _.groupBy(imagePoints, (ip) => getRoadReference(ip).withoutMeter);
+  const groupedByRoadReference = groupBy(imagePoints, (ip) => getRoadReference(ip).withoutMeter);
   for (const [roadReference, imagePointsForRoadReference] of Object.entries(
     groupedByRoadReference
   )) {
-    const groupedByDate = _.groupBy(imagePointsForRoadReference, getDateString);
+    const groupedByDate = groupBy(imagePointsForRoadReference, getDateString);
     groupedByRoadReference[roadReference] = groupedByDate;
   }
   return groupedByRoadReference;
