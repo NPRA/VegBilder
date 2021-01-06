@@ -6,7 +6,7 @@ import { InputBase } from '@material-ui/core';
 import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import { CalendarIcon } from 'components/Icons/Icons';
+import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
 import { useYearFilter } from 'contexts/YearFilterContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
@@ -36,6 +36,19 @@ const useStyles = makeStyles((theme) => ({
     top: '0.6875rem',
     left: '0.75rem',
   },
+  heading: {
+    color: theme.palette.common.grayIcons,
+    textTransform: 'uppercase',
+    padding: '0.9375rem 1.625rem',
+    fontWeight: 700,
+  },
+  item: {
+    color: theme.palette.common.grayIcons,
+    padding: '0.25rem 1.625rem',
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+    },
+  },
 }));
 
 const iconStyles = {
@@ -55,23 +68,30 @@ const YearSelector = () => {
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { setCommand } = useCommand();
 
+  const handleChange = (event) => {
+    setYear(event.target.value);
+    resetLoadedImagePoints();
+    resetFilteredImagePoints();
+    setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+  };
+
   return (
     <FormControl>
       <Select
         id="year-select"
         value={year}
-        onChange={(event) => {
-          setYear(event.target.value);
-          resetLoadedImagePoints();
-          resetFilteredImagePoints();
-          setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
-        }}
+        onChange={(event) => handleChange(event)}
         className={classes.yearSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
       >
+        <option aria-label="Tidsperiode" className={classes.heading}>
+          {' '}
+          Tidsperiode{' '}
+        </option>
         {availableYears.map((y) => (
-          <MenuItem key={y} value={y}>
+          <MenuItem key={y} value={y} className={classes.item}>
+            {/* {y === year && <CheckmarkIcon />} */}
             {y}
           </MenuItem>
         ))}

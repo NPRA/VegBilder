@@ -14,6 +14,7 @@ import { ReactComponent as EnlargeIcon } from './Enlarge.svg';
 import { ReactComponent as StopIcon } from './Stop.svg';
 import { ReactComponent as TimerIcon } from './timer.svg';
 import { ReactComponent as CircledHelpIcon } from './help-circle-outline.svg';
+import { ReactComponent as CheckmarkIcon } from './checkmark.svg';
 
 export {
   ArrowDownIcon,
@@ -32,4 +33,5 @@ export {
   StopIcon,
   TimerIcon,
   CircledHelpIcon,
+  CheckmarkIcon,
 };
