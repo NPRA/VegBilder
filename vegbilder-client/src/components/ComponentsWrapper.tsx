@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Snackbar from '@material-ui/core/Snackbar';
-import MuiAlert from '@material-ui/lab/Alert';
+import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 
 import Header from './Header/Header';
@@ -16,14 +16,7 @@ const useStyles = makeStyles({
   },
   header: {
     flex: '0 1 5rem', // Do not allow the grid item containing the header to grow. Height depends on content
-    zIndex: '1',
-  },
-  content: {
-    flex: '1 1 auto', // Allow the grid item containing the main content to grow and shrink to fill the available height.
-    position: 'relative', // Needed for the small map to be positioned correctly relative to the top left corner of the content container
-  },
-  footer: {
-    flex: '0 1 4.5rem',
+    zIndex: 1,
   },
   snackbar: {
     opacity: '85%',
@@ -45,24 +38,24 @@ const views = {
   imageView: 'image',
 };
 
-const isValidView = (view) => view === views.mapView || view === views.imageView;
+const isValidView = (view: string) => view === views.mapView || view === views.imageView;
 
-const Alert = (props) => <MuiAlert elevation={6} variant="filled" {...props} />;
+const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {...props} />;
 
 const ComponentsWrapper = () => {
   const classes = useStyles();
   const [view, setView] = useQueryParamState('view', views.mapView, isValidView);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState(null);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const handleSnackbarClose = (reason) => {
-    if (reason === 'clickaway') {
+  const handleSnackbarClose = (event: SyntheticEvent<Element, Event>) => {
+    if (event.type === 'clickaway') {
       return;
     }
     setSnackbarVisible(false);
   };
 
-  const showSnackbarMessage = (message) => {
+  const showSnackbarMessage = (message: string) => {
     setSnackbarMessage(message);
     setSnackbarVisible(true);
   };
