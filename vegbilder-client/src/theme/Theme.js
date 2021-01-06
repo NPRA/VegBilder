@@ -82,6 +82,7 @@ export default createMuiTheme({
     },
     MuiListItem: {
       root: {
+        color: grayIcons,
         '&:hover': {
           backgroundColor: grayDark,
           '& .MuiListItemIcon-root, & .MuiListItemText-primary': {

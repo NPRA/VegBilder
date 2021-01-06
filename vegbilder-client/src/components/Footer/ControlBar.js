@@ -59,11 +59,11 @@ const useStyles = makeStyles((theme) => ({
     fontWeight: 600,
   },
   speedMenuItem: {
-    color: theme.palette.common.grayIcons,
     padding: '0.25rem 2.125rem',
-    '&:hover': {
-      color: theme.palette.common.orangeDark,
-    },
+  },
+  iconStyle: {
+    position: 'absolute',
+    left: '0.75rem',
   },
 }));
 
@@ -218,7 +218,6 @@ const ControlBar = ({ showMessage }) => {
           keepMounted
           open={Boolean(timerOptionsAnchorEl)}
           onClose={handleTimerOptionsClose}
-          style={{ width: '10.9375rem' }}
           anchorOrigin={{
             vertical: 'top',
             horizontal: 'center',
@@ -238,7 +237,7 @@ const ControlBar = ({ showMessage }) => {
               }}
               className={classes.speedMenuItem}
             >
-              {/* {option === currentTime && <CheckmarkIcon />} */}
+              {option === currentTime && <CheckmarkIcon className={classes.iconStyle} />}
               <ListItemText primary={(option / 1000).toString() + ' sekunder'} />
             </MenuItem>
           ))}
