@@ -7,6 +7,7 @@ const grayDark = '#444F55';
 const grayDarker = '#2E3539';
 const orangeDark = '#F67F00';
 const blueRegular = '#077197';
+const grayMenuItems = '#c4c4c4';
 
 export default createMuiTheme({
   palette: {
@@ -14,6 +15,7 @@ export default createMuiTheme({
       grayDark: grayDark,
       grayDarker: grayDarker,
       grayIcons: grayIcons,
+      grayMenuItems: grayMenuItems,
       charcoalLighter: charcoalLighter,
       orangeDark: orangeDark,
     },
@@ -33,17 +35,14 @@ export default createMuiTheme({
     borderRadius: '0.5rem',
   },
   overrides: {
-    // Styles for Select menu: <ul> element
+    // Styles for Select menu
     MuiMenu: {
+      // <ul> element
       list: {
         backgroundColor: grayDarker,
-        color: grayRegular,
+        color: grayMenuItems,
         border: `1px solid ${grayDark}`,
       },
-    },
-    // Styles for Select menu: <li> elements
-    MuiMenuItem: {
-      root: {},
     },
     MuiIconButton: {
       root: {
@@ -82,7 +81,7 @@ export default createMuiTheme({
     },
     MuiListItem: {
       root: {
-        color: grayIcons,
+        color: grayMenuItems,
         '&:hover': {
           backgroundColor: grayDark,
           '& .MuiListItemIcon-root, & .MuiListItemText-primary': {

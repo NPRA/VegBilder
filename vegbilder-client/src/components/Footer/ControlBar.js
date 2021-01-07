@@ -49,7 +49,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   speedHeading: {
-    color: theme.palette.common.grayIcons,
+    color: theme.palette.common.grayMenuItems,
     textTransform: 'uppercase',
     paddingTop: '1.21875rem',
     paddingLeft: '1.875rem',

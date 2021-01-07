@@ -26,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.secondary.main, 0.8),
     color: theme.palette.secondary.contrastText,
-    width: '8.5rem',
+    width: '10rem',
     '&:hover': {
       backgroundColor: fade(theme.palette.secondary.main, 1.0),
     },
@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
     position: 'absolute',
     left: '0.75rem',
     display: 'none',
+  },
+  dropdownStyle: {
+    marginTop: '4.3rem',
   },
 }));
 
@@ -92,6 +95,7 @@ const YearSelector = () => {
         className={classes.yearSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
+        MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
         <option aria-label="Tidsperiode" className={classes.heading}>
           {' '}
