@@ -48,10 +48,14 @@ const useStyles = makeStyles((theme) => ({
     '&:hover': {
       color: theme.palette.common.orangeDark,
     },
+    '& $checkmarkStyle': {
+      display: 'block',
+    },
   },
   checkmarkStyle: {
     position: 'absolute',
     left: '0.75rem',
+    display: 'none',
   },
 }));
 
