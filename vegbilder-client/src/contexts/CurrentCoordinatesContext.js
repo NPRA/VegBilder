@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import useQueryParamState from '../hooks/useQueryParamState';
+import useQueryParamState from 'hooks/useQueryParamState';
 
 const CurrentCoordinatesContext = React.createContext();
 
@@ -14,8 +14,7 @@ function useCurrentCoordinates() {
 function CurrentCoordinatesProvider(props) {
   const [currentCoordinateString, setCurrentCoordinateString] = useQueryParamState(
     'coordinates',
-    '65,15,4',
-    isValidCoordinateString
+    '65,15,4'
   );
   const [currentCoordinates, setCurrentCoordinatesInternal] = useState(
     parseCoordinateString(currentCoordinateString)
@@ -37,11 +36,6 @@ function CurrentCoordinatesProvider(props) {
       {...props}
     />
   );
-}
-
-function isValidCoordinateString(coordinateString) {
-  const regexp = /^(\d*(\.\d*)?,){2}\d{1,2}$/;
-  return regexp.test(coordinateString);
 }
 
 function parseCoordinateString(coordinateString) {

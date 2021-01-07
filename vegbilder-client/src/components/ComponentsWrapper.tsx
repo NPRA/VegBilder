@@ -38,13 +38,11 @@ const views = {
   imageView: 'image',
 };
 
-const isValidView = (view: string) => view === views.mapView || view === views.imageView;
-
 const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {...props} />;
 
 const ComponentsWrapper = () => {
   const classes = useStyles();
-  const [view, setView] = useQueryParamState('view', views.mapView, isValidView);
+  const [view, setView] = useQueryParamState('view', 'map');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
