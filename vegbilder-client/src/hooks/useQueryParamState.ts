@@ -1,7 +1,7 @@
 import { availableYears } from 'configuration/config';
 import { useEffect, useState } from 'react';
 
-type queryParamterNames = 'coordinates' | 'imageId' | 'year' | 'view' | 'lat' | 'lang' | 'zoom';
+type queryParamterNames = 'coordinates' | 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
 
 const isValidImageId = (imageId: string) => {
   const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
@@ -47,6 +47,12 @@ const useQueryParamState = (name: queryParamterNames, defaultValue: string) => {
         if (!validCoordinates) {
           throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
         }
+        return searchParam;
+      case 'lat':
+        return searchParam;
+      case 'lng':
+        return searchParam;
+      case 'zoom':
         return searchParam;
     }
   };

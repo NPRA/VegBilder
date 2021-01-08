@@ -1,33 +1,40 @@
-import React, { useState } from 'react';
+import React, { useState, useContext, createContext } from 'react';
 import useQueryParamState from 'hooks/useQueryParamState';
 
-const CurrentCoordinatesContext = React.createContext();
+const CurrentCoordinatesContext = createContext();
 
-function useCurrentCoordinates() {
-  const context = React.useContext(CurrentCoordinatesContext);
+const useCurrentCoordinates = () => {
+  const context = useContext(CurrentCoordinatesContext);
   if (!context) {
     throw new Error('useCurrentCoordinates must be used within a CurrentCoordinatesProvider');
   }
   return context;
-}
+};
 
-function CurrentCoordinatesProvider(props) {
-  const [currentCoordinateString, setCurrentCoordinateString] = useQueryParamState(
-    'coordinates',
-    '65,15,4'
-  );
-  const [currentCoordinates, setCurrentCoordinatesInternal] = useState(
-    parseCoordinateString(currentCoordinateString)
-  );
+const CurrentCoordinatesProvider = (props) => {
+  const [currentLat, setLat] = useQueryParamState('lat', '65');
+  const [currentLng, setLng] = useQueryParamState('lng', '15');
+  const [currentZoom, setZoom] = useQueryParamState('zoom', '4');
+
+  const lat = parseFloat(currentLat);
+  const lng = parseFloat(currentLng);
+
+  const [currentCoordinates, setCurrentCoordinatesInternal] = useState({
+    latlng: { lat, lng },
+    zoom: parseInt(currentZoom),
+  });
 
   const setCurrentCoordinates = ({ latlng, zoom }) => {
     const newCoordinates = {
       latlng: latlng,
-      zoom: zoom ?? currentCoordinates.zoom,
+      zoom: zoom ? zoom : currentCoordinates.zoom,
     };
-    const newCoordinateString = `${newCoordinates.latlng.lat},${newCoordinates.latlng.lng},${newCoordinates.zoom}`;
     setCurrentCoordinatesInternal(newCoordinates);
-    setCurrentCoordinateString(newCoordinateString);
+    setLat(latlng.lat.toString());
+    setLng(latlng.lng.toString());
+    if (zoom) {
+      setZoom(zoom.toString());
+    }
   };
 
   return (
@@ -36,14 +43,6 @@ function CurrentCoordinatesProvider(props) {
       {...props}
     />
   );
-}
-
-function parseCoordinateString(coordinateString) {
-  const split = coordinateString.split(',');
-  const lat = parseFloat(split[0], 10);
-  const lng = parseFloat(split[1], 10);
-  const zoom = parseInt(split[2], 10);
-  return { latlng: { lat, lng }, zoom };
-}
+};
 
 export { CurrentCoordinatesProvider, useCurrentCoordinates };
