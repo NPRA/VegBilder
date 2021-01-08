@@ -48,7 +48,7 @@ const SmallMapContainer = () => {
         attributionControl={false}
       >
         <TileLayer
-          url="https://m{s}-nvdbcache.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
+          url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
           attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
           subdomains="123456789"
         />
