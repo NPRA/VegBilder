@@ -40,8 +40,10 @@ const SmallMapContainer = () => {
         maxZoom={maxZoom}
         zoomControl={false}
         onViewportChanged={({ center, zoom }) => {
-          const latlng = { lat: center[0], lng: center[1] };
-          setCurrentCoordinates({ latlng, zoom });
+          if (center && zoom) {
+            const latlng = { lat: center[0], lng: center[1] };
+            setCurrentCoordinates({ latlng, zoom });
+          }
         }}
         attributionControl={false}
       >

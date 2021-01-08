@@ -277,7 +277,6 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
     if (autoPlay) {
       if (nextImagePoint) {
         sleep(timer).then(() => {
-          console.log(timer);
           const latlng = getImagePointLatLng(nextImagePoint);
           setCurrentImagePoint(nextImagePoint);
           setCurrentCoordinates({ latlng: latlng });
