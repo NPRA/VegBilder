@@ -2,7 +2,7 @@ import groupBy from 'lodash/groupBy';
 
 import { getDistanceInMetersBetween } from './latlngUtilities';
 import { splitDateTimeString } from './dateTimeUtilities';
-import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
+//import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
 const getImagePointLatLng = (imagePoint) => {
   if (imagePoint) {
