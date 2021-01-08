@@ -10,6 +10,7 @@ import getVegByVegsystemreferanse from '../../apis/NVDB/getVegByVegsystemreferan
 import { useFilteredImagePoints } from '../../contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from '../../utilities/vegsystemreferanseUtilities';
 import { useCurrentImagePoint } from '../../contexts/CurrentImagePointContext';
+import { getCoordinatesByPlace } from 'apis/geonorge/getCoordinatesByPlace';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -67,6 +68,9 @@ const Search = ({ showMessage }) => {
 
   const onKeyDown = async (event) => {
     if (event.key === 'Enter') {
+      const place = getCoordinatesByPlace(searchString);
+      console.log(place);
+
       const validSearchString = matchAndPadVegsystemreferanse(searchString);
       if (validSearchString == null) {
         console.warn(`Invalid search query: ${searchString}`);
