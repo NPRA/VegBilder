@@ -3,13 +3,13 @@ import InputBase from '@material-ui/core/InputBase';
 import { MagnifyingGlassIcon } from '../Icons/Icons';
 import { fade, makeStyles } from '@material-ui/core/styles';
 
-import { useCurrentCoordinates } from '../../contexts/CurrentCoordinatesContext';
-import { useLoadedImagePoints } from '../../contexts/LoadedImagePointsContext';
-import { useCommand, commandTypes } from '../../contexts/CommandContext';
-import getVegByVegsystemreferanse from '../../apis/NVDB/getVegByVegsystemreferanse';
-import { useFilteredImagePoints } from '../../contexts/FilteredImagePointsContext';
-import { matchAndPadVegsystemreferanse } from '../../utilities/vegsystemreferanseUtilities';
-import { useCurrentImagePoint } from '../../contexts/CurrentImagePointContext';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
+import { useCommand, commandTypes } from 'contexts/CommandContext';
+import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
+import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
+import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { getCoordinatesByPlace } from 'apis/geonorge/getCoordinatesByPlace';
 
 const useStyles = makeStyles((theme) => ({
@@ -67,20 +67,35 @@ const Search = ({ showMessage }) => {
   };
 
   const onKeyDown = async (event) => {
-    if (event.key === 'Enter') {
-      const place = getCoordinatesByPlace(searchString);
-      console.log(place);
+    if (!event) return;
 
-      const validSearchString = matchAndPadVegsystemreferanse(searchString);
-      if (validSearchString == null) {
-        console.warn(`Invalid search query: ${searchString}`);
-        showMessage('Det der ser ikke ut som en vegsystemreferanse for ERF-veg');
-        return;
+    if (event.key === 'Enter') {
+      const validVegsystemReferanse = matchAndPadVegsystemreferanse(searchString);
+      let latlng;
+      let zoom;
+      if (validVegsystemReferanse) {
+        setSearchString(validVegsystemReferanse);
+        latlng = await getCoordinates(validVegsystemReferanse);
+        zoom = 16;
+      } else {
+        const place = await getCoordinatesByPlace(searchString);
+        if (place.totaltAntallTreff !== '0') {
+          console.log(place.stedsnavn);
+          place.stedsnavn[0]
+            ? (latlng = { lat: place.stedsnavn[0].nord, lng: place.stedsnavn[0].aust })
+            : (latlng = { lat: place.stedsnavn.nord, lng: place.stedsnavn.aust });
+          zoom = 14;
+        } else {
+          console.warn(`Invalid search query: ${searchString}`);
+          showMessage(
+            'Det der ser ikke ut som en vegsystemreferanse for ERF-veg eller et stedsnavn.'
+          );
+          return;
+        }
       }
-      setSearchString(validSearchString);
-      const latlng = await getCoordinates(validSearchString);
+
       if (latlng) {
-        setCurrentCoordinates({ latlng: latlng, zoom: 16 });
+        setCurrentCoordinates({ latlng: latlng, zoom: zoom });
         /* Since a search usually entails a big jump in location, the currently loaded image points
          * will most likely no longer be useful. We need to clear them in order for the
          * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
