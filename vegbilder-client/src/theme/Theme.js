@@ -90,5 +90,8 @@ export default createMuiTheme({
         },
       },
     },
+    MuiListItemText: {
+      secondary: { color: grayMenuItems },
+    },
   },
 });

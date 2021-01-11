@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import { MagnifyingGlassIcon } from '../Icons/Icons';
 import { fade, makeStyles } from '@material-ui/core/styles';
-import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 
@@ -61,8 +60,8 @@ const useStyles = makeStyles((theme) => ({
     color: '#ececec',
     backgroundColor: '#2E3539',
     borderRadius: '0.5rem',
-    width: '20rem',
-    maxHeight: '20rem',
+    width: '25rem',
+    maxHeight: '40rem',
     overflowY: 'auto',
   },
 }));
@@ -77,11 +76,7 @@ const Search = ({ showMessage }) => {
   const { unsetCurrentImagePoint } = useCurrentImagePoint();
   const { setCommand } = useCommand();
 
-  const menuRef = useRef();
-
   const [openMenu, setOpenMenu] = useState(false);
-
-  const [searchOptionsAnchorEl, setSearchOptionsAnchorEl] = useState(null);
 
   const handleSelectedOption = (place) => {
     setOpenMenu(false);
@@ -110,7 +105,7 @@ const Search = ({ showMessage }) => {
 
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(searchString);
       if (validVegsystemReferanse) {
-        setSearchString(validVegsystemReferanse);
+        //setSearchString(validVegsystemReferanse);
         const latlng = await getCoordinates(validVegsystemReferanse);
         const zoom = 16;
       } else {
@@ -156,7 +151,11 @@ const Search = ({ showMessage }) => {
                 handleCloseMenu();
               }}
             >
-              <ListItemText key={`Textkey${i}`} primary={option?.stedsnavn} />
+              <ListItemText
+                key={`Textkey${i}`}
+                primary={option.stedsnavn}
+                secondary={`${option.navnetype}, ${option.kommunenavn} (${option.fylkesnavn})`}
+              />
             </MenuItem>
           ))}
         </div>
