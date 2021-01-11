@@ -1,7 +1,10 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import { MagnifyingGlassIcon } from '../Icons/Icons';
 import { fade, makeStyles } from '@material-ui/core/styles';
+import Menu from '@material-ui/core/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
@@ -51,62 +54,80 @@ const useStyles = makeStyles((theme) => ({
       height: '3ch',
     },
   },
+  menu: {
+    position: 'absolute',
+    top: '5.5rem',
+    left: 0,
+    color: '#ececec',
+    backgroundColor: '#2E3539',
+    borderRadius: '0.5rem',
+    width: '20rem',
+    maxHeight: '20rem',
+    overflowY: 'auto',
+  },
 }));
 
 const Search = ({ showMessage }) => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState('');
+  const [options, setOptions] = useState([]);
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { unsetCurrentImagePoint } = useCurrentImagePoint();
   const { setCommand } = useCommand();
 
-  const onChange = (event) => {
-    setSearchString(event.target.value);
+  const menuRef = useRef();
+
+  const [openMenu, setOpenMenu] = useState(false);
+
+  const [searchOptionsAnchorEl, setSearchOptionsAnchorEl] = useState(null);
+
+  const handleSelectedOption = (place) => {
+    setOpenMenu(false);
+    const latlng = { lat: place.nord, lng: place.aust };
+    if (latlng.lat && latlng.lng) {
+      setCurrentCoordinates({ latlng: latlng, zoom: 12 });
+      /* Since a search usually entails a big jump in location, the currently loaded image points
+       * will most likely no longer be useful. We need to clear them in order for the
+       * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
+       * the nearest of the image points in the previous location.)
+       */
+      resetLoadedImagePoints();
+      resetFilteredImagePoints();
+      unsetCurrentImagePoint();
+      setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
+    }
   };
 
-  const onKeyDown = async (event) => {
-    if (!event) return;
+  const handleCloseMenu = () => {
+    setOpenMenu(false);
+  };
 
-    if (event.key === 'Enter') {
+  const onChange = async (event) => {
+    if (event.target.value) {
+      setSearchString(event.target.value);
+
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(searchString);
-      let latlng;
-      let zoom;
       if (validVegsystemReferanse) {
         setSearchString(validVegsystemReferanse);
-        latlng = await getCoordinates(validVegsystemReferanse);
-        zoom = 16;
+        const latlng = await getCoordinates(validVegsystemReferanse);
+        const zoom = 16;
       } else {
-        const place = await getCoordinatesByPlace(searchString);
+        const place = await getCoordinatesByPlace(event.target.value);
         if (place.totaltAntallTreff !== '0') {
-          console.log(place.stedsnavn);
-          place.stedsnavn[0]
-            ? (latlng = { lat: place.stedsnavn[0].nord, lng: place.stedsnavn[0].aust })
-            : (latlng = { lat: place.stedsnavn.nord, lng: place.stedsnavn.aust });
-          zoom = 14;
+          const newOptions = place.stedsnavn[0] ? [...place.stedsnavn] : place.stedsnavn;
+          setOptions(newOptions);
+          const zoom = 14;
         } else {
-          console.warn(`Invalid search query: ${searchString}`);
-          showMessage(
-            'Det der ser ikke ut som en vegsystemreferanse for ERF-veg eller et stedsnavn.'
-          );
-          return;
+          // console.warn(`Invalid search query: ${searchString}`);
+          // showMessage('Ugyldig vegsystemreferanse for ERF-veg eller stedsnavn.');
+          // return;
         }
       }
-
-      if (latlng) {
-        setCurrentCoordinates({ latlng: latlng, zoom: zoom });
-        /* Since a search usually entails a big jump in location, the currently loaded image points
-         * will most likely no longer be useful. We need to clear them in order for the
-         * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
-         * the nearest of the image points in the previous location.)
-         */
-        resetLoadedImagePoints();
-        resetFilteredImagePoints();
-        unsetCurrentImagePoint();
-        setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
-      }
     }
+    //setSearchOptionsAnchorEl(menuRef.current);
+    setOpenMenu(true);
   };
 
   return (
@@ -122,9 +143,24 @@ const Search = ({ showMessage }) => {
         }}
         inputProps={{ 'aria-label': 'search' }}
         onChange={onChange}
-        onKeyDown={onKeyDown}
         value={searchString}
       />
+      {/* <p className={classes.speedHeading}> Hastighet </p> */}
+      {openMenu && (
+        <div className={classes.menu}>
+          {options.map((option, i) => (
+            <MenuItem
+              key={i}
+              onClick={() => {
+                handleSelectedOption(option);
+                handleCloseMenu();
+              }}
+            >
+              <ListItemText key={`Textkey${i}`} primary={option?.stedsnavn} />
+            </MenuItem>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

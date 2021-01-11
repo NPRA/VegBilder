@@ -4,9 +4,10 @@ export const getCoordinatesByPlace = async (place: string) => {
   return await wsgeonorge
     .get('/sok', {
       params: {
-        navn: place,
-        maxAnt: 2,
+        navn: `${place}*`,
+        maxAnt: 10,
         epsgKode: 4326,
+        eksakteForst: true,
       },
     })
     .then((response) => {
@@ -15,5 +16,4 @@ export const getCoordinatesByPlace = async (place: string) => {
         return data;
       }
     });
-  //return response;
 };
