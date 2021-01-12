@@ -15,5 +15,8 @@ export const getStedsnavnByName = async (name: string) => {
       if (data.sokStatus.ok) {
         return data;
       }
+    })
+    .catch((error) => {
+      console.error(error);
     });
 };

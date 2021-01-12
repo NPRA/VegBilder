@@ -71,7 +71,7 @@ const useStyles = makeStyles((theme) => ({
 const Search = () => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState('');
-  const [options, setOptions] = useState([]);
+  const [stedsnavnOptions, setStedsnavnOptions] = useState([]);
   const [vegSystemReferanser, setVegSystemReferanser] = useState([]);
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
@@ -81,22 +81,38 @@ const Search = () => {
 
   const [openMenu, setOpenMenu] = useState(false);
 
+  const [previousInvalid, setPreviousInvalid] = useState(false);
+
   const delayedStedsnavnQuery = useCallback(
     debounce(async (trimmedSearch) => {
-      const place = await getStedsnavnByName(trimmedSearch);
-      if (place && place.totaltAntallTreff !== '0') {
-        const newOptions = place.stedsnavn[0] ? [...place.stedsnavn] : place.stedsnavn;
-        setOptions(newOptions);
+      const stedsnavn = await getStedsnavnByName(trimmedSearch);
+      if (stedsnavn && stedsnavn.totaltAntallTreff !== '0') {
+        const newOptions = stedsnavn.stedsnavn[0] ? [...stedsnavn.stedsnavn] : stedsnavn.stedsnavn;
+        setStedsnavnOptions(newOptions);
       } else {
-        setOptions([]);
+        setStedsnavnOptions([]);
       }
     }, 200),
     []
   );
 
+  const delayedVegQuery = useCallback(
+    debounce(async (vegsystemreferanse) => {
+      const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
+      if (vegResponse) {
+        const vegsystemReferanse = vegResponse.data?.vegsystemreferanse.kortform;
+        const newReferanceState = [vegsystemReferanse, ...vegSystemReferanser];
+        setVegSystemReferanser(newReferanceState);
+      } else {
+        setPreviousInvalid(true);
+      }
+    }, 300),
+    []
+  );
+
   const handleSelectedOption = (latlng, zoom) => {
     setOpenMenu(false);
-    if (latlng.lat && latlng.lng) {
+    if (latlng && latlng.lat && latlng.lng) {
       setCurrentCoordinates({ latlng: latlng, zoom: zoom });
       /* Since a search usually entails a big jump in location, the currently loaded image points
        * will most likely no longer be useful. We need to clear them in order for the
@@ -112,6 +128,7 @@ const Search = () => {
   };
 
   const handleVegSystemReferanseClick = async (vegsystemReferanse) => {
+    //const wktForRef = wkts[vegsystemReferanse];
     const latlng = await getCoordinates(vegsystemReferanse);
     const zoom = 16;
     handleSelectedOption(latlng, zoom);
@@ -130,13 +147,12 @@ const Search = () => {
         const validVegsystemReferanse = matchAndPadVegsystemreferanse(trimmedSearch);
         if (validVegsystemReferanse) {
           if (!vegSystemReferanser.includes(validVegsystemReferanse)) {
-            const newReferanceState = [...vegSystemReferanser, validVegsystemReferanse];
-            setVegSystemReferanser(newReferanceState);
+            await delayedVegQuery(validVegsystemReferanse);
           }
         } else {
           setVegSystemReferanser([]);
+          await delayedStedsnavnQuery(trimmedSearch);
         }
-        await delayedStedsnavnQuery(trimmedSearch);
         setOpenMenu(true);
       } else {
         setOpenMenu(false);
@@ -150,7 +166,7 @@ const Search = () => {
         <MagnifyingGlassIcon />
       </div>
       <InputBase
-        placeholder="Søk etter vegsystemreferanse (ERF-veger)"
+        placeholder="Søk etter et sted eller en vegsystemreferanse (ERF-veger)"
         classes={{
           root: classes.inputRoot,
           input: classes.inputInput,
@@ -177,19 +193,21 @@ const Search = () => {
               ))}
             </>
           )}
-          {options && <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>}
-          {options.map((option, i) => (
+          {stedsnavnOptions && (
+            <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
+          )}
+          {stedsnavnOptions.map((stedsnavn, i) => (
             <MenuItem
               key={i}
               style={{ paddingLeft: '1.875rem' }}
               onClick={() => {
-                handleSelectedOption({ lat: option.nord, lng: option.aust }, 14);
+                handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, 14);
               }}
             >
               <ListItemText
                 key={`Textkey${i}`}
-                primary={option.stedsnavn}
-                secondary={`${option.navnetype}, ${option.kommunenavn} (${option.fylkesnavn})`}
+                primary={stedsnavn.stedsnavn}
+                secondary={`${stedsnavn.navnetype}, ${stedsnavn.kommunenavn} (${stedsnavn.fylkesnavn})`}
               />
             </MenuItem>
           ))}
