@@ -1,10 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import InputBase from '@material-ui/core/InputBase';
-import { MagnifyingGlassIcon } from '../Icons/Icons';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ListSubheader } from '@material-ui/core';
+import { debounce } from 'lodash';
 
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
@@ -14,6 +14,7 @@ import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { getCoordinatesByPlace } from 'apis/geonorge/getCoordinatesByPlace';
+import { MagnifyingGlassIcon } from '../Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +81,11 @@ const Search = () => {
 
   const [openMenu, setOpenMenu] = useState(false);
 
+  const delayedStedsnavnQuery = useCallback(
+    debounce(async (trimmedSearch) => getCoordinatesByPlace(trimmedSearch), 200),
+    []
+  );
+
   const handleSelectedOption = (latlng, zoom) => {
     setOpenMenu(false);
     if (latlng.lat && latlng.lng) {
@@ -121,9 +127,8 @@ const Search = () => {
         } else {
           setVegSystemReferanser([]);
         }
-
-        const place = await getCoordinatesByPlace(trimmedSearch);
-        if (place.totaltAntallTreff !== '0') {
+        const place = await delayedStedsnavnQuery(trimmedSearch);
+        if (place && place.totaltAntallTreff !== '0') {
           const newOptions = place.stedsnavn[0] ? [...place.stedsnavn] : place.stedsnavn;
           setOptions(newOptions);
           const zoom = 14;
