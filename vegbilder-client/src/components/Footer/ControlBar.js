@@ -29,6 +29,9 @@ import {
   StopIcon,
   TimerIcon,
   CheckmarkIcon,
+  PauseIcon,
+  ArrowTurnDisabledIcon,
+  DotsHorizontalDisabledIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -81,21 +84,17 @@ const ControlBar = ({ showMessage }) => {
 
   const timerOptions = [1000, 2000, 3000];
 
-  const handleMoreControlsClick = (event) => {
-    setMoreControlsAnchorEl(event.currentTarget);
-  };
+  const [playMode, setPlayMode] = useState(false);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
 
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
 
-  const handleTimerOptionSelect = (time) => {
-    setTime(time);
-  };
+  const handleTimerOptionSelect = (time) => setTime(time);
 
-  const handleTimerOptionsClick = (event) => {
-    setTimerOptionsAnchorEl(event.currentTarget);
-  };
+  const handleTimerOptionsClick = (event) => setTimerOptionsAnchorEl(event.currentTarget);
+
+  const handleMoreControlsClick = (event) => setMoreControlsAnchorEl(event.currentTarget);
 
   const copyShareableUrlToClipboard = () => {
     const shareableUrl = getShareableUrlForImage(currentImagePoint);
@@ -130,7 +129,7 @@ const ControlBar = ({ showMessage }) => {
   return (
     <>
       <Toolbar>
-        {miniMapVisible ? (
+        {miniMapVisible && !playVideo ? (
           <IconButton
             aria-label="Skjul kart"
             className={classes.button}
@@ -140,6 +139,7 @@ const ControlBar = ({ showMessage }) => {
           </IconButton>
         ) : (
           <IconButton
+            disabled={playVideo}
             aria-label="Vis kart"
             className={classes.button}
             onClick={() => setMiniMapVisible(true)}
@@ -147,47 +147,121 @@ const ControlBar = ({ showMessage }) => {
             <MapDisabledIcon />
           </IconButton>
         )}
-        <IconButton
-          aria-label="Gå bakover"
-          className={classes.button}
-          onClick={() => setCommand(commandTypes.goBackwards)}
-        >
-          <ArrowDownIcon />
-        </IconButton>
-        <IconButton
-          aria-label="Gå fremover"
-          className={classes.button}
-          onClick={() => setCommand(commandTypes.goForwards)}
-        >
-          <ArrowUpIcon />
-        </IconButton>
-        <IconButton
-          aria-label="Bytt kjøreretning"
-          className={clsx(classes.button, classes.arrowTurnButton)}
-          onClick={() => setCommand(commandTypes.turnAround)}
-        >
-          <ArrowTurnIcon />
-        </IconButton>
+
+        {!playMode && (
+          <>
+            <IconButton
+              aria-label="Gå bakover"
+              className={classes.button}
+              onClick={() => setCommand(commandTypes.goBackwards)}
+            >
+              <ArrowDownIcon />
+            </IconButton>
+            <IconButton
+              aria-label="Gå fremover"
+              className={classes.button}
+              onClick={() => setCommand(commandTypes.goForwards)}
+            >
+              <ArrowUpIcon />
+            </IconButton>
+          </>
+        )}
 
         {playVideo ? (
+          <ArrowTurnDisabledIcon className={clsx(classes.button, classes.arrowTurnButton)} />
+        ) : (
           <IconButton
-            aria-label="Stopp animasjon"
+            aria-label="Bytt kjøreretning"
+            className={clsx(classes.button, classes.arrowTurnButton)}
+            onClick={() => setCommand(commandTypes.turnAround)}
+          >
+            <ArrowTurnIcon />
+          </IconButton>
+        )}
+
+        {playMode && (
+          <IconButton
+            aria-label="Stopp animasjonsmodus"
+            title="Gå ut av animasjonsmodus"
             className={classes.button}
-            onClick={() => setPlayVideo(false)}
+            onClick={() => {
+              setPlayVideo(false);
+              setPlayMode(false);
+            }}
           >
             <StopIcon />
           </IconButton>
+        )}
+
+        {playVideo ? (
+          <IconButton
+            aria-label="Stopp autoplay"
+            title="Pause animasjonen"
+            className={classes.button}
+            onClick={() => {
+              setPlayVideo(false);
+            }}
+          >
+            <PauseIcon />
+          </IconButton>
         ) : (
           <IconButton
-            aria-label="Start animasjon"
+            aria-label="Start animasjonsmodus"
             className={classes.button}
-            onClick={() => setPlayVideo(true)}
+            onClick={() => {
+              setPlayVideo(true);
+              setPlayMode(true);
+            }}
           >
             <PlayIcon />
           </IconButton>
         )}
 
-        {meterLineVisible ? (
+        {playMode && (
+          <>
+            <IconButton
+              aria-label="Bytt tid"
+              onClick={handleTimerOptionsClick}
+              className={classes.button}
+            >
+              <TimerIcon />
+            </IconButton>
+            <Menu
+              id="timer-options"
+              anchorEl={timerOptionsAnchorEl}
+              keepMounted
+              open={Boolean(timerOptionsAnchorEl)}
+              onClose={handleTimerOptionsClose}
+              anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+              }}
+              transformOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+              }}
+            >
+              <p className={classes.speedHeading}> Hastighet </p>
+              {timerOptions.map((option) => (
+                <MenuItem
+                  onClick={() => {
+                    handleTimerOptionSelect(option);
+                    handleTimerOptionsClose();
+                  }}
+                  className={classes.speedMenuItem}
+                >
+                  {option === currentTime && <CheckmarkIcon className={classes.iconStyle} />}
+                  <ListItemText
+                    primary={(option / 1000).toString() + ' sekunder'}
+                    style={{ color: option === currentTime ? '#F67F00' : '' }}
+                  />
+                </MenuItem>
+              ))}
+            </Menu>
+          </>
+        )}
+
+        {meterLineVisible && !playVideo ? (
           <IconButton
             aria-label="Mål avstand"
             className={classes.button}
@@ -197,6 +271,7 @@ const ControlBar = ({ showMessage }) => {
           </IconButton>
         ) : (
           <IconButton
+            disabled={playVideo}
             aria-label="Mål avstand"
             className={classes.button}
             onClick={() => setMeterLineVisible(true)}
@@ -205,46 +280,6 @@ const ControlBar = ({ showMessage }) => {
           </IconButton>
         )}
 
-        <IconButton
-          aria-label="Bytt tid"
-          onClick={handleTimerOptionsClick}
-          className={classes.button}
-        >
-          <TimerIcon />
-        </IconButton>
-        <Menu
-          id="timer-options"
-          anchorEl={timerOptionsAnchorEl}
-          keepMounted
-          open={Boolean(timerOptionsAnchorEl)}
-          onClose={handleTimerOptionsClose}
-          anchorOrigin={{
-            vertical: 'top',
-            horizontal: 'center',
-          }}
-          transformOrigin={{
-            vertical: 'bottom',
-            horizontal: 'center',
-          }}
-        >
-          <p className={classes.speedHeading}> Hastighet </p>
-
-          {timerOptions.map((option) => (
-            <MenuItem
-              onClick={() => {
-                handleTimerOptionSelect(option);
-                handleTimerOptionsClose();
-              }}
-              className={classes.speedMenuItem}
-            >
-              {option === currentTime && <CheckmarkIcon className={classes.iconStyle} />}
-              <ListItemText
-                primary={(option / 1000).toString() + ' sekunder'}
-                style={{ color: option === currentTime ? '#F67F00' : '' }}
-              />
-            </MenuItem>
-          ))}
-        </Menu>
         {/*
         <IconButton
           aria-label="Finn bilder herfra på andre datoer"
@@ -253,13 +288,17 @@ const ControlBar = ({ showMessage }) => {
           <HistoryIcon />
         </IconButton>
         */}
-        <IconButton
-          aria-label="Flere funksjoner"
-          onClick={handleMoreControlsClick}
-          className={classes.button}
-        >
-          <DotsHorizontalIcon />
-        </IconButton>
+        {playVideo ? (
+          <DotsHorizontalDisabledIcon className={classes.button} />
+        ) : (
+          <IconButton
+            aria-label="Flere funksjoner"
+            onClick={handleMoreControlsClick}
+            className={classes.button}
+          >
+            <DotsHorizontalIcon />
+          </IconButton>
+        )}
       </Toolbar>
       {currentImagePoint ? (
         <Menu
