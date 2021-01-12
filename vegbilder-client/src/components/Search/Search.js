@@ -68,20 +68,18 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Search = () => {
+const Search = ({ showMessage }) => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState('');
   const [stedsnavnOptions, setStedsnavnOptions] = useState([]);
   const [vegSystemReferanser, setVegSystemReferanser] = useState([]);
+  const [openMenu, setOpenMenu] = useState(false);
+
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { unsetCurrentImagePoint } = useCurrentImagePoint();
   const { setCommand } = useCommand();
-
-  const [openMenu, setOpenMenu] = useState(false);
-
-  const [previousInvalid, setPreviousInvalid] = useState(false);
 
   const delayedStedsnavnQuery = useCallback(
     debounce(async (trimmedSearch) => {
@@ -91,6 +89,7 @@ const Search = () => {
         setStedsnavnOptions(newOptions);
       } else {
         setStedsnavnOptions([]);
+        showMessage('Finner ingen steder med det navnet.');
       }
     }, 200),
     []
@@ -104,7 +103,8 @@ const Search = () => {
         const newReferanceState = [vegsystemReferanse, ...vegSystemReferanser];
         setVegSystemReferanser(newReferanceState);
       } else {
-        setPreviousInvalid(true);
+        showMessage('Ugyldig ERF-veg');
+        setVegSystemReferanser([]);
       }
     }, 300),
     []
@@ -128,7 +128,6 @@ const Search = () => {
   };
 
   const handleVegSystemReferanseClick = async (vegsystemReferanse) => {
-    //const wktForRef = wkts[vegsystemReferanse];
     const latlng = await getCoordinates(vegsystemReferanse);
     const zoom = 16;
     handleSelectedOption(latlng, zoom);

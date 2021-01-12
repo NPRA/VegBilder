@@ -10,12 +10,14 @@ const getVegByVegsystemreferanse = async (vegsystemreferanse) => {
     })
     .then((response) => {
       if (response.code === 4012) {
-        console.error(response.message);
+        console.warn(response.message);
         return;
       }
       return response;
     })
-    .catch((error) => console.error(error));
+    .catch((error) => {
+      console.warn(error);
+    });
 };
 
 export default getVegByVegsystemreferanse;
