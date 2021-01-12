@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import { MagnifyingGlassIcon } from '../Icons/Icons';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import { ListSubheader } from '@material-ui/core';
 
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
@@ -55,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   },
   menu: {
     position: 'absolute',
-    top: '5.5rem',
+    top: '5.2rem',
     left: 0,
     color: '#ececec',
     backgroundColor: '#2E3539',
@@ -66,10 +67,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Search = ({ showMessage }) => {
+const Search = () => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState('');
   const [options, setOptions] = useState([]);
+  const [vegSystemReferanser, setVegSystemReferanser] = useState([]);
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
@@ -78,11 +80,10 @@ const Search = ({ showMessage }) => {
 
   const [openMenu, setOpenMenu] = useState(false);
 
-  const handleSelectedOption = (place) => {
+  const handleSelectedOption = (latlng, zoom) => {
     setOpenMenu(false);
-    const latlng = { lat: place.nord, lng: place.aust };
     if (latlng.lat && latlng.lng) {
-      setCurrentCoordinates({ latlng: latlng, zoom: 12 });
+      setCurrentCoordinates({ latlng: latlng, zoom: zoom });
       /* Since a search usually entails a big jump in location, the currently loaded image points
        * will most likely no longer be useful. We need to clear them in order for the
        * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
@@ -92,37 +93,48 @@ const Search = ({ showMessage }) => {
       resetFilteredImagePoints();
       unsetCurrentImagePoint();
       setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
+      setSearchString('');
     }
   };
 
-  const handleCloseMenu = () => {
-    setOpenMenu(false);
+  const handleVegSystemReferanseClick = async (vegsystemReferanse) => {
+    const latlng = await getCoordinates(vegsystemReferanse);
+    const zoom = 16;
+    handleSelectedOption(latlng, zoom);
   };
 
   const onChange = async (event) => {
-    if (event.target.value) {
-      setSearchString(event.target.value);
+    if (event) {
+      const search = event.target.value;
+      setSearchString(search);
+      const isAlphaNumericSpace = /^[a-å0-9-. ]+$/i;
+      if (isAlphaNumericSpace.test(search)) {
+        const trimmedSearch = search.trim();
+        if (trimmedSearch === searchString) return;
 
-      const validVegsystemReferanse = matchAndPadVegsystemreferanse(searchString);
-      if (validVegsystemReferanse) {
-        //setSearchString(validVegsystemReferanse);
-        const latlng = await getCoordinates(validVegsystemReferanse);
-        const zoom = 16;
-      } else {
-        const place = await getCoordinatesByPlace(event.target.value);
+        const validVegsystemReferanse = matchAndPadVegsystemreferanse(trimmedSearch);
+        if (validVegsystemReferanse) {
+          if (!vegSystemReferanser.includes(validVegsystemReferanse)) {
+            const newReferanceState = [...vegSystemReferanser, validVegsystemReferanse];
+            setVegSystemReferanser(newReferanceState);
+          }
+        } else {
+          setVegSystemReferanser([]);
+        }
+
+        const place = await getCoordinatesByPlace(trimmedSearch);
         if (place.totaltAntallTreff !== '0') {
           const newOptions = place.stedsnavn[0] ? [...place.stedsnavn] : place.stedsnavn;
           setOptions(newOptions);
           const zoom = 14;
         } else {
-          // console.warn(`Invalid search query: ${searchString}`);
-          // showMessage('Ugyldig vegsystemreferanse for ERF-veg eller stedsnavn.');
-          // return;
+          setOptions([]);
         }
+        setOpenMenu(true);
+      } else {
+        setOpenMenu(false);
       }
     }
-    //setSearchOptionsAnchorEl(menuRef.current);
-    setOpenMenu(true);
   };
 
   return (
@@ -140,15 +152,31 @@ const Search = ({ showMessage }) => {
         onChange={onChange}
         value={searchString}
       />
-      {/* <p className={classes.speedHeading}> Hastighet </p> */}
       {openMenu && (
         <div className={classes.menu}>
+          {vegSystemReferanser.length > 0 && (
+            <>
+              <ListSubheader style={{ paddingTop: '0.5rem' }}> Vegsystemreferanser </ListSubheader>
+              {vegSystemReferanser.map((referanse, i) => (
+                <MenuItem
+                  key={i}
+                  style={{ paddingLeft: '1.875rem' }}
+                  onClick={() => {
+                    handleVegSystemReferanseClick(referanse);
+                  }}
+                >
+                  <ListItemText key={`Textkey${i}`} primary={referanse} />
+                </MenuItem>
+              ))}
+            </>
+          )}
+          {options && <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>}
           {options.map((option, i) => (
             <MenuItem
               key={i}
+              style={{ paddingLeft: '1.875rem' }}
               onClick={() => {
-                handleSelectedOption(option);
-                handleCloseMenu();
+                handleSelectedOption({ lat: option.nord, lng: option.aust }, 14);
               }}
             >
               <ListItemText
