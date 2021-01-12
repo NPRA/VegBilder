@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -13,7 +13,7 @@ import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
-import { getCoordinatesByPlace } from 'apis/geonorge/getCoordinatesByPlace';
+import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
 import { MagnifyingGlassIcon } from '../Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -82,7 +82,15 @@ const Search = () => {
   const [openMenu, setOpenMenu] = useState(false);
 
   const delayedStedsnavnQuery = useCallback(
-    debounce(async (trimmedSearch) => getCoordinatesByPlace(trimmedSearch), 200),
+    debounce(async (trimmedSearch) => {
+      const place = await getStedsnavnByName(trimmedSearch);
+      if (place && place.totaltAntallTreff !== '0') {
+        const newOptions = place.stedsnavn[0] ? [...place.stedsnavn] : place.stedsnavn;
+        setOptions(newOptions);
+      } else {
+        setOptions([]);
+      }
+    }, 200),
     []
   );
 
@@ -112,11 +120,12 @@ const Search = () => {
   const onChange = async (event) => {
     if (event) {
       const search = event.target.value;
+      const previousSearch = searchString;
       setSearchString(search);
       const isAlphaNumericSpace = /^[a-å0-9-. ]+$/i;
       if (isAlphaNumericSpace.test(search)) {
         const trimmedSearch = search.trim();
-        if (trimmedSearch === searchString) return;
+        if (trimmedSearch === searchString || trimmedSearch === previousSearch.trim()) return;
 
         const validVegsystemReferanse = matchAndPadVegsystemreferanse(trimmedSearch);
         if (validVegsystemReferanse) {
@@ -127,14 +136,7 @@ const Search = () => {
         } else {
           setVegSystemReferanser([]);
         }
-        const place = await delayedStedsnavnQuery(trimmedSearch);
-        if (place && place.totaltAntallTreff !== '0') {
-          const newOptions = place.stedsnavn[0] ? [...place.stedsnavn] : place.stedsnavn;
-          setOptions(newOptions);
-          const zoom = 14;
-        } else {
-          setOptions([]);
-        }
+        await delayedStedsnavnQuery(trimmedSearch);
         setOpenMenu(true);
       } else {
         setOpenMenu(false);
