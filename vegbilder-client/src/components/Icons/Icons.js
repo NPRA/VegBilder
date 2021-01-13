@@ -15,6 +15,9 @@ import { ReactComponent as StopIcon } from './Stop.svg';
 import { ReactComponent as TimerIcon } from './timer.svg';
 import { ReactComponent as CircledHelpIcon } from './help-circle-outline.svg';
 import { ReactComponent as CheckmarkIcon } from './checkmark.svg';
+import { ReactComponent as PauseIcon } from './Pause.svg';
+import { ReactComponent as ArrowTurnDisabledIcon } from './TurnAroundDisabled.svg';
+import { ReactComponent as DotsHorizontalDisabledIcon } from './DotsHorizontalDisabled.svg';
 
 export {
   ArrowDownIcon,
@@ -34,4 +37,7 @@ export {
   TimerIcon,
   CircledHelpIcon,
   CheckmarkIcon,
+  PauseIcon,
+  ArrowTurnDisabledIcon,
+  DotsHorizontalDisabledIcon,
 };

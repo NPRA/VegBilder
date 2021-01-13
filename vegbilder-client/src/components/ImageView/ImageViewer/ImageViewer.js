@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import orderBy from 'lodash/orderBy';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useRecoilState } from 'recoil';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
@@ -48,7 +48,7 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
   const { command, resetCommand } = useCommand();
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { meterLineVisible } = useToggles();
-  const autoPlay = useRecoilValue(playVideoState);
+  const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
   const timer = useRecoilValue(timerState);
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
@@ -282,6 +282,7 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
           setCurrentCoordinates({ latlng: latlng });
         });
       } else {
+        setAutoPlay(false);
         showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
       }
     }

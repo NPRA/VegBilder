@@ -22,6 +22,8 @@ import {
 } from 'utilities/imagePointUtilities';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { availableYears } from 'configuration/config';
+import { useRecoilValue } from 'recoil';
+import { playVideoState } from 'recoil/atoms';
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -40,6 +42,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const { year } = useYearFilter();
   const { command, resetCommand } = useCommand();
+  const playVideo = useRecoilValue(playVideoState);
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -234,7 +237,9 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
                 rotationOrigin={'center center'}
                 zIndexOffset={isSelected ? 10000 : 0}
                 onclick={() => {
-                  setCurrentImagePoint(imagePoint);
+                  if (!playVideo) {
+                    setCurrentImagePoint(imagePoint);
+                  }
                   //setCurrentCoordinates({ latlng: latlng, zoom: zoom });
                 }}
               />
