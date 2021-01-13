@@ -38,6 +38,7 @@ import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
 import { playVideoState, timerState } from 'recoil/atoms';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -81,19 +82,14 @@ const ControlBar = ({ showMessage }) => {
   const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
   const [currentTime, setTime] = useRecoilState(timerState);
-
-  const timerOptions = [1000, 2000, 3000];
-
   const [playMode, setPlayMode] = useState(false);
 
+  const timerOptions = [1000, 2000, 3000, 4000, 5000];
+
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
-
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
-
   const handleTimerOptionSelect = (time) => setTime(time);
-
   const handleTimerOptionsClick = (event) => setTimerOptionsAnchorEl(event.currentTarget);
-
   const handleMoreControlsClick = (event) => setMoreControlsAnchorEl(event.currentTarget);
 
   const copyShareableUrlToClipboard = () => {
@@ -242,8 +238,9 @@ const ControlBar = ({ showMessage }) => {
               }}
             >
               <p className={classes.speedHeading}> Hastighet </p>
-              {timerOptions.map((option) => (
+              {timerOptions.map((option, i) => (
                 <MenuItem
+                  key={i}
                   onClick={() => {
                     handleTimerOptionSelect(option);
                     handleTimerOptionsClose();
@@ -252,8 +249,9 @@ const ControlBar = ({ showMessage }) => {
                 >
                   {option === currentTime && <CheckmarkIcon className={classes.iconStyle} />}
                   <ListItemText
+                    key={`Text${i}`}
                     primary={(option / 1000).toString() + ' sekunder'}
-                    style={{ color: option === currentTime ? '#F67F00' : '' }}
+                    style={{ color: option === currentTime ? Theme.palette.common.orangeDark : '' }}
                   />
                 </MenuItem>
               ))}
