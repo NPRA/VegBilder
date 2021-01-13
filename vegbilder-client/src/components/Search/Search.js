@@ -57,10 +57,10 @@ const useStyles = makeStyles((theme) => ({
   },
   menu: {
     position: 'absolute',
-    top: '5.2rem',
+    marginTop: '1.35rem',
     left: 0,
-    color: '#ececec',
-    backgroundColor: '#2E3539',
+    color: theme.palette.common.grayRegular,
+    backgroundColor: theme.palette.common.grayDarker,
     borderRadius: '0.5rem',
     width: '25rem',
     maxHeight: '40rem',
@@ -91,7 +91,6 @@ const Search = ({ showMessage }) => {
         setStedsnavnOptions(newOptions);
       } else {
         setStedsnavnOptions([]);
-        showMessage('Finner ingen steder med det navnet.');
       }
     }, 300),
     []
@@ -146,13 +145,17 @@ const Search = ({ showMessage }) => {
     };
   };
 
-  const getZoomByTypeOfPlace = (place) => {
-    let zoom = 15;
-    switch (place) {
+  const getZoomByTypeOfPlace = (stedsnavn) => {
+    let zoom;
+    switch (stedsnavn) {
       case 'Adressenavn (veg/gate)':
         zoom = 16;
+        break;
       case 'Fjellområde':
         zoom = 12;
+        break;
+      default:
+        zoom = 15;
     }
     return zoom;
   };
@@ -175,9 +178,8 @@ const Search = ({ showMessage }) => {
           }
         } else {
           setVegSystemReferanser([]);
-          await delayedStedsnavnQuery(trimmedSearch);
-          console.log(stedsnavnOptions);
         }
+        await delayedStedsnavnQuery(trimmedSearch);
         setOpenMenu(true);
       } else {
         setOpenMenu(false);
@@ -191,7 +193,7 @@ const Search = ({ showMessage }) => {
         <MagnifyingGlassIcon />
       </div>
       <InputBase
-        placeholder="Søk etter et sted eller en vegsystemreferanse (ERF-veger)"
+        placeholder="Søk etter sted eller vegsystemreferanse (ERF-veger)"
         classes={{
           root: classes.inputRoot,
           input: classes.inputInput,

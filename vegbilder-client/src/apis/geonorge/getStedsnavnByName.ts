@@ -17,6 +17,6 @@ export const getStedsnavnByName = async (name: string) => {
       }
     })
     .catch((error) => {
-      console.error(error);
+      throw error;
     });
 };

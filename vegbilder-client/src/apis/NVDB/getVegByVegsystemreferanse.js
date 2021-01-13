@@ -16,7 +16,11 @@ const getVegByVegsystemreferanse = async (vegsystemreferanse) => {
       return response;
     })
     .catch((error) => {
-      console.warn(error);
+      if (error.message === 'Request failed with status code 404') {
+        console.warn(error);
+      } else {
+        throw error;
+      }
     });
 };
 
