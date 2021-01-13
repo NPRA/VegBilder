@@ -2,7 +2,7 @@ import React from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { InputBase } from '@material-ui/core';
+import { InputBase, ListSubheader } from '@material-ui/core';
 import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
@@ -97,10 +97,7 @@ const YearSelector = () => {
         IconComponent={CustomExpandMoreIcon}
         MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
-        <option aria-label="Tidsperiode" className={classes.heading}>
-          {' '}
-          Tidsperiode{' '}
-        </option>
+        <ListSubheader>Tidsperiode</ListSubheader>
         {availableYears.map((y) => (
           <MenuItem
             key={y}

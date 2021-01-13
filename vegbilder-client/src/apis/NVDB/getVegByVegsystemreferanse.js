@@ -1,14 +1,27 @@
-import nvdbApi from "./nvdbApi";
+import nvdbApi from './nvdbApi';
 
 const getVegByVegsystemreferanse = async (vegsystemreferanse) => {
-  const response = await nvdbApi.get("/veg", {
-    params: {
-      vegsystemreferanse: vegsystemreferanse,
-      srid: "4326",
-    },
-  });
-  return response;
+  return await nvdbApi
+    .get('/veg', {
+      params: {
+        vegsystemreferanse: vegsystemreferanse,
+        srid: '4326',
+      },
+    })
+    .then((response) => {
+      if (response.code === 4012) {
+        console.warn(response.message);
+        return;
+      }
+      return response;
+    })
+    .catch((error) => {
+      if (error.message === 'Request failed with status code 404') {
+        console.warn(error);
+      } else {
+        throw error;
+      }
+    });
 };
-
 
 export default getVegByVegsystemreferanse;

@@ -47,8 +47,10 @@ const ComponentsWrapper = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleSnackbarClose = (event: SyntheticEvent<Element, Event>) => {
-    if (event.type === 'clickaway') {
-      return;
+    if (event) {
+      if (event.type === 'clickaway') {
+        return;
+      }
     }
     setSnackbarVisible(false);
   };

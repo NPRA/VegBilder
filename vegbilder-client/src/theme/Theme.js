@@ -90,5 +90,20 @@ export default createMuiTheme({
         },
       },
     },
+    MuiListItemText: {
+      secondary: { color: grayMenuItems },
+    },
+    MuiListSubheader: {
+      root: {
+        color: grayMenuItems,
+        textTransform: 'uppercase',
+        margin: 0,
+        fontWeight: 700,
+      },
+      gutters: {
+        paddingLeft: '1.875rem',
+        paddingRight: '1.875rem',
+      },
+    },
   },
 });
