@@ -85,7 +85,9 @@ const Search = ({ showMessage }) => {
     debounce(async (trimmedSearch) => {
       const stedsnavn = await getStedsnavnByName(trimmedSearch);
       if (stedsnavn && stedsnavn.totaltAntallTreff !== '0') {
-        const newOptions = stedsnavn.stedsnavn[0] ? [...stedsnavn.stedsnavn] : stedsnavn.stedsnavn;
+        const newOptions = stedsnavn.stedsnavn[0]
+          ? [...stedsnavn.stedsnavn]
+          : [stedsnavn.stedsnavn];
         setStedsnavnOptions(newOptions);
       } else {
         setStedsnavnOptions([]);
@@ -144,6 +146,17 @@ const Search = ({ showMessage }) => {
     };
   };
 
+  const getZoomByTypeOfPlace = (place) => {
+    let zoom = 15;
+    switch (place) {
+      case 'Adressenavn (veg/gate)':
+        zoom = 16;
+      case 'Fjellområde':
+        zoom = 12;
+    }
+    return zoom;
+  };
+
   const onChange = async (event) => {
     if (event) {
       const search = event.target.value;
@@ -163,6 +176,7 @@ const Search = ({ showMessage }) => {
         } else {
           setVegSystemReferanser([]);
           await delayedStedsnavnQuery(trimmedSearch);
+          console.log(stedsnavnOptions);
         }
         setOpenMenu(true);
       } else {
@@ -207,24 +221,27 @@ const Search = ({ showMessage }) => {
               ))}
             </>
           )}
-          {stedsnavnOptions && (
-            <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
+          {stedsnavnOptions.length > 0 && (
+            <>
+              <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
+              {stedsnavnOptions.map((stedsnavn, i) => (
+                <MenuItem
+                  key={i}
+                  style={{ paddingLeft: '1.875rem' }}
+                  onClick={() => {
+                    const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
+                    handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+                  }}
+                >
+                  <ListItemText
+                    key={`Textkey${i}`}
+                    primary={stedsnavn.stedsnavn}
+                    secondary={`${stedsnavn.navnetype}, ${stedsnavn.kommunenavn} (${stedsnavn.fylkesnavn})`}
+                  />
+                </MenuItem>
+              ))}
+            </>
           )}
-          {stedsnavnOptions.map((stedsnavn, i) => (
-            <MenuItem
-              key={i}
-              style={{ paddingLeft: '1.875rem' }}
-              onClick={() => {
-                handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, 14);
-              }}
-            >
-              <ListItemText
-                key={`Textkey${i}`}
-                primary={stedsnavn.stedsnavn}
-                secondary={`${stedsnavn.navnetype}, ${stedsnavn.kommunenavn} (${stedsnavn.fylkesnavn})`}
-              />
-            </MenuItem>
-          ))}
         </div>
       )}
     </div>
