@@ -289,7 +289,7 @@ const ControlBar = ({ showMessage }) => {
         </IconButton>
         */}
         {playVideo ? (
-          <DotsHorizontalDisabledIcon className={classes.button} />
+          <DotsHorizontalDisabledIcon style={{ margin: '0 1.25rem' }} />
         ) : (
           <IconButton
             aria-label="Flere funksjoner"
