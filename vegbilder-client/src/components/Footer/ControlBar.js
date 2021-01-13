@@ -195,7 +195,7 @@ const ControlBar = ({ showMessage }) => {
 
         {playVideo ? (
           <IconButton
-            aria-label="Stopp autoplay"
+            aria-label="Pause autoplay"
             title="Pause animasjonen"
             className={classes.button}
             onClick={() => {
@@ -288,17 +288,15 @@ const ControlBar = ({ showMessage }) => {
           <HistoryIcon />
         </IconButton>
         */}
-        {playVideo ? (
-          <DotsHorizontalDisabledIcon style={{ margin: '0 1.25rem' }} />
-        ) : (
-          <IconButton
-            aria-label="Flere funksjoner"
-            onClick={handleMoreControlsClick}
-            className={classes.button}
-          >
-            <DotsHorizontalIcon />
-          </IconButton>
-        )}
+
+        <IconButton
+          disabled={playVideo}
+          aria-label="Flere funksjoner"
+          onClick={handleMoreControlsClick}
+          className={classes.button}
+        >
+          {playVideo ? <DotsHorizontalDisabledIcon /> : <DotsHorizontalIcon />}
+        </IconButton>
       </Toolbar>
       {currentImagePoint ? (
         <Menu
