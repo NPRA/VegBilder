@@ -91,7 +91,7 @@ const Search = ({ showMessage }) => {
         setStedsnavnOptions([]);
         showMessage('Finner ingen steder med det navnet.');
       }
-    }, 200),
+    }, 300),
     []
   );
 
@@ -99,8 +99,8 @@ const Search = ({ showMessage }) => {
     debounce(async (vegsystemreferanse) => {
       const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
       if (vegResponse) {
-        const vegsystemReferanse = vegResponse.data?.vegsystemreferanse.kortform;
-        const newReferanceState = [vegsystemReferanse, ...vegSystemReferanser];
+        const vegsystemData = vegResponse.data;
+        const newReferanceState = [vegsystemData, ...vegSystemReferanser];
         setVegSystemReferanser(newReferanceState);
       } else {
         showMessage('Ugyldig ERF-veg');
@@ -127,10 +127,21 @@ const Search = ({ showMessage }) => {
     }
   };
 
-  const handleVegSystemReferanseClick = async (vegsystemReferanse) => {
-    const latlng = await getCoordinates(vegsystemReferanse);
+  const handleVegSystemReferanseClick = async (wkt) => {
+    const latlng = await getCoordinatesFromWkt(wkt);
     const zoom = 16;
     handleSelectedOption(latlng, zoom);
+  };
+
+  const getCoordinatesFromWkt = (wkt) => {
+    const split = wkt?.split(/[()]/);
+    const coordinateString = split[1];
+    if (!coordinateString) return null;
+    const coordinates = coordinateString.split(' ');
+    return {
+      lat: parseFloat(coordinates[0]),
+      lng: parseFloat(coordinates[1]),
+    };
   };
 
   const onChange = async (event) => {
@@ -138,6 +149,7 @@ const Search = ({ showMessage }) => {
       const search = event.target.value;
       const previousSearch = searchString;
       setSearchString(search);
+
       const isAlphaNumericSpace = /^[a-å0-9-. ]+$/i;
       if (isAlphaNumericSpace.test(search)) {
         const trimmedSearch = search.trim();
@@ -184,10 +196,13 @@ const Search = ({ showMessage }) => {
                   key={i}
                   style={{ paddingLeft: '1.875rem' }}
                   onClick={() => {
-                    handleVegSystemReferanseClick(referanse);
+                    handleVegSystemReferanseClick(referanse.geometri.wkt);
                   }}
                 >
-                  <ListItemText key={`Textkey${i}`} primary={referanse} />
+                  <ListItemText
+                    key={`Textkey${i}`}
+                    primary={referanse.vegsystemreferanse.kortform}
+                  />
                 </MenuItem>
               ))}
             </>
@@ -214,25 +229,6 @@ const Search = ({ showMessage }) => {
       )}
     </div>
   );
-};
-
-const getCoordinates = async (vegsystemreferanse) => {
-  const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
-  if (vegResponse) {
-    const wkt = vegResponse.data?.geometri?.wkt;
-    return getCoordinatesFromWkt(wkt);
-  }
-};
-
-const getCoordinatesFromWkt = (wkt) => {
-  const split = wkt?.split(/[()]/);
-  const coordinateString = split[1];
-  if (!coordinateString) return null;
-  const coordinates = coordinateString.split(' ');
-  return {
-    lat: parseFloat(coordinates[0]),
-    lng: parseFloat(coordinates[1]),
-  };
 };
 
 export default Search;
