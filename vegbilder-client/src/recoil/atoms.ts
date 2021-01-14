@@ -1,7 +1,6 @@
 import { atom } from 'recoil';
 
-const p = new URLSearchParams(window.location.search);
-console.log(p.get('year'));
+const searchParams = new URLSearchParams(window.location.search);
 
 export const playVideoState = atom({
   key: 'playVideoState',
@@ -15,7 +14,7 @@ export const timerState = atom({
 
 export const currentYearState = atom({
   key: 'currentYear',
-  default: p.get('year') || 2020,
+  default: searchParams.get('year') || 2020,
 });
 
 export const currentImagePointState = atom({
