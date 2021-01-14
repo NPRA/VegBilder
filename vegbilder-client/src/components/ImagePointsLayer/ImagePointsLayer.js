@@ -14,7 +14,6 @@ import {
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { useYearFilter } from 'contexts/YearFilterContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
   getImagePointLatLng,
@@ -22,9 +21,8 @@ import {
   getGenericRoadReference,
 } from 'utilities/imagePointUtilities';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { playVideoState } from 'recoil/atoms';
+import { currentYearState, playVideoState } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
-import useQueryParamState from 'hooks/useQueryParamState';
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -41,7 +39,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const [year] = useQueryParamState('year');
+  const year = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
   const availableYears = useRecoilValue(availableYearsQuery);

@@ -1,13 +1,14 @@
 import React from 'react';
 import { useLeafletZoom } from 'use-leaflet';
 import { WMSTileLayer } from 'react-leaflet';
+import { useRecoilValue } from 'recoil';
 
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
-import useQueryParamState from 'hooks/useQueryParamState';
+import { currentYearState } from 'recoil/atoms';
 
 const ImagePointLayersWrapper = () => {
   const zoom = useLeafletZoom();
-  const [year] = useQueryParamState('year');
+  const year = useRecoilValue(currentYearState);
 
   const renderImagePointsLayer = () => {
     if (zoom > 14) {

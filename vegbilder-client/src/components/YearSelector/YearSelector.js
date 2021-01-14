@@ -82,10 +82,12 @@ const YearSelector = () => {
   const availableYears = useRecoilValue(availableYearsQuery);
 
   const handleChange = (event) => {
-    setYear(event.target.value);
-    resetLoadedImagePoints();
-    resetFilteredImagePoints();
-    setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+    if (event.target.value !== year) {
+      setYear(event.target.value);
+      resetLoadedImagePoints();
+      resetFilteredImagePoints();
+      setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+    }
   };
 
   return (
