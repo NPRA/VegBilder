@@ -15,6 +15,11 @@ export const timerState = atom({
 });
 
 export const currentYearState = atom({
-  key: 'year',
+  key: 'currentYear',
   default: 2019,
+});
+
+export const currentImagePointState = atom({
+  key: 'currentImagePoint',
+  default: '',
 });
