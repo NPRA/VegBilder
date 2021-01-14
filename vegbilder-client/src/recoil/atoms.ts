@@ -1,8 +1,4 @@
-import { atom, useRecoilValue } from 'recoil';
-import { availableYearsQuery } from './selectors';
-import { ICoordinates } from './types';
-
-//const availableYears = useRecoilValue(availableYearsQuery);
+import { atom } from 'recoil';
 
 export const playVideoState = atom({
   key: 'playVideoState',
@@ -16,7 +12,7 @@ export const timerState = atom({
 
 export const currentYearState = atom({
   key: 'currentYear',
-  default: 2019,
+  default: 2020,
 });
 
 export const currentImagePointState = atom({

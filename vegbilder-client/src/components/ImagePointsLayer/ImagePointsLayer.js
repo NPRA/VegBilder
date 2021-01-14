@@ -39,7 +39,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const year = useRecoilValue(currentYearState);
+  const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
   const availableYears = useRecoilValue(availableYearsQuery);
@@ -107,7 +107,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       if (isFetching) return;
       if (
         !loadedImagePoints ||
-        loadedImagePoints.year !== year ||
+        loadedImagePoints.year !== currentYear ||
         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
       ) {
         setIsFetching(true);
@@ -122,11 +122,11 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           imagePoints,
           expandedBbox,
           fetchedBboxes,
-        } = await getImagePointsInTilesOverlappingBbox(targetBbox, year);
+        } = await getImagePointsInTilesOverlappingBbox(targetBbox, currentYear);
         setLoadedImagePoints({
           imagePoints: imagePoints,
           bbox: expandedBbox,
-          year: year,
+          year: currentYear,
         });
         setFetchedBboxes(fetchedBboxes);
         setTargetBbox(targetBbox);
@@ -136,7 +136,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   }, [
     mapCenter,
     loadedImagePoints,
-    year,
+    currentYear,
     isFetching,
     createBboxForVisibleMapArea,
     shouldUseMapBoundsAsTargetBbox,
@@ -185,7 +185,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
     const iconUrl = `images/markers/marker-${
       vegkategori === 'E' || vegkategori === 'R' ? 'ER' : 'FK'
-    }-${year === availableYears[0] ? 'newest' : 'older'}-${
+    }-${currentYear === availableYears[0] ? 'newest' : 'older'}-${
       isDirectional ? 'directional' : 'nondirectional'
     }${isSelected ? '-selected' : ''}.svg`;
     let iconSizeX, iconSizeY;
