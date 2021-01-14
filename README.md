@@ -3,6 +3,12 @@ Application to display road images on a map and view the images.
 
 # Atlas Bygge & Utrullning
 
+## Bygg med npm
+
+```
+scrier@svv-vm-d033:~/Git/VegBilder/vegbilder-client$ npm build
+```
+
 ## Paketere eksisterende løsning
 
 *Input:*
