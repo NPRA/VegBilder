@@ -16,12 +16,7 @@ const App = () => {
   return (
     <RecoilRoot>
       <Suspense
-        fallback={
-          <CircularProgress
-            color="black"
-            style={{ position: 'absolute', top: '50%', left: '50%' }}
-          />
-        }
+        fallback={<CircularProgress style={{ position: 'absolute', top: '50%', left: '50%' }} />}
       >
         <ThemeProvider theme={theme}>
           <CurrentCoordinatesProvider>
