@@ -2,13 +2,15 @@ import React from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
-import { InputBase } from '@material-ui/core';
+import { InputBase, ListSubheader } from '@material-ui/core';
 import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { useImageSeries } from 'contexts/ImageSeriesContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
+import Theme from 'theme/Theme';
+import { CheckmarkIcon } from 'components/Icons/Icons';
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -23,10 +25,28 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     backgroundColor: fade(theme.palette.secondary.main, 0.8),
     color: theme.palette.secondary.contrastText,
-    width: '8rem',
+    width: '10rem',
     '&:hover': {
       backgroundColor: fade(theme.palette.secondary.main, 1.0),
     },
+  },
+  dropdownStyle: {
+    marginTop: '4.3rem',
+  },
+  item: {
+    color: theme.palette.common.grayIcons,
+    padding: '0.25rem 2.125rem',
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+    },
+    '& $checkmarkStyle': {
+      display: 'block',
+    },
+  },
+  checkmarkStyle: {
+    position: 'absolute',
+    left: '0.75rem',
+    display: 'none',
   },
 }));
 
@@ -46,6 +66,14 @@ const ImageSeriesSelector = () => {
   const { setCommand } = useCommand();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
 
+  const parseDate = (imageSeriesDate) => {
+    const splitted = imageSeriesDate.split('-');
+    const day = splitted[2];
+    const month = splitted[1];
+    const year = splitted[0];
+    return `${day}.${month}.${year}`;
+  };
+
   return availableImageSeries.length <= 1 ? null : (
     <FormControl>
       <Select
@@ -63,10 +91,22 @@ const ImageSeriesSelector = () => {
         className={classes.imageSeriesSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
+        MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
+        <ListSubheader>Dato</ListSubheader>
         {availableImageSeries.map((series) => (
-          <MenuItem key={series} value={series}>
-            {series}
+          <MenuItem
+            key={series}
+            value={series}
+            className={classes.item}
+            style={{
+              color: series === currentImageSeries.date ? Theme.palette.common.orangeDark : '',
+            }}
+          >
+            {series === currentImageSeries.date && (
+              <CheckmarkIcon className={classes.checkmarkStyle} />
+            )}
+            {parseDate(series)}
           </MenuItem>
         ))}
       </Select>

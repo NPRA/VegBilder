@@ -3,6 +3,7 @@ import { Icon } from 'leaflet';
 import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 import { Rectangle, Marker } from 'react-leaflet';
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
+import { useRecoilValue } from 'recoil';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import {
@@ -13,7 +14,6 @@ import {
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { useYearFilter } from 'contexts/YearFilterContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
   getImagePointLatLng,
@@ -21,9 +21,8 @@ import {
   getGenericRoadReference,
 } from 'utilities/imagePointUtilities';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { availableYears } from 'configuration/config';
-import { useRecoilValue } from 'recoil';
-import { playVideoState } from 'recoil/atoms';
+import { currentYearState, playVideoState } from 'recoil/atoms';
+import { availableYearsQuery } from 'recoil/selectors';
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -40,9 +39,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const { year } = useYearFilter();
+  const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
+  const availableYears = useRecoilValue(availableYearsQuery);
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -107,7 +107,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       if (isFetching) return;
       if (
         !loadedImagePoints ||
-        loadedImagePoints.year !== year ||
+        loadedImagePoints.year !== currentYear ||
         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
       ) {
         setIsFetching(true);
@@ -122,11 +122,11 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           imagePoints,
           expandedBbox,
           fetchedBboxes,
-        } = await getImagePointsInTilesOverlappingBbox(targetBbox, year);
+        } = await getImagePointsInTilesOverlappingBbox(targetBbox, currentYear);
         setLoadedImagePoints({
           imagePoints: imagePoints,
           bbox: expandedBbox,
-          year: year,
+          year: currentYear,
         });
         setFetchedBboxes(fetchedBboxes);
         setTargetBbox(targetBbox);
@@ -136,7 +136,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   }, [
     mapCenter,
     loadedImagePoints,
-    year,
+    currentYear,
     isFetching,
     createBboxForVisibleMapArea,
     shouldUseMapBoundsAsTargetBbox,
@@ -185,7 +185,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
     const iconUrl = `images/markers/marker-${
       vegkategori === 'E' || vegkategori === 'R' ? 'ER' : 'FK'
-    }-${year === availableYears[0] ? 'newest' : 'older'}-${
+    }-${currentYear === availableYears[0] ? 'newest' : 'older'}-${
       isDirectional ? 'directional' : 'nondirectional'
     }${isSelected ? '-selected' : ''}.svg`;
     let iconSizeX, iconSizeY;

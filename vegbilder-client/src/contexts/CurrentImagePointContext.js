@@ -16,7 +16,7 @@ function useCurrentImagePoint() {
 
 function CurrentImagePointProvider(props) {
   const { loadedImagePoints } = useLoadedImagePoints();
-  const [currentImageId, setCurrentImageId] = useQueryParamState('imageId', '', isValidImageId);
+  const [currentImageId, setCurrentImageId] = useQueryParamState('imageId');
   const [currentImagePoint, setCurrentImagePointInternal] = useState(null);
 
   function setCurrentImagePoint(imagePoint) {
@@ -59,11 +59,6 @@ function CurrentImagePointProvider(props) {
       {...props}
     />
   );
-}
-
-function isValidImageId(imageId) {
-  const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
-  return regexp.test(imageId);
 }
 
 export { CurrentImagePointProvider, useCurrentImagePoint };

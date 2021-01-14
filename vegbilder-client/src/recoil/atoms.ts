@@ -1,10 +1,6 @@
 import { atom } from 'recoil';
-import { ICoordinates } from './types';
 
-const urlParams = new URLSearchParams(window.location.search);
-const lat = urlParams.get('lat');
-const lng = urlParams.get('lng');
-const zoom = urlParams.get('zoom');
+const searchParams = new URLSearchParams(window.location.search);
 
 export const playVideoState = atom({
   key: 'playVideoState',
@@ -16,10 +12,12 @@ export const timerState = atom({
   default: 2000, // ms
 });
 
-export const coordinatesState = atom<ICoordinates>({
-  key: 'cordinatesState',
-  default: {
-    latlng: { lat: lat ? parseInt(lat) : 65, lng: lng ? parseInt(lng) : 15 },
-    zoom: zoom ? parseInt(zoom) : 4,
-  },
+export const currentYearState = atom({
+  key: 'currentYear',
+  default: searchParams.get('year') || 2020,
+});
+
+export const currentImagePointState = atom({
+  key: 'currentImagePoint',
+  default: '',
 });

@@ -42,7 +42,7 @@ const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {.
 
 const ComponentsWrapper = () => {
   const classes = useStyles();
-  const [view, setView] = useQueryParamState('view', 'map');
+  const [view, setView] = useQueryParamState('view');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 

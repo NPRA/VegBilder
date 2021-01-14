@@ -5,13 +5,15 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { InputBase, ListSubheader } from '@material-ui/core';
 import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { useRecoilValue, useRecoilState } from 'recoil';
 
 import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
-import { useYearFilter } from 'contexts/YearFilterContext';
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { availableYears } from 'configuration/config';
+import { availableYearsQuery } from 'recoil/selectors';
+import useQueryParamState from 'hooks/useQueryParamState';
+import { currentYearState } from 'recoil/atoms';
+import Theme from 'theme/Theme';
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -74,39 +76,46 @@ const CustomExpandMoreIcon = withStyles(iconStyles)(({ className, classes, ...re
 
 const YearSelector = () => {
   const classes = useStyles();
-  const { year, setYear } = useYearFilter();
-  const { resetLoadedImagePoints } = useLoadedImagePoints();
+  const [, setYear] = useQueryParamState('year');
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { setCommand } = useCommand();
+  const availableYears = useRecoilValue(availableYearsQuery);
+  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
+
+  const sortedYears = availableYears.slice();
+  sortedYears.sort((a, b) => b - a);
 
   const handleChange = (event) => {
-    setYear(event.target.value);
-    resetLoadedImagePoints();
-    resetFilteredImagePoints();
-    setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+    const newYear = event.target.value;
+    if (parseInt(newYear) !== currentYear) {
+      setYear(newYear);
+      setCurrentYear(parseInt(newYear));
+      resetFilteredImagePoints();
+      setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+    }
   };
 
   return (
     <FormControl>
       <Select
         id="year-select"
-        value={year}
+        value={currentYear}
         onChange={(event) => handleChange(event)}
         className={classes.yearSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
         MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
-        <ListSubheader>Tidsperiode</ListSubheader>
-        {availableYears.map((y) => (
+        <ListSubheader>Årstall</ListSubheader>
+        {sortedYears.map((year) => (
           <MenuItem
-            key={y}
-            value={y}
+            key={year}
+            value={year}
             className={classes.item}
-            style={{ color: y === year ? '#F67F00' : '' }}
+            style={{ color: year === currentYear ? Theme.palette.common.orangeDark : '' }}
           >
-            {y === year && <CheckmarkIcon className={classes.checkmarkStyle} />}
-            {y}
+            {year === currentYear && <CheckmarkIcon className={classes.checkmarkStyle} />}
+            {year}
           </MenuItem>
         ))}
       </Select>

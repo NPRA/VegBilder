@@ -12,9 +12,9 @@ const useCurrentCoordinates = () => {
 };
 
 const CurrentCoordinatesProvider = (props) => {
-  const [currentLat, setLat] = useQueryParamState('lat', '65');
-  const [currentLng, setLng] = useQueryParamState('lng', '15');
-  const [currentZoom, setZoom] = useQueryParamState('zoom', '4');
+  const [currentLat, setLat] = useQueryParamState('lat');
+  const [currentLng, setLng] = useQueryParamState('lng');
+  const [currentZoom, setZoom] = useQueryParamState('zoom');
 
   const lat = parseFloat(currentLat);
   const lng = parseFloat(currentLng);
