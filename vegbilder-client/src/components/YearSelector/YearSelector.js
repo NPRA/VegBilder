@@ -5,13 +5,14 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { InputBase, ListSubheader } from '@material-ui/core';
 import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { useRecoilValue } from 'recoil';
 
 import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
-import { useYearFilter } from 'contexts/YearFilterContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { availableYears } from 'configuration/config';
+import { availableYearsQuery } from 'recoil/selectors';
+import useQueryParamState from 'hooks/useQueryParamState';
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -74,10 +75,11 @@ const CustomExpandMoreIcon = withStyles(iconStyles)(({ className, classes, ...re
 
 const YearSelector = () => {
   const classes = useStyles();
-  const { year, setYear } = useYearFilter();
+  const [year, setYear] = useQueryParamState('year');
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { setCommand } = useCommand();
+  const availableYears = useRecoilValue(availableYearsQuery);
 
   const handleChange = (event) => {
     setYear(event.target.value);

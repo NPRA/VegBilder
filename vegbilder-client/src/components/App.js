@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { ThemeProvider } from '@material-ui/core';
 import { RecoilRoot } from 'recoil';
 
@@ -7,32 +7,34 @@ import { CurrentCoordinatesProvider } from 'contexts/CurrentCoordinatesContext';
 import { LoadedImagePointsProvider } from 'contexts/LoadedImagePointsContext';
 import { CommandProvider } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
-import { YearFilterProvider } from 'contexts/YearFilterContext';
+//import { YearFilterProvider } from 'contexts/YearFilterContext';
 import { ImageSeriesProvider } from 'contexts/ImageSeriesContext';
 import { FilteredImagePointsProvider } from 'contexts/FilteredImagePointsContext';
 import ComponentsWrapper from './ComponentsWrapper';
 
 const App = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <CurrentCoordinatesProvider>
-        <YearFilterProvider>
-          <LoadedImagePointsProvider>
-            <CurrentImagePointProvider>
-              <ImageSeriesProvider>
-                <FilteredImagePointsProvider>
-                  <CommandProvider>
-                    <RecoilRoot>
+    <RecoilRoot>
+      <Suspense fallback={<p>Loading...</p>}>
+        <ThemeProvider theme={theme}>
+          <CurrentCoordinatesProvider>
+            {/* <YearFilterProvider> */}
+            <LoadedImagePointsProvider>
+              <CurrentImagePointProvider>
+                <ImageSeriesProvider>
+                  <FilteredImagePointsProvider>
+                    <CommandProvider>
                       <ComponentsWrapper />
-                    </RecoilRoot>
-                  </CommandProvider>
-                </FilteredImagePointsProvider>
-              </ImageSeriesProvider>
-            </CurrentImagePointProvider>
-          </LoadedImagePointsProvider>
-        </YearFilterProvider>
-      </CurrentCoordinatesProvider>
-    </ThemeProvider>
+                    </CommandProvider>
+                  </FilteredImagePointsProvider>
+                </ImageSeriesProvider>
+              </CurrentImagePointProvider>
+            </LoadedImagePointsProvider>
+            {/* </YearFilterProvider> */}
+          </CurrentCoordinatesProvider>
+        </ThemeProvider>
+      </Suspense>
+    </RecoilRoot>
   );
 };
 

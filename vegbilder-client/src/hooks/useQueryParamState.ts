@@ -1,63 +1,64 @@
-import { availableYears } from 'configuration/config';
 import { useEffect, useState } from 'react';
+import { useRecoilValue } from 'recoil';
+import { availableYearsQuery } from 'recoil/selectors';
 
-type queryParamterNames = 'coordinates' | 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
+type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
 
-const isValidImageId = (imageId: string) => {
-  const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
-  return regexp.test(imageId);
-};
-
-const isValidYear = (year: number) => availableYears.includes(year);
-const isValidView = (view: string) => view === 'map' || view === 'image';
-
-const isValidCoordinateString = (coordinates: string) => {
-  const regexp = /^(\d*(\.\d*)?,){2}\d{1,2}$/;
-  return regexp.test(coordinates);
-};
-
-const useQueryParamState = (name: queryParamterNames, defaultValue: string) => {
+const useQueryParamState = (name: queryParamterNames, defaultValue?: string) => {
   const searchParams = new URLSearchParams(window.location.search);
   const searchParam = searchParams.get(name);
+  const availableYears = useRecoilValue(availableYearsQuery);
 
-  const getValidatedSearchParam = (name: string) => {
-    if (!searchParam) return;
+  const isValidImageId = (imageId: string) => {
+    const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
+    return regexp.test(imageId);
+  };
 
+  const isValidYear = (year: number) => availableYears.includes(year);
+  const isValidView = (view: string) => view === 'map' || view === 'image';
+
+  const getSearchParam = (name: string) => {
     switch (name) {
       case 'imageId':
-        const validImageIdParam = isValidImageId(searchParam);
-        if (!validImageIdParam) {
-          throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+        if (searchParam) {
+          const validImageIdParam = isValidImageId(searchParam);
+          if (!validImageIdParam) {
+            throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+          }
+          return searchParam;
         }
-        return searchParam;
+        return '';
       case 'year':
-        const validYearParam = isValidYear(parseInt(searchParam));
-        if (!validYearParam) {
-          throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+        const defaultYear = availableYears[0].toString();
+        if (searchParam) {
+          const validYearParam = isValidYear(parseInt(searchParam));
+          if (!validYearParam) {
+            throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+          }
+          return searchParam;
         }
-        return searchParam;
+        return defaultYear;
       case 'view':
-        const validView = isValidView(searchParam);
-        if (!validView) {
-          throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+        if (searchParam) {
+          const validView = isValidView(searchParam);
+          if (!validView) {
+            throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+          }
+          return searchParam;
         }
-        return searchParam;
-      case 'coordinates':
-        const validCoordinates = isValidCoordinateString(searchParam);
-        if (!validCoordinates) {
-          throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
-        }
-        return searchParam;
+        return 'map';
       case 'lat':
-        return searchParam;
+        return searchParam || '65';
       case 'lng':
-        return searchParam;
+        return searchParam || '15';
       case 'zoom':
-        return searchParam;
+        return searchParam || '4';
+      default:
+        return '';
     }
   };
 
-  const [state, setState] = useState<string>(getValidatedSearchParam(name) || defaultValue);
+  const [state, setState] = useState<string>(getSearchParam(name));
 
   useEffect(() => {
     const newSearchParams = new URLSearchParams(window.location.search);

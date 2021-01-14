@@ -2,12 +2,12 @@ import React from 'react';
 import { useLeafletZoom } from 'use-leaflet';
 import { WMSTileLayer } from 'react-leaflet';
 
-import { useYearFilter } from 'contexts/YearFilterContext';
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
+import useQueryParamState from 'hooks/useQueryParamState';
 
 const ImagePointLayersWrapper = () => {
   const zoom = useLeafletZoom();
-  const { year } = useYearFilter();
+  const [year] = useQueryParamState('year');
 
   const renderImagePointsLayer = () => {
     if (zoom > 14) {

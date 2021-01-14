@@ -3,6 +3,7 @@ import { Icon } from 'leaflet';
 import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 import { Rectangle, Marker } from 'react-leaflet';
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
+import { useRecoilValue } from 'recoil';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import {
@@ -21,9 +22,9 @@ import {
   getGenericRoadReference,
 } from 'utilities/imagePointUtilities';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { availableYears } from 'configuration/config';
-import { useRecoilValue } from 'recoil';
 import { playVideoState } from 'recoil/atoms';
+import { availableYearsQuery } from 'recoil/selectors';
+import useQueryParamState from 'hooks/useQueryParamState';
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
@@ -40,9 +41,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const { year } = useYearFilter();
+  const [year] = useQueryParamState('year');
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
+  const availableYears = useRecoilValue(availableYearsQuery);
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
