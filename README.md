@@ -1,15 +1,52 @@
 # VegBilder
 Application to display road images on a map and view the images. 
 
-# Atlas Bygge & Utrullning
 
-## Bygg med npm
+## Oppsett av utviklermiljø
+
+For å kjøre applikasjonen, må du ha [node](https://nodejs.org/) installert. Når dette er i orden, gjør du som følger:
+
+1. Klon dette repoet.
+2. Åpne et terminalvindu, og naviger til `vegbilder-client`-mappen.
+3. Kjør `npm install`.
+4. Kjør `npm run start`. Frontend-serveren vil automatisk transpilere og laste siden på nytt når filendringer registreres.
+
+## Prosjektstruktur
+
+Prosjektet består av en frontend skrevet i React, og koden er primært lokalisert i `vegbilder-client/src/`. Statiske filer ligger i `vegbilder-client/public`.
+
+I `src`-mappen ligger `index.tsx`, som tar seg av oppstart av React-appen, og mounter `App`-komponenten. `App` ligger i `components`-mappen, i likhet med alle andre vanlige komponenter. 
+
+De andre undermappene i `src` inneholder forskjellige klasser av hjelpefiler:
+
+- `api` inneholder apier som tar seg av kommunikasjon med backend-tjenester
+- `contexts` inneholder definisjoner av React-kontekster, som brukes for å injisere data i komponenter
+- `hooks` inneholder egendefinerte React-hooks
+- `theme` inneholder styling og tema for Material UI komponenter ut ifra merkevaren til vegvesenet
+- `utilities` inneholder hjelpefunksjoner
+- `constants` inneholder konstanter
+- `recoil` inneholder atoms, selectors og typer for tilstandshåndtering 
+
+## Teknologier
+
+- [React](https://reactjs.org/)
+- [Material UI](https://material-ui.com/) designsystem for react
+- [TypeScript](https://www.typescriptlang.org/) utvider javascript ved å legge til typer
+- [Leaflet](https://leafletjs.com/) kart
+
+## Atlas Bygge & Utrullning
+
+### Bygg med npm
+
+```
+scrier@svv-vm-d033:~/Git/VegBilder/vegbilder-client$ npm install
+```
 
 ```
 scrier@svv-vm-d033:~/Git/VegBilder/vegbilder-client$ npm build
 ```
 
-## Paketere eksisterende løsning
+### Pakk eksisterende løsning
 
 *Input:*
 
@@ -54,7 +91,7 @@ utilities/mathUtilities.js
 /home/scrier/Git/VegBilder
 ```
 
-## Lasta opp til artifactory
+### Last opp til artifactory
 
 *Input:*
 
@@ -87,8 +124,15 @@ Password:                                     # passord till SVV
   "uri" : "https://artrepo.vegvesen.no/artifactory/webcontent-release-local/tk/vegfoto/vegbilder/vegbilder-0.1.1.tar.gz"
 }
 ```
+### Logg inn på Atlas
 
-## Bygg ny image:
+```
+scrier@svv-vm-d033:~/Git/VegBilder$ ac login  https://atlas-api.atlas.vegvesen.no/api
+Username (inabjo):      # Ditt SVV-brukernavn
+Password:               # Ditt SVV-passord
+```
+
+### Bygg et nytt image:
 
 *Input:*
 
@@ -111,7 +155,7 @@ BuildConfig "vegbilder-0.1.1" created
 Build "vegbilder-0.1.1-1" created
 ```
 
-### Se aktuellt bygge er klart:
+### Se om aktuelt bygg er klart:
 
 *Input:* 
 
@@ -141,10 +185,10 @@ s3gateway-0.1.1-1  vegfoto  openjdk8    28s       2 days ago      Complete
 s3gateway-0.0.1-1  vegfoto  openjdk8    29s       4 days ago      Complete
 ```
 
-## Rulla ut ny versjon:
+### Rull ut ny versjon:
 
 ```
-ac perform rolling deploy vegbilder -e utvikling -v 0.1.1
+scrier@svv-vm-d033:~/Git/VegBilder$ ac perform rolling deploy vegbilder -e utvikling -v 0.1.1
 ```
 
 
