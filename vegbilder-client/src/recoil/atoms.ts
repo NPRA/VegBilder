@@ -17,6 +17,11 @@ export const currentYearState = atom({
   default: searchParams.get('year') || 2020,
 });
 
+export const imageSeriesState = atom({
+  key: 'imageSeriesState',
+  default: false,
+});
+
 export const currentImagePointState = atom({
   key: 'currentImagePoint',
   default: '',

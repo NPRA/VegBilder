@@ -20,7 +20,7 @@ import {
   ArrowTurnIcon,
   ArrowUpIcon,
   DotsHorizontalIcon,
-  //HistoryIcon,
+  HistoryIcon,
   MapIcon,
   MapDisabledIcon,
   MeasureIcon,
@@ -37,7 +37,7 @@ import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
-import { playVideoState, timerState } from 'recoil/atoms';
+import { imageSeriesState, playVideoState, timerState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 
 const useStyles = makeStyles((theme) => ({
@@ -82,6 +82,7 @@ const ControlBar = ({ showMessage }) => {
   const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
   const [currentTime, setTime] = useRecoilState(timerState);
+  const [showImageSeries, setShowImageSeries] = useRecoilState(imageSeriesState);
   const [playMode, setPlayMode] = useState(false);
 
   const timerOptions = [1000, 2000, 3000, 4000, 5000];
@@ -278,14 +279,14 @@ const ControlBar = ({ showMessage }) => {
           </IconButton>
         )}
 
-        {/*
         <IconButton
           aria-label="Finn bilder herfra på andre datoer"
           className={classes.button}
+          disabled={playVideo}
+          onClick={() => setShowImageSeries(!showImageSeries)}
         >
           <HistoryIcon />
         </IconButton>
-        */}
 
         <IconButton
           disabled={playVideo}

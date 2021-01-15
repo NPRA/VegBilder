@@ -41,7 +41,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageViewer = ({ exitImageView, showMessage }) => {
+const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -302,7 +302,7 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
           {renderMeterLine()}
         </>
       ) : null}
-      <CloseButton onClick={exitImageView} />
+      {showCloseButton && <CloseButton onClick={exitImageView} />}
     </div>
   );
 };
