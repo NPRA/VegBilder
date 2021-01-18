@@ -13,6 +13,7 @@ const getImagePointLatLng = (imagePoint) => {
 };
 
 const getImageUrl = (imagepoint) => rewriteUrlDomainToLocalhost(imagepoint.properties.URL);
+
 const findNearestImagePoint = (imagePoints, latlng) => {
   let nearestPoint = { distance: 100000000, imagePoint: null };
   imagePoints.forEach((ip) => {

@@ -1,4 +1,4 @@
-import { degreesToRadians } from "./mathUtilities";
+import { degreesToRadians } from './mathUtilities';
 
 const metersPerDegreeLat = 111111; // = 10^7 / 90. Approximate value stemming from the original definition of 1 meter as 1/10^7 of the total distance from the equator to the north pole along the meridian running through Paris. It is close enough for our purposes.
 
@@ -33,20 +33,13 @@ const dxToDlng = (dx, lat) => {
 const isWithinBbox = (latlng, bbox) => {
   const lat = latlng.lat;
   const lng = latlng.lng;
-  return (
-    lat >= bbox.south &&
-    lat <= bbox.north &&
-    lng >= bbox.west &&
-    lng <= bbox.east
-  );
+  return lat >= bbox.south && lat <= bbox.north && lng >= bbox.west && lng <= bbox.east;
 };
 
 const isOutsideBbox = (latlng, bbox) => {
   const lat = latlng.lat;
   const lng = latlng.lng;
-  return (
-    lat < bbox.south || lat > bbox.north || lng < bbox.west || lng > bbox.east
-  );
+  return lat < bbox.south || lat > bbox.north || lng < bbox.west || lng > bbox.east;
 };
 
 const isBboxWithinContainingBbox = (bbox, containingBbox) => {

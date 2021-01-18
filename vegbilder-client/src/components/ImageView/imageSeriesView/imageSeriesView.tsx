@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 
 import { useImageSeries } from 'contexts/ImageSeriesContext';
-import Theme from 'theme/Theme';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { getImageUrl, getRoadReference } from 'utilities/imagePointUtilities';
+import { getDateString, getImageUrl, getRoadReference } from 'utilities/imagePointUtilities';
+import { IImagePoint } from 'types';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#c4c4c4',
     display: 'flex',
     flexDirection: 'column',
+    //overflowY: 'auto',
   },
   header: {
     margin: 0,
@@ -25,7 +26,6 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: '1rem',
   },
   image: {
-    //height: '10%',
     width: '90%',
     alignSelf: 'center',
     paddingBottom: '1rem',
@@ -34,42 +34,73 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ImageSeriesView = () => {
-  const { availableImageSeries, currentImageSeries, setCurrentImageSeries } = useImageSeries();
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const { currentImagePoint } = useCurrentImagePoint();
   const { loadedImagePoints } = useLoadedImagePoints();
+  const { availableImageSeries, currentImageSeries, setCurrentImageSeries } = useImageSeries();
+
+  const [filteredImagePoints, setFilteredImagePoints] = useState<IImagePoint[]>([]);
 
   const classes = useStyles();
 
-  const getImageSeries = () => {
+  useEffect(() => {
     if (loadedImagePoints && currentImagePoint) {
+      const fullRoadReference = getRoadReference(currentImagePoint).complete;
       const roadReference = getRoadReference(currentImagePoint).withoutMeter;
-      //const currentImageDate = getDateString(currentImagePoint);
+
+      const currentImagePointDate = getDateString(currentImagePoint);
+      const currentImagePointMeter = Math.round(currentImagePoint.properties.METER);
+
+      console.log(roadReference);
+
+      // const groupedByRoadReference: Dictionary<IImagePoint[]> = groupBy(
+      //   loadedImagePoints.imagePoints,
+      //   (ip) => getRoadReference(ip).withoutMeter
+      // );
+
+      //console.log(groupedByRoadReference[roadReference]);
+
       const imagePointsForRoadReferenceGroupedByDate =
         loadedImagePoints.imagePointsGroupedBySeries[roadReference];
 
-      console.log(imagePointsForRoadReferenceGroupedByDate);
-      // let availableDates = [];
-      // if (imagePointsForRoadReferenceGroupedByDate) {
-      //   availableDates = Object.getOwnPropertyNames(imagePointsForRoadReferenceGroupedByDate);
-      //   console.log(availableDates);
-      // }
+      availableImageSeries.forEach((date: string) => {
+        if (date !== currentImagePointDate) {
+          imagePointsForRoadReferenceGroupedByDate[date].forEach((imagePoint: IImagePoint) => {
+            if (imagePoint) {
+              const imagePointMeter = Math.round(imagePoint.properties.METER);
+              if (imagePointMeter - currentImagePointMeter < 5) {
+                const newFilteredState = [...filteredImagePoints, imagePoint];
+                setFilteredImagePoints(newFilteredState);
+                //return;
+              }
+            }
+          });
+        }
+      });
     }
-  };
-
-  getImageSeries();
+  }, [
+    setFilteredImagePoints,
+    currentImagePoint,
+    // loadedImagePoints,
+    // availableImageSeries,
+    // filteredImagePoints,
+  ]);
 
   return (
     <Paper className={classes.content} square={true}>
       <h4 className={classes.header}>Vegbilder fra samme sted</h4>
-      {currentImagePoint && (
-        <img
-          src={getImageUrl(currentImagePoint)}
-          alt="vegbilde"
-          className={classes.image}
-          //ref={imgRef}
-          //onLoad={onImageLoaded}
-        />
-      )}
+      {currentImagePoint &&
+        filteredImagePoints?.map((imagePoint) => (
+          <>
+            <img
+              key={imagePoint.id}
+              src={getImageUrl(imagePoint)}
+              alt={imagePoint.id}
+              className={classes.image}
+              //onLoad={onImageLoaded}
+            />
+            <p> {imagePoint.properties.TIDSPUNKT} </p>
+          </>
+        ))}
     </Paper>
   );
 };
