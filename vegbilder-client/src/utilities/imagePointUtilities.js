@@ -81,6 +81,14 @@ const usesOldVegreferanse = (imagePoint) => imagePoint.properties.AAR < 2020;
 
 const getDateString = (imagePoint) => splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
 
+const getFormattedDateString = (imageSeriesDate) => {
+  const splitted = imageSeriesDate.split('-');
+  const day = splitted[2];
+  const month = splitted[1];
+  const year = splitted[0];
+  return `${day}.${month}.${year}`;
+};
+
 /* Takes an array of image points and returns those image points grouped first by road reference
  * (vegsystemreferanse or vegreferanse) without the meter value, and then by date. So a
  * series is defined as images taken on one particular day in one particular lane in
@@ -183,4 +191,5 @@ export {
   getDateString,
   groupBySeries,
   areOnSameOrConsecutiveRoadParts,
+  getFormattedDateString,
 };

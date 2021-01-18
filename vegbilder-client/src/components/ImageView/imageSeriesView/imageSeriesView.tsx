@@ -5,7 +5,12 @@ import Paper from '@material-ui/core/Paper';
 import { useImageSeries } from 'contexts/ImageSeriesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { getDateString, getImageUrl, getRoadReference } from 'utilities/imagePointUtilities';
+import {
+  getDateString,
+  getFormattedDateString,
+  getImageUrl,
+  getRoadReference,
+} from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 
 const useStyles = makeStyles((theme) => ({
@@ -18,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
     color: '#c4c4c4',
     display: 'flex',
     flexDirection: 'column',
-    //overflowY: 'auto',
+    overflowY: 'auto',
   },
   header: {
     margin: 0,
@@ -34,30 +39,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const ImageSeriesView = () => {
+  const classes = useStyles();
+
   const { currentImagePoint } = useCurrentImagePoint();
   const { loadedImagePoints } = useLoadedImagePoints();
-  const { availableImageSeries, currentImageSeries, setCurrentImageSeries } = useImageSeries();
+  const { availableImageSeries } = useImageSeries();
 
   const [filteredImagePoints, setFilteredImagePoints] = useState<IImagePoint[]>([]);
 
-  const classes = useStyles();
-
+  // I useEffekt'en finner vi bilder som er mindre enn 10 meter unna current image point og har annen dato enn current image point.
+  // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   useEffect(() => {
     if (loadedImagePoints && currentImagePoint) {
-      const fullRoadReference = getRoadReference(currentImagePoint).complete;
+      setFilteredImagePoints((prevState) => [currentImagePoint, ...prevState]);
       const roadReference = getRoadReference(currentImagePoint).withoutMeter;
 
       const currentImagePointDate = getDateString(currentImagePoint);
       const currentImagePointMeter = Math.round(currentImagePoint.properties.METER);
-
-      console.log(roadReference);
-
-      // const groupedByRoadReference: Dictionary<IImagePoint[]> = groupBy(
-      //   loadedImagePoints.imagePoints,
-      //   (ip) => getRoadReference(ip).withoutMeter
-      // );
-
-      //console.log(groupedByRoadReference[roadReference]);
 
       const imagePointsForRoadReferenceGroupedByDate =
         loadedImagePoints.imagePointsGroupedBySeries[roadReference];
@@ -67,23 +65,18 @@ const ImageSeriesView = () => {
           imagePointsForRoadReferenceGroupedByDate[date].forEach((imagePoint: IImagePoint) => {
             if (imagePoint) {
               const imagePointMeter = Math.round(imagePoint.properties.METER);
-              if (imagePointMeter - currentImagePointMeter < 5) {
-                const newFilteredState = [...filteredImagePoints, imagePoint];
-                setFilteredImagePoints(newFilteredState);
-                //return;
+              if (
+                imagePointMeter - currentImagePointMeter < 10 &&
+                imagePointMeter - currentImagePointMeter > -10
+              ) {
+                setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
               }
             }
           });
         }
       });
     }
-  }, [
-    setFilteredImagePoints,
-    currentImagePoint,
-    // loadedImagePoints,
-    // availableImageSeries,
-    // filteredImagePoints,
-  ]);
+  }, [setFilteredImagePoints, currentImagePoint, loadedImagePoints, availableImageSeries]);
 
   return (
     <Paper className={classes.content} square={true}>
@@ -98,7 +91,7 @@ const ImageSeriesView = () => {
               className={classes.image}
               //onLoad={onImageLoaded}
             />
-            <p> {imagePoint.properties.TIDSPUNKT} </p>
+            <p> {getFormattedDateString(getDateString(imagePoint))} </p>
           </>
         ))}
     </Paper>
