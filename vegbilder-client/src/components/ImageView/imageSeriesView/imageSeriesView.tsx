@@ -12,13 +12,13 @@ import {
   getRoadReference,
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
+import { SelectIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   content: {
     padding: '1rem',
     height: '100%',
     width: '40%',
-    maxWidth: '35rem',
     backgroundColor: '#444F55',
     color: '#c4c4c4',
     display: 'flex',
@@ -30,11 +30,27 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'center',
     paddingBottom: '1rem',
   },
-  image: {
-    width: '90%',
+  imageContainer: {
     alignSelf: 'center',
+    position: 'relative',
+    paddingBottom: '1rem',
+  },
+  image: {
+    display: 'block',
+    width: '100%',
     paddingBottom: '1rem',
     borderRadius: '4px',
+  },
+  selectIcon: {
+    position: 'absolute',
+    top: '0.2rem',
+    right: '0.2rem',
+  },
+  date: {
+    alignSelf: 'center',
+    fontSize: '0.9375rem',
+    fontWeight: 500,
+    margin: 0,
   },
 }));
 
@@ -51,7 +67,7 @@ const ImageSeriesView = () => {
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   useEffect(() => {
     if (loadedImagePoints && currentImagePoint) {
-      setFilteredImagePoints((prevState) => [currentImagePoint, ...prevState]);
+      setFilteredImagePoints([currentImagePoint]); // wait for currentImagePoint to be set before we initialize the state
       const roadReference = getRoadReference(currentImagePoint).withoutMeter;
 
       const currentImagePointDate = getDateString(currentImagePoint);
@@ -84,14 +100,18 @@ const ImageSeriesView = () => {
       {currentImagePoint &&
         filteredImagePoints?.map((imagePoint) => (
           <>
-            <img
-              key={imagePoint.id}
-              src={getImageUrl(imagePoint)}
-              alt={imagePoint.id}
-              className={classes.image}
-              //onLoad={onImageLoaded}
-            />
-            <p> {getFormattedDateString(getDateString(imagePoint))} </p>
+            <div className={classes.imageContainer}>
+              {imagePoint === currentImagePoint && <SelectIcon className={classes.selectIcon} />}
+              <img
+                key={imagePoint.id}
+                src={getImageUrl(imagePoint)}
+                alt={imagePoint.id}
+                className={classes.image}
+                //onLoad={onImageLoaded}
+              />
+            </div>
+            <p className={classes.date}> {getFormattedDateString(getDateString(imagePoint))} </p>
+            <p> {getRoadReference(imagePoint).complete} </p>
           </>
         ))}
     </Paper>

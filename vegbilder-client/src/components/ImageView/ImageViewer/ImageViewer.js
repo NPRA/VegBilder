@@ -23,6 +23,7 @@ import { playVideoState, timerState } from 'recoil/atoms';
 const useStyles = makeStyles((theme) => ({
   imageArea: {
     height: '100%',
+    minWidth: '60%',
     backgroundColor: theme.palette.primary.main,
     display: 'flex',
     justifyContent: 'center',
