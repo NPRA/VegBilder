@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
+import { useRecoilValue } from 'recoil';
 
 import { useImageSeries } from 'contexts/ImageSeriesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
@@ -13,6 +14,13 @@ import {
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
+import { availableYearsQuery } from 'recoil/selectors';
+import getImagePointsInBbox from 'apis/VegbilderOGC/getImagePointsInBbox';
+import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
+import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
+import { currentYearState } from 'recoil/atoms';
+import { createSquareBboxAroundPoint } from 'utilities/latlngUtilities';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -60,6 +68,9 @@ const ImageSeriesView = () => {
   const { currentImagePoint } = useCurrentImagePoint();
   const { loadedImagePoints } = useLoadedImagePoints();
   const { availableImageSeries } = useImageSeries();
+  const { currentCoordinates } = useCurrentCoordinates();
+  const availableYears = useRecoilValue(availableYearsQuery);
+  const currentYear = useRecoilValue(currentYearState);
 
   const [filteredImagePoints, setFilteredImagePoints] = useState<IImagePoint[]>([]);
 
@@ -91,8 +102,46 @@ const ImageSeriesView = () => {
           });
         }
       });
+
+      const bbox = {
+        west: currentCoordinates.latlng.lng,
+        south: currentCoordinates.latlng.lat,
+        east: currentCoordinates.latlng.lng + 0.01,
+        north: currentCoordinates.latlng.lat + 0.01,
+      };
+      availableYears.forEach(async (year) => {
+        if (year === currentYear) {
+          return;
+        } else {
+          await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
+            const imagePoints = res.imagePoints;
+            imagePoints.forEach((imagePoint) => {
+              if (imagePoint) {
+                const imagePointMeter = Math.round(imagePoint.properties.METER);
+                if (
+                  imagePointMeter - currentImagePointMeter < 10 &&
+                  imagePointMeter - currentImagePointMeter > -10
+                ) {
+                  setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
+                }
+              }
+            });
+          });
+        }
+      });
     }
-  }, [setFilteredImagePoints, currentImagePoint, loadedImagePoints, availableImageSeries]);
+  }, [
+    setFilteredImagePoints,
+    currentImagePoint,
+    loadedImagePoints,
+    availableImageSeries,
+    availableYears,
+    currentYear,
+  ]);
+
+  useEffect(() => {
+    const currentImagePointMeter = Math.round(currentImagePoint.properties.METER);
+  }, [availableYears, currentYear]);
 
   return (
     <Paper className={classes.content} square={true}>

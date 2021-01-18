@@ -14,7 +14,7 @@ export const timerState = atom({
 
 export const currentYearState = atom({
   key: 'currentYear',
-  default: searchParams.get('year') || 2020,
+  default: parseInt(searchParams.get('year') || '2020'),
 });
 
 export const imageSeriesState = atom({
