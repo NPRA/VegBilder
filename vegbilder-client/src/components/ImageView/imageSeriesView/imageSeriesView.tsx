@@ -7,6 +7,7 @@ import { IconButton } from '@material-ui/core';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
+  getBearingBetweenImagePoints,
   getDateString,
   getDistanceToBetweenImagePoints,
   getFormattedDateString,
@@ -29,6 +30,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'auto',
+    overflowX: 'hidden',
   },
   imageSeriesHeader: {
     display: 'flex',
@@ -66,7 +68,6 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.9375rem',
     fontWeight: 500,
     margin: 0,
-    padding: '10rem',
   },
 }));
 
@@ -99,6 +100,7 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
 
   // I useEffekt'en finner vi bilder som er mindre enn 10 meter unna current image point.
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
+  // Dette gjøres ved å finne distanse i meter ved hjelp av koordinatene, samt bearing mellom koordinatene.
   useEffect(() => {
     if (currentImagePoint) {
       const bbox = {
@@ -107,7 +109,6 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         east: currentCoordinates.latlng.lng + 0.01,
         north: currentCoordinates.latlng.lat + 0.01,
       };
-      const currentImagePointFeltCode = currentImagePoint.properties.FELTKODE;
 
       availableYears.forEach(async (year) => {
         await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
@@ -116,10 +117,8 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
             if (imagePoint) {
               const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
               if (distance < 10) {
-                if (
-                  currentImagePointFeltCode &&
-                  currentImagePointFeltCode === imagePoint.properties.FELTKODE
-                ) {
+                const bearing = getBearingBetweenImagePoints(currentImagePoint, imagePoint);
+                if (bearing === 0 || (bearing < 110 && bearing > 70)) {
                   setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
                 }
               }

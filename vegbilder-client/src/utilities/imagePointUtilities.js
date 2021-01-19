@@ -1,6 +1,6 @@
 import groupBy from 'lodash/groupBy';
 
-import { getDistanceInMetersBetween } from './latlngUtilities';
+import { getBearingBetween, getDistanceInMetersBetween } from './latlngUtilities';
 import { splitDateTimeString } from './dateTimeUtilities';
 import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
@@ -31,6 +31,12 @@ const getDistanceToBetweenImagePoints = (imagePoint1, imagePoint2) => {
   const image2Latlng = getImagePointLatLng(imagePoint2);
   const distance = getDistanceInMetersBetween(image1Latlng, image2Latlng);
   return distance;
+};
+
+const getBearingBetweenImagePoints = (imagePoint1, imagePoint2) => {
+  const image1Latlng = getImagePointLatLng(imagePoint1);
+  const image2Latlng = getImagePointLatLng(imagePoint2);
+  return getBearingBetween(image1Latlng, image2Latlng);
 };
 
 const getRoadReference = (imagePoint) => {
@@ -200,4 +206,5 @@ export {
   areOnSameOrConsecutiveRoadParts,
   getFormattedDateString,
   getDistanceToBetweenImagePoints,
+  getBearingBetweenImagePoints,
 };
