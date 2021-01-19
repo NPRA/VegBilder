@@ -26,6 +26,13 @@ const findNearestImagePoint = (imagePoints, latlng) => {
   return nearestPoint.imagePoint;
 };
 
+const getDistanceToBetweenImagePoints = (imagePoint1, imagePoint2) => {
+  const image1Latlng = getImagePointLatLng(imagePoint1);
+  const image2Latlng = getImagePointLatLng(imagePoint2);
+  const distance = getDistanceInMetersBetween(image1Latlng, image2Latlng);
+  return distance;
+};
+
 const getRoadReference = (imagePoint) => {
   const {
     VEGKATEGORI,
@@ -192,4 +199,5 @@ export {
   groupBySeries,
   areOnSameOrConsecutiveRoadParts,
   getFormattedDateString,
+  getDistanceToBetweenImagePoints,
 };

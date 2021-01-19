@@ -8,6 +8,7 @@ import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import {
   getDateString,
+  getDistanceToBetweenImagePoints,
   getFormattedDateString,
   getImageUrl,
   getRoadReference,
@@ -90,13 +91,11 @@ const ImageSeriesView = () => {
       availableYears.forEach(async (year) => {
         await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
           const imagePoints = res.imagePoints;
-          imagePoints.forEach((imagePoint) => {
+          imagePoints.forEach((imagePoint: IImagePoint) => {
             if (imagePoint) {
-              const imagePointMeter = Math.round(imagePoint.properties.METER);
-              if (
-                imagePointMeter - currentImagePointMeter < 10 &&
-                imagePointMeter - currentImagePointMeter > -10
-              ) {
+              //const imagePointMeter = Math.round(imagePoint.properties.METER);
+              const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
+              if (distance < 10) {
                 if (
                   currentImagePointFeltCode &&
                   currentImagePointFeltCode === imagePoint.properties.FELTKODE
