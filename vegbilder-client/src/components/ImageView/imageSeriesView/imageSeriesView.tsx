@@ -23,7 +23,6 @@ import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 const useStyles = makeStyles((theme) => ({
   content: {
     padding: '1rem',
-    height: '100%',
     width: '40%',
     backgroundColor: '#444F55',
     color: '#c4c4c4',
@@ -57,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.9375rem',
     fontWeight: 500,
     margin: 0,
+    padding: '10rem',
   },
 }));
 
