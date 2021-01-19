@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useRecoilValue } from 'recoil';
@@ -15,11 +15,8 @@ import {
 import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
 import { availableYearsQuery } from 'recoil/selectors';
-import getImagePointsInBbox from 'apis/VegbilderOGC/getImagePointsInBbox';
-import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { currentYearState } from 'recoil/atoms';
-import { createSquareBboxAroundPoint } from 'utilities/latlngUtilities';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -66,42 +63,19 @@ const ImageSeriesView = () => {
   const classes = useStyles();
 
   const { currentImagePoint } = useCurrentImagePoint();
-  const { loadedImagePoints } = useLoadedImagePoints();
-  const { availableImageSeries } = useImageSeries();
+  //const { loadedImagePoints } = useLoadedImagePoints();
+  //const { availableImageSeries } = useImageSeries();
   const { currentCoordinates } = useCurrentCoordinates();
   const availableYears = useRecoilValue(availableYearsQuery);
   const currentYear = useRecoilValue(currentYearState);
 
   const [filteredImagePoints, setFilteredImagePoints] = useState<IImagePoint[]>([]);
 
-  // I useEffekt'en finner vi bilder som er mindre enn 10 meter unna current image point og har annen dato enn current image point.
+  // I useEffekt'en finner vi bilder som er mindre enn 10 meter unna current image point.
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   useEffect(() => {
-    if (loadedImagePoints && currentImagePoint) {
-      setFilteredImagePoints([currentImagePoint]); // wait for currentImagePoint to be set before we initialize the state
-      const roadReference = getRoadReference(currentImagePoint).withoutMeter;
-
-      const currentImagePointDate = getDateString(currentImagePoint);
-      const currentImagePointMeter = Math.round(currentImagePoint.properties.METER);
-
-      const imagePointsForRoadReferenceGroupedByDate =
-        loadedImagePoints.imagePointsGroupedBySeries[roadReference];
-
-      availableImageSeries.forEach((date: string) => {
-        if (date !== currentImagePointDate) {
-          imagePointsForRoadReferenceGroupedByDate[date].forEach((imagePoint: IImagePoint) => {
-            if (imagePoint) {
-              const imagePointMeter = Math.round(imagePoint.properties.METER);
-              if (
-                imagePointMeter - currentImagePointMeter < 10 &&
-                imagePointMeter - currentImagePointMeter > -10
-              ) {
-                setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
-              }
-            }
-          });
-        }
-      });
+    if (currentImagePoint) {
+      console.log('here');
 
       const bbox = {
         west: currentCoordinates.latlng.lng,
@@ -109,39 +83,42 @@ const ImageSeriesView = () => {
         east: currentCoordinates.latlng.lng + 0.01,
         north: currentCoordinates.latlng.lat + 0.01,
       };
+
+      const currentImagePointMeter = Math.round(currentImagePoint.properties.METER);
+      const currentImagePointFeltCode = currentImagePoint.properties.FELTKODE;
+
       availableYears.forEach(async (year) => {
-        if (year === currentYear) {
-          return;
-        } else {
-          await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
-            const imagePoints = res.imagePoints;
-            imagePoints.forEach((imagePoint) => {
-              if (imagePoint) {
-                const imagePointMeter = Math.round(imagePoint.properties.METER);
+        await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
+          const imagePoints = res.imagePoints;
+          imagePoints.forEach((imagePoint) => {
+            if (imagePoint) {
+              const imagePointMeter = Math.round(imagePoint.properties.METER);
+              if (
+                imagePointMeter - currentImagePointMeter < 10 &&
+                imagePointMeter - currentImagePointMeter > -10
+              ) {
                 if (
-                  imagePointMeter - currentImagePointMeter < 10 &&
-                  imagePointMeter - currentImagePointMeter > -10
+                  currentImagePointFeltCode &&
+                  currentImagePointFeltCode === imagePoint.properties.FELTKODE
                 ) {
                   setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
                 }
               }
-            });
+            }
           });
-        }
+        });
       });
     }
+    return () => {
+      setFilteredImagePoints([]);
+    };
   }, [
-    setFilteredImagePoints,
     currentImagePoint,
-    loadedImagePoints,
-    availableImageSeries,
     availableYears,
+    currentCoordinates.latlng.lat,
+    currentCoordinates.latlng.lng,
     currentYear,
   ]);
-
-  useEffect(() => {
-    const currentImagePointMeter = Math.round(currentImagePoint.properties.METER);
-  }, [availableYears, currentYear]);
 
   return (
     <Paper className={classes.content} square={true}>
@@ -149,8 +126,10 @@ const ImageSeriesView = () => {
       {currentImagePoint &&
         filteredImagePoints?.map((imagePoint) => (
           <>
-            <div className={classes.imageContainer}>
-              {imagePoint === currentImagePoint && <SelectIcon className={classes.selectIcon} />}
+            <div key={`${imagePoint.id}-container`} className={classes.imageContainer}>
+              {imagePoint.id === currentImagePoint.id && (
+                <SelectIcon key={`${imagePoint.id}-icon`} className={classes.selectIcon} />
+              )}
               <img
                 key={imagePoint.id}
                 src={getImageUrl(imagePoint)}
@@ -159,8 +138,11 @@ const ImageSeriesView = () => {
                 //onLoad={onImageLoaded}
               />
             </div>
-            <p className={classes.date}> {getFormattedDateString(getDateString(imagePoint))} </p>
-            <p> {getRoadReference(imagePoint).complete} </p>
+            <p key={`${imagePoint.id}-date`} className={classes.date}>
+              {' '}
+              {getFormattedDateString(getDateString(imagePoint))}{' '}
+            </p>
+            <p key={`${imagePoint.id}-ref`}> {getRoadReference(currentImagePoint).complete} </p>
           </>
         ))}
     </Paper>
