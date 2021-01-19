@@ -74,6 +74,19 @@ interface IImageSeriesProps {
   close: () => void;
 }
 
+const getDateObj = (imagePoint: IImagePoint) => {
+  const dateString = getDateString(imagePoint);
+  const splitted = dateString.split('-');
+  const day = splitted[2];
+  const month = splitted[1];
+  const year = splitted[0];
+  return new Date(year, month, day);
+};
+
+const sortImagePointsByDate = (imagePoints: IImagePoint[]) => {
+  return imagePoints.sort((a, b) => getDateObj(b).getTime() - getDateObj(a).getTime());
+};
+
 const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   const classes = useStyles();
 
@@ -94,7 +107,6 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         east: currentCoordinates.latlng.lng + 0.01,
         north: currentCoordinates.latlng.lat + 0.01,
       };
-
       const currentImagePointFeltCode = currentImagePoint.properties.FELTKODE;
 
       availableYears.forEach(async (year) => {
@@ -142,7 +154,7 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         </IconButton>
       </div>
       {currentImagePoint &&
-        filteredImagePoints?.map((imagePoint) => (
+        sortImagePointsByDate(filteredImagePoints)?.map((imagePoint) => (
           <>
             <div key={`${imagePoint.id}-container`} className={classes.imageContainer}>
               {imagePoint.id === currentImagePoint.id && (
