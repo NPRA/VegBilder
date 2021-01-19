@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useRecoilValue } from 'recoil';
+import CloseIcon from '@material-ui/icons/Close';
+import { IconButton } from '@material-ui/core';
 
-import { useImageSeries } from 'contexts/ImageSeriesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import {
   getDateString,
   getDistanceToBetweenImagePoints,
@@ -21,7 +21,7 @@ import { currentYearState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 
 const useStyles = makeStyles((theme) => ({
-  content: {
+  imageSeriesContent: {
     padding: '1rem',
     width: '40%',
     backgroundColor: '#444F55',
@@ -30,10 +30,19 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     overflowY: 'auto',
   },
+  imageSeriesHeader: {
+    display: 'flex',
+    paddingBottom: '1rem',
+    alignItems: 'center',
+    position: 'relative',
+    justifyContent: 'center',
+  },
   header: {
     margin: 0,
-    alignSelf: 'center',
-    paddingBottom: '1rem',
+  },
+  closeButton: {
+    position: 'absolute',
+    right: 0,
   },
   imageContainer: {
     alignSelf: 'center',
@@ -45,6 +54,7 @@ const useStyles = makeStyles((theme) => ({
     width: '100%',
     paddingBottom: '1rem',
     borderRadius: '4px',
+    cursor: 'pointer',
   },
   selectIcon: {
     position: 'absolute',
@@ -60,12 +70,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageSeriesView = () => {
+interface IImageSeriesProps {
+  close: () => void;
+}
+
+const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   const classes = useStyles();
 
-  const { currentImagePoint } = useCurrentImagePoint();
-  //const { loadedImagePoints } = useLoadedImagePoints();
-  //const { availableImageSeries } = useImageSeries();
+  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const availableYears = useRecoilValue(availableYearsQuery);
   const currentYear = useRecoilValue(currentYearState);
@@ -76,8 +88,6 @@ const ImageSeriesView = () => {
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   useEffect(() => {
     if (currentImagePoint) {
-      console.log('here');
-
       const bbox = {
         west: currentCoordinates.latlng.lng,
         south: currentCoordinates.latlng.lat,
@@ -85,7 +95,6 @@ const ImageSeriesView = () => {
         north: currentCoordinates.latlng.lat + 0.01,
       };
 
-      const currentImagePointMeter = Math.round(currentImagePoint.properties.METER);
       const currentImagePointFeltCode = currentImagePoint.properties.FELTKODE;
 
       availableYears.forEach(async (year) => {
@@ -93,7 +102,6 @@ const ImageSeriesView = () => {
           const imagePoints = res.imagePoints;
           imagePoints.forEach((imagePoint: IImagePoint) => {
             if (imagePoint) {
-              //const imagePointMeter = Math.round(imagePoint.properties.METER);
               const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
               if (distance < 10) {
                 if (
@@ -119,9 +127,20 @@ const ImageSeriesView = () => {
     currentYear,
   ]);
 
+  const handleImageClick = (imagePoint: IImagePoint) => {
+    if (imagePoint !== currentImagePoint) {
+      setCurrentImagePoint(imagePoint);
+    }
+  };
+
   return (
-    <Paper className={classes.content} square={true}>
-      <h4 className={classes.header}>Vegbilder fra samme sted</h4>
+    <Paper className={classes.imageSeriesContent} square={true}>
+      <div className={classes.imageSeriesHeader}>
+        <h4 className={classes.header}>Vegbilder fra samme sted</h4>
+        <IconButton onClick={close} className={classes.closeButton}>
+          <CloseIcon />
+        </IconButton>
+      </div>
       {currentImagePoint &&
         filteredImagePoints?.map((imagePoint) => (
           <>
@@ -134,6 +153,7 @@ const ImageSeriesView = () => {
                 src={getImageUrl(imagePoint)}
                 alt={imagePoint.id}
                 className={classes.image}
+                onClick={() => handleImageClick(imagePoint)}
                 //onLoad={onImageLoaded}
               />
             </div>

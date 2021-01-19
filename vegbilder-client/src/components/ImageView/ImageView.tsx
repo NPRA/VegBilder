@@ -6,7 +6,7 @@ import Footer from 'components/Footer/Footer';
 import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
 import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { imageSeriesState } from 'recoil/atoms';
 import ImageSeriesView from './imageSeriesView/imageSeriesView';
 
@@ -34,7 +34,7 @@ interface IImageViewProps {
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
-  const showImageSeries = useRecoilValue(imageSeriesState);
+  const [showImageSeries, setShowImageSeries] = useRecoilState(imageSeriesState);
 
   return (
     <TogglesProvider>
@@ -47,7 +47,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               showMessage={showSnackbarMessage}
               showCloseButton={false}
             />
-            <ImageSeriesView />{' '}
+            <ImageSeriesView close={() => setShowImageSeries(false)} />{' '}
           </div>
         ) : (
           <ImageViewer
