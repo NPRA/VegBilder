@@ -32,6 +32,7 @@ import {
   PauseIcon,
   ArrowTurnDisabledIcon,
   DotsHorizontalDisabledIcon,
+  PlayDisabledIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -205,12 +206,13 @@ const ControlBar = ({ showMessage }) => {
           <IconButton
             aria-label="Start animasjonsmodus"
             className={classes.button}
+            disabled={showImageSeries}
             onClick={() => {
               setPlayVideo(true);
               setPlayMode(true);
             }}
           >
-            <PlayIcon />
+            {showImageSeries ? <PlayDisabledIcon /> : <PlayIcon />}
           </IconButton>
         )}
 

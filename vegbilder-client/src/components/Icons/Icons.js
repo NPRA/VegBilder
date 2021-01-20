@@ -19,6 +19,7 @@ import { ReactComponent as PauseIcon } from './Pause.svg';
 import { ReactComponent as ArrowTurnDisabledIcon } from './TurnAroundDisabled.svg';
 import { ReactComponent as DotsHorizontalDisabledIcon } from './DotsHorizontalDisabled.svg';
 import { ReactComponent as SelectIcon } from './selectedImage.svg';
+import { ReactComponent as PlayDisabledIcon } from './PlayDisabled.svg';
 
 export {
   ArrowDownIcon,
@@ -42,4 +43,5 @@ export {
   ArrowTurnDisabledIcon,
   DotsHorizontalDisabledIcon,
   SelectIcon,
+  PlayDisabledIcon,
 };
