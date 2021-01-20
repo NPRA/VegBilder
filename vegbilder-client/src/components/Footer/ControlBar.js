@@ -95,13 +95,13 @@ const ControlBar = ({ showMessage }) => {
   const handleMoreControlsClick = (event) => setMoreControlsAnchorEl(event.currentTarget);
 
   const copyShareableUrlToClipboard = () => {
+    showMessage('Lenke kopiert til utklippstavle');
     const shareableUrl = getShareableUrlForImage(currentImagePoint);
     copyToClipboard(shareableUrl);
-    showMessage('Lenke kopiert til utklippstavle');
   };
 
   const openPrefilledEmailInDefaultEmailClient = () => {
-    window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
+    window.open(createMailtoHrefForReporting(), '_self');
     showMessage('Åpner e-post-klient');
   };
 

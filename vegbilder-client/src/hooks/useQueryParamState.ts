@@ -25,7 +25,7 @@ const useQueryParamState = (name: queryParamterNames) => {
         if (searchParam) {
           const validImageIdParam = isValidImageId(searchParam);
           if (!validImageIdParam) {
-            throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+            throw new Error(`Ugyldig id for bilde: ${searchParam}`);
           }
           return searchParam;
         }
@@ -35,7 +35,7 @@ const useQueryParamState = (name: queryParamterNames) => {
         if (searchParam) {
           const validYearParam = isValidYear(parseInt(searchParam));
           if (!validYearParam) {
-            throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+            throw new Error(`Ugyldig verdi for år: ${searchParam}`);
           }
           return searchParam;
         }
@@ -44,7 +44,7 @@ const useQueryParamState = (name: queryParamterNames) => {
         if (searchParam) {
           const validView = isValidView(searchParam);
           if (!validView) {
-            throw new Error(`Invalid value of query parameter ${name}: ${searchParam}`);
+            throw new Error(`Ugyldig view: ${searchParam}`);
           }
           return searchParam;
         }

@@ -259,7 +259,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
         });
       } else {
         setAutoPlay(false);
-        showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
+        showMessage('Stopper film, dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
       }
     }
   }, [autoPlay, nextImagePoint, showMessage, timer]);
