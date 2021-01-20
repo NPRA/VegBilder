@@ -194,6 +194,32 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (imagePoint1, imagePoint2) =
   );
 };
 
+// Get image points for the current lane in correct order
+const shouldIncludeImagePoint = (imagePoint, currentImagePoint) => {
+  const currentProps = currentImagePoint.properties;
+  const ipProps = imagePoint.properties;
+  if (ipProps.VEGKATEGORI !== currentProps.VEGKATEGORI) return false;
+  if (ipProps.VEGSTATUS !== currentProps.VEGSTATUS) return false;
+  if (ipProps.VEGNUMMER !== currentProps.VEGNUMMER) return false;
+  if (ipProps.FELTKODE !== currentProps.FELTKODE) return false;
+  if (currentProps.KRYSSDEL || currentProps.SIDEANLEGGSDEL) {
+    if (currentProps.KRYSSDEL && ipProps.KRYSSDEL !== currentProps.KRYSSDEL) {
+      return false;
+    } else if (
+      currentProps.SIDEANLEGGSDEL &&
+      ipProps.SIDEANLEGGSDEL !== currentProps.SIDEANLEGGSDEL
+    ) {
+      return false;
+    }
+    if (ipProps.ANKERPUNKT !== currentProps.ANKERPUNKT) return false;
+    if (ipProps.STREKNING !== currentProps.STREKNING) return false;
+    if (ipProps.DELSTREKNING !== currentProps.DELSTREKNING) return false;
+  } else {
+    if (ipProps.KRYSSDEL || ipProps.SIDEANLEGGSDEL) return false;
+  }
+  return true;
+};
+
 export {
   getImagePointLatLng,
   getImageUrl,
@@ -207,4 +233,5 @@ export {
   getFormattedDateString,
   getDistanceToBetweenImagePoints,
   getBearingBetweenImagePoints,
+  shouldIncludeImagePoint,
 };

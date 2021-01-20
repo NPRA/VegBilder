@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton } from '@material-ui/core';
 
@@ -11,8 +11,10 @@ import {
   getDateString,
   getDistanceToBetweenImagePoints,
   getFormattedDateString,
+  getImagePointLatLng,
   getImageUrl,
   getRoadReference,
+  shouldIncludeImagePoint,
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
@@ -94,13 +96,22 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { currentCoordinates } = useCurrentCoordinates();
   const availableYears = useRecoilValue(availableYearsQuery);
-  const currentYear = useRecoilValue(currentYearState);
+  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
+  const { setCurrentCoordinates } = useCurrentCoordinates();
 
   const [filteredImagePoints, setFilteredImagePoints] = useState<IImagePoint[]>([]);
 
+  const handleImageClick = (imagePoint: IImagePoint) => {
+    if (imagePoint !== currentImagePoint) {
+      setCurrentImagePoint(imagePoint);
+      //setCurrentYear(imagePoint.properties.AAR);
+      //setCurrentCoordinates({ latlng: getImagePointLatLng(imagePoint) });
+    }
+  };
+
   // I useEffekt'en finner vi bilder som er mindre enn 10 meter unna current image point.
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
-  // Dette gjøres ved å finne distanse i meter ved hjelp av koordinatene, samt bearing mellom koordinatene.
+  // Dette gjøres ved å finne distanse i meter ved hjelp av koordinatene, samt å finne ut av om den er en del av det feltet.
   useEffect(() => {
     if (currentImagePoint) {
       const bbox = {
@@ -117,8 +128,9 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
             if (imagePoint) {
               const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
               if (distance < 10) {
-                const bearing = getBearingBetweenImagePoints(currentImagePoint, imagePoint);
-                if (bearing === 0 || (bearing < 110 && bearing > 70)) {
+                // const bearing = getBearingBetweenImagePoints(currentImagePoint, imagePoint);
+                // if (bearing === 0 || (bearing < 110 && bearing > 70)) {
+                if (shouldIncludeImagePoint(imagePoint, currentImagePoint)) {
                   setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
                 }
               }
@@ -137,12 +149,6 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
     currentCoordinates.latlng.lng,
     currentYear,
   ]);
-
-  const handleImageClick = (imagePoint: IImagePoint) => {
-    if (imagePoint !== currentImagePoint) {
-      setCurrentImagePoint(imagePoint);
-    }
-  };
 
   return (
     <Paper className={classes.imageSeriesContent} square={true}>

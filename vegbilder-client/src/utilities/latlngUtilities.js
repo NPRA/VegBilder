@@ -11,15 +11,26 @@ const getDistanceInMetersBetween = (pointA, pointB) => {
 };
 
 // where 	φ1,λ1 is the start point, φ2,λ2 the end point (Δλ is the difference in longitude)
+// const getBearingBetween = (pointA, pointB) => {
+//   const φ1 = pointA.lat;
+//   const λ1 = pointA.lng;
+//   const φ2 = pointB.lat;
+//   const λ2 = pointB.lng;
+//   const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
+//   const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
+//   const θ = Math.atan2(y, x);
+//   return ((θ * 180) / Math.PI + 360) % 360; // in degrees
+// };
+
 const getBearingBetween = (pointA, pointB) => {
-  const φ1 = pointA.lat;
-  const λ1 = pointA.lng;
-  const φ2 = pointB.lat;
-  const λ2 = pointB.lng;
-  const y = Math.sin(λ2 - λ1) * Math.cos(φ2);
-  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(λ2 - λ1);
-  const θ = Math.atan2(y, x);
-  return ((θ * 180) / Math.PI + 360) % 360; // in degrees
+  const lat1 = pointA.lat;
+  const lat2 = pointB.lat;
+  const dLon = pointB.lng - pointA.lng;
+  var y = Math.sin(dLon) * Math.cos(lat2);
+  var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+  var brng = Math.atan2(y, x);
+  const brngDegress = ((brng * 180) / Math.PI + 360) % 360;
+  return brngDegress;
 };
 
 const createSquareBboxAroundPoint = (centerPoint, sizeInMeters) => {
