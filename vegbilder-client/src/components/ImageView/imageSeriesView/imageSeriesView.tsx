@@ -117,7 +117,6 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   // Dette gjøres ved å finne distanse i meter ved hjelp av koordinatene, samt å finne ut av om den er en del av det feltet.
   useEffect(() => {
-    console.log('here');
     if (currentImagePoint) {
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
       const bbox = {
@@ -130,11 +129,10 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
       availableYears.forEach(async (year) => {
         await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
           const imagePoints = res.imagePoints;
-          console.log(res.imagePoints);
           imagePoints.forEach((imagePoint: IImagePoint) => {
             if (imagePoint) {
               const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
-              if (distance < 10) {
+              if (distance < 20) {
                 if (shouldIncludeImagePoint(imagePoint, currentImagePoint)) {
                   setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
                 }
@@ -170,14 +168,12 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
                 alt={imagePoint.id}
                 className={classes.image}
                 onClick={() => handleImageClick(imagePoint)}
-                //onLoad={onImageLoaded}
               />
             </div>
             <p key={`${imagePoint.id}-date`} className={classes.date}>
               {' '}
               {getFormattedDateString(getDateString(imagePoint))}{' '}
             </p>
-            <p key={`${imagePoint.id}-ref`}> {getRoadReference(currentImagePoint).complete} </p>
           </>
         ))}
     </Paper>
