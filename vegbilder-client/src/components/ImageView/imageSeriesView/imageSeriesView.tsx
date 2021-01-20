@@ -56,7 +56,7 @@ const useStyles = makeStyles((theme) => ({
   image: {
     display: 'block',
     width: '100%',
-    paddingBottom: '1rem',
+    paddingBottom: '0.5rem',
     borderRadius: '4px',
     cursor: 'pointer',
   },
@@ -70,6 +70,7 @@ const useStyles = makeStyles((theme) => ({
     fontSize: '0.9375rem',
     fontWeight: 500,
     margin: 0,
+    paddingBottom: '1rem',
   },
 }));
 
