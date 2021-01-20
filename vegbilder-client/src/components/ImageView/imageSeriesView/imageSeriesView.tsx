@@ -7,7 +7,6 @@ import { IconButton } from '@material-ui/core';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
-  getBearingBetweenImagePoints,
   getDateString,
   getDistanceToBetweenImagePoints,
   getFormattedDateString,
@@ -22,6 +21,7 @@ import { availableYearsQuery } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { currentYearState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import useQueryParamState from 'hooks/useQueryParamState';
 
 const useStyles = makeStyles((theme) => ({
   imageSeriesContent: {
@@ -94,18 +94,22 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   const classes = useStyles();
 
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
-  const { currentCoordinates } = useCurrentCoordinates();
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
   const { setCurrentCoordinates } = useCurrentCoordinates();
+  const [, setQueryParamYear] = useQueryParamState('year');
 
   const [filteredImagePoints, setFilteredImagePoints] = useState<IImagePoint[]>([]);
 
   const handleImageClick = (imagePoint: IImagePoint) => {
     if (imagePoint !== currentImagePoint) {
       setCurrentImagePoint(imagePoint);
-      //setCurrentYear(imagePoint.properties.AAR);
-      //setCurrentCoordinates({ latlng: getImagePointLatLng(imagePoint) });
+      setCurrentCoordinates({ latlng: getImagePointLatLng(imagePoint) });
+      if (imagePoint.properties.AAR !== currentYear) {
+        setCurrentYear(imagePoint.properties.AAR);
+        setQueryParamYear(imagePoint.properties.AAR.toString());
+      }
+      setFilteredImagePoints([]);
     }
   };
 
@@ -113,23 +117,24 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   // Dette gjøres ved å finne distanse i meter ved hjelp av koordinatene, samt å finne ut av om den er en del av det feltet.
   useEffect(() => {
+    console.log('here');
     if (currentImagePoint) {
+      const currentCoordinates = getImagePointLatLng(currentImagePoint);
       const bbox = {
-        west: currentCoordinates.latlng.lng,
-        south: currentCoordinates.latlng.lat,
-        east: currentCoordinates.latlng.lng + 0.01,
-        north: currentCoordinates.latlng.lat + 0.01,
+        west: currentCoordinates?.lng,
+        south: currentCoordinates?.lat,
+        east: currentCoordinates?.lng + 0.001,
+        north: currentCoordinates?.lat + 0.001,
       };
 
       availableYears.forEach(async (year) => {
         await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
           const imagePoints = res.imagePoints;
+          console.log(res.imagePoints);
           imagePoints.forEach((imagePoint: IImagePoint) => {
             if (imagePoint) {
               const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
               if (distance < 10) {
-                // const bearing = getBearingBetweenImagePoints(currentImagePoint, imagePoint);
-                // if (bearing === 0 || (bearing < 110 && bearing > 70)) {
                 if (shouldIncludeImagePoint(imagePoint, currentImagePoint)) {
                   setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
                 }
@@ -142,13 +147,7 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
     return () => {
       setFilteredImagePoints([]);
     };
-  }, [
-    currentImagePoint,
-    availableYears,
-    currentCoordinates.latlng.lat,
-    currentCoordinates.latlng.lng,
-    currentYear,
-  ]);
+  }, [currentImagePoint, availableYears]);
 
   return (
     <Paper className={classes.imageSeriesContent} square={true}>

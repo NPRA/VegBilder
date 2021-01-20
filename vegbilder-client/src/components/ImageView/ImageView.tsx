@@ -6,7 +6,7 @@ import Footer from 'components/Footer/Footer';
 import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
 import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { imageSeriesState } from 'recoil/atoms';
 import ImageSeriesView from './imageSeriesView/imageSeriesView';
 
