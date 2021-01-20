@@ -38,8 +38,10 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     paddingBottom: '1rem',
     alignItems: 'center',
-    position: 'relative',
     justifyContent: 'center',
+    position: 'sticky',
+    top: 0,
+    backgroundColor: '#444F55',
   },
   header: {
     margin: 0,
