@@ -11,6 +11,7 @@ import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import Theme from 'theme/Theme';
 import { CheckmarkIcon } from 'components/Icons/Icons';
+import { getFormattedDateString } from 'utilities/imagePointUtilities';
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -66,14 +67,6 @@ const ImageSeriesSelector = () => {
   const { setCommand } = useCommand();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
 
-  const parseDate = (imageSeriesDate) => {
-    const splitted = imageSeriesDate.split('-');
-    const day = splitted[2];
-    const month = splitted[1];
-    const year = splitted[0];
-    return `${day}.${month}.${year}`;
-  };
-
   return availableImageSeries.length <= 1 ? null : (
     <FormControl>
       <Select
@@ -106,7 +99,7 @@ const ImageSeriesSelector = () => {
             {series === currentImageSeries.date && (
               <CheckmarkIcon className={classes.checkmarkStyle} />
             )}
-            {parseDate(series)}
+            {getFormattedDateString(series)}
           </MenuItem>
         ))}
       </Select>

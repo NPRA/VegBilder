@@ -1,8 +1,8 @@
 import groupBy from 'lodash/groupBy';
 
-import { getDistanceInMetersBetween } from './latlngUtilities';
+import { getBearingBetween, getDistanceInMetersBetween } from './latlngUtilities';
 import { splitDateTimeString } from './dateTimeUtilities';
-//import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
+import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
 const getImagePointLatLng = (imagePoint) => {
   if (imagePoint) {
@@ -12,7 +12,8 @@ const getImagePointLatLng = (imagePoint) => {
   }
 };
 
-const getImageUrl = (imagepoint) => imagepoint.properties.URL;
+const getImageUrl = (imagepoint) => rewriteUrlDomainToLocalhost(imagepoint.properties.URL);
+
 const findNearestImagePoint = (imagePoints, latlng) => {
   let nearestPoint = { distance: 100000000, imagePoint: null };
   imagePoints.forEach((ip) => {
@@ -23,6 +24,19 @@ const findNearestImagePoint = (imagePoints, latlng) => {
     }
   });
   return nearestPoint.imagePoint;
+};
+
+const getDistanceToBetweenImagePoints = (imagePoint1, imagePoint2) => {
+  const image1Latlng = getImagePointLatLng(imagePoint1);
+  const image2Latlng = getImagePointLatLng(imagePoint2);
+  const distance = getDistanceInMetersBetween(image1Latlng, image2Latlng);
+  return distance;
+};
+
+const getBearingBetweenImagePoints = (imagePoint1, imagePoint2) => {
+  const image1Latlng = getImagePointLatLng(imagePoint1);
+  const image2Latlng = getImagePointLatLng(imagePoint2);
+  return getBearingBetween(image1Latlng, image2Latlng);
 };
 
 const getRoadReference = (imagePoint) => {
@@ -79,6 +93,14 @@ const getGenericRoadReference = (imagePoint) => {
 const usesOldVegreferanse = (imagePoint) => imagePoint.properties.AAR < 2020;
 
 const getDateString = (imagePoint) => splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
+
+const getFormattedDateString = (imageSeriesDate) => {
+  const splitted = imageSeriesDate.split('-');
+  const day = splitted[2];
+  const month = splitted[1];
+  const year = splitted[0];
+  return `${day}.${month}.${year}`;
+};
 
 /* Takes an array of image points and returns those image points grouped first by road reference
  * (vegsystemreferanse or vegreferanse) without the meter value, and then by date. So a
@@ -172,6 +194,32 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (imagePoint1, imagePoint2) =
   );
 };
 
+// Get image points for the current lane in correct order
+const shouldIncludeImagePoint = (imagePoint, currentImagePoint) => {
+  const currentProps = currentImagePoint.properties;
+  const ipProps = imagePoint.properties;
+  if (ipProps.VEGKATEGORI !== currentProps.VEGKATEGORI) return false;
+  if (ipProps.VEGSTATUS !== currentProps.VEGSTATUS) return false;
+  if (ipProps.VEGNUMMER !== currentProps.VEGNUMMER) return false;
+  if (ipProps.FELTKODE !== currentProps.FELTKODE) return false;
+  if (currentProps.KRYSSDEL || currentProps.SIDEANLEGGSDEL) {
+    if (currentProps.KRYSSDEL && ipProps.KRYSSDEL !== currentProps.KRYSSDEL) {
+      return false;
+    } else if (
+      currentProps.SIDEANLEGGSDEL &&
+      ipProps.SIDEANLEGGSDEL !== currentProps.SIDEANLEGGSDEL
+    ) {
+      return false;
+    }
+    if (ipProps.ANKERPUNKT !== currentProps.ANKERPUNKT) return false;
+    if (ipProps.STREKNING !== currentProps.STREKNING) return false;
+    if (ipProps.DELSTREKNING !== currentProps.DELSTREKNING) return false;
+  } else {
+    if (ipProps.KRYSSDEL || ipProps.SIDEANLEGGSDEL) return false;
+  }
+  return true;
+};
+
 export {
   getImagePointLatLng,
   getImageUrl,
@@ -182,4 +230,8 @@ export {
   getDateString,
   groupBySeries,
   areOnSameOrConsecutiveRoadParts,
+  getFormattedDateString,
+  getDistanceToBetweenImagePoints,
+  getBearingBetweenImagePoints,
+  shouldIncludeImagePoint,
 };

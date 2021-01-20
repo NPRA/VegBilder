@@ -27,6 +27,10 @@ export default createMuiTheme({
       main: charcoalLighter,
       contrastText: grayRegular,
     },
+    series: {
+      main: grayDark,
+      contrastText: grayMenuItems,
+    },
     info: {
       main: blueRegular,
     },

@@ -6,16 +6,26 @@ import Footer from 'components/Footer/Footer';
 import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
 import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
+import { useRecoilState } from 'recoil';
+import { imageSeriesState } from 'recoil/atoms';
+import ImageSeriesView from './imageSeriesView/imageSeriesView';
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   content: {
     flex: '1 1 auto', // Allow the grid item containing the main content to grow and shrink to fill the available height.
     position: 'relative', // Needed for the small map to be positioned correctly relative to the top left corner of the content container
+    height: '100%',
+    overflow: 'auto',
   },
   footer: {
     flex: '0 1 4.5rem',
   },
-});
+  imageseries: {
+    display: 'flex',
+    position: 'relative',
+    height: '100%',
+  },
+}));
 
 interface IImageViewProps {
   setView: () => void;
@@ -24,11 +34,28 @@ interface IImageViewProps {
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
+  const [showImageSeries, setShowImageSeries] = useRecoilState(imageSeriesState);
 
   return (
     <TogglesProvider>
       <Grid item className={classes.content}>
-        <ImageViewer exitImageView={setView} showMessage={showSnackbarMessage} />
+        {showImageSeries ? (
+          <div className={classes.imageseries}>
+            {' '}
+            <ImageViewer
+              exitImageView={setView}
+              showMessage={showSnackbarMessage}
+              showCloseButton={false}
+            />
+            <ImageSeriesView close={() => setShowImageSeries(false)} />{' '}
+          </div>
+        ) : (
+          <ImageViewer
+            exitImageView={setView}
+            showMessage={showSnackbarMessage}
+            showCloseButton={true}
+          />
+        )}
         <SmallMapContainer />
       </Grid>
       <Grid item className={classes.footer}>

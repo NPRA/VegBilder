@@ -14,6 +14,7 @@ import {
   findNearestImagePoint,
   usesOldVegreferanse,
   areOnSameOrConsecutiveRoadParts,
+  shouldIncludeImagePoint,
 } from 'utilities/imagePointUtilities';
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
@@ -23,6 +24,7 @@ import { playVideoState, timerState } from 'recoil/atoms';
 const useStyles = makeStyles((theme) => ({
   imageArea: {
     height: '100%',
+    minWidth: '60%',
     backgroundColor: theme.palette.primary.main,
     display: 'flex',
     justifyContent: 'center',
@@ -41,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageViewer = ({ exitImageView, showMessage }) => {
+const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -103,33 +105,7 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
     setImageElement(null);
   }, [currentImagePoint]);
 
-  // Get image points for the current lane in correct order
   useEffect(() => {
-    function shouldIncludeImagePoint(imagePoint, currentImagePoint) {
-      const currentProps = currentImagePoint.properties;
-      const ipProps = imagePoint.properties;
-      if (ipProps.VEGKATEGORI !== currentProps.VEGKATEGORI) return false;
-      if (ipProps.VEGSTATUS !== currentProps.VEGSTATUS) return false;
-      if (ipProps.VEGNUMMER !== currentProps.VEGNUMMER) return false;
-      if (ipProps.FELTKODE !== currentProps.FELTKODE) return false;
-      if (currentProps.KRYSSDEL || currentProps.SIDEANLEGGSDEL) {
-        if (currentProps.KRYSSDEL && ipProps.KRYSSDEL !== currentProps.KRYSSDEL) {
-          return false;
-        } else if (
-          currentProps.SIDEANLEGGSDEL &&
-          ipProps.SIDEANLEGGSDEL !== currentProps.SIDEANLEGGSDEL
-        ) {
-          return false;
-        }
-        if (ipProps.ANKERPUNKT !== currentProps.ANKERPUNKT) return false;
-        if (ipProps.STREKNING !== currentProps.STREKNING) return false;
-        if (ipProps.DELSTREKNING !== currentProps.DELSTREKNING) return false;
-      } else {
-        if (ipProps.KRYSSDEL || ipProps.SIDEANLEGGSDEL) return false;
-      }
-      return true;
-    }
-
     const getSortedImagePointsForCurrentLane = () => {
       const currentLaneImagePoints = filteredImagePoints.filter((ip) =>
         shouldIncludeImagePoint(ip, currentImagePoint)
@@ -302,7 +278,7 @@ const ImageViewer = ({ exitImageView, showMessage }) => {
           {renderMeterLine()}
         </>
       ) : null}
-      <CloseButton onClick={exitImageView} />
+      {showCloseButton && <CloseButton onClick={exitImageView} />}
     </div>
   );
 };
