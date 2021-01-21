@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
     padding: '1rem',
     width: '40%',
     backgroundColor: '#444F55',
-    color: '#c4c4c4',
+    color: '#c4c4c4', // why is theme not working with ts?
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'auto',
@@ -132,6 +132,9 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         north: currentCoordinates?.lat + 0.001,
       };
 
+      const currentImagePointTime = getDateObj(currentImagePoint).getTime();
+      setFilteredImagePoints((prevState) => [currentImagePoint, ...prevState]);
+
       availableYears.forEach(async (year) => {
         await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
           const imagePoints = res.imagePoints;
@@ -140,8 +143,10 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
             imagePoints,
             (imagePoint: IImagePoint) => {
               const time = getDateObj(imagePoint).getTime();
-              uniqueDates.add(time);
-              return time;
+              if (time !== currentImagePointTime) {
+                uniqueDates.add(time);
+                return time;
+              }
             }
           );
 
