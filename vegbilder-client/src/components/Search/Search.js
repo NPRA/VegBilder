@@ -122,7 +122,7 @@ const Search = ({ showMessage }) => {
     return () => {
       setResetImagePoint(false);
     };
-  }, [resetImagePoint]);
+  }, [resetImagePoint, resetFilteredImagePoints, resetLoadedImagePoints]);
 
   useEffect(() => {
     if (findClosestImagePoint) {
@@ -131,7 +131,7 @@ const Search = ({ showMessage }) => {
     return () => {
       setFindClosestImagePoint(false);
     };
-  }, [findClosestImagePoint]);
+  }, [findClosestImagePoint, setCommand]);
 
   const handleSelectedOption = (latlng, zoom) => {
     /* Since a search usually entails a big jump in location, the currently loaded image points
