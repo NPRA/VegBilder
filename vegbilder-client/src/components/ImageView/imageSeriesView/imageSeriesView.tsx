@@ -37,12 +37,13 @@ const useStyles = makeStyles((theme) => ({
   },
   imageSeriesHeader: {
     display: 'flex',
-    paddingBottom: '1rem',
+    padding: '0.5rem 0',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'sticky',
+    zIndex: 5,
     top: 0,
-    backgroundColor: '#444F55',
+    background: 'rgba(68,79,85, 0.8)',
   },
   header: {
     margin: 0,
