@@ -12,7 +12,6 @@ import {
   getFormattedDateString,
   getImagePointLatLng,
   getImageUrl,
-  getRoadReference,
   shouldIncludeImagePoint,
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';

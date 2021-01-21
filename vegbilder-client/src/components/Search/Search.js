@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -74,6 +74,8 @@ const Search = ({ showMessage }) => {
   const [stedsnavnOptions, setStedsnavnOptions] = useState([]);
   const [vegSystemReferanser, setVegSystemReferanser] = useState([]);
   const [openMenu, setOpenMenu] = useState(false);
+  const [resetImagePoint, setResetImagePoint] = useState(false);
+  const [findClosestImagePoint, setFindClosestImagePoint] = useState(false);
 
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
@@ -111,19 +113,39 @@ const Search = ({ showMessage }) => {
     []
   );
 
+  useEffect(() => {
+    if (resetImagePoint) {
+      unsetCurrentImagePoint();
+      resetLoadedImagePoints();
+      resetFilteredImagePoints();
+    }
+    return () => {
+      setResetImagePoint(false);
+    };
+  }, [resetImagePoint]);
+
+  useEffect(() => {
+    if (findClosestImagePoint) {
+      setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
+    }
+    return () => {
+      setFindClosestImagePoint(false);
+    };
+  }, [findClosestImagePoint]);
+
   const handleSelectedOption = (latlng, zoom) => {
+    /* Since a search usually entails a big jump in location, the currently loaded image points
+     * will most likely no longer be useful. We need to clear them in order for the
+     * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
+     * the nearest of the image points in the previous location.)
+     */
     setOpenMenu(false);
     if (latlng && latlng.lat && latlng.lng) {
       setCurrentCoordinates({ latlng: latlng, zoom: zoom });
-      /* Since a search usually entails a big jump in location, the currently loaded image points
-       * will most likely no longer be useful. We need to clear them in order for the
-       * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
-       * the nearest of the image points in the previous location.)
-       */
-      resetLoadedImagePoints();
-      resetFilteredImagePoints();
-      unsetCurrentImagePoint();
-      setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
+      setResetImagePoint(true);
+      if (zoom === 16) {
+        setFindClosestImagePoint(true);
+      }
       setSearchString('');
     }
   };
