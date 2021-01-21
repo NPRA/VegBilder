@@ -32,6 +32,7 @@ import {
   PauseIcon,
   ArrowTurnDisabledIcon,
   DotsHorizontalDisabledIcon,
+  PlayDisabledIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -94,13 +95,13 @@ const ControlBar = ({ showMessage }) => {
   const handleMoreControlsClick = (event) => setMoreControlsAnchorEl(event.currentTarget);
 
   const copyShareableUrlToClipboard = () => {
+    showMessage('Lenke kopiert til utklippstavle');
     const shareableUrl = getShareableUrlForImage(currentImagePoint);
     copyToClipboard(shareableUrl);
-    showMessage('Lenke kopiert til utklippstavle');
   };
 
   const openPrefilledEmailInDefaultEmailClient = () => {
-    window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
+    window.open(createMailtoHrefForReporting(), '_self');
     showMessage('Åpner e-post-klient');
   };
 
@@ -205,12 +206,13 @@ const ControlBar = ({ showMessage }) => {
           <IconButton
             aria-label="Start animasjonsmodus"
             className={classes.button}
+            disabled={showImageSeries}
             onClick={() => {
               setPlayVideo(true);
               setPlayMode(true);
             }}
           >
-            <PlayIcon />
+            {showImageSeries ? <PlayDisabledIcon /> : <PlayIcon />}
           </IconButton>
         )}
 

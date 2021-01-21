@@ -83,6 +83,7 @@ const ComponentsWrapper = () => {
         {renderContent()}
       </Grid>
       <Snackbar
+        key={snackbarMessage}
         open={snackbarVisible}
         autoHideDuration={5000}
         onClose={(reason) => handleSnackbarClose(reason)}
