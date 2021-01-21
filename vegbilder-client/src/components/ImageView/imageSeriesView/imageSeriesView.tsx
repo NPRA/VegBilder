@@ -4,6 +4,7 @@ import Paper from '@material-ui/core/Paper';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton } from '@material-ui/core';
+import groupBy from 'lodash/groupBy';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
@@ -21,13 +22,14 @@ import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePoin
 import { currentYearState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
+import { Dictionary } from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   imageSeriesContent: {
     padding: '1rem',
     width: '40%',
     backgroundColor: '#444F55',
-    color: '#c4c4c4',
+    color: '#c4c4c4', // why is theme not working with ts?
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'auto',
@@ -35,12 +37,13 @@ const useStyles = makeStyles((theme) => ({
   },
   imageSeriesHeader: {
     display: 'flex',
-    paddingBottom: '1rem',
+    padding: '0.5rem 0',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'sticky',
+    zIndex: 5,
     top: 0,
-    backgroundColor: '#444F55',
+    background: 'rgba(68,79,85, 0.8)',
   },
   header: {
     margin: 0,
@@ -118,6 +121,7 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   // I useEffekt'en finner vi bilder som er mindre enn 10 meter unna current image point.
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   // Dette gjøres ved å finne distanse i meter ved hjelp av koordinatene, samt å finne ut av om den er en del av det feltet.
+  // Bildene er sortert på tid, og vi velger første og beste som matcher mindre enn 20 meter og i samme felt fra hver tid (dato).
   useEffect(() => {
     if (currentImagePoint) {
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
@@ -128,18 +132,36 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         north: currentCoordinates?.lat + 0.001,
       };
 
+      const currentImagePointTime = getDateObj(currentImagePoint).getTime();
+      setFilteredImagePoints((prevState) => [currentImagePoint, ...prevState]);
+
       availableYears.forEach(async (year) => {
         await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
           const imagePoints = res.imagePoints;
-          imagePoints.forEach((imagePoint: IImagePoint) => {
-            if (imagePoint) {
-              const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
-              if (distance < 20) {
-                if (shouldIncludeImagePoint(imagePoint, currentImagePoint)) {
-                  setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
-                }
+          const uniqueDates: Set<number> = new Set();
+          const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
+            imagePoints,
+            (imagePoint: IImagePoint) => {
+              const time = getDateObj(imagePoint).getTime();
+              if (time !== currentImagePointTime) {
+                uniqueDates.add(time);
+                return time;
               }
             }
+          );
+
+          [...uniqueDates].forEach((date) => {
+            imagePointsGroupedByTime[date].some((imagePoint: IImagePoint) => {
+              if (imagePoint) {
+                const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
+                if (distance < 20) {
+                  if (shouldIncludeImagePoint(imagePoint, currentImagePoint)) {
+                    setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
+                    return true;
+                  }
+                }
+              }
+            });
           });
         });
       });
