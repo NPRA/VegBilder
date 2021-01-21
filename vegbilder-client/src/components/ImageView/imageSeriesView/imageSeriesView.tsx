@@ -8,6 +8,7 @@ import groupBy from 'lodash/groupBy';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
+  getBearingBetweenImagePoints,
   getDateString,
   getDistanceToBetweenImagePoints,
   getFormattedDateString,
@@ -105,6 +106,8 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   const [, setQueryParamYear] = useQueryParamState('year');
 
   const [filteredImagePoints, setFilteredImagePoints] = useState<IImagePoint[]>([]);
+  const [bearings, setBearings] = useState<number[]>([]);
+  const [Obearings, OsetBearings] = useState<number[]>([]);
 
   const handleImageClick = (imagePoint: IImagePoint) => {
     if (imagePoint !== currentImagePoint) {
@@ -156,8 +159,17 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
                 const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
                 if (distance < 20) {
                   if (shouldIncludeImagePoint(imagePoint, currentImagePoint)) {
+                    setBearings((prevState) => [
+                      ...prevState,
+                      getBearingBetweenImagePoints(currentImagePoint, imagePoint),
+                    ]);
                     setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
                     return true;
+                  } else {
+                    OsetBearings((prevState) => [
+                      ...prevState,
+                      getBearingBetweenImagePoints(currentImagePoint, imagePoint),
+                    ]);
                   }
                 }
               }
@@ -168,8 +180,16 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
     }
     return () => {
       setFilteredImagePoints([]);
+      setBearings([]);
+      OsetBearings([]);
     };
   }, [currentImagePoint, availableYears]);
+
+  console.log('bearing A');
+  console.log(bearings);
+  console.log('bearing B');
+
+  console.log(Obearings);
 
   return (
     <Paper className={classes.imageSeriesContent} square={true}>
