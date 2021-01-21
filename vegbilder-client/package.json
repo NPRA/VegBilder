@@ -3,17 +3,17 @@
   "version": "0.1.20",
   "private": true,
   "dependencies": {
-    "@material-ui/core": "^4.11.0",
-    "@material-ui/icons": "^4.9.1",
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/icons": "^4.11.2",
     "@material-ui/lab": "^4.0.0-alpha.57",
-    "@material-ui/styles": "^4.10.0",
+    "@material-ui/styles": "^4.11.2",
     "axios": "^0.21.1",
     "copy-to-clipboard": "^3.3.1",
     "leaflet": "^1.7.1",
     "leaflet-rotatedmarker": "^0.2.0",
     "proj4leaflet": "^1.0.2",
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
     "react-leaflet": "^2.8.0",
     "react-scripts": "3.4.4",
     "recoil": "^0.1.2",
@@ -42,6 +42,6 @@
     ]
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.167"
+    "@types/lodash": "^4.14.168"
   }
 }

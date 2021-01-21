@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
@@ -46,11 +46,9 @@ const ComponentsWrapper = () => {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const handleSnackbarClose = (event: SyntheticEvent<Element, Event>) => {
-    if (event) {
-      if (event.type === 'clickaway') {
-        return;
-      }
+  const handleSnackbarClose = (reason: any) => {
+    if (reason && reason._reactName !== 'onClick') {
+      return;
     }
     setSnackbarVisible(false);
   };
@@ -88,10 +86,10 @@ const ComponentsWrapper = () => {
         key={snackbarMessage}
         open={snackbarVisible}
         autoHideDuration={5000}
-        onClose={handleSnackbarClose}
+        onClose={(reason) => handleSnackbarClose(reason)}
         className={classes.snackbar}
       >
-        <Alert onClose={handleSnackbarClose} severity="info">
+        <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
           {snackbarMessage}
         </Alert>
       </Snackbar>
