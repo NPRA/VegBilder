@@ -24,6 +24,7 @@ import { currentYearState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { Dictionary } from 'lodash';
+import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 
 const useStyles = makeStyles((theme) => ({
   imageSeriesContent: {
@@ -92,6 +93,11 @@ const getDateObj = (imagePoint: IImagePoint) => {
   return new Date(year, month, day);
 };
 
+const getDateObjWithTime = (imagePoint: IImagePoint) => {
+  const dateString = imagePoint.properties.TIDSPUNKT; // format: 2020-08-20T09:30:19Z
+  return new Date(dateString);
+};
+
 const sortImagePointsByDate = (imagePoints: IImagePoint[]) => {
   return imagePoints.sort((a, b) => getDateObj(b).getTime() - getDateObj(a).getTime());
 };
@@ -104,10 +110,9 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const [, setQueryParamYear] = useQueryParamState('year');
+  const { filteredImagePoints } = useFilteredImagePoints();
 
-  const [filteredImagePoints, setFilteredImagePoints] = useState<IImagePoint[]>([]);
-  const [bearings, setBearings] = useState<number[]>([]);
-  const [Obearings, OsetBearings] = useState<number[]>([]);
+  const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
 
   const handleImageClick = (imagePoint: IImagePoint) => {
     if (imagePoint !== currentImagePoint) {
@@ -117,8 +122,12 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         setCurrentYear(imagePoint.properties.AAR);
         setQueryParamYear(imagePoint.properties.AAR.toString());
       }
-      setFilteredImagePoints([]);
+      setHistoryImagePoints([]);
     }
+  };
+
+  const getImagePointDirection = () => {
+    return 0;
   };
 
   // I useEffekt'en finner vi bilder som er mindre enn 10 meter unna current image point.
@@ -136,7 +145,15 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
       };
 
       const currentImagePointTime = getDateObj(currentImagePoint).getTime();
-      setFilteredImagePoints((prevState) => [currentImagePoint, ...prevState]);
+      const currentImagePointDateWithTime = getDateObjWithTime(currentImagePoint).getTime();
+
+      // if (filteredImagePoints) {
+      //   console.log(filteredImagePoints);
+      // }
+      const currentImagePointDirection =
+        currentImagePoint.properties.RETNING ?? getImagePointDirection();
+
+      setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
 
       availableYears.forEach(async (year) => {
         await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
@@ -159,17 +176,18 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
                 const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
                 if (distance < 20) {
                   if (shouldIncludeImagePoint(imagePoint, currentImagePoint)) {
-                    setBearings((prevState) => [
-                      ...prevState,
-                      getBearingBetweenImagePoints(currentImagePoint, imagePoint),
-                    ]);
-                    setFilteredImagePoints((prevState) => [...prevState, imagePoint]);
-                    return true;
-                  } else {
-                    OsetBearings((prevState) => [
-                      ...prevState,
-                      getBearingBetweenImagePoints(currentImagePoint, imagePoint),
-                    ]);
+                    const imagePointDirection =
+                      imagePoint.properties.RETNING ?? getImagePointDirection();
+                    console.log(imagePointDirection);
+                    console.log(currentImagePointDirection);
+
+                    if (
+                      imagePointDirection < currentImagePointDirection + 10 &&
+                      imagePointDirection > currentImagePointDirection - 10
+                    ) {
+                      setHistoryImagePoints((prevState) => [...prevState, imagePoint]);
+                      return true;
+                    }
                   }
                 }
               }
@@ -179,17 +197,15 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
       });
     }
     return () => {
-      setFilteredImagePoints([]);
-      setBearings([]);
-      OsetBearings([]);
+      setHistoryImagePoints([]);
     };
   }, [currentImagePoint, availableYears]);
 
-  console.log('bearing A');
-  console.log(bearings);
-  console.log('bearing B');
+  // console.log('bearing A');
+  // console.log(bearings);
+  // console.log('bearing B');
 
-  console.log(Obearings);
+  // console.log(Obearings);
 
   return (
     <Paper className={classes.imageSeriesContent} square={true}>
@@ -200,7 +216,7 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         </IconButton>
       </div>
       {currentImagePoint &&
-        sortImagePointsByDate(filteredImagePoints)?.map((imagePoint) => (
+        sortImagePointsByDate(historyImagePoints)?.map((imagePoint) => (
           <>
             <div key={`${imagePoint.id}-container`} className={classes.imageContainer}>
               {imagePoint.id === currentImagePoint.id && (
@@ -217,6 +233,10 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
             <p key={`${imagePoint.id}-date`} className={classes.date}>
               {' '}
               {getFormattedDateString(getDateString(imagePoint))}{' '}
+            </p>
+            <p key={`${imagePoint.id}-retning`} className={classes.date}>
+              {' '}
+              {imagePoint.properties.RETNING}{' '}
             </p>
           </>
         ))}

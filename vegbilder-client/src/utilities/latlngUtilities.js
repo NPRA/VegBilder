@@ -18,7 +18,7 @@ const getBearingBetween = (pointA, pointB) => {
   var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
   var brng = Math.atan2(y, x);
   const brngDegress = ((brng * 180) / Math.PI + 360) % 360;
-  return brngDegress;
+  return 360 - brngDegress;
 };
 
 const createSquareBboxAroundPoint = (centerPoint, sizeInMeters) => {
