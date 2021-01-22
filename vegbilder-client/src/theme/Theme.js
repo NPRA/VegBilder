@@ -1,4 +1,5 @@
 import { createMuiTheme } from '@material-ui/core/styles';
+import LFTEthicalThin from 'fonts/LFTEticaLt.woff';
 
 const grayRegular = '#ececec';
 const grayIcons = '#c4c4c4';
@@ -10,6 +11,9 @@ const blueRegular = '#077197';
 const grayMenuItems = '#c4c4c4';
 
 export default createMuiTheme({
+  typography: {
+    fontFamily: ['sans-serif', '"LFT-Etica"', '"Lucida Sans Unicode"', '"Lucida Grande"'].join(','),
+  },
   palette: {
     common: {
       grayDark: grayDark,
