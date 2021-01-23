@@ -14,7 +14,6 @@ import {
   getFormattedDateString,
   getImagePointLatLng,
   getImageUrl,
-  shouldIncludeImagePoint,
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
@@ -122,18 +121,32 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         setCurrentYear(imagePoint.properties.AAR);
         setQueryParamYear(imagePoint.properties.AAR.toString());
       }
-      setHistoryImagePoints([]);
     }
   };
 
-  const getImagePointDirection = () => {
-    return 0;
+  const getCurrentImagePointBearing = (
+    imagePoints: IImagePoint[],
+    currentImagePoint: IImagePoint
+  ) => {
+    const currentImagePointDateWithTime = getDateObjWithTime(currentImagePoint).getTime();
+
+    // find an image point within 30 seconds from currentImagePoint (which is then most likely on the same line)
+    const imagePointCloseToCurrent = imagePoints.find(
+      (imagePoint) =>
+        getDateObjWithTime(imagePoint).getTime() < currentImagePointDateWithTime + 30000 &&
+        getDateObjWithTime(imagePoint).getTime() > currentImagePointDateWithTime - 30000
+    );
+
+    if (imagePointCloseToCurrent) {
+      return getBearingBetweenImagePoints(currentImagePoint, imagePointCloseToCurrent);
+    }
   };
 
-  // I useEffekt'en finner vi bilder som er mindre enn 10 meter unna current image point.
+  // I useEffekt'en finner vi bilder som er mindre enn 20 meter unna current image point.
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   // Dette gjøres ved å finne distanse i meter ved hjelp av koordinatene, samt å finne ut av om den er en del av det feltet.
   // Bildene er sortert på tid, og vi velger første og beste som matcher mindre enn 20 meter og i samme felt fra hver tid (dato).
+  // Vi ser på retning for å finne ut av om punktet er en del av feltet.
   useEffect(() => {
     if (currentImagePoint) {
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
@@ -145,13 +158,13 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
       };
 
       const currentImagePointTime = getDateObj(currentImagePoint).getTime();
-      const currentImagePointDateWithTime = getDateObjWithTime(currentImagePoint).getTime();
 
-      // if (filteredImagePoints) {
-      //   console.log(filteredImagePoints);
-      // }
-      const currentImagePointDirection =
-        currentImagePoint.properties.RETNING ?? getImagePointDirection();
+      const currentImagePointBearing = getCurrentImagePointBearing(
+        filteredImagePoints,
+        currentImagePoint
+      );
+
+      const currentImagePointDirection = currentImagePoint.properties.RETNING;
 
       setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
 
@@ -175,15 +188,24 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
               if (imagePoint) {
                 const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
                 if (distance < 20) {
-                  if (shouldIncludeImagePoint(imagePoint, currentImagePoint)) {
-                    const imagePointDirection =
-                      imagePoint.properties.RETNING ?? getImagePointDirection();
-                    console.log(imagePointDirection);
-                    console.log(currentImagePointDirection);
-
+                  const imagePointDirection = imagePoint.properties.RETNING;
+                  if (imagePointDirection && currentImagePointDirection) {
                     if (
                       imagePointDirection < currentImagePointDirection + 10 &&
                       imagePointDirection > currentImagePointDirection - 10
+                    ) {
+                      setHistoryImagePoints((prevState) => [...prevState, imagePoint]);
+                      return true;
+                    }
+                  } else {
+                    const bearingBetween = getBearingBetweenImagePoints(
+                      currentImagePoint,
+                      imagePoint
+                    );
+                    if (
+                      currentImagePointBearing &&
+                      bearingBetween < currentImagePointBearing + 20 &&
+                      bearingBetween > currentImagePointBearing - 20
                     ) {
                       setHistoryImagePoints((prevState) => [...prevState, imagePoint]);
                       return true;
@@ -200,12 +222,6 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
       setHistoryImagePoints([]);
     };
   }, [currentImagePoint, availableYears]);
-
-  // console.log('bearing A');
-  // console.log(bearings);
-  // console.log('bearing B');
-
-  // console.log(Obearings);
 
   return (
     <Paper className={classes.imageSeriesContent} square={true}>
