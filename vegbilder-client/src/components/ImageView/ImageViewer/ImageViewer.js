@@ -19,7 +19,7 @@ import {
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { useToggles } from 'contexts/TogglesContext';
-import { playVideoState, timerState } from 'recoil/atoms';
+import { playVideoState, timerState, imageSeriesState } from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -43,7 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
+const ImageViewer = ({ exitImageView, showMessage, showCloseButton, currentHistoryImage }) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -52,6 +52,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
   const { meterLineVisible } = useToggles();
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
   const timer = useRecoilValue(timerState);
+  const [showImageSeries, setShowImageSeries] = useRecoilState(imageSeriesState);
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -266,10 +267,14 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
 
   return (
     <div className={classes.imageArea}>
-      {currentImagePoint ? (
+      {currentImagePoint && (
         <>
           <img
-            src={getImageUrl(currentImagePoint)}
+            src={
+              showImageSeries && currentHistoryImage
+                ? getImageUrl(currentHistoryImage)
+                : getImageUrl(currentImagePoint)
+            }
             alt="vegbilde"
             className={classes.image}
             ref={imgRef}
@@ -277,7 +282,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
           />
           {renderMeterLine()}
         </>
-      ) : null}
+      )}
       {showCloseButton && <CloseButton onClick={exitImageView} />}
     </div>
   );

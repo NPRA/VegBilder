@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
+import { useRecoilValue } from 'recoil';
 
 import Footer from 'components/Footer/Footer';
 import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
 import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
-import { useRecoilState } from 'recoil';
 import { imageSeriesState } from 'recoil/atoms';
 import ImageSeriesView from './imageSeriesView/imageSeriesView';
+import { IImagePoint } from 'types';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -34,7 +35,8 @@ interface IImageViewProps {
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
-  const [showImageSeries, setShowImageSeries] = useRecoilState(imageSeriesState);
+  const showImageSeries = useRecoilValue(imageSeriesState);
+  const [currentHistoryImage, setCurrentHistoryImage] = useState<IImagePoint | null>(null);
 
   return (
     <TogglesProvider>
@@ -46,14 +48,19 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               exitImageView={setView}
               showMessage={showSnackbarMessage}
               showCloseButton={false}
+              currentHistoryImage={currentHistoryImage}
             />
-            <ImageSeriesView close={() => setShowImageSeries(false)} />{' '}
+            <ImageSeriesView
+              currentHistoryImage={currentHistoryImage}
+              setCurrentHistoryImage={setCurrentHistoryImage}
+            />{' '}
           </div>
         ) : (
           <ImageViewer
             exitImageView={setView}
             showMessage={showSnackbarMessage}
             showCloseButton={true}
+            currentHistoryImage={currentHistoryImage}
           />
         )}
         <SmallMapContainer />

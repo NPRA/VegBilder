@@ -19,7 +19,7 @@ import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
 import { availableYearsQuery } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { currentYearState } from 'recoil/atoms';
+import { currentYearState, imageSeriesState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { Dictionary } from 'lodash';
@@ -80,7 +80,8 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IImageSeriesProps {
-  close: () => void;
+  currentHistoryImage: IImagePoint | null;
+  setCurrentHistoryImage: React.Dispatch<React.SetStateAction<IImagePoint | null>>;
 }
 
 const getDateObj = (imagePoint: IImagePoint) => {
@@ -101,7 +102,7 @@ const sortImagePointsByDate = (imagePoints: IImagePoint[]) => {
   return imagePoints.sort((a, b) => getDateObj(b).getTime() - getDateObj(a).getTime());
 };
 
-const ImageSeriesView = ({ close }: IImageSeriesProps) => {
+const ImageSeriesView = ({ currentHistoryImage, setCurrentHistoryImage }: IImageSeriesProps) => {
   const classes = useStyles();
 
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
@@ -109,19 +110,31 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const [, setQueryParamYear] = useQueryParamState('year');
-  const { filteredImagePoints } = useFilteredImagePoints();
+  //const [currentHistoryImage, setCurrentHistoryImage] = useState<IImagePoint | null>(null);
 
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
 
+  const [, setShowImageSeries] = useRecoilState(imageSeriesState);
+  const { filteredImagePoints } = useFilteredImagePoints();
+
   const handleImageClick = (imagePoint: IImagePoint) => {
-    if (imagePoint !== currentImagePoint) {
-      setCurrentImagePoint(imagePoint);
-      setCurrentCoordinates({ latlng: getImagePointLatLng(imagePoint) });
-      if (imagePoint.properties.AAR !== currentYear) {
-        setCurrentYear(imagePoint.properties.AAR);
-        setQueryParamYear(imagePoint.properties.AAR.toString());
+    setCurrentHistoryImage(imagePoint);
+    setCurrentCoordinates({ latlng: getImagePointLatLng(imagePoint) });
+    // if (imagePoint.properties.AAR !== currentYear) {
+    //   setCurrentYear(imagePoint.properties.AAR);
+    //   setQueryParamYear(imagePoint.properties.AAR.toString());
+    // }
+  };
+
+  const onClose = () => {
+    if (currentHistoryImage) {
+      setCurrentImagePoint(currentHistoryImage);
+      if (currentHistoryImage.properties.AAR !== currentYear) {
+        setCurrentYear(currentHistoryImage.properties.AAR);
+        setQueryParamYear(currentHistoryImage.properties.AAR.toString());
       }
     }
+    setShowImageSeries(false);
   };
 
   const getCurrentImagePointBearing = (
@@ -149,6 +162,7 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
   // Vi ser på retning for å finne ut av om punktet er en del av feltet.
   useEffect(() => {
     if (currentImagePoint) {
+      setCurrentHistoryImage(currentImagePoint);
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
       const bbox = {
         west: currentCoordinates?.lng,
@@ -213,6 +227,7 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
                   }
                 }
               }
+              return false;
             });
           });
         });
@@ -221,13 +236,13 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
     return () => {
       setHistoryImagePoints([]);
     };
-  }, [currentImagePoint, availableYears]);
+  }, [currentImagePoint, availableYears, setCurrentHistoryImage]);
 
   return (
     <Paper className={classes.imageSeriesContent} square={true}>
       <div className={classes.imageSeriesHeader}>
         <h4 className={classes.header}>Vegbilder fra samme sted</h4>
-        <IconButton onClick={close} className={classes.closeButton}>
+        <IconButton onClick={onClose} className={classes.closeButton}>
           <CloseIcon />
         </IconButton>
       </div>
@@ -235,7 +250,7 @@ const ImageSeriesView = ({ close }: IImageSeriesProps) => {
         sortImagePointsByDate(historyImagePoints)?.map((imagePoint) => (
           <>
             <div key={`${imagePoint.id}-container`} className={classes.imageContainer}>
-              {imagePoint.id === currentImagePoint.id && (
+              {imagePoint.id === currentHistoryImage?.id && (
                 <SelectIcon key={`${imagePoint.id}-icon`} className={classes.selectIcon} />
               )}
               <img
