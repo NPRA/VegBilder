@@ -19,14 +19,14 @@ import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
 import { availableYearsQuery } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { currentYearState, imageSeriesState } from 'recoil/atoms';
+import { currentHistoryImageState, currentYearState, isHistoryModeState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { Dictionary } from 'lodash';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 
 const useStyles = makeStyles((theme) => ({
-  imageSeriesContent: {
+  historyContent: {
     padding: '1rem',
     width: '40%',
     backgroundColor: '#444F55',
@@ -36,7 +36,7 @@ const useStyles = makeStyles((theme) => ({
     overflowY: 'auto',
     overflowX: 'hidden',
   },
-  imageSeriesHeader: {
+  historyHeader: {
     display: 'flex',
     padding: '0.5rem 0',
     alignItems: 'center',
@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme) => ({
     top: 0,
     background: 'rgba(68,79,85, 0.8)',
   },
-  header: {
+  headerText: {
     margin: 0,
   },
   closeButton: {
@@ -79,18 +79,9 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IImageSeriesProps {
-  currentHistoryImage: IImagePoint | null;
-  setCurrentHistoryImage: React.Dispatch<React.SetStateAction<IImagePoint | null>>;
-}
-
 const getDateObj = (imagePoint: IImagePoint) => {
-  const dateString = getDateString(imagePoint);
-  const splitted = dateString.split('-');
-  const day = splitted[2];
-  const month = splitted[1];
-  const year = splitted[0];
-  return new Date(year, month, day);
+  const dateString = getDateString(imagePoint); // format: 2020-08-20
+  return new Date(dateString);
 };
 
 const getDateObjWithTime = (imagePoint: IImagePoint) => {
@@ -102,39 +93,35 @@ const sortImagePointsByDate = (imagePoints: IImagePoint[]) => {
   return imagePoints.sort((a, b) => getDateObj(b).getTime() - getDateObj(a).getTime());
 };
 
-const ImageSeriesView = ({ currentHistoryImage, setCurrentHistoryImage }: IImageSeriesProps) => {
+const HistoryView = () => {
   const classes = useStyles();
 
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
+  const [currentHistoryImage, setCurrentHistoryImage] = useRecoilState(currentHistoryImageState);
+  const [, setHistoryMode] = useRecoilState(isHistoryModeState);
+
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const [, setQueryParamYear] = useQueryParamState('year');
-  //const [currentHistoryImage, setCurrentHistoryImage] = useState<IImagePoint | null>(null);
+  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const { filteredImagePoints } = useFilteredImagePoints();
 
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
-
-  const [, setShowImageSeries] = useRecoilState(imageSeriesState);
-  const { filteredImagePoints } = useFilteredImagePoints();
 
   const handleImageClick = (imagePoint: IImagePoint) => {
     setCurrentHistoryImage(imagePoint);
     setCurrentCoordinates({ latlng: getImagePointLatLng(imagePoint) });
-    // if (imagePoint.properties.AAR !== currentYear) {
-    //   setCurrentYear(imagePoint.properties.AAR);
-    //   setQueryParamYear(imagePoint.properties.AAR.toString());
-    // }
+    if (imagePoint.properties.AAR !== currentYear) {
+      setCurrentYear(imagePoint.properties.AAR);
+      setQueryParamYear(imagePoint.properties.AAR.toString());
+    }
   };
 
   const onClose = () => {
     if (currentHistoryImage) {
       setCurrentImagePoint(currentHistoryImage);
-      if (currentHistoryImage.properties.AAR !== currentYear) {
-        setCurrentYear(currentHistoryImage.properties.AAR);
-        setQueryParamYear(currentHistoryImage.properties.AAR.toString());
-      }
     }
-    setShowImageSeries(false);
+    setHistoryMode(false);
   };
 
   const getCurrentImagePointBearing = (
@@ -157,9 +144,9 @@ const ImageSeriesView = ({ currentHistoryImage, setCurrentHistoryImage }: IImage
 
   // I useEffekt'en finner vi bilder som er mindre enn 20 meter unna current image point.
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
-  // Dette gjøres ved å finne distanse i meter ved hjelp av koordinatene, samt å finne ut av om den er en del av det feltet.
-  // Bildene er sortert på tid, og vi velger første og beste som matcher mindre enn 20 meter og i samme felt fra hver tid (dato).
-  // Vi ser på retning for å finne ut av om punktet er en del av feltet.
+  // For å finne retningen av bildet så har vi to muligheter: se på retning (som ikke alle bilder har), eller regne ut bearing.
+  // I de tilfellene vi må regne ut bearing (når bildet ikke har retning) så finner vi først bearing mellom currentImagePoint og et nærliggende bilde (et bilde tatt
+  // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
   useEffect(() => {
     if (currentImagePoint) {
       setCurrentHistoryImage(currentImagePoint);
@@ -172,14 +159,11 @@ const ImageSeriesView = ({ currentHistoryImage, setCurrentHistoryImage }: IImage
       };
 
       const currentImagePointTime = getDateObj(currentImagePoint).getTime();
-
       const currentImagePointBearing = getCurrentImagePointBearing(
         filteredImagePoints,
         currentImagePoint
       );
-
       const currentImagePointDirection = currentImagePoint.properties.RETNING;
-
       setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
 
       availableYears.forEach(async (year) => {
@@ -239,9 +223,9 @@ const ImageSeriesView = ({ currentHistoryImage, setCurrentHistoryImage }: IImage
   }, [currentImagePoint, availableYears, setCurrentHistoryImage]);
 
   return (
-    <Paper className={classes.imageSeriesContent} square={true}>
-      <div className={classes.imageSeriesHeader}>
-        <h4 className={classes.header}>Vegbilder fra samme sted</h4>
+    <Paper className={classes.historyContent} square={true}>
+      <div className={classes.historyHeader}>
+        <h4 className={classes.headerText}>Vegbilder fra samme sted</h4>
         <IconButton onClick={onClose} className={classes.closeButton}>
           <CloseIcon />
         </IconButton>
@@ -265,14 +249,10 @@ const ImageSeriesView = ({ currentHistoryImage, setCurrentHistoryImage }: IImage
               {' '}
               {getFormattedDateString(getDateString(imagePoint))}{' '}
             </p>
-            <p key={`${imagePoint.id}-retning`} className={classes.date}>
-              {' '}
-              {imagePoint.properties.RETNING}{' '}
-            </p>
           </>
         ))}
     </Paper>
   );
 };
 
-export default ImageSeriesView;
+export default HistoryView;

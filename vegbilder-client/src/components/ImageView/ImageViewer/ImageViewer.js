@@ -19,7 +19,12 @@ import {
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { useToggles } from 'contexts/TogglesContext';
-import { playVideoState, timerState, imageSeriesState } from 'recoil/atoms';
+import {
+  playVideoState,
+  timerState,
+  isHistoryModeState,
+  currentHistoryImageState,
+} from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -43,7 +48,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageViewer = ({ exitImageView, showMessage, showCloseButton, currentHistoryImage }) => {
+const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -52,7 +57,8 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton, currentHisto
   const { meterLineVisible } = useToggles();
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
   const timer = useRecoilValue(timerState);
-  const [showImageSeries, setShowImageSeries] = useRecoilState(imageSeriesState);
+  const isHistoryMode = useRecoilValue(isHistoryModeState);
+  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -271,7 +277,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton, currentHisto
         <>
           <img
             src={
-              showImageSeries && currentHistoryImage
+              isHistoryMode && currentHistoryImage
                 ? getImageUrl(currentHistoryImage)
                 : getImageUrl(currentImagePoint)
             }

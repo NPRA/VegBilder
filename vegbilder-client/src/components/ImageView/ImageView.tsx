@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
@@ -7,9 +7,8 @@ import Footer from 'components/Footer/Footer';
 import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
 import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
-import { imageSeriesState } from 'recoil/atoms';
-import ImageSeriesView from './imageSeriesView/imageSeriesView';
-import { IImagePoint } from 'types';
+import { isHistoryModeState } from 'recoil/atoms';
+import HistoryView from './HistoryView/HistoryView';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -35,32 +34,26 @@ interface IImageViewProps {
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
-  const showImageSeries = useRecoilValue(imageSeriesState);
-  const [currentHistoryImage, setCurrentHistoryImage] = useState<IImagePoint | null>(null);
+  const isHistoryMode = useRecoilValue(isHistoryModeState);
 
   return (
     <TogglesProvider>
       <Grid item className={classes.content}>
-        {showImageSeries ? (
+        {isHistoryMode ? (
           <div className={classes.imageseries}>
             {' '}
             <ImageViewer
               exitImageView={setView}
               showMessage={showSnackbarMessage}
               showCloseButton={false}
-              currentHistoryImage={currentHistoryImage}
             />
-            <ImageSeriesView
-              currentHistoryImage={currentHistoryImage}
-              setCurrentHistoryImage={setCurrentHistoryImage}
-            />{' '}
+            <HistoryView />
           </div>
         ) : (
           <ImageViewer
             exitImageView={setView}
             showMessage={showSnackbarMessage}
             showCloseButton={true}
-            currentHistoryImage={currentHistoryImage}
           />
         )}
         <SmallMapContainer />
