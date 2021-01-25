@@ -93,7 +93,7 @@ const sortImagePointsByDate = (imagePoints: IImagePoint[]) => {
   return imagePoints.sort((a, b) => getDateObj(b).getTime() - getDateObj(a).getTime());
 };
 
-const HistoryView = () => {
+const History = () => {
   const classes = useStyles();
 
   const availableYears = useRecoilValue(availableYearsQuery);
@@ -103,6 +103,7 @@ const HistoryView = () => {
 
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const [, setQueryParamYear] = useQueryParamState('year');
+  const [, setQueryParamImageId] = useQueryParamState('imageId');
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
 
@@ -111,6 +112,7 @@ const HistoryView = () => {
   const handleImageClick = (imagePoint: IImagePoint) => {
     setCurrentHistoryImage(imagePoint);
     setCurrentCoordinates({ latlng: getImagePointLatLng(imagePoint) });
+    setQueryParamImageId(imagePoint.id);
     if (imagePoint.properties.AAR !== currentYear) {
       setCurrentYear(imagePoint.properties.AAR);
       setQueryParamYear(imagePoint.properties.AAR.toString());
@@ -151,11 +153,12 @@ const HistoryView = () => {
     if (currentImagePoint) {
       setCurrentHistoryImage(currentImagePoint);
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
+
       const bbox = {
         west: currentCoordinates?.lng,
         south: currentCoordinates?.lat,
-        east: currentCoordinates?.lng + 0.001,
-        north: currentCoordinates?.lat + 0.001,
+        east: currentCoordinates?.lng + 0.0001, // ~111 m differance
+        north: currentCoordinates?.lat + 0.0001,
       };
 
       const currentImagePointTime = getDateObj(currentImagePoint).getTime();
@@ -255,4 +258,4 @@ const HistoryView = () => {
   );
 };
 
-export default HistoryView;
+export default History;

@@ -8,7 +8,7 @@ import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
 import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
 import { isHistoryModeState } from 'recoil/atoms';
-import HistoryView from './HistoryView/HistoryView';
+import History from './History/History';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -47,7 +47,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               showMessage={showSnackbarMessage}
               showCloseButton={false}
             />
-            <HistoryView />
+            <History />
           </div>
         ) : (
           <ImageViewer
