@@ -14,6 +14,7 @@ import {
   getFormattedDateString,
   getImagePointLatLng,
   getImageUrl,
+  getRoadReference,
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
@@ -185,18 +186,16 @@ const History = () => {
           );
 
           [...uniqueDates].forEach((date) => {
-            imagePointsGroupedByTime[date].some((imagePoint: IImagePoint) => {
-              if (imagePoint) {
-                const distance = getDistanceToBetweenImagePoints(currentImagePoint, imagePoint);
-                if (distance < 20) {
-                  const imagePointDirection = imagePoint.properties.RETNING;
+            const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
+              (imagePoint: IImagePoint) => {
+                if (imagePoint) {
+                  const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
                   if (imagePointDirection && currentImagePointDirection) {
                     if (
                       imagePointDirection < currentImagePointDirection + 10 &&
                       imagePointDirection > currentImagePointDirection - 10
                     ) {
-                      setHistoryImagePoints((prevState) => [...prevState, imagePoint]);
-                      return true;
+                      return imagePoint;
                     }
                   } else {
                     const bearingBetween = getBearingBetweenImagePoints(
@@ -205,17 +204,31 @@ const History = () => {
                     );
                     if (
                       currentImagePointBearing &&
-                      bearingBetween < currentImagePointBearing + 20 &&
-                      bearingBetween > currentImagePointBearing - 20
+                      bearingBetween < currentImagePointBearing + 10 &&
+                      bearingBetween > currentImagePointBearing - 10
                     ) {
-                      setHistoryImagePoints((prevState) => [...prevState, imagePoint]);
-                      return true;
+                      return imagePoint;
                     }
                   }
                 }
               }
-              return false;
-            });
+            );
+            if (imagePointsInSameDirection.length) {
+              const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
+                (prevImgpoint, currImgPoint) => {
+                  return getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) <
+                    getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) - 0
+                    ? currImgPoint
+                    : prevImgpoint;
+                }
+              );
+              if (closestImagePointInSameDirection) {
+                setHistoryImagePoints((prevState) => [
+                  ...prevState,
+                  closestImagePointInSameDirection,
+                ]);
+              }
+            }
           });
         });
       });
@@ -251,6 +264,14 @@ const History = () => {
             <p key={`${imagePoint.id}-date`} className={classes.date}>
               {' '}
               {getFormattedDateString(getDateString(imagePoint))}{' '}
+            </p>
+            <p key={`${imagePoint.id}-referanse`} className={classes.date}>
+              {' '}
+              {getRoadReference(imagePoint).complete}{' '}
+            </p>
+            <p key={`${imagePoint.id}-retning`} className={classes.date}>
+              {' '}
+              {imagePoint.properties.RETNING}{' '}
             </p>
           </>
         ))}
