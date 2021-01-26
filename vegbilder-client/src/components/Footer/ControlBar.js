@@ -95,14 +95,18 @@ const ControlBar = ({ showMessage }) => {
   const handleMoreControlsClick = (event) => setMoreControlsAnchorEl(event.currentTarget);
 
   const copyShareableUrlToClipboard = () => {
-    showMessage('Lenke kopiert til utklippstavle');
-    const shareableUrl = getShareableUrlForImage(currentImagePoint);
-    copyToClipboard(shareableUrl);
+    if (currentImagePoint) {
+      showMessage('Lenke kopiert til utklippstavle');
+      const shareableUrl = getShareableUrlForImage(currentImagePoint);
+      copyToClipboard(shareableUrl);
+    }
   };
 
   const openPrefilledEmailInDefaultEmailClient = () => {
-    window.open(createMailtoHrefForReporting(), '_self');
-    showMessage('Åpner e-post-klient');
+    if (currentImagePoint) {
+      window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
+      showMessage('Åpner e-post-klient');
+    }
   };
 
   useEffect(() => {
