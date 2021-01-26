@@ -227,9 +227,9 @@ const History = () => {
               const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
                 (prevImgpoint, currImgPoint) => {
                   return getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) <
-                    getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) - 0
-                    ? currImgPoint
-                    : prevImgpoint;
+                    getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint)
+                    ? prevImgpoint
+                    : currImgPoint;
                 }
               );
               if (closestImagePointInSameDirection) {
