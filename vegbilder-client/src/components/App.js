@@ -2,6 +2,7 @@ import React, { Suspense } from 'react';
 import { ThemeProvider } from '@material-ui/core';
 import { RecoilRoot } from 'recoil';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import CssBaseline from '@material-ui/core/CssBaseline';
 
 import { CurrentImagePointProvider } from 'contexts/CurrentImagePointContext';
 import { CurrentCoordinatesProvider } from 'contexts/CurrentCoordinatesContext';
@@ -19,6 +20,7 @@ const App = () => {
         fallback={<CircularProgress style={{ position: 'absolute', top: '50%', left: '50%' }} />}
       >
         <ThemeProvider theme={theme}>
+          <CssBaseline />
           <CurrentCoordinatesProvider>
             <LoadedImagePointsProvider>
               <CurrentImagePointProvider>
