@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
+import { Dictionary } from 'lodash';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
@@ -23,7 +24,6 @@ import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePoin
 import { currentHistoryImageState, currentYearState, isHistoryModeState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
-import { Dictionary } from 'lodash';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 
 const useStyles = makeStyles((theme) => ({
@@ -145,11 +145,12 @@ const History = () => {
     }
   };
 
-  // I useEffekt'en finner vi bilder som er mindre enn 20 meter unna current image point.
+  // I useEffekt'en finner vi bilder som er nærmest current image point innen hver tilgjengelige dato.
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   // For å finne retningen av bildet så har vi to muligheter: se på retning (som ikke alle bilder har), eller regne ut bearing.
   // I de tilfellene vi må regne ut bearing (når bildet ikke har retning) så finner vi først bearing mellom currentImagePoint og et nærliggende bilde (et bilde tatt
   // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
+  // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
     if (currentImagePoint) {
       setCurrentHistoryImage(currentImagePoint);
@@ -158,8 +159,8 @@ const History = () => {
       const bbox = {
         west: currentCoordinates?.lng,
         south: currentCoordinates?.lat,
-        east: currentCoordinates?.lng + 0.0001, // ~111 m differance
-        north: currentCoordinates?.lat + 0.0001,
+        east: currentCoordinates?.lng, // create the smallest possible bbox area
+        north: currentCoordinates?.lat,
       };
 
       const currentImagePointTime = getDateObj(currentImagePoint).getTime();
@@ -168,6 +169,9 @@ const History = () => {
         currentImagePoint
       );
       const currentImagePointDirection = currentImagePoint.properties.RETNING;
+
+      const maxDistance = 50; // meters (avoid getting a picture on a totally different road)
+
       setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
 
       availableYears.forEach(async (year) => {
@@ -189,25 +193,31 @@ const History = () => {
             const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
               (imagePoint: IImagePoint) => {
                 if (imagePoint) {
-                  const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                  if (imagePointDirection && currentImagePointDirection) {
+                  const distanceBetween = getDistanceToBetweenImagePoints(
+                    currentImagePoint,
+                    imagePoint
+                  );
+                  if (distanceBetween < maxDistance) {
+                    const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
                     if (
+                      imagePointDirection &&
+                      currentImagePointDirection &&
                       imagePointDirection < currentImagePointDirection + 10 &&
                       imagePointDirection > currentImagePointDirection - 10
                     ) {
                       return imagePoint;
-                    }
-                  } else {
-                    const bearingBetween = getBearingBetweenImagePoints(
-                      currentImagePoint,
-                      imagePoint
-                    );
-                    if (
-                      currentImagePointBearing &&
-                      bearingBetween < currentImagePointBearing + 10 &&
-                      bearingBetween > currentImagePointBearing - 10
-                    ) {
-                      return imagePoint;
+                    } else {
+                      const bearingBetween = getBearingBetweenImagePoints(
+                        currentImagePoint,
+                        imagePoint
+                      );
+                      if (
+                        currentImagePointBearing &&
+                        bearingBetween < currentImagePointBearing + 10 &&
+                        bearingBetween > currentImagePointBearing - 10
+                      ) {
+                        return imagePoint;
+                      }
                     }
                   }
                 }
@@ -268,10 +278,6 @@ const History = () => {
             <p key={`${imagePoint.id}-referanse`} className={classes.date}>
               {' '}
               {getRoadReference(imagePoint).complete}{' '}
-            </p>
-            <p key={`${imagePoint.id}-retning`} className={classes.date}>
-              {' '}
-              {imagePoint.properties.RETNING}{' '}
             </p>
           </>
         ))}
