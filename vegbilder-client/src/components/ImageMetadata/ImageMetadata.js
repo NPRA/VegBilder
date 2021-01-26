@@ -1,18 +1,11 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import { getRoadReference } from 'utilities/imagePointUtilities';
-
-const useStyles = makeStyles({
-  roadReference: {
-    fontWeight: 'bold',
-  },
-});
+import { Typography } from '@material-ui/core';
 
 const ImageMetadata = () => {
-  const classes = useStyles();
   const { currentImagePoint } = useCurrentImagePoint();
   if (!currentImagePoint) return null;
 
@@ -23,9 +16,8 @@ const ImageMetadata = () => {
 
   return (
     <>
-      <span className={classes.roadReference}>{roadReference}</span>
-      <br />
-      {dateAndTime}
+      <Typography variant="subtitle1">{roadReference}</Typography>
+      <Typography variant="body1">{dateAndTime}</Typography>
     </>
   );
 };

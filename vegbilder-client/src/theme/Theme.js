@@ -17,9 +17,10 @@ const LFTEticaThin = {
   fontStyle: 'thin',
   fontDisplay: 'swap',
   fontWeight: 200,
+  lineHeight: 1.4,
   src: `
-    local('Raleway'),
-    local('Raleway-Regular'),
+    local('LFT-Etica'),
+    local('LFTEticaLt'),
     url(${LFTEticaThinWoff}) format('woff')
   `,
   unicodeRange:
@@ -31,9 +32,10 @@ const LFTEticaRegular = {
   fontStyle: 'regular',
   fontDisplay: 'swap',
   fontWeight: 400,
+  lineHeight: 1.4,
   src: `
-    local('Raleway'),
-    local('Raleway-Regular'),
+    local('LFT-Etica'),
+    local('LFT_Etica_Reg'),
     url(${LFTEticalRegularWoff}) format('woff')
   `,
   unicodeRange:
@@ -41,13 +43,14 @@ const LFTEticaRegular = {
 };
 
 const LFTEticaSemiBold = {
-  fontFamily: '"LFT-Etica"',
+  fontFamily: '"LFT-Etica semi-bold"',
   fontStyle: 'semi-bold',
+  lineHeight: 1.4,
   fontDisplay: 'swap',
   fontWeight: 600,
   src: `
-    local('Raleway'),
-    local('Raleway-Regular'),
+    local('LFT-Etica'),
+    local('LFT_Etica_Semibold'),
     url(${LFTEticaSemiBoldWoff}) format('woff')
   `,
   unicodeRange:
@@ -56,7 +59,19 @@ const LFTEticaSemiBold = {
 
 export default createMuiTheme({
   typography: {
-    fontFamily: ['sans-serif', '"LFT-Etica"', '"Lucida Sans Unicode"', '"Lucida Grande"'].join(','),
+    fontFamily: ['sans-serif', '"LFT-Etica"'].join(','),
+    h3: {
+      fontFamily: '"LFT-Etica semi-bold"',
+      fontSize: '1.125rem',
+    },
+    subtitle1: {
+      fontFamily: '"LFT-Etica semi-bold"',
+      fontSize: '0.875rem',
+    },
+    body1: {
+      fontFamily: '"LFT-Etica"',
+      fontSize: '0.875rem',
+    },
   },
   palette: {
     common: {
@@ -90,13 +105,14 @@ export default createMuiTheme({
     MuiCssBaseline: {
       // globally define custom fonts
       '@global': {
-        '@font-face': [LFTEticaThin, LFTEticaRegular, LFTEticaSemiBold],
+        '@font-face': [LFTEticaRegular, LFTEticaSemiBold],
       },
     },
     // Styles for Select menu
     MuiMenu: {
       // <ul> element
       list: {
+        fontFamily: '"LFT-Etica"',
         backgroundColor: grayDarker,
         color: grayMenuItems,
         border: `1px solid ${grayDark}`,
@@ -104,6 +120,7 @@ export default createMuiTheme({
     },
     MuiIconButton: {
       root: {
+        fontFamily: '"LFT-Etica"',
         borderRadius: '0.625rem',
         borderStyle: 'none',
         backgroundColor: grayDark,
@@ -139,6 +156,7 @@ export default createMuiTheme({
     },
     MuiListItem: {
       root: {
+        fontFamily: '"LFT-Etica"',
         color: grayMenuItems,
         '&:hover': {
           backgroundColor: grayDark,
@@ -149,10 +167,11 @@ export default createMuiTheme({
       },
     },
     MuiListItemText: {
-      secondary: { color: grayMenuItems },
+      secondary: { color: grayMenuItems, fontFamily: '"LFT-Etica"' },
     },
     MuiListSubheader: {
       root: {
+        fontFamily: '"LFT-Etica"',
         color: grayMenuItems,
         textTransform: 'uppercase',
         margin: 0,
@@ -161,6 +180,11 @@ export default createMuiTheme({
       gutters: {
         paddingLeft: '1.875rem',
         paddingRight: '1.875rem',
+      },
+    },
+    MuiPaper: {
+      root: {
+        fontFamily: '"LFT-Etica"',
       },
     },
   },
