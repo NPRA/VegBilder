@@ -1,14 +1,14 @@
 import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
+import { useRecoilValue } from 'recoil';
 
 import Footer from 'components/Footer/Footer';
 import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
 import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
-import { useRecoilState } from 'recoil';
-import { imageSeriesState } from 'recoil/atoms';
-import ImageSeriesView from './imageSeriesView/imageSeriesView';
+import { isHistoryModeState } from 'recoil/atoms';
+import History from './History/History';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -34,12 +34,12 @@ interface IImageViewProps {
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
-  const [showImageSeries, setShowImageSeries] = useRecoilState(imageSeriesState);
+  const isHistoryMode = useRecoilValue(isHistoryModeState);
 
   return (
     <TogglesProvider>
       <Grid item className={classes.content}>
-        {showImageSeries ? (
+        {isHistoryMode ? (
           <div className={classes.imageseries}>
             {' '}
             <ImageViewer
@@ -47,7 +47,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               showMessage={showSnackbarMessage}
               showCloseButton={false}
             />
-            <ImageSeriesView close={() => setShowImageSeries(false)} />{' '}
+            <History />
           </div>
         ) : (
           <ImageViewer

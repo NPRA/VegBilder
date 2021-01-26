@@ -19,7 +19,12 @@ import {
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { useToggles } from 'contexts/TogglesContext';
-import { playVideoState, timerState } from 'recoil/atoms';
+import {
+  playVideoState,
+  timerState,
+  isHistoryModeState,
+  currentHistoryImageState,
+} from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -52,6 +57,8 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
   const { meterLineVisible } = useToggles();
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
   const timer = useRecoilValue(timerState);
+  const isHistoryMode = useRecoilValue(isHistoryModeState);
+  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
   const [nextImagePoint, setNextImagePoint] = useState(null);
   const [previousImagePoint, setPreviousImagePoint] = useState(null);
@@ -266,10 +273,14 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
 
   return (
     <div className={classes.imageArea}>
-      {currentImagePoint ? (
+      {currentImagePoint && (
         <>
           <img
-            src={getImageUrl(currentImagePoint)}
+            src={
+              isHistoryMode && currentHistoryImage
+                ? getImageUrl(currentHistoryImage)
+                : getImageUrl(currentImagePoint)
+            }
             alt="vegbilde"
             className={classes.image}
             ref={imgRef}
@@ -277,7 +288,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
           />
           {renderMeterLine()}
         </>
-      ) : null}
+      )}
       {showCloseButton && <CloseButton onClick={exitImageView} />}
     </div>
   );

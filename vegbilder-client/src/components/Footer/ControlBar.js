@@ -38,7 +38,7 @@ import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
-import { imageSeriesState, playVideoState, timerState } from 'recoil/atoms';
+import { isHistoryModeState, playVideoState, timerState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 
 const useStyles = makeStyles((theme) => ({
@@ -83,7 +83,7 @@ const ControlBar = ({ showMessage }) => {
   const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
   const [currentTime, setTime] = useRecoilState(timerState);
-  const [showImageSeries, setShowImageSeries] = useRecoilState(imageSeriesState);
+  const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
 
   const timerOptions = [1000, 2000, 3000, 4000, 5000];
@@ -95,14 +95,18 @@ const ControlBar = ({ showMessage }) => {
   const handleMoreControlsClick = (event) => setMoreControlsAnchorEl(event.currentTarget);
 
   const copyShareableUrlToClipboard = () => {
-    showMessage('Lenke kopiert til utklippstavle');
-    const shareableUrl = getShareableUrlForImage(currentImagePoint);
-    copyToClipboard(shareableUrl);
+    if (currentImagePoint) {
+      showMessage('Lenke kopiert til utklippstavle');
+      const shareableUrl = getShareableUrlForImage(currentImagePoint);
+      copyToClipboard(shareableUrl);
+    }
   };
 
   const openPrefilledEmailInDefaultEmailClient = () => {
-    window.open(createMailtoHrefForReporting(), '_self');
-    showMessage('Åpner e-post-klient');
+    if (currentImagePoint) {
+      window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
+      showMessage('Åpner e-post-klient');
+    }
   };
 
   useEffect(() => {
@@ -206,13 +210,13 @@ const ControlBar = ({ showMessage }) => {
           <IconButton
             aria-label="Start animasjonsmodus"
             className={classes.button}
-            disabled={showImageSeries}
+            disabled={isHistoryMode}
             onClick={() => {
               setPlayVideo(true);
               setPlayMode(true);
             }}
           >
-            {showImageSeries ? <PlayDisabledIcon /> : <PlayIcon />}
+            {isHistoryMode ? <PlayDisabledIcon /> : <PlayIcon />}
           </IconButton>
         )}
 
@@ -285,7 +289,7 @@ const ControlBar = ({ showMessage }) => {
           aria-label="Finn bilder herfra på andre datoer"
           className={classes.button}
           disabled={playVideo}
-          onClick={() => setShowImageSeries(!showImageSeries)}
+          onClick={() => setHistoryMode(true)}
         >
           <HistoryIcon />
         </IconButton>
