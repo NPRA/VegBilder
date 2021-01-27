@@ -1,4 +1,5 @@
 import { atom } from 'recoil';
+import { IImagePoint } from 'types';
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -17,12 +18,12 @@ export const currentYearState = atom({
   default: parseInt(searchParams.get('year') || '2020'),
 });
 
-export const imageSeriesState = atom({
+export const isHistoryModeState = atom({
   key: 'imageSeriesState',
   default: false,
 });
 
-export const currentImagePointState = atom({
-  key: 'currentImagePoint',
-  default: '',
+export const currentHistoryImageState = atom<IImagePoint | null>({
+  key: 'currentHistoryImage',
+  default: null,
 });

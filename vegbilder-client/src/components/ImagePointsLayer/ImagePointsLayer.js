@@ -21,7 +21,12 @@ import {
   getGenericRoadReference,
 } from 'utilities/imagePointUtilities';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { currentYearState, playVideoState } from 'recoil/atoms';
+import {
+  currentYearState,
+  playVideoState,
+  currentHistoryImageState,
+  isHistoryModeState,
+} from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
 
 const settings = {
@@ -43,6 +48,8 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
   const availableYears = useRecoilValue(availableYearsQuery);
+  const isHistoryMode = useRecoilValue(isHistoryModeState);
+  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -222,7 +229,9 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           {imagePointsToRender.map((imagePoint) => {
             const latlng = getImagePointLatLng(imagePoint);
             const isDirectional = imagePoint.properties.RETNING != null;
-            const isSelected = currentImagePoint && currentImagePoint.id === imagePoint.id;
+            const isSelected = isHistoryMode
+              ? currentHistoryImage && currentHistoryImage.id === imagePoint.id
+              : currentImagePoint && currentImagePoint.id === imagePoint.id;
             const icon = getMarkerIcon(
               imagePoint.properties.VEGKATEGORI,
               isDirectional,
@@ -240,7 +249,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
                   if (!playVideo) {
                     setCurrentImagePoint(imagePoint);
                   }
-                  //setCurrentCoordinates({ latlng: latlng, zoom: zoom });
                 }}
               />
             );
