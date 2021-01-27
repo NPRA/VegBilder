@@ -1,10 +1,10 @@
 import React from 'react';
 import { Typography } from '@material-ui/core';
+import { useRecoilValue } from 'recoil';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import { getRoadReference } from 'utilities/imagePointUtilities';
-import { useRecoilValue } from 'recoil';
 import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
 
 const ImageMetadata = () => {

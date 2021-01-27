@@ -3,6 +3,17 @@ import LFTEticaThinWoff from 'fonts/LFTEticaLt.woff';
 import LFTEticalRegularWoff from 'fonts/LFT_Etica_Reg.woff';
 import LFTEticaSemiBoldWoff from 'fonts/LFT_Etica_Semibold.woff';
 
+declare module '@material-ui/core/styles/createPalette' {
+  interface CommonColors {
+    grayDark: string;
+    grayDarker: string;
+    grayIcons: string;
+    grayMenuItems: string;
+    charcoalLighter: string;
+    orangeDark: string;
+  }
+}
+
 const grayRegular = '#ececec';
 const grayIcons = '#c4c4c4';
 const charcoalLighter = '#646A70';
@@ -13,9 +24,8 @@ const blueRegular = '#077197';
 const grayMenuItems = '#c4c4c4';
 
 const LFTEticaThin = {
-  fontFamily: '"LFT-Etica"',
+  fontFamily: '"LFT-Etica thin"',
   fontStyle: 'thin',
-  fontDisplay: 'swap',
   fontWeight: 200,
   lineHeight: 1.4,
   src: `
@@ -30,7 +40,6 @@ const LFTEticaThin = {
 const LFTEticaRegular = {
   fontFamily: '"LFT-Etica"',
   fontStyle: 'regular',
-  fontDisplay: 'swap',
   fontWeight: 400,
   lineHeight: 1.4,
   src: `
@@ -46,7 +55,6 @@ const LFTEticaSemiBold = {
   fontFamily: '"LFT-Etica semi-bold"',
   fontStyle: 'semi-bold',
   lineHeight: 1.4,
-  fontDisplay: 'swap',
   fontWeight: 600,
   src: `
     local('LFT-Etica'),
@@ -60,9 +68,16 @@ const LFTEticaSemiBold = {
 export default createMuiTheme({
   typography: {
     fontFamily: ['sans-serif', '"LFT-Etica"'].join(','),
+    h1: {
+      fontFamily: '"LFT-Etica thin"',
+    },
     h3: {
       fontFamily: '"LFT-Etica semi-bold"',
       fontSize: '1.125rem',
+    },
+    h5: {
+      fontFamily: '"LFT-Etica semi-bold"',
+      fontSize: '0.9375rem',
     },
     subtitle1: {
       fontFamily: '"LFT-Etica semi-bold"',
@@ -90,22 +105,18 @@ export default createMuiTheme({
       main: charcoalLighter,
       contrastText: grayRegular,
     },
-    series: {
-      main: grayDark,
-      contrastText: grayMenuItems,
-    },
     info: {
       main: blueRegular,
     },
   },
   shape: {
-    borderRadius: '0.5rem',
+    borderRadius: 8,
   },
   overrides: {
     MuiCssBaseline: {
       // globally define custom fonts
       '@global': {
-        '@font-face': [LFTEticaRegular, LFTEticaSemiBold],
+        '@font-face': [LFTEticaRegular, LFTEticaSemiBold, LFTEticaThin],
       },
     },
     // Styles for Select menu
@@ -171,11 +182,10 @@ export default createMuiTheme({
     },
     MuiListSubheader: {
       root: {
-        fontFamily: '"LFT-Etica"',
+        fontFamily: '"LFT-Etica semi-bold"',
         color: grayMenuItems,
         textTransform: 'uppercase',
         margin: 0,
-        fontWeight: 700,
       },
       gutters: {
         paddingLeft: '1.875rem',
@@ -185,6 +195,8 @@ export default createMuiTheme({
     MuiPaper: {
       root: {
         fontFamily: '"LFT-Etica"',
+        backgroundColor: grayDark,
+        color: grayMenuItems,
       },
     },
   },

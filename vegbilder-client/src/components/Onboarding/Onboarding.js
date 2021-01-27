@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
+import { Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import CloseButton from 'components/CloseButton/CloseButton';
@@ -49,9 +49,11 @@ const Onboarding = () => {
       <div className={classes.onboarding}>
         <CloseButton onClick={closeOnboarding} />
         <div className={classes.content}>
-          <h1>{onboardingText.header}</h1>
+          <Typography variant="h1">{onboardingText.header}</Typography>
           {onboardingText.paragraphs.map((paragraph, index) => (
-            <p key={index}>{paragraph}</p>
+            <Typography variant="body1" key={index}>
+              {paragraph}
+            </Typography>
           ))}
           <FormControlLabel
             control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
