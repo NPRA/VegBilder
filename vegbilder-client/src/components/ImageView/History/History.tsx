@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
-import { IconButton } from '@material-ui/core';
+import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
 import { Dictionary } from 'lodash';
 
@@ -30,8 +30,6 @@ const useStyles = makeStyles((theme) => ({
   historyContent: {
     padding: '1rem',
     width: '40%',
-    backgroundColor: '#444F55',
-    color: '#c4c4c4', // why is theme not working with ts?
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'auto',
@@ -46,6 +44,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 5,
     top: 0,
     background: 'rgba(68,79,85, 0.8)',
+    marginBottom: '1rem',
   },
   headerText: {
     margin: 0,
@@ -73,8 +72,6 @@ const useStyles = makeStyles((theme) => ({
   },
   date: {
     alignSelf: 'center',
-    fontSize: '0.9375rem',
-    fontWeight: 500,
     margin: 0,
     paddingBottom: '1rem',
   },
@@ -251,7 +248,9 @@ const History = () => {
   return (
     <Paper className={classes.historyContent} square={true}>
       <div className={classes.historyHeader}>
-        <h4 className={classes.headerText}>Vegbilder fra samme sted</h4>
+        <Typography variant="h3" className={classes.headerText}>
+          Vegbilder fra samme sted
+        </Typography>
         <IconButton onClick={onClose} className={classes.closeButton}>
           <CloseIcon />
         </IconButton>
@@ -271,14 +270,14 @@ const History = () => {
                 onClick={() => handleImageClick(imagePoint)}
               />
             </div>
-            <p key={`${imagePoint.id}-date`} className={classes.date}>
+            <Typography variant="h5" key={`${imagePoint.id}-date`} className={classes.date}>
               {' '}
               {getFormattedDateString(getDateString(imagePoint))}{' '}
-            </p>
-            <p key={`${imagePoint.id}-referanse`} className={classes.date}>
+            </Typography>
+            <Typography variant="h5" key={`${imagePoint.id}-referanse`} className={classes.date}>
               {' '}
               {getRoadReference(imagePoint).complete}{' '}
-            </p>
+            </Typography>
           </>
         ))}
     </Paper>

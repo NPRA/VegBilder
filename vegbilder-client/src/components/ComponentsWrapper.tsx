@@ -13,6 +13,7 @@ import ImageView from './ImageView/ImageView';
 const useStyles = makeStyles({
   gridRoot: {
     height: '100%',
+    fontFamily: '"LFT-Ethica"',
   },
   header: {
     flex: '0 1 5rem', // Do not allow the grid item containing the header to grow. Height depends on content

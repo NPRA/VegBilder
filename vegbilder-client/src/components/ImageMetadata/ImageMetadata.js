@@ -1,20 +1,13 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Typography } from '@material-ui/core';
+import { useRecoilValue } from 'recoil';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import { getRoadReference } from 'utilities/imagePointUtilities';
-import { useRecoilValue } from 'recoil';
 import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
 
-const useStyles = makeStyles({
-  roadReference: {
-    fontWeight: 'bold',
-  },
-});
-
 const ImageMetadata = () => {
-  const classes = useStyles();
   const { currentImagePoint } = useCurrentImagePoint();
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
@@ -38,9 +31,8 @@ const ImageMetadata = () => {
 
   return (
     <>
-      <span className={classes.roadReference}>{roadReference}</span>
-      <br />
-      {dateAndTime}
+      <Typography variant="subtitle1">{roadReference}</Typography>
+      <Typography variant="body1">{dateAndTime}</Typography>
     </>
   );
 };
