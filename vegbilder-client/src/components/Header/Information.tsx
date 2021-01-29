@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 
 import CloseButton from 'components/CloseButton/CloseButton';
 import { informationText } from 'constants/text';
@@ -20,21 +20,37 @@ const useStyles = makeStyles((theme) => ({
   content: {
     margin: '2rem',
   },
+  paragraphs: {
+    paddingBottom: '1rem',
+  },
 }));
 
 interface IInformationProps {
   setVisible: () => void;
+  isOnboarding?: boolean;
 }
 
-const Information = ({ setVisible }: IInformationProps) => {
+const Information = ({ setVisible, isOnboarding }: IInformationProps) => {
   const classes = useStyles();
 
   return (
-    <div className={classes.information}>
+    <div className={isOnboarding ? '' : classes.information}>
       <CloseButton onClick={setVisible} />
       <div className={classes.content}>
-        <p>{informationText.versionNumber}</p>
-        <p>{informationText.contact}</p>
+        <Typography variant="h2" className={classes.paragraphs}>
+          {' '}
+          {informationText.header}{' '}
+        </Typography>
+        <Typography variant="body1" className={classes.paragraphs}>
+          {' '}
+          {informationText.text}{' '}
+        </Typography>
+        <Typography variant="body1" className={classes.paragraphs}>
+          {informationText.contact}
+        </Typography>
+        <Typography variant="body1" className={classes.paragraphs}>
+          {informationText.versionNumber}
+        </Typography>
       </div>
     </div>
   );

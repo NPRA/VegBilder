@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui/core';
+import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-import CloseButton from 'components/CloseButton/CloseButton';
-import { onboardingText } from 'constants/text';
+import Information from 'components/Header/Information';
 
 const useStyles = makeStyles((theme) => ({
   onboarding: {
@@ -17,10 +16,13 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
   },
-  content: {
-    margin: '2rem',
+  formControl: {
+    marginLeft: '2rem',
+    marginBottom: '2rem',
   },
   checkbox: {
+    margin: 0,
+    padding: 0,
     backgroundColor: 'transparent',
     color: theme.palette.primary.contrastText,
   },
@@ -47,19 +49,12 @@ const Onboarding = () => {
   return (
     <ClickAwayListener onClickAway={closeOnboarding}>
       <div className={classes.onboarding}>
-        <CloseButton onClick={closeOnboarding} />
-        <div className={classes.content}>
-          <Typography variant="h1">{onboardingText.header}</Typography>
-          {onboardingText.paragraphs.map((paragraph, index) => (
-            <Typography variant="body1" key={index}>
-              {paragraph}
-            </Typography>
-          ))}
-          <FormControlLabel
-            control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
-            label={'Ikke vis ved oppstart'}
-          />
-        </div>
+        <Information isOnboarding={true} />
+        <FormControlLabel
+          className={classes.formControl}
+          control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
+          label={'Ikke vis ved oppstart'}
+        />
       </div>
     </ClickAwayListener>
   );

@@ -7,34 +7,14 @@ const reportEmailTemplateText = {
   },
 };
 
-const onboardingText = {
-  header: 'Velkommen til Vegbilder',
-  paragraphs: [
-    `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer eu
-     neque eget eros interdum condimentum sed rutrum orci. Etiam cursus
-     ac leo luctus tincidunt. Nunc consequat pellentesque magna ut
-     fermentum. Etiam sit amet elementum tellus. Vestibulum ante ipsum
-     primis in faucibus orci luctus et ultrices posuere cubilia curae;
-     Curabitur facilisis sem quam, nec tempus justo tempus eu. Aenean
-     congue urna sed lorem dictum tempor. Sed eget accumsan velit, in
-     ultricies urna. Pellentesque eu risus non velit maximus rutrum.`,
-    `Nulla viverra neque eget suscipit suscipit. Nam eget volutpat orci,
-     eu posuere nisl. Nunc malesuada, elit vel sagittis molestie, mi mi
-     rhoncus diam, quis volutpat turpis nibh sit amet quam. Nulla vitae
-     est ac enim vehicula bibendum. Maecenas sed ornare lectus. Curabitur
-     dapibus non orci id lacinia. Donec eu maximus eros. Maecenas
-     elementum varius bibendum. Pellentesque non nisi vel nisl convallis
-     volutpat. Nulla facilisi. Nullam ac eros et odio pulvinar posuere.
-     Proin commodo libero ut nunc maximus, eget semper neque fringilla.
-     Nam sit amet metus quam. Integer pretium ante et aliquet tincidunt.
-     Vestibulum sit amet lectus a diam sodales consequat. Morbi gravida
-     risus libero, sit amet tincidunt turpis ullamcorper et.`,
-  ],
-};
-
 const informationText = {
+  header: 'Velkommen til Vegbilder',
   versionNumber: 'Versjonsnummer: 0.1.33',
   contact: 'Kontakt: vegbilder@vegvesen.no',
+  text:
+    'Vegbilder viser vegbilder av Europa- og riksveger via en kartløsning. Hvert år blir det tatt millioner av vegbilder i Norge, ' +
+    'og nå er mange av disse tilgjengeliggjort på nett. Bildene blir anonymisert før publisering slik at hverken mennesker eller kjøretøy er gjengjenbare. ' +
+    'Bilder blir lagt ut etterhvert som de tas. Til nå er årgangene 2013, 2019 og 2020 tilgjengelig. Eldre årganger er planlagt, men på grunn av antallet vil det ta litt tid før de er klare.',
 };
 
-export { reportEmailTemplateText, onboardingText, informationText };
+export { reportEmailTemplateText, informationText };
