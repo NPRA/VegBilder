@@ -52,6 +52,7 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
         color="primary.contrastText"
         display="flex"
         flexDirection="column"
+        boxShadow="1px 2px 2px 2px rgba(0, 0, 0, 0.4)"
       >
         <Box>
           <img

@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     left: '20px',
     top: '20px',
     border: `1px ${theme.palette.primary.main} solid`,
+    boxShadow: '1px 2px 2px 2px rgba(0, 0, 0, 0.4)',
   },
   minimapHidden: {
     display: 'none',
