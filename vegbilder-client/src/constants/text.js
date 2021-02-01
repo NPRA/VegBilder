@@ -9,7 +9,7 @@ const reportEmailTemplateText = {
 
 const informationText = {
   header: 'Velkommen til Vegbilder',
-  versionNumber: 'Versjonsnummer: 0.1.33',
+  versionNumber: 'Versjonsnummer: 1.0.0',
   contact: 'Kontakt: vegbilder@vegvesen.no',
   text:
     'Vegbilder viser vegbilder av Europa- og riksveger via en kartløsning. Hvert år blir det tatt millioner av vegbilder i Norge, ' +
