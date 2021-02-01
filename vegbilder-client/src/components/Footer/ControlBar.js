@@ -33,6 +33,7 @@ import {
   ArrowTurnDisabledIcon,
   DotsHorizontalDisabledIcon,
   PlayDisabledIcon,
+  InformIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -40,6 +41,7 @@ import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
 import { isHistoryModeState, playVideoState, timerState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
+import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -85,6 +87,8 @@ const ControlBar = ({ showMessage }) => {
   const [currentTime, setTime] = useRecoilState(timerState);
   const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
+  const [showMoreInfo, setShowMoreInfo] = useState(false);
+  const [moreInfoAnchorEl, setMoreInfoAnchorEl] = useState(null);
 
   const timerOptions = [1000, 2000, 3000, 4000, 5000];
 
@@ -93,6 +97,14 @@ const ControlBar = ({ showMessage }) => {
   const handleTimerOptionSelect = (time) => setTime(time);
   const handleTimerOptionsClick = (event) => setTimerOptionsAnchorEl(event.currentTarget);
   const handleMoreControlsClick = (event) => setMoreControlsAnchorEl(event.currentTarget);
+
+  const handleMoreInfoButtonClick = (event) => {
+    setMoreInfoAnchorEl(event.currentTarget);
+  };
+
+  const handleMoreInfoClose = () => {
+    setMoreInfoAnchorEl(null);
+  };
 
   const copyShareableUrlToClipboard = () => {
     if (currentImagePoint) {
@@ -294,6 +306,23 @@ const ControlBar = ({ showMessage }) => {
           <HistoryIcon />
         </IconButton>
 
+        <div style={{ position: 'relative' }}>
+          <IconButton
+            aria-label="Mer info om bildet"
+            className={classes.button}
+            onClick={(event) => {
+              if (currentImagePoint) handleMoreInfoButtonClick(event);
+            }}
+          >
+            <InformIcon />
+          </IconButton>
+          <MoreImageInfo
+            imagePoint={currentImagePoint}
+            anchorEl={moreInfoAnchorEl}
+            handleClose={handleMoreInfoClose}
+          />
+        </div>
+
         <IconButton
           disabled={playVideo}
           aria-label="Flere funksjoner"
@@ -303,6 +332,7 @@ const ControlBar = ({ showMessage }) => {
           {playVideo ? <DotsHorizontalDisabledIcon /> : <DotsHorizontalIcon />}
         </IconButton>
       </Toolbar>
+
       {currentImagePoint ? (
         <Menu
           id="more-controls-menu"
