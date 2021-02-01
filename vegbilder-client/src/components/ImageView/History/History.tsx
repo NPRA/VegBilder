@@ -12,7 +12,6 @@ import {
   getBearingBetweenImagePoints,
   getDateString,
   getDistanceToBetweenImagePoints,
-  getFormattedDateString,
   getImagePointLatLng,
   getImageUrl,
   getRoadReference,
@@ -71,14 +70,11 @@ const useStyles = makeStyles((theme) => ({
     top: '0.2rem',
     right: '0.2rem',
   },
-  date: {
-    alignSelf: 'center',
-    margin: 0,
-    paddingBottom: '1rem',
-  },
   info: {
     display: 'flex',
     justifyContent: 'space-evenly',
+    margin: 0,
+    paddingBottom: '1rem',
   },
 }));
 
@@ -282,11 +278,11 @@ const History = () => {
               />
             </div>
             <div className={classes.info}>
-              <Typography variant="h5" key={`${imagePoint.id}-reference`} className={classes.date}>
+              <Typography variant="h5" key={`${imagePoint.id}-reference`}>
                 {' '}
                 {`${getRoadReference(imagePoint).complete}   `}{' '}
               </Typography>
-              <Typography variant="body1" key={`${imagePoint.id}-date`} className={classes.date}>
+              <Typography variant="body1" key={`${imagePoint.id}-date`}>
                 {' '}
                 {getDateAndTimeString(imagePoint)}{' '}
               </Typography>
