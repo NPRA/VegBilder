@@ -25,6 +25,7 @@ import { currentHistoryImageState, currentYearState, isHistoryModeState } from '
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
+import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 
 const useStyles = makeStyles((theme) => ({
   historyContent: {
@@ -75,6 +76,10 @@ const useStyles = makeStyles((theme) => ({
     margin: 0,
     paddingBottom: '1rem',
   },
+  info: {
+    display: 'flex',
+    justifyContent: 'space-evenly',
+  },
 }));
 
 const getDateObj = (imagePoint: IImagePoint) => {
@@ -89,6 +94,12 @@ const getDateObjWithTime = (imagePoint: IImagePoint) => {
 
 const sortImagePointsByDate = (imagePoints: IImagePoint[]) => {
   return imagePoints.sort((a, b) => getDateObj(b).getTime() - getDateObj(a).getTime());
+};
+
+const getDateAndTimeString = (imagePoint: IImagePoint) => {
+  const { TIDSPUNKT } = imagePoint.properties;
+  const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
+  return `${dateTime?.date} kl. ${dateTime?.time}`;
 };
 
 const History = () => {
@@ -270,14 +281,16 @@ const History = () => {
                 onClick={() => handleImageClick(imagePoint)}
               />
             </div>
-            <Typography variant="h5" key={`${imagePoint.id}-date`} className={classes.date}>
-              {' '}
-              {getFormattedDateString(getDateString(imagePoint))}{' '}
-            </Typography>
-            <Typography variant="h5" key={`${imagePoint.id}-referanse`} className={classes.date}>
-              {' '}
-              {getRoadReference(imagePoint).complete}{' '}
-            </Typography>
+            <div className={classes.info}>
+              <Typography variant="h5" key={`${imagePoint.id}-reference`} className={classes.date}>
+                {' '}
+                {`${getRoadReference(imagePoint).complete}   `}{' '}
+              </Typography>
+              <Typography variant="body1" key={`${imagePoint.id}-date`} className={classes.date}>
+                {' '}
+                {getDateAndTimeString(imagePoint)}{' '}
+              </Typography>
+            </div>
           </>
         ))}
     </Paper>
