@@ -3,8 +3,8 @@ import { selector } from 'recoil';
 
 export const availableYearsQuery = selector({
   key: 'availableYears',
-  get: async ({ get }) => {
+  get: async () => {
     const response = await getAvailableYearsFromOGC();
-    return response;
+    return response.slice().sort((a, b) => b - a);
   },
 });

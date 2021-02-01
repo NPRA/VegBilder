@@ -82,9 +82,6 @@ const YearSelector = () => {
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
 
-  const sortedYears = availableYears.slice();
-  sortedYears.sort((a, b) => b - a);
-
   const handleChange = (event) => {
     const newYear = event.target.value;
     if (parseInt(newYear) !== currentYear) {
@@ -107,7 +104,7 @@ const YearSelector = () => {
         MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
         <ListSubheader>Årstall</ListSubheader>
-        {sortedYears.map((year) => (
+        {availableYears.map((year) => (
           <MenuItem
             key={year}
             value={year}
