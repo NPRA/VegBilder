@@ -203,12 +203,13 @@ const History = () => {
                   );
                   if (distanceBetween < maxDistance) {
                     const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                    if (imagePointDirection && currentImagePointDirection) {
-                      if (
-                        imagePointDirection < currentImagePointDirection + 10 &&
-                        imagePointDirection > currentImagePointDirection - 10
-                      )
-                        return imagePoint;
+                    if (
+                      imagePointDirection &&
+                      currentImagePointDirection &&
+                      imagePointDirection < currentImagePointDirection + 10 &&
+                      imagePointDirection > currentImagePointDirection - 10
+                    ) {
+                      return imagePoint;
                     } else {
                       const bearingBetween = getBearingBetweenImagePoints(
                         currentImagePoint,
@@ -261,27 +262,33 @@ const History = () => {
           <CloseIcon />
         </IconButton>
       </div>
-      {currentImagePoint
-        ? sortImagePointsByDate(historyImagePoints)?.map((imagePoint) => (
-            <div key={imagePoint.id}>
-              <div className={classes.imageContainer}>
-                {imagePoint.id === currentHistoryImage?.id ? (
-                  <SelectIcon className={classes.selectIcon} />
-                ) : null}
-                <img
-                  src={getImageUrl(imagePoint)}
-                  alt={imagePoint.id}
-                  className={classes.image}
-                  onClick={() => handleImageClick(imagePoint)}
-                />
-              </div>
-              <div className={classes.info}>
-                <Typography variant="h5">{getRoadReference(imagePoint).complete}</Typography>
-                <Typography variant="body1">{getDateAndTimeString(imagePoint)}</Typography>
-              </div>
+      {currentImagePoint &&
+        sortImagePointsByDate(historyImagePoints)?.map((imagePoint) => (
+          <>
+            <div key={`${imagePoint.id}-container`} className={classes.imageContainer}>
+              {imagePoint.id === currentHistoryImage?.id && (
+                <SelectIcon key={`${imagePoint.id}-icon`} className={classes.selectIcon} />
+              )}
+              <img
+                key={imagePoint.id}
+                src={getImageUrl(imagePoint)}
+                alt={imagePoint.id}
+                className={classes.image}
+                onClick={() => handleImageClick(imagePoint)}
+              />
             </div>
-          ))
-        : null}
+            <div className={classes.info}>
+              <Typography variant="h5" key={`${imagePoint.id}-reference`}>
+                {' '}
+                {`${getRoadReference(imagePoint).complete}   `}{' '}
+              </Typography>
+              <Typography variant="body1" key={`${imagePoint.id}-date`}>
+                {' '}
+                {getDateAndTimeString(imagePoint)}{' '}
+              </Typography>
+            </div>
+          </>
+        ))}
     </Paper>
   );
 };
