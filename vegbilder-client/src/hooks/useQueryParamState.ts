@@ -27,7 +27,6 @@ const useQueryParamState = (name: queryParamterNames) => {
           }
           return searchParam;
         }
-
         return '';
       case 'year':
         const defaultYear = availableYears[0].toString();
