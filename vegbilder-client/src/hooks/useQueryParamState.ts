@@ -29,9 +29,10 @@ const useQueryParamState = (name: queryParamterNames) => {
           }
           return searchParam;
         }
+
         return '';
       case 'year':
-        const defaultYear = year.toString();
+        const defaultYear = year;
         if (searchParam) {
           const validYearParam = isValidYear(parseInt(searchParam));
           if (!validYearParam) {
@@ -54,6 +55,13 @@ const useQueryParamState = (name: queryParamterNames) => {
       case 'lng':
         return searchParam || '15';
       case 'zoom':
+        if (!searchParam) {
+          const lat = searchParams.get('lat');
+          const lng = searchParams.get('lng');
+          if (lat && lat !== '65' && lng && lng !== '15') {
+            return '15';
+          }
+        }
         return searchParam || '4';
       default:
         return '';

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
@@ -9,6 +9,7 @@ import Onboarding from './Onboarding/Onboarding';
 import useQueryParamState from 'hooks/useQueryParamState';
 import MapView from './MapView/MapView';
 import ImageView from './ImageView/ImageView';
+import { useCommand, commandTypes } from 'contexts/CommandContext';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -46,6 +47,16 @@ const ComponentsWrapper = () => {
   const [view, setView] = useQueryParamState('view');
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const { setCommand } = useCommand();
+  const [currentImageQuery] = useQueryParamState('imageId');
+  const [currentZoomQuery] = useQueryParamState('zoom');
+
+  // if a user opens the app with only coordinates we find the nearest image
+  useEffect(() => {
+    if (currentImageQuery === '' && currentZoomQuery && parseInt(currentZoomQuery) > 14) {
+      setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
+    }
+  }, [currentImageQuery, currentZoomQuery]);
 
   const handleSnackbarClose = (reason: any) => {
     if (reason && reason._reactName !== 'onClick') {
