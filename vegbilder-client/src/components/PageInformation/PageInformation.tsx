@@ -3,6 +3,11 @@ import { makeStyles, Paper, Typography } from '@material-ui/core';
 
 import CloseButton from 'components/CloseButton/CloseButton';
 import { informationText } from 'constants/text';
+import { IImagePoint } from 'types';
+import {
+  createMailtoHrefForFeedbackOrContact,
+  createMailtoHrefForReporting,
+} from 'utilities/mailtoUtilities';
 
 const useStyles = makeStyles((theme) => ({
   information: {
@@ -25,15 +30,31 @@ const useStyles = makeStyles((theme) => ({
   paragraphs: {
     paddingBottom: '1rem',
   },
+  openEmailButton: {
+    border: 'none',
+    background: 'inherit',
+    color: 'inherit',
+    borderBottom: `1px solid ${theme.palette.common.charcoalLighter}`,
+    fontFamily: 'inherit',
+    fontSize: 'inherit',
+    cursor: 'pointer',
+    padding: 0,
+  },
 }));
 
 interface IInformationProps {
   setVisible: () => void;
   isOnboarding?: boolean;
+  showMessage: (message: string) => void;
 }
 
-const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
+const PageInformation = ({ setVisible, isOnboarding, showMessage }: IInformationProps) => {
   const classes = useStyles(isOnboarding);
+
+  const openPrefilledEmailInDefaultEmailClient = () => {
+    window.open(createMailtoHrefForFeedbackOrContact(), '_self');
+    showMessage('Åpner e-post-klient');
+  };
 
   return (
     <div className={isOnboarding ? '' : classes.information}>
@@ -49,6 +70,13 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
         </Typography>
         <Typography variant="body1" className={classes.paragraphs}>
           {informationText.contact}
+          <button
+            className={classes.openEmailButton}
+            onClick={openPrefilledEmailInDefaultEmailClient}
+          >
+            {' '}
+            {informationText.email}
+          </button>
         </Typography>
         <Typography variant="body1" className={classes.paragraphs}>
           {informationText.versionNumber}

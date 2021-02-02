@@ -33,7 +33,7 @@ const useStyles = makeStyles((theme) => ({
 
 const HIDE_SPLASH_ON_STARTUP = 'HideSplashOnStartup';
 
-const Onboarding = () => {
+const Onboarding = (showMessage) => {
   const classes = useStyles();
   const hideWasSet = localStorage.getItem(HIDE_SPLASH_ON_STARTUP) === 'true';
   const [visible, setVisible] = useState(!hideWasSet);
@@ -52,7 +52,11 @@ const Onboarding = () => {
   return (
     <ClickAwayListener onClickAway={closeOnboarding}>
       <div className={classes.onboarding}>
-        <PageInformation isOnboarding={true} setVisible={closeOnboarding} />
+        <PageInformation
+          showMessage={showMessage}
+          isOnboarding={true}
+          setVisible={closeOnboarding}
+        />
         <FormControlLabel
           className={classes.formControl}
           control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}

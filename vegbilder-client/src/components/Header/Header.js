@@ -72,7 +72,10 @@ const Header = ({ showMessage }) => {
         </Grid>
       </Toolbar>
       {showInformation && (
-        <PageInformation setVisible={() => setShowInformation(!showInformation)} />
+        <PageInformation
+          showMessage={showMessage}
+          setVisible={() => setShowInformation(!showInformation)}
+        />
       )}
     </AppBar>
   );

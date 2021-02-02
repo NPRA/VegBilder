@@ -105,7 +105,7 @@ const ComponentsWrapper = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <Onboarding />
+      <Onboarding showMessage={showSnackbarMessage} />
     </>
   );
 };
