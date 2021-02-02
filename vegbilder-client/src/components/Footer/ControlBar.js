@@ -306,22 +306,20 @@ const ControlBar = ({ showMessage }) => {
           <HistoryIcon />
         </IconButton>
 
-        <div style={{ position: 'relative' }}>
-          <IconButton
-            aria-label="Mer info om bildet"
-            className={classes.button}
-            onClick={(event) => {
-              if (currentImagePoint) handleMoreInfoButtonClick(event);
-            }}
-          >
-            <InformIcon />
-          </IconButton>
-          <MoreImageInfo
-            imagePoint={currentImagePoint}
-            anchorEl={moreInfoAnchorEl}
-            handleClose={handleMoreInfoClose}
-          />
-        </div>
+        <IconButton
+          aria-label="Mer info om bildet"
+          className={classes.button}
+          onClick={(event) => {
+            if (currentImagePoint) handleMoreInfoButtonClick(event);
+          }}
+        >
+          <InformIcon />
+        </IconButton>
+        <MoreImageInfo
+          imagePoint={currentImagePoint}
+          anchorEl={moreInfoAnchorEl}
+          handleClose={handleMoreInfoClose}
+        />
 
         <IconButton
           disabled={playVideo}

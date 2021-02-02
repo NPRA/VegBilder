@@ -199,5 +199,12 @@ export default createMuiTheme({
         color: grayMenuItems,
       },
     },
+    MuiPopover: {
+      paper: {
+        fontFamily: '"LFT-Etica"',
+        backgroundColor: grayDarker,
+        color: grayMenuItems,
+      },
+    },
   },
 });
