@@ -32,12 +32,14 @@ const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProp
   const [strekningsnavn, setStrekningsnavn] = useState('');
 
   const getMoreInfoProps = async (jsonUrl: string) => {
-    const moreProps = await getImageJsonFile(jsonUrl).then((res) => {
-      setStrekningsnavn(res.exif_strekningsnavn);
-      const detekterteObjekter = res.detekterte_objekter;
-      const keys = Object.keys(detekterteObjekter);
-      setDetectedObjectsKeys(keys);
-      setDetectedObjects(detekterteObjekter);
+    await getImageJsonFile(jsonUrl).then((res) => {
+      if (res) {
+        setStrekningsnavn(res.exif_strekningsnavn);
+        const detekterteObjekter = res.detekterte_objekter;
+        const keys = Object.keys(detekterteObjekter);
+        setDetectedObjectsKeys(keys);
+        setDetectedObjects(detekterteObjekter);
+      }
     });
   };
 
@@ -53,7 +55,6 @@ const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProp
   let position;
 
   if (imagePoint) {
-    //if (!imagePoint) return null;
     const { TIDSPUNKT } = imagePoint?.properties;
     roadReference = getRoadReference(imagePoint).complete;
     const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;

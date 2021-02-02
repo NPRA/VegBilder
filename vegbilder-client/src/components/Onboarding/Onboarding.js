@@ -15,9 +15,12 @@ const useStyles = makeStyles((theme) => ({
     overflowY: 'auto',
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
+    border: `1px solid ${theme.palette.common.grayDark}`,
+    borderRadius: '0.5rem',
   },
   formControl: {
-    marginLeft: '2rem',
+    marginTop: 0,
+    marginLeft: '1.35rem',
     marginBottom: '2rem',
   },
   checkbox: {
@@ -49,7 +52,7 @@ const Onboarding = () => {
   return (
     <ClickAwayListener onClickAway={closeOnboarding}>
       <div className={classes.onboarding}>
-        <Information isOnboarding={true} />
+        <Information isOnboarding={true} setVisible={closeOnboarding} />
         <FormControlLabel
           className={classes.formControl}
           control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}

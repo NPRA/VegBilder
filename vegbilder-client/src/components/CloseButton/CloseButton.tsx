@@ -14,10 +14,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CloseButton = ({ onClick }) => {
+interface ICloseButtonProps {
+  onClick: () => void;
+  transparent?: boolean;
+}
+
+const CloseButton = ({ onClick, transparent }: ICloseButtonProps) => {
   const classes = useStyles();
   return (
-    <IconButton className={classes.closeButton} onClick={onClick}>
+    <IconButton
+      className={classes.closeButton}
+      style={{ background: transparent ? 'transparent' : '' }}
+      onClick={onClick}
+    >
       <CloseIcon />
     </IconButton>
   );

@@ -1,5 +1,5 @@
 import React from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Paper, Typography } from '@material-ui/core';
 
 import CloseButton from 'components/CloseButton/CloseButton';
 import { informationText } from 'constants/text';
@@ -16,9 +16,11 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 100,
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
+    border: `1px solid ${theme.palette.common.grayDark}`,
+    borderRadius: '0.5rem',
   },
   content: {
-    margin: '2rem',
+    margin: '2rem 2rem 0 2rem',
   },
   paragraphs: {
     paddingBottom: '1rem',
@@ -31,11 +33,11 @@ interface IInformationProps {
 }
 
 const Information = ({ setVisible, isOnboarding }: IInformationProps) => {
-  const classes = useStyles();
+  const classes = useStyles(isOnboarding);
 
   return (
     <div className={isOnboarding ? '' : classes.information}>
-      <CloseButton onClick={setVisible} />
+      <CloseButton transparent={true} onClick={setVisible} />
       <div className={classes.content}>
         <Typography variant="h2" className={classes.paragraphs}>
           {' '}
