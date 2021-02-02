@@ -2,14 +2,16 @@ import React from 'react';
 import { IconButton, makeStyles, Popover, Typography } from '@material-ui/core';
 
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
-import { getImagePointLatLng, getRoadReference } from 'utilities/imagePointUtilities';
+import { getImagePointLatLng, getImageUrl, getRoadReference } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
+import getImageJsonFile from 'apis/Vegvesen/getImageJsonFile';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
     width: '15rem',
     padding: '1rem',
+    marginBottom: '1rem',
     border: `1px solid ${theme.palette.common.grayDark}`,
   },
   lines: {
@@ -32,7 +34,16 @@ const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProp
   const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
   const dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
   const position = getImagePointLatLng(imagePoint);
-  console.log(imagePoint);
+
+  const jsonUrl = getImageUrl(imagePoint).replace('jpg', 'json');
+
+  const getMoreInfoProps = async () => {
+    const moreProps = await getImageJsonFile(jsonUrl).then((res) => {
+      //console.log(res);
+    });
+  };
+
+  getMoreInfoProps();
 
   return (
     <>
@@ -65,7 +76,7 @@ const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProp
           </Typography>
           <Typography variant="body1" className={classes.lines}>
             {' '}
-            {`Posisjon: ${'lat: ' + position?.lat + ', lng: ' + position?.lng}`}
+            {`Posisjon: ${position?.lat + ', ' + position?.lng}`}
           </Typography>
           <Typography variant="body1" className={classes.lines}>
             {' '}
