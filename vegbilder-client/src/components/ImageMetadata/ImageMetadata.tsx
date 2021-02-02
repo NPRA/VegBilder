@@ -20,20 +20,20 @@ const ImageMetadata = () => {
     const { TIDSPUNKT } = currentHistoryImage.properties;
     roadReference = getRoadReference(currentHistoryImage).complete;
     const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
-    dateAndTime = `${dateTime.date} kl. ${dateTime.time}`;
+    dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
   } else {
     if (!currentImagePoint) return null;
     const { TIDSPUNKT } = currentImagePoint.properties;
     roadReference = getRoadReference(currentImagePoint).complete;
     const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
-    dateAndTime = `${dateTime.date} kl. ${dateTime.time}`;
+    dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
   }
 
   return (
-    <>
+    <div>
       <Typography variant="subtitle1">{roadReference}</Typography>
       <Typography variant="body1">{dateAndTime}</Typography>
-    </>
+    </div>
   );
 };
 

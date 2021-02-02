@@ -8,6 +8,7 @@ import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities'
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import { EnlargeIcon } from 'components/Icons/Icons';
 import CloseButton from 'components/CloseButton/CloseButton';
+import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -21,6 +22,9 @@ const useStyles = makeStyles((theme) => ({
         height: '21px',
       },
     },
+  },
+  infoButton: {
+    margin: '0.4rem',
   },
 }));
 
@@ -54,23 +58,27 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
         flexDirection="column"
         boxShadow="1px 2px 2px 2px rgba(0, 0, 0, 0.4)"
       >
-        <Box>
+        <>
           <img
             src={getImageUrl(currentImagePoint)}
             className={classes.image}
             alt="Bilde tatt langs veg"
-          ></img>
+          />
           <CloseButton onClick={unsetCurrentImagePoint} />
-        </Box>
+        </>
         <Box
           padding="0.25rem 0.75rem 0.75rem 0.75rem"
           display="flex"
+          flexDirection="row"
           justifyContent="space-between"
         >
           <ImageMetadata />
-          <IconButton className={classes.enlargeButton} onClick={openImage}>
-            <EnlargeIcon />
-          </IconButton>
+          <div>
+            <MoreImageInfo imagePoint={currentImagePoint} className={classes.infoButton} />
+            <IconButton className={classes.enlargeButton} onClick={openImage}>
+              <EnlargeIcon />
+            </IconButton>
+          </div>
         </Box>
       </Box>
     );

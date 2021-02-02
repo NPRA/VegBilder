@@ -25,9 +25,10 @@ const useStyles = makeStyles((theme) => ({
 
 interface IMoreImageInfoProps {
   imagePoint: IImagePoint;
+  className?: string;
 }
 
-const MoreImageInfo = ({ imagePoint }: IMoreImageInfoProps) => {
+const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
   const classes = useStyles();
   const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
   const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
@@ -77,7 +78,7 @@ const MoreImageInfo = ({ imagePoint }: IMoreImageInfoProps) => {
     <>
       <IconButton
         aria-label="Mer info om bildet"
-        className={classes.button}
+        className={className}
         onClick={(event) => {
           if (imagePoint) handleMoreInfoButtonClick(event);
         }}

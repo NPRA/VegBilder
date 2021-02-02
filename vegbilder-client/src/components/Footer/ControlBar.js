@@ -295,7 +295,7 @@ const ControlBar = ({ showMessage }) => {
           <HistoryIcon />
         </IconButton>
 
-        <MoreImageInfo imagePoint={currentImagePoint} />
+        <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
 
         <IconButton
           disabled={playVideo}
