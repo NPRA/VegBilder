@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-import Information from 'components/Header/Information';
+import PageInformation from 'components/PageInformation/PageInformation';
 
 const useStyles = makeStyles((theme) => ({
   onboarding: {
@@ -52,7 +52,7 @@ const Onboarding = () => {
   return (
     <ClickAwayListener onClickAway={closeOnboarding}>
       <div className={classes.onboarding}>
-        <Information isOnboarding={true} setVisible={closeOnboarding} />
+        <PageInformation isOnboarding={true} setVisible={closeOnboarding} />
         <FormControlLabel
           className={classes.formControl}
           control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}

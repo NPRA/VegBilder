@@ -17,19 +17,30 @@ const useStyles = makeStyles((theme) => ({
   lines: {
     padding: '0.2rem',
   },
+  button: {
+    margin: '1.25rem',
+    backgroundColor: 'transparent',
+  },
 }));
 
 interface IMoreImageInfoProps {
   imagePoint: IImagePoint;
-  anchorEl: Element | ((element: Element) => Element) | null | undefined;
-  handleClose: ((event: {}, reason: 'backdropClick' | 'escapeKeyDown') => void) | undefined;
 }
 
-const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProps) => {
+const MoreImageInfo = ({ imagePoint }: IMoreImageInfoProps) => {
   const classes = useStyles();
   const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
   const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
   const [strekningsnavn, setStrekningsnavn] = useState('');
+  const [moreInfoAnchorEl, setMoreInfoAnchorEl] = useState<HTMLButtonElement | null>(null);
+
+  const handleMoreInfoButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setMoreInfoAnchorEl(event.currentTarget);
+  };
+
+  const handleMoreInfoClose = () => {
+    setMoreInfoAnchorEl(null);
+  };
 
   const getMoreInfoProps = async (jsonUrl: string) => {
     await getImageJsonFile(jsonUrl).then((res) => {
@@ -64,12 +75,21 @@ const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProp
 
   return (
     <>
-      {imagePoint && anchorEl ? (
+      <IconButton
+        aria-label="Mer info om bildet"
+        className={classes.button}
+        onClick={(event) => {
+          if (imagePoint) handleMoreInfoButtonClick(event);
+        }}
+      >
+        <InformIcon />
+      </IconButton>
+      {imagePoint && moreInfoAnchorEl ? (
         <Popover
-          id={Boolean(anchorEl) ? 'more-info' : undefined}
-          open={Boolean(anchorEl)}
-          anchorEl={anchorEl}
-          onClose={handleClose}
+          id={Boolean(moreInfoAnchorEl) ? 'more-info' : undefined}
+          open={Boolean(moreInfoAnchorEl)}
+          anchorEl={moreInfoAnchorEl}
+          onClose={handleMoreInfoClose}
           PaperProps={{ classes: { root: classes.popover } }}
           anchorOrigin={{
             vertical: 'top',

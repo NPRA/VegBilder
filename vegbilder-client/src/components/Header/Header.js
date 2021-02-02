@@ -7,7 +7,7 @@ import Search from 'components/Search/Search';
 import YearSelector from 'components/YearSelector/YearSelector';
 import ImageSeriesSelector from 'components/ImageSeriesSelector/ImageSeriesSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
-import Information from './Information';
+import PageInformation from '../PageInformation/PageInformation';
 
 const useStyles = makeStyles({
   headerAppBar: {
@@ -71,7 +71,9 @@ const Header = ({ showMessage }) => {
           </IconButton>
         </Grid>
       </Toolbar>
-      {showInformation && <Information setVisible={() => setShowInformation(!showInformation)} />}
+      {showInformation && (
+        <PageInformation setVisible={() => setShowInformation(!showInformation)} />
+      )}
     </AppBar>
   );
 };
