@@ -6,12 +6,9 @@ const getImageJsonFile = async (url: string) => {
   });
 
   return await urlToFetch
-    .get('', {
-      headers: { 'Access-Control-Allow-Origin': '*' },
-    })
+    .get('', {})
     .then((response) => {
-      console.log(response);
-      return response;
+      return response.data;
     })
     .catch((error) => {
       if (error.message === 'Request failed with status code 404') {

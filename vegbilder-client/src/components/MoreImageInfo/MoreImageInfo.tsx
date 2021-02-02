@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { IconButton, makeStyles, Popover, Typography } from '@material-ui/core';
 
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
@@ -27,23 +27,39 @@ interface IMoreImageInfoProps {
 
 const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProps) => {
   const classes = useStyles();
+  const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
+  const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
+  const [strekningsnavn, setStrekningsnavn] = useState('');
 
-  if (!imagePoint) return null;
-  const { TIDSPUNKT } = imagePoint?.properties;
-  const roadReference = getRoadReference(imagePoint).complete;
-  const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
-  const dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
-  const position = getImagePointLatLng(imagePoint);
-
-  const jsonUrl = getImageUrl(imagePoint).replace('jpg', 'json');
-
-  const getMoreInfoProps = async () => {
+  const getMoreInfoProps = async (jsonUrl: string) => {
     const moreProps = await getImageJsonFile(jsonUrl).then((res) => {
-      //console.log(res);
+      setStrekningsnavn(res.exif_strekningsnavn);
+      const detekterteObjekter = res.detekterte_objekter;
+      const keys = Object.keys(detekterteObjekter);
+      setDetectedObjectsKeys(keys);
+      setDetectedObjects(detekterteObjekter);
     });
   };
 
-  getMoreInfoProps();
+  useEffect(() => {
+    if (imagePoint) {
+      const jsonUrl = getImageUrl(imagePoint).replace('jpg', 'json');
+      getMoreInfoProps(jsonUrl);
+    }
+  }, [imagePoint]);
+
+  let roadReference = '';
+  let dateAndTime = '';
+  let position;
+
+  if (imagePoint) {
+    //if (!imagePoint) return null;
+    const { TIDSPUNKT } = imagePoint?.properties;
+    roadReference = getRoadReference(imagePoint).complete;
+    const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
+    dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
+    position = getImagePointLatLng(imagePoint);
+  }
 
   return (
     <>
@@ -71,6 +87,9 @@ const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProp
             {dateAndTime}{' '}
           </Typography>
           <Typography variant="body1" className={classes.lines}>
+            {`Strekningsnavn: ${strekningsnavn}`}
+          </Typography>
+          <Typography variant="body1" className={classes.lines}>
             {' '}
             {`Fylkenummer: ${imagePoint.properties.FYLKENUMMER}`}
           </Typography>
@@ -82,6 +101,20 @@ const MoreImageInfo = ({ imagePoint, anchorEl, handleClose }: IMoreImageInfoProp
             {' '}
             {`Retning: ${imagePoint.properties.RETNING}`}
           </Typography>
+          <Typography variant="subtitle1" className={classes.lines}>
+            Detekterte objekter
+          </Typography>
+          {detectedObjectsKeys.length ? (
+            detectedObjectsKeys.map((key) => (
+              <Typography variant="body1" className={classes.lines} key={key}>
+                {`${key}: ${detectedObjects[key]} `}
+              </Typography>
+            ))
+          ) : (
+            <Typography variant="body1" className={classes.lines}>
+              Ingen
+            </Typography>
+          )}
         </Popover>
       ) : null}
     </>
