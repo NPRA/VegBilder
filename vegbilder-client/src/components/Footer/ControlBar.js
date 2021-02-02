@@ -347,7 +347,7 @@ const ControlBar = ({ showMessage }) => {
           </MenuItem>
           <MenuItem
             onClick={() => {
-              window.open(getImageUrl(currentImagePoint), '_blank', 'noopener');
+              window.open(getImageUrl(currentImagePoint), '_blank', 'noopener noreferer');
               handleMoreControlsClose();
             }}
           >
