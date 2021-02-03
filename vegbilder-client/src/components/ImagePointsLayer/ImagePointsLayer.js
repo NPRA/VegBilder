@@ -29,6 +29,8 @@ import {
 } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
 
+import { groupBySeries } from 'utilities/imagePointUtilities';
+
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
   debugMode: false,
@@ -50,6 +52,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const availableYears = useRecoilValue(availableYearsQuery);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
+  const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -218,12 +221,18 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     });
   };
 
-  const renderImagePoints = () => {
+  useEffect(() => {
     if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
-      const imagePointsToRender = filteredImagePoints.filter((imagePoint) =>
+      const imagePoints = filteredImagePoints.filter((imagePoint) =>
         imagePointIsWithinBbox(imagePoint, mapBbox)
       );
+      setImagePointsToRender(imagePoints);
+    }
+  }, [filteredImagePoints, createBboxForVisibleMapArea]);
+
+  const renderImagePoints = () => {
+    if (imagePointsToRender) {
       return (
         <>
           {imagePointsToRender.map((imagePoint) => {

@@ -1,8 +1,9 @@
+import { IBbox, ILatlng } from 'types';
 import { degreesToRadians } from './mathUtilities';
 
 const metersPerDegreeLat = 111111; // = 10^7 / 90. Approximate value stemming from the original definition of 1 meter as 1/10^7 of the total distance from the equator to the north pole along the meridian running through Paris. It is close enough for our purposes.
 
-const getDistanceInMetersBetween = (pointA, pointB) => {
+const getDistanceInMetersBetween = (pointA: ILatlng, pointB: ILatlng) => {
   const dlat = Math.abs(pointA.lat - pointB.lat);
   const dlng = Math.abs(pointA.lng - pointB.lng);
   const dy = metersPerDegreeLat * dlat;
@@ -10,7 +11,7 @@ const getDistanceInMetersBetween = (pointA, pointB) => {
   return Math.sqrt(dx * dx + dy * dy);
 };
 
-const getBearingBetween = (pointA, pointB) => {
+const getBearingBetween = (pointA: ILatlng, pointB: ILatlng) => {
   const φ1 = pointA.lat;
   const λ1 = pointA.lng;
   const φ2 = pointB.lat;
@@ -21,7 +22,7 @@ const getBearingBetween = (pointA, pointB) => {
   return ((θ * 180) / Math.PI + 360) % 360; // in degrees
 };
 
-const createSquareBboxAroundPoint = (centerPoint, sizeInMeters) => {
+const createSquareBboxAroundPoint = (centerPoint: ILatlng, sizeInMeters: number) => {
   const dLat = dyToDlat(sizeInMeters / 2);
   const dLng = dxToDlng(sizeInMeters / 2, centerPoint.lat);
   const bbox = {
@@ -33,27 +34,27 @@ const createSquareBboxAroundPoint = (centerPoint, sizeInMeters) => {
   return bbox;
 };
 
-const dyToDlat = (dy) => {
+const dyToDlat = (dy: number) => {
   return dy / metersPerDegreeLat;
 };
 
-const dxToDlng = (dx, lat) => {
+const dxToDlng = (dx: number, lat: number) => {
   return dx / (metersPerDegreeLat * Math.cos(degreesToRadians(lat)));
 };
 
-const isWithinBbox = (latlng, bbox) => {
+const isWithinBbox = (latlng: ILatlng, bbox: IBbox) => {
   const lat = latlng.lat;
   const lng = latlng.lng;
   return lat >= bbox.south && lat <= bbox.north && lng >= bbox.west && lng <= bbox.east;
 };
 
-const isOutsideBbox = (latlng, bbox) => {
+const isOutsideBbox = (latlng: ILatlng, bbox: IBbox) => {
   const lat = latlng.lat;
   const lng = latlng.lng;
   return lat < bbox.south || lat > bbox.north || lng < bbox.west || lng > bbox.east;
 };
 
-const isBboxWithinContainingBbox = (bbox, containingBbox) => {
+const isBboxWithinContainingBbox = (bbox: IBbox, containingBbox: IBbox) => {
   return (
     bbox.south > containingBbox.south &&
     bbox.north < containingBbox.north &&

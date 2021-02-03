@@ -201,7 +201,7 @@ const History = () => {
                     currentImagePoint,
                     imagePoint
                   );
-                  if (distanceBetween < maxDistance) {
+                  if (distanceBetween && distanceBetween < maxDistance) {
                     const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
                     if (imagePointDirection && currentImagePointDirection) {
                       if (
@@ -216,6 +216,7 @@ const History = () => {
                       );
                       if (
                         currentImagePointBearing &&
+                        bearingBetween &&
                         bearingBetween < currentImagePointBearing + 10 &&
                         bearingBetween > currentImagePointBearing - 10
                       ) {
@@ -229,10 +230,11 @@ const History = () => {
             if (imagePointsInSameDirection.length) {
               const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
                 (prevImgpoint, currImgPoint) => {
-                  return getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) <
-                    getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint)
-                    ? prevImgpoint
-                    : currImgPoint;
+                  const prevDistance =
+                    getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
+                  const currDistance =
+                    getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
+                  return prevDistance < currDistance ? prevImgpoint : currImgPoint;
                 }
               );
               if (closestImagePointInSameDirection) {

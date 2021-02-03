@@ -2,9 +2,11 @@ import groupBy from 'lodash/groupBy';
 
 import { getBearingBetween, getDistanceInMetersBetween } from './latlngUtilities';
 import { splitDateTimeString } from './dateTimeUtilities';
+import { IImagePoint, ILatlng } from 'types';
+import { Dictionary } from 'lodash';
 //import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
-const getImagePointLatLng = (imagePoint) => {
+const getImagePointLatLng = (imagePoint: IImagePoint) => {
   if (imagePoint) {
     const lat = imagePoint.geometry.coordinates[1];
     const lng = imagePoint.geometry.coordinates[0];
@@ -12,34 +14,40 @@ const getImagePointLatLng = (imagePoint) => {
   }
 };
 
-const getImageUrl = (imagepoint) => imagepoint.properties.URL;
+const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
 
-const findNearestImagePoint = (imagePoints, latlng) => {
-  let nearestPoint = { distance: 100000000, imagePoint: null };
+const findNearestImagePoint = (imagePoints: IImagePoint[], latlng: ILatlng) => {
+  let distance_ = 100000000;
+  let imagePoint;
   imagePoints.forEach((ip) => {
     const imageLatlng = getImagePointLatLng(ip);
-    const distance = getDistanceInMetersBetween(latlng, imageLatlng);
-    if (distance < nearestPoint.distance) {
-      nearestPoint = { distance: distance, imagePoint: ip };
+    if (imageLatlng) {
+      const distance = getDistanceInMetersBetween(latlng, imageLatlng);
+      if (distance < distance_) {
+        distance_ = distance;
+        imagePoint = ip;
+      }
     }
   });
-  return nearestPoint.imagePoint;
+  return imagePoint;
 };
 
-const getDistanceToBetweenImagePoints = (imagePoint1, imagePoint2) => {
+const getDistanceToBetweenImagePoints = (imagePoint1: IImagePoint, imagePoint2: IImagePoint) => {
   const image1Latlng = getImagePointLatLng(imagePoint1);
   const image2Latlng = getImagePointLatLng(imagePoint2);
-  const distance = getDistanceInMetersBetween(image1Latlng, image2Latlng);
-  return distance;
+  if (image1Latlng && image2Latlng) {
+    const distance = getDistanceInMetersBetween(image1Latlng, image2Latlng);
+    return distance;
+  }
 };
 
-const getBearingBetweenImagePoints = (imagePoint1, imagePoint2) => {
+const getBearingBetweenImagePoints = (imagePoint1: IImagePoint, imagePoint2: IImagePoint) => {
   const image1Latlng = getImagePointLatLng(imagePoint1);
   const image2Latlng = getImagePointLatLng(imagePoint2);
-  return getBearingBetween(image1Latlng, image2Latlng);
+  if (image1Latlng && image2Latlng) return getBearingBetween(image1Latlng, image2Latlng);
 };
 
-const getRoadReference = (imagePoint) => {
+const getRoadReference = (imagePoint: IImagePoint) => {
   const {
     VEGKATEGORI,
     VEGSTATUS,
@@ -85,16 +93,17 @@ const getRoadReference = (imagePoint) => {
  * the old vegreferanse and the new vegsystemreferanse). VEGKATEGORI, VEGSTATUS and VEGNUMMER are
  * usually the same (but they do change occasionally). FELTKODE may also change. Use with care.
  */
-const getGenericRoadReference = (imagePoint) => {
+const getGenericRoadReference = (imagePoint: IImagePoint) => {
   const { VEGKATEGORI, VEGSTATUS, VEGNUMMER, FELTKODE } = imagePoint.properties;
   return `${VEGKATEGORI}${VEGSTATUS}${VEGNUMMER} F${FELTKODE}`;
 };
 
-const usesOldVegreferanse = (imagePoint) => imagePoint.properties.AAR < 2020;
+const usesOldVegreferanse = (imagePoint: IImagePoint) => imagePoint.properties.AAR < 2020;
 
-const getDateString = (imagePoint) => splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
+const getDateString = (imagePoint: IImagePoint) =>
+  splitDateTimeString(imagePoint.properties.TIDSPUNKT)?.date;
 
-const getFormattedDateString = (imageSeriesDate) => {
+const getFormattedDateString = (imageSeriesDate: string) => {
   const splitted = imageSeriesDate.split('-');
   const day = splitted[2];
   const month = splitted[1];
@@ -117,15 +126,16 @@ const getFormattedDateString = (imageSeriesDate) => {
  * new object, under which each key is a date. The value for each of those is an array of image
  * points.
  */
-const groupBySeries = (imagePoints) => {
+const groupBySeries = (imagePoints: IImagePoint[]) => {
+  let groupedByReferenceAndDate: Dictionary<Dictionary<IImagePoint[]>> = {};
   const groupedByRoadReference = groupBy(imagePoints, (ip) => getRoadReference(ip).withoutMeter);
   for (const [roadReference, imagePointsForRoadReference] of Object.entries(
     groupedByRoadReference
   )) {
     const groupedByDate = groupBy(imagePointsForRoadReference, getDateString);
-    groupedByRoadReference[roadReference] = groupedByDate;
+    groupedByReferenceAndDate[roadReference] = groupedByDate;
   }
-  return groupedByRoadReference;
+  return groupedByReferenceAndDate;
 };
 
 /* Check if two image points are on the same road part or consecutive road parts,
@@ -133,7 +143,7 @@ const groupBySeries = (imagePoints) => {
  *  - hovedparsell (HP) in the old vegreferanse (2019 and earlier)
  *  - combination of strekning and delstrekning in the new vegsystemreferanse (2020 and later)
  */
-const areOnSameOrConsecutiveRoadParts = (imagePoint1, imagePoint2) => {
+const areOnSameOrConsecutiveRoadParts = (imagePoint1: IImagePoint, imagePoint2: IImagePoint) => {
   if (usesOldVegreferanse(imagePoint1) && usesOldVegreferanse(imagePoint2)) {
     return areOnSameOrConsecutiveHovedparsells(imagePoint1, imagePoint2);
   } else if (!usesOldVegreferanse(imagePoint1) && !usesOldVegreferanse(imagePoint2)) {
@@ -145,19 +155,25 @@ const areOnSameOrConsecutiveRoadParts = (imagePoint1, imagePoint2) => {
   }
 };
 
-const areOnSameOrConsecutiveHovedparsells = (imagePoint1, imagePoint2) => {
+const areOnSameOrConsecutiveHovedparsells = (
+  imagePoint1: IImagePoint,
+  imagePoint2: IImagePoint
+) => {
   const hp1 = imagePoint1.properties.HP;
   const hp2 = imagePoint2.properties.HP;
-  if (hp1 == null || hp2 == null) {
+  if (hp1 === null || hp2 === null) {
     console.error(
       `Could not compare hovedparsell for two image points because one or both was null. HP1: ${hp1}, HP2: ${hp2}`
     );
     return false;
   }
-  return Math.abs(hp1 - hp2) <= 1;
+  return Math.abs(parseInt(hp1) - parseInt(hp2)) <= 1;
 };
 
-const areOnSameOrConsecutiveStrekningDelstrekning = (imagePoint1, imagePoint2) => {
+const areOnSameOrConsecutiveStrekningDelstrekning = (
+  imagePoint1: IImagePoint,
+  imagePoint2: IImagePoint
+) => {
   const sd1 = {
     strekning: imagePoint1.properties.STREKNING,
     delstrekning: imagePoint1.properties.DELSTREKNING,
@@ -190,12 +206,12 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (imagePoint1, imagePoint2) =
     // Next delstrekning on same strekning
     (second.strekning === first.strekning && second.delstrekning === first.delstrekning + 1) ||
     // First delstrekning on next strekning
-    (second.strekning === first.strekning + 1 && second.delstrekning === 1)
+    (second.strekning === first.strekning + 1 && parseInt(second.delstrekning) === 1)
   );
 };
 
 // Get image points for the current lane in correct order
-const shouldIncludeImagePoint = (imagePoint, currentImagePoint) => {
+const shouldIncludeImagePoint = (imagePoint: IImagePoint, currentImagePoint: IImagePoint) => {
   const currentProps = currentImagePoint.properties;
   const ipProps = imagePoint.properties;
   if (ipProps.VEGKATEGORI !== currentProps.VEGKATEGORI) return false;
