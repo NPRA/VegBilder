@@ -69,6 +69,10 @@ const PageInformation = ({ setVisible, isOnboarding, showMessage }: IInformation
           {informationText.text}{' '}
         </Typography>
         <Typography variant="body1" className={classes.paragraphs}>
+          {' '}
+          {informationText.text2}{' '}
+        </Typography>
+        <Typography variant="body1" className={classes.paragraphs}>
           {informationText.contact}
           <button
             className={classes.openEmailButton}

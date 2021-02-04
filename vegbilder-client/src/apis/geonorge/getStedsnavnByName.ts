@@ -2,7 +2,7 @@ import wsgeonorge from './wsgeonorge';
 
 export const getStedsnavnByName = async (name: string) => {
   return await wsgeonorge
-    .get('/sok', {
+    .get('SKWS3Index/ssr/sok', {
       params: {
         navn: `${name}*`,
         maxAnt: 10,

@@ -3,19 +3,21 @@ import { IconButton, makeStyles, Popover, Typography } from '@material-ui/core';
 
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import { getImagePointLatLng, getImageUrl, getRoadReference } from 'utilities/imagePointUtilities';
-import { IImagePoint } from 'types';
+import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
 import getImageJsonFile from 'apis/Vegvesen/getImageJsonFile';
+import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
+import { GetElevationByLatLng } from 'apis/openwps/getElevation';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
-    width: '15rem',
+    width: '17rem',
     padding: '1rem',
     marginBottom: '1rem',
     border: `1px solid ${theme.palette.common.grayDark}`,
   },
   lines: {
-    padding: '0.2rem',
+    padding: '0.3rem',
   },
   button: {
     margin: '1.25rem',
@@ -34,6 +36,9 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
   const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
   const [strekningsnavn, setStrekningsnavn] = useState('');
   const [moreInfoAnchorEl, setMoreInfoAnchorEl] = useState<HTMLButtonElement | null>(null);
+  const [fylkesNavn, setFylkesNavn] = useState('');
+  const [kommuneNavn, setKommuneNavn] = useState('');
+  const [elevation, setElevation] = useState('');
 
   const handleMoreInfoButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMoreInfoAnchorEl(event.currentTarget);
@@ -43,34 +48,52 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
     setMoreInfoAnchorEl(null);
   };
 
-  const getMoreInfoProps = async (jsonUrl: string) => {
-    await getImageJsonFile(jsonUrl).then((res) => {
-      if (res) {
-        setStrekningsnavn(res.exif_strekningsnavn);
-        const detekterteObjekter = res.detekterte_objekter;
-        const keys = Object.keys(detekterteObjekter);
-        setDetectedObjectsKeys(keys);
-        setDetectedObjects(detekterteObjekter);
-      }
-    });
+  // UTKOMMENTERT TIL DEN FLYTTER API
+  // const getMoreInfoProps = async (jsonUrl: string) => {
+  //   await getImageJsonFile(jsonUrl).then((res) => {
+  //     if (res) {
+  //       setStrekningsnavn(res.exif_strekningsnavn);
+  //       const detekterteObjekter = res.detekterte_objekter;
+  //       const keys = Object.keys(detekterteObjekter);
+  //       setDetectedObjectsKeys(keys);
+  //       setDetectedObjects(detekterteObjekter);
+  //     }
+  //   });
+  // };
+
+  // useEffect(() => {
+  //   if (imagePoint) {
+  //     const jsonUrl = getImageUrl(imagePoint).replace('jpg', 'json');
+  //     getMoreInfoProps(jsonUrl);
+  //   }
+  // }, [imagePoint]);
+
+  const getKommuneAndFylke = async (latlng: ILatlng) => {
+    const response = await GetKommuneAndFylkeByLatLng(latlng);
+    setFylkesNavn(response.fylkesnavn);
+    setKommuneNavn(response.kommunenavn);
+  };
+
+  const getHoydeMeter = async (latlng: ILatlng) => {
+    const response = await GetElevationByLatLng(latlng);
+    if (response) {
+      setElevation(response);
+    }
   };
 
   useEffect(() => {
     if (imagePoint) {
-      const jsonUrl = getImageUrl(imagePoint).replace('jpg', 'json');
-      getMoreInfoProps(jsonUrl);
+      const latlng = getImagePointLatLng(imagePoint);
+      if (latlng) {
+        getKommuneAndFylke(latlng);
+        getHoydeMeter(latlng);
+      }
     }
   }, [imagePoint]);
 
-  let roadReference = '';
-  let dateAndTime = '';
   let position;
 
   if (imagePoint) {
-    const { TIDSPUNKT } = imagePoint?.properties;
-    roadReference = getRoadReference(imagePoint).complete;
-    const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
-    dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
     position = getImagePointLatLng(imagePoint);
   }
 
@@ -101,32 +124,40 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
             horizontal: 'center',
           }}
         >
-          <Typography variant="subtitle1" className={classes.lines}>
-            {roadReference}
-          </Typography>
-          <Typography variant="body1" className={classes.lines}>
-            {' '}
-            {dateAndTime}{' '}
-          </Typography>
-          <Typography variant="body1" className={classes.lines}>
+          {/* <Typography variant="body1" className={classes.lines}>
             {`Strekningsnavn: ${strekningsnavn}`}
+          </Typography> */}
+          {fylkesNavn.length && imagePoint.properties.FYLKENUMMER ? (
+            <Typography variant="body1" className={classes.lines}>
+              {' '}
+              {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER}), ${kommuneNavn}`}
+            </Typography>
+          ) : null}
+          {elevation.length ? (
+            <Typography variant="body1" className={classes.lines}>
+              {' '}
+              {`${elevation} Moh.`}
+            </Typography>
+          ) : null}
+          <Typography variant="body1" className={classes.lines}>
+            {' '}
+            {`Breddegrad: ${position?.lat}`}
           </Typography>
           <Typography variant="body1" className={classes.lines}>
             {' '}
-            {`Fylkenummer: ${imagePoint.properties.FYLKENUMMER}`}
+            {`Lengdegrad: ${position?.lng}`}
           </Typography>
-          <Typography variant="body1" className={classes.lines}>
-            {' '}
-            {`Posisjon: ${position?.lat + ', ' + position?.lng}`}
-          </Typography>
-          <Typography variant="body1" className={classes.lines}>
-            {' '}
-            {`Retning: ${imagePoint.properties.RETNING}`}
-          </Typography>
+          {imagePoint.properties.RETNING ? (
+            <Typography variant="body1" className={classes.lines}>
+              {' '}
+              {`Kameraretning: ${imagePoint.properties.RETNING}`}
+            </Typography>
+          ) : null}
+          {/*
           <Typography variant="subtitle1" className={classes.lines}>
             Detekterte objekter
           </Typography>
-          {detectedObjectsKeys.length ? (
+           {detectedObjectsKeys.length ? (
             detectedObjectsKeys.map((key) => (
               <Typography variant="body1" className={classes.lines} key={key}>
                 {`${key}: ${detectedObjects[key]} `}
@@ -136,7 +167,7 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
             <Typography variant="body1" className={classes.lines}>
               Ingen
             </Typography>
-          )}
+          )} */}
         </Popover>
       ) : null}
     </>
