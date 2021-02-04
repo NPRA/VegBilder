@@ -91,15 +91,9 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
     }
   }, [imagePoint]);
 
-  let roadReference = '';
-  let dateAndTime = '';
   let position;
 
   if (imagePoint) {
-    const { TIDSPUNKT } = imagePoint?.properties;
-    roadReference = getRoadReference(imagePoint).complete;
-    const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
-    dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
     position = getImagePointLatLng(imagePoint);
   }
 
@@ -130,13 +124,6 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
             horizontal: 'center',
           }}
         >
-          <Typography variant="subtitle1" className={classes.lines}>
-            {roadReference}
-          </Typography>
-          <Typography variant="body1" className={classes.lines}>
-            {' '}
-            {dateAndTime}{' '}
-          </Typography>
           {/* <Typography variant="body1" className={classes.lines}>
             {`Strekningsnavn: ${strekningsnavn}`}
           </Typography> */}
