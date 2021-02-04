@@ -1,17 +1,15 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState } from 'react';
+import { useEffect } from 'react';
 
-import { useLoadedImagePoints } from "./LoadedImagePointsContext";
-import { useImageSeries } from "./ImageSeriesContext";
+import { useLoadedImagePoints } from './LoadedImagePointsContext';
+import { useImageSeries } from './ImageSeriesContext';
 
 const FilteredImagePointsContext = React.createContext();
 
 function useFilteredImagePoints() {
   const context = React.useContext(FilteredImagePointsContext);
   if (!context) {
-    throw new Error(
-      "useFilteredImagePoints must be used within a FilteredImagePointsProvider"
-    );
+    throw new Error('useFilteredImagePoints must be used within a FilteredImagePointsProvider');
   }
   return context;
 }
@@ -26,10 +24,8 @@ function FilteredImagePointsProvider(props) {
   }
 
   function findLatestImageSeries(availableImageSeries) {
-    let latest = "0001-01-01";
-    for (const imageSeriesDate of Object.getOwnPropertyNames(
-      availableImageSeries
-    )) {
+    let latest = '0001-01-01';
+    for (const imageSeriesDate of Object.getOwnPropertyNames(availableImageSeries)) {
       if (imageSeriesDate > latest) {
         latest = imageSeriesDate;
       }
@@ -46,18 +42,14 @@ function FilteredImagePointsProvider(props) {
   useEffect(() => {
     if (loadedImagePoints?.imagePointsGroupedBySeries) {
       let filteredImagePoints = [];
-      for (const [
-        roadReference,
-        availableImageSeriesForRoadReference,
-      ] of Object.entries(loadedImagePoints.imagePointsGroupedBySeries)) {
+      for (const [roadReference, availableImageSeriesForRoadReference] of Object.entries(
+        loadedImagePoints.imagePointsGroupedBySeries
+      )) {
         const imagePointsForRoadReference =
           roadReference === currentImageSeries?.roadReference
             ? availableImageSeriesForRoadReference[currentImageSeries.date]
             : findLatestImageSeries(availableImageSeriesForRoadReference);
-        filteredImagePoints = [
-          ...filteredImagePoints,
-          ...imagePointsForRoadReference,
-        ];
+        filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
       }
       setFilteredImagePoints(filteredImagePoints);
     }

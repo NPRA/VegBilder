@@ -28,3 +28,15 @@ export interface IImagePoint {
     BASELINEINFO: string;
   };
 }
+
+export interface ILatlng {
+  lat: number;
+  lng: number;
+}
+
+export interface IBbox {
+  east: number;
+  west: number;
+  north: number;
+  south: number;
+}
