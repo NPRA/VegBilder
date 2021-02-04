@@ -14,7 +14,7 @@ const contactEmailTemplateText = {
 
 const informationText = {
   header: 'Velkommen til Vegbilder',
-  versionNumber: 'Versjonsnummer: 1.0.0',
+  versionNumber: 'Versjonsnummer: 1.0.1',
   contact: 'Kontakt:  ',
   email: 'vegbilder@vegvesen.no',
   text:
