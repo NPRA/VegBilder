@@ -18,6 +18,11 @@ export const currentYearState = atom({
   default: parseInt(searchParams.get('year') || '2020'),
 });
 
+export const nyesteState = atom({
+  key: 'nyeste',
+  default: true,
+});
+
 export const isHistoryModeState = atom({
   key: 'imageSeriesState',
   default: false,

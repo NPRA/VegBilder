@@ -12,7 +12,7 @@ import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { availableYearsQuery } from 'recoil/selectors';
 import useQueryParamState from 'hooks/useQueryParamState';
-import { currentYearState } from 'recoil/atoms';
+import { currentYearState, nyesteState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 
 const useStyles = makeStyles((theme) => ({
@@ -86,6 +86,7 @@ const YearSelector = () => {
   const { setCommand } = useCommand();
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
+  const [nyeste, setNyeste] = useRecoilState(nyesteState);
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -95,11 +96,16 @@ const YearSelector = () => {
   ) => {
     if (event) {
       const newYear = event.target.value as string;
+      if (newYear === 'Nyeste') {
+        setNyeste(true);
+        return;
+      }
       if (parseInt(newYear) !== currentYear) {
         setQueryParamYear(newYear);
         setCurrentYear(parseInt(newYear));
         resetFilteredImagePoints();
         setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+        setNyeste(false);
       }
     }
   };
@@ -115,6 +121,15 @@ const YearSelector = () => {
         IconComponent={CustomExpandMoreIcon}
         MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
+        <ListSubheader>Periode</ListSubheader>
+        <MenuItem
+          value={'Nyeste'}
+          className={classes.item}
+          style={{ color: nyeste ? Theme.palette.common.orangeDark : '' }}
+        >
+          {nyeste ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
+          {'Nyeste'}
+        </MenuItem>
         <ListSubheader>Årstall</ListSubheader>
         {availableYears.map((year) => (
           <MenuItem
@@ -123,7 +138,7 @@ const YearSelector = () => {
             className={classes.item}
             style={{ color: year === currentYear ? Theme.palette.common.orangeDark : '' }}
           >
-            {year === currentYear && <CheckmarkIcon className={classes.checkmarkStyle} />}
+            {year === currentYear ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
             {year}
           </MenuItem>
         ))}
