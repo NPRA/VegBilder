@@ -3,7 +3,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { InputBase, ListSubheader } from '@material-ui/core';
-import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
+import { createStyles, fade, makeStyles, WithStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
@@ -14,14 +14,6 @@ import { availableYearsQuery } from 'recoil/selectors';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { currentYearState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
-
-const CustomInput = withStyles((theme) => ({
-  input: {
-    paddingTop: '0.8125rem',
-    paddingBottom: '0.8125rem',
-    paddingLeft: '2.3125rem',
-  },
-}))(InputBase);
 
 const useStyles = makeStyles((theme) => ({
   yearSelect: {
@@ -64,31 +56,51 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const iconStyles = {
-  selectIcon: {
-    color: '#ececec',
-  },
-};
+const iconStyles = () =>
+  createStyles({
+    selectIcon: {
+      color: '#ececec',
+    },
+  });
 
-const CustomExpandMoreIcon = withStyles(iconStyles)(({ className, classes, ...rest }) => {
+interface Props extends WithStyles<typeof iconStyles> {
+  className: string;
+}
+
+const CustomExpandMoreIcon = withStyles(iconStyles)(({ className, classes, ...rest }: Props) => {
   return <ExpandMoreIcon {...rest} className={`${className} ${classes.selectIcon}`} />;
 });
 
+const CustomInput = withStyles(() => ({
+  input: {
+    paddingTop: '0.8125rem',
+    paddingBottom: '0.8125rem',
+    paddingLeft: '2.3125rem',
+  },
+}))(InputBase);
+
 const YearSelector = () => {
   const classes = useStyles();
-  const [, setYear] = useQueryParamState('year');
+  const [, setQueryParamYear] = useQueryParamState('year');
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { setCommand } = useCommand();
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
 
-  const handleChange = (event) => {
-    const newYear = event.target.value;
-    if (parseInt(newYear) !== currentYear) {
-      setYear(newYear);
-      setCurrentYear(parseInt(newYear));
-      resetFilteredImagePoints();
-      setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+  const handleChange = (
+    event: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    if (event) {
+      const newYear = event.target.value as string;
+      if (parseInt(newYear) !== currentYear) {
+        setQueryParamYear(newYear);
+        setCurrentYear(parseInt(newYear));
+        resetFilteredImagePoints();
+        setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+      }
     }
   };
 
