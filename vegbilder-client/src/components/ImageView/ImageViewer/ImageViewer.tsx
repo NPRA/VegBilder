@@ -25,6 +25,8 @@ import {
   isHistoryModeState,
   currentHistoryImageState,
 } from 'recoil/atoms';
+import { getDistanceInMetersBetween } from 'utilities/latlngUtilities';
+import { IImagePoint } from 'types';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -48,7 +50,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
+interface IImageViewerProps {
+  exitImageView: () => void;
+  showMessage: (message: string) => void;
+  showCloseButton: boolean;
+}
+
+const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageViewerProps) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -67,7 +75,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
 
   const imgRef = useRef();
 
-  const hasOppositeParity = (feltkode1, feltkode2) => {
+  const hasOppositeParity = (feltkode1: string, feltkode2: string) => {
     if (!feltkode1 || !feltkode2) return null;
     const primaryFeltkode1 = parseInt(feltkode1[0], 10);
     const primaryFeltkode2 = parseInt(feltkode2[0], 10);
@@ -76,13 +84,15 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
 
   const onImageLoaded = () => {
     const img = imgRef.current;
-    setImageElement(img);
+    if (img) {
+      setImageElement(img);
+    }
   };
 
   const goToNearestImagePointInOppositeLane = useCallback(() => {
     if (!currentImagePoint) return;
     const imagePointsInOppositeLane = filteredImagePoints.filter(
-      (ip) =>
+      (ip: IImagePoint) =>
         ip.properties.VEGKATEGORI === currentImagePoint.properties.VEGKATEGORI &&
         ip.properties.VEGSTATUS === currentImagePoint.properties.VEGSTATUS &&
         ip.properties.VEGNUMMER === currentImagePoint.properties.VEGNUMMER &&
@@ -93,14 +103,25 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
         ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
         hasOppositeParity(ip.properties.FELTKODE, currentImagePoint.properties.FELTKODE)
     );
-    if (imagePointsInOppositeLane.length === 0) return;
+    const latlngCurrentImagePoint = getImagePointLatLng(currentImagePoint);
+    if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) return;
     const nearestImagePointInOppositeLane = findNearestImagePoint(
       imagePointsInOppositeLane,
-      getImagePointLatLng(currentImagePoint)
+      latlngCurrentImagePoint
     );
-    const latlng = getImagePointLatLng(nearestImagePointInOppositeLane);
-    setCurrentImagePoint(nearestImagePointInOppositeLane);
-    setCurrentCoordinates({ latlng });
+    if (nearestImagePointInOppositeLane) {
+      console.log(nearestImagePointInOppositeLane);
+      const latlngNearestImagePointInOppositeLane = getImagePointLatLng(
+        nearestImagePointInOppositeLane
+      );
+      console.log(latlngNearestImagePointInOppositeLane);
+      if (latlngNearestImagePointInOppositeLane) {
+        setCurrentImagePoint(nearestImagePointInOppositeLane);
+        setCurrentCoordinates({ latlngNearestImagePointInOppositeLane });
+      }
+    } else {
+      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
+    }
   }, [currentImagePoint, filteredImagePoints, setCurrentImagePoint, setCurrentCoordinates]);
 
   /* When currentImagePoint changes, we have to reset imageElement to null. Otherwise the imageElement

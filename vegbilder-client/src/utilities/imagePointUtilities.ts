@@ -17,19 +17,23 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
 const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
 
 const findNearestImagePoint = (imagePoints: IImagePoint[], latlng: ILatlng) => {
-  let distance_ = 100000000;
-  let imagePoint;
-  imagePoints.forEach((ip) => {
-    const imageLatlng = getImagePointLatLng(ip);
+  let maxDistance = 50; // meters
+  let imagePoint = imagePoints[0];
+  imagePoints.forEach((imagePoint: IImagePoint) => {
+    const imageLatlng = getImagePointLatLng(imagePoint);
     if (imageLatlng) {
       const distance = getDistanceInMetersBetween(latlng, imageLatlng);
-      if (distance < distance_) {
-        distance_ = distance;
-        imagePoint = ip;
+      if (distance < maxDistance) {
+        maxDistance = distance;
+        imagePoint = imagePoint;
       }
     }
   });
-  return imagePoint;
+  console.log(maxDistance);
+  if (imagePoint && maxDistance < 50) {
+    console.log('here');
+    return imagePoint;
+  }
 };
 
 const getDistanceToBetweenImagePoints = (imagePoint1: IImagePoint, imagePoint2: IImagePoint) => {

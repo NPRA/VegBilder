@@ -25,6 +25,7 @@ const CurrentCoordinatesProvider = (props) => {
   });
 
   const setCurrentCoordinates = ({ latlng, zoom }) => {
+    console.log(latlng);
     const newCoordinates = {
       latlng: latlng,
       zoom: zoom ? zoom : currentCoordinates.zoom,
