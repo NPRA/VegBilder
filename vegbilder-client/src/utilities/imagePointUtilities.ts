@@ -197,10 +197,6 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (
   }
 
   const [first, second] = [sd1, sd2];
-  // sd1.strekning < sd2.strekning ||
-  // (sd1.strekning === sd2.strekning && sd1.delstrekning < sd2.delstrekning)
-  //   ? [sd1, sd2]
-  //   : [sd2, sd1];
 
   const areOnSameOrConsecutiveStrekningDelstrekning =
     // Same strekning and delstrekning
@@ -209,7 +205,7 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (
     (second.strekning === first.strekning && second.delstrekning === first.delstrekning + 1) ||
     // First delstrekning on next strekning
     (second.strekning === first.strekning + 1 && parseInt(second.delstrekning) === 1);
-  //console.log(areOnSameOrConsecutiveStrekningDelstrekning);
+
   return areOnSameOrConsecutiveStrekningDelstrekning;
 };
 
