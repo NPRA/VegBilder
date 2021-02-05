@@ -68,12 +68,12 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
-  const [nextImagePoint, setNextImagePoint] = useState(null);
-  const [previousImagePoint, setPreviousImagePoint] = useState(null);
-  const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState([]);
-  const [imageElement, setImageElement] = useState(null);
+  const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
+  const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
+  const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState<IImagePoint[]>([]);
+  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
 
-  const imgRef = useRef();
+  const imgRef = useRef<HTMLImageElement>(null);
 
   const hasOppositeParity = (feltkode1: string, feltkode2: string) => {
     if (!feltkode1 || !feltkode2) return null;
@@ -110,14 +110,12 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
       latlngCurrentImagePoint
     );
     if (nearestImagePointInOppositeLane) {
-      console.log(nearestImagePointInOppositeLane);
       const latlngNearestImagePointInOppositeLane = getImagePointLatLng(
         nearestImagePointInOppositeLane
       );
-      console.log(latlngNearestImagePointInOppositeLane);
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
-        setCurrentCoordinates({ latlngNearestImagePointInOppositeLane });
+        setCurrentCoordinates({ latlng: latlngNearestImagePointInOppositeLane });
       }
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
@@ -135,7 +133,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
 
   useEffect(() => {
     const getSortedImagePointsForCurrentLane = () => {
-      const currentLaneImagePoints = filteredImagePoints.filter((ip) =>
+      const currentLaneImagePoints = filteredImagePoints.filter((ip: IImagePoint) =>
         shouldIncludeImagePoint(ip, currentImagePoint)
       );
       const primaryFeltkode = parseInt(currentImagePoint.properties.FELTKODE[0], 10);
@@ -315,6 +313,6 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
   );
 };
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default ImageViewer;
