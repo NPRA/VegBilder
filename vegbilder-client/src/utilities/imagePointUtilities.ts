@@ -185,10 +185,10 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (
     delstrekning: imagePoint2.properties.DELSTREKNING,
   };
   if (
-    sd1.strekning == null ||
-    sd1.delstrekning == null ||
-    sd2.strekning == null ||
-    sd2.delstrekning == null
+    sd1.strekning === null ||
+    sd1.delstrekning === null ||
+    sd2.strekning === null ||
+    sd2.delstrekning === null
   ) {
     console.error(
       `Could not compare (strekning, delstrekning) for two image points because one or both was null. SD1: (${sd1.strekning}, ${sd1.delstrekning}), SD2: (${sd2.strekning}, ${sd2.delstrekning})`
@@ -196,20 +196,21 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (
     return false;
   }
 
-  const [first, second] =
-    sd1.strekning < sd2.strekning ||
-    (sd1.strekning === sd2.strekning && sd1.delstrekning < sd2.delstrekning)
-      ? [sd1, sd2]
-      : [sd2, sd1];
+  const [first, second] = [sd1, sd2];
+  // sd1.strekning < sd2.strekning ||
+  // (sd1.strekning === sd2.strekning && sd1.delstrekning < sd2.delstrekning)
+  //   ? [sd1, sd2]
+  //   : [sd2, sd1];
 
-  return (
+  const areOnSameOrConsecutiveStrekningDelstrekning =
     // Same strekning and delstrekning
     (second.strekning === first.strekning && second.delstrekning === first.delstrekning) ||
     // Next delstrekning on same strekning
     (second.strekning === first.strekning && second.delstrekning === first.delstrekning + 1) ||
     // First delstrekning on next strekning
-    (second.strekning === first.strekning + 1 && parseInt(second.delstrekning) === 1)
-  );
+    (second.strekning === first.strekning + 1 && parseInt(second.delstrekning) === 1);
+  //console.log(areOnSameOrConsecutiveStrekningDelstrekning);
+  return areOnSameOrConsecutiveStrekningDelstrekning;
 };
 
 // Get image points for the current lane in correct order

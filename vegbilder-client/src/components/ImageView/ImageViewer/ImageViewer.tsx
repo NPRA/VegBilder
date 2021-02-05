@@ -120,7 +120,13 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
     }
-  }, [currentImagePoint, filteredImagePoints, setCurrentImagePoint, setCurrentCoordinates]);
+  }, [
+    currentImagePoint,
+    filteredImagePoints,
+    setCurrentImagePoint,
+    setCurrentCoordinates,
+    showMessage,
+  ]);
 
   /* When currentImagePoint changes, we have to reset imageElement to null. Otherwise the imageElement
    * will briefly contain an image with naturalWidth and naturalHeight of 0 (before the image has finished loading),
@@ -191,6 +197,8 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
 
     let nextImagePoint =
       nextIndex < currentLaneImagePoints.length ? currentLaneImagePoints[nextIndex] : null;
+
+    if (nextImagePoint?.id === currentImagePoint) return;
     if (
       nextImagePoint &&
       !areOnSameOrConsecutiveRoadParts(currentImagePoint, nextImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
@@ -201,11 +209,10 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
     let previousImagePoint = previousIndex >= 0 ? currentLaneImagePoints[previousIndex] : null;
     if (
       previousImagePoint &&
-      !areOnSameOrConsecutiveRoadParts(currentImagePoint, previousImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
+      !areOnSameOrConsecutiveRoadParts(previousImagePoint, currentImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
     ) {
       previousImagePoint = null;
     }
-
     setNextImagePoint(nextImagePoint);
     setPreviousImagePoint(previousImagePoint);
   }, [currentImagePoint, currentLaneImagePoints]);
