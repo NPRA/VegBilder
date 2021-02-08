@@ -206,5 +206,14 @@ export default createMuiTheme({
         color: grayMenuItems,
       },
     },
+    MuiTooltip: {
+      tooltip: {
+        fontFamily: '"LFT-Etica"',
+        backgroundColor: grayDark,
+        color: grayMenuItems,
+        fontSize: '0.875rem',
+        padding: '0.5rem',
+      },
+    },
   },
 });

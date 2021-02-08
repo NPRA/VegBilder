@@ -1,11 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, makeStyles, Popover, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Popover, Tooltip, Typography } from '@material-ui/core';
 
-import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
-import { getImagePointLatLng, getImageUrl, getRoadReference } from 'utilities/imagePointUtilities';
+import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
-import getImageJsonFile from 'apis/Vegvesen/getImageJsonFile';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { GetElevationByLatLng } from 'apis/openwps/getElevation';
 
@@ -28,9 +26,10 @@ const useStyles = makeStyles((theme) => ({
 interface IMoreImageInfoProps {
   imagePoint: IImagePoint;
   className?: string;
+  disabled?: boolean;
 }
 
-const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
+const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps) => {
   const classes = useStyles();
   const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
   const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
@@ -99,15 +98,18 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
 
   return (
     <>
-      <IconButton
-        aria-label="Mer info om bildet"
-        className={className}
-        onClick={(event) => {
-          if (imagePoint) handleMoreInfoButtonClick(event);
-        }}
-      >
-        <InformIcon />
-      </IconButton>
+      <Tooltip title="Få mer info om bildet">
+        <IconButton
+          disabled={disabled}
+          aria-label="Mer info om bildet"
+          className={className}
+          onClick={(event) => {
+            if (imagePoint) handleMoreInfoButtonClick(event);
+          }}
+        >
+          <InformIcon />
+        </IconButton>
+      </Tooltip>
       {imagePoint && moreInfoAnchorEl ? (
         <Popover
           id={Boolean(moreInfoAnchorEl) ? 'more-info' : undefined}

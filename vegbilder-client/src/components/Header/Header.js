@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import { Toolbar, Grid, Box, IconButton } from '@material-ui/core';
+import { Toolbar, Grid, Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 import Search from 'components/Search/Search';
@@ -62,13 +62,15 @@ const Header = ({ showMessage }) => {
             <Box width={'1.125rem'} />
             <ImageSeriesSelector />
           </Grid>
-          <IconButton
-            aria-label="Informasjon om versjonsnummer og kontaktinfo"
-            className={classes.button}
-            onClick={() => setShowInformation(!showInformation)}
-          >
-            <CircledHelpIcon />
-          </IconButton>
+          <Tooltip title="Informasjon om Vegbilder">
+            <IconButton
+              aria-label="Informasjon om Vegbilder"
+              className={classes.button}
+              onClick={() => setShowInformation(!showInformation)}
+            >
+              <CircledHelpIcon />
+            </IconButton>
+          </Tooltip>
         </Grid>
       </Toolbar>
       {showInformation && (

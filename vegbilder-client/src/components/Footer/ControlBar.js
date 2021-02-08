@@ -9,6 +9,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
+import Tooltip from '@material-ui/core/Tooltip';
 import { useRecoilState } from 'recoil';
 
 import clsx from 'clsx';
@@ -133,103 +134,119 @@ const ControlBar = ({ showMessage }) => {
     <>
       <Toolbar>
         {miniMapVisible && !playVideo ? (
-          <IconButton
-            aria-label="Skjul kart"
-            className={classes.button}
-            onClick={() => setMiniMapVisible(false)}
-          >
-            <MapIcon />
-          </IconButton>
+          <Tooltip title="Skjul kart">
+            <IconButton
+              aria-label="Skjul kart"
+              className={classes.button}
+              onClick={() => setMiniMapVisible(false)}
+            >
+              <MapIcon />
+            </IconButton>
+          </Tooltip>
         ) : (
-          <IconButton
-            disabled={playVideo}
-            aria-label="Vis kart"
-            className={classes.button}
-            onClick={() => setMiniMapVisible(true)}
-          >
-            <MapDisabledIcon />
-          </IconButton>
+          <Tooltip title="Vis kart">
+            <IconButton
+              disabled={playVideo}
+              aria-label="Vis kart"
+              className={classes.button}
+              onClick={() => setMiniMapVisible(true)}
+            >
+              <MapDisabledIcon />
+            </IconButton>
+          </Tooltip>
         )}
 
         {!playMode && (
           <>
-            <IconButton
-              aria-label="Gå bakover"
-              className={classes.button}
-              onClick={() => setCommand(commandTypes.goBackwards)}
-            >
-              <ArrowDownIcon />
-            </IconButton>
-            <IconButton
-              aria-label="Gå fremover"
-              className={classes.button}
-              onClick={() => setCommand(commandTypes.goForwards)}
-            >
-              <ArrowUpIcon />
-            </IconButton>
+            <Tooltip title="Gå bakover">
+              <IconButton
+                aria-label="Gå bakover"
+                className={classes.button}
+                onClick={() => setCommand(commandTypes.goBackwards)}
+              >
+                <ArrowDownIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Gå fremover">
+              <IconButton
+                aria-label="Gå fremover"
+                className={classes.button}
+                onClick={() => setCommand(commandTypes.goForwards)}
+              >
+                <ArrowUpIcon />
+              </IconButton>
+            </Tooltip>
           </>
         )}
 
         {playVideo ? (
           <ArrowTurnDisabledIcon className={clsx(classes.button, classes.arrowTurnButton)} />
         ) : (
-          <IconButton
-            aria-label="Bytt kjøreretning"
-            className={clsx(classes.button, classes.arrowTurnButton)}
-            onClick={() => setCommand(commandTypes.turnAround)}
-          >
-            <ArrowTurnIcon />
-          </IconButton>
+          <Tooltip title="Bytt kjøreretning">
+            <IconButton
+              aria-label="Bytt kjøreretning"
+              className={clsx(classes.button, classes.arrowTurnButton)}
+              onClick={() => setCommand(commandTypes.turnAround)}
+            >
+              <ArrowTurnIcon />
+            </IconButton>
+          </Tooltip>
         )}
 
-        {playMode && (
-          <IconButton
-            aria-label="Stopp animasjonsmodus"
-            title="Gå ut av animasjonsmodus"
-            className={classes.button}
-            onClick={() => {
-              setPlayVideo(false);
-              setPlayMode(false);
-            }}
-          >
-            <StopIcon />
-          </IconButton>
-        )}
+        {playMode ? (
+          <Tooltip title="Gå ut av animasjonsmodus">
+            <IconButton
+              aria-label="Gå ut av animasjonsmodus"
+              className={classes.button}
+              onClick={() => {
+                setPlayVideo(false);
+                setPlayMode(false);
+              }}
+            >
+              <StopIcon />
+            </IconButton>
+          </Tooltip>
+        ) : null}
 
         {playVideo ? (
-          <IconButton
-            aria-label="Pause autoplay"
-            title="Pause animasjonen"
-            className={classes.button}
-            onClick={() => {
-              setPlayVideo(false);
-            }}
-          >
-            <PauseIcon />
-          </IconButton>
+          <Tooltip title="Pause animasjonen">
+            <IconButton
+              aria-label="Pause animasjonen"
+              className={classes.button}
+              onClick={() => {
+                setPlayVideo(false);
+              }}
+            >
+              <PauseIcon />
+            </IconButton>
+          </Tooltip>
         ) : (
-          <IconButton
-            aria-label="Start animasjonsmodus"
-            className={classes.button}
-            disabled={isHistoryMode}
-            onClick={() => {
-              setPlayVideo(true);
-              setPlayMode(true);
-            }}
-          >
-            {isHistoryMode ? <PlayDisabledIcon /> : <PlayIcon />}
-          </IconButton>
+          <Tooltip title="Start animasjonsmodus">
+            <IconButton
+              aria-label="Start animasjonsmodus"
+              className={classes.button}
+              disabled={isHistoryMode}
+              onClick={() => {
+                setPlayVideo(true);
+                setPlayMode(true);
+              }}
+            >
+              {isHistoryMode ? <PlayDisabledIcon /> : <PlayIcon />}
+            </IconButton>
+          </Tooltip>
         )}
 
         {playMode && (
           <>
-            <IconButton
-              aria-label="Bytt tid"
-              onClick={handleTimerOptionsClick}
-              className={classes.button}
-            >
-              <TimerIcon />
-            </IconButton>
+            <Tooltip title="Bytt hastighet på avspilling">
+              <IconButton
+                aria-label="Bytt hastighet på avspilling"
+                onClick={handleTimerOptionsClick}
+                className={classes.button}
+              >
+                <TimerIcon />
+              </IconButton>
+            </Tooltip>
             <Menu
               id="timer-options"
               anchorEl={timerOptionsAnchorEl}
@@ -268,43 +285,55 @@ const ControlBar = ({ showMessage }) => {
         )}
 
         {meterLineVisible && !playVideo ? (
-          <IconButton
-            aria-label="Mål avstand"
-            className={classes.button}
-            onClick={() => setMeterLineVisible(false)}
-          >
-            <MeasureIcon />
-          </IconButton>
+          <Tooltip title="Mål avstand">
+            <IconButton
+              aria-label="Mål avstand"
+              className={classes.button}
+              onClick={() => setMeterLineVisible(false)}
+            >
+              <MeasureIcon />
+            </IconButton>
+          </Tooltip>
         ) : (
-          <IconButton
-            disabled={playVideo}
-            aria-label="Mål avstand"
-            className={classes.button}
-            onClick={() => setMeterLineVisible(true)}
-          >
-            <MeasureDisabledIcon />
-          </IconButton>
+          <Tooltip title="Mål avstand">
+            <IconButton
+              disabled={playVideo}
+              aria-label="Mål avstand"
+              className={classes.button}
+              onClick={() => setMeterLineVisible(true)}
+            >
+              <MeasureDisabledIcon />
+            </IconButton>
+          </Tooltip>
         )}
 
-        <IconButton
-          aria-label="Finn bilder herfra på andre datoer"
+        <Tooltip title="Finn bilder herfra på andre datoer">
+          <IconButton
+            aria-label="Finn bilder herfra på andre datoer"
+            className={classes.button}
+            disabled={playVideo}
+            onClick={() => setHistoryMode(true)}
+          >
+            <HistoryIcon />
+          </IconButton>
+        </Tooltip>
+
+        <MoreImageInfo
+          imagePoint={currentImagePoint}
           className={classes.button}
           disabled={playVideo}
-          onClick={() => setHistoryMode(true)}
-        >
-          <HistoryIcon />
-        </IconButton>
+        />
 
-        <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
-
-        <IconButton
-          disabled={playVideo}
-          aria-label="Flere funksjoner"
-          onClick={handleMoreControlsClick}
-          className={classes.button}
-        >
-          {playVideo ? <DotsHorizontalDisabledIcon /> : <DotsHorizontalIcon />}
-        </IconButton>
+        <Tooltip title="Flere funksjoner">
+          <IconButton
+            disabled={playVideo}
+            aria-label="Flere funksjoner"
+            onClick={handleMoreControlsClick}
+            className={classes.button}
+          >
+            {playVideo ? <DotsHorizontalDisabledIcon /> : <DotsHorizontalIcon />}
+          </IconButton>
+        </Tooltip>
       </Toolbar>
 
       {currentImagePoint ? (
