@@ -285,9 +285,9 @@ const ControlBar = ({ showMessage }) => {
         )}
 
         {meterLineVisible && !playVideo ? (
-          <Tooltip title="Aktiver basislinje">
+          <Tooltip title="Deaktiver basislinje">
             <IconButton
-              aria-label="Aktiver basislinje"
+              aria-label="Deaktiver basislinje"
               className={classes.button}
               onClick={() => setMeterLineVisible(false)}
             >
@@ -295,7 +295,7 @@ const ControlBar = ({ showMessage }) => {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title="Deaktiver basislinje">
+          <Tooltip title="Aktiver basislinje">
             <IconButton
               disabled={playVideo}
               aria-label="Deaktiver basislinje"

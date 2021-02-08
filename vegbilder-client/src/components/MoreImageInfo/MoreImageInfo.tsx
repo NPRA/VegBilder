@@ -88,7 +88,7 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
 
   return (
     <>
-      <Tooltip title="Få mer info om bildet">
+      <Tooltip title="Mer info om bildet">
         <IconButton
           disabled={disabled}
           aria-label="Mer info om bildet"
