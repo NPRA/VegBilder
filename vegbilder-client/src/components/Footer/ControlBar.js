@@ -285,9 +285,9 @@ const ControlBar = ({ showMessage }) => {
         )}
 
         {meterLineVisible && !playVideo ? (
-          <Tooltip title="Mål avstand">
+          <Tooltip title="Aktiver basislinje">
             <IconButton
-              aria-label="Mål avstand"
+              aria-label="Aktiver basislinje"
               className={classes.button}
               onClick={() => setMeterLineVisible(false)}
             >
@@ -295,10 +295,10 @@ const ControlBar = ({ showMessage }) => {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title="Deaktiver avstandsmåler">
+          <Tooltip title="Deaktiver basislinje">
             <IconButton
               disabled={playVideo}
-              aria-label="Deaktiver avstandsmåler"
+              aria-label="Deaktiver basislinje"
               className={classes.button}
               onClick={() => setMeterLineVisible(true)}
             >
