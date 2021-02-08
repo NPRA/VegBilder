@@ -25,6 +25,8 @@ import {
   isHistoryModeState,
   currentHistoryImageState,
 } from 'recoil/atoms';
+import { getDistanceInMetersBetween } from 'utilities/latlngUtilities';
+import { IImagePoint } from 'types';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -48,7 +50,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
+interface IImageViewerProps {
+  exitImageView: () => void;
+  showMessage: (message: string) => void;
+  showCloseButton: boolean;
+}
+
+const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageViewerProps) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -60,14 +68,14 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
-  const [nextImagePoint, setNextImagePoint] = useState(null);
-  const [previousImagePoint, setPreviousImagePoint] = useState(null);
-  const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState([]);
-  const [imageElement, setImageElement] = useState(null);
+  const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
+  const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
+  const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState<IImagePoint[]>([]);
+  const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
 
-  const imgRef = useRef();
+  const imgRef = useRef<HTMLImageElement>(null);
 
-  const hasOppositeParity = (feltkode1, feltkode2) => {
+  const hasOppositeParity = (feltkode1: string, feltkode2: string) => {
     if (!feltkode1 || !feltkode2) return null;
     const primaryFeltkode1 = parseInt(feltkode1[0], 10);
     const primaryFeltkode2 = parseInt(feltkode2[0], 10);
@@ -76,13 +84,15 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
 
   const onImageLoaded = () => {
     const img = imgRef.current;
-    setImageElement(img);
+    if (img) {
+      setImageElement(img);
+    }
   };
 
   const goToNearestImagePointInOppositeLane = useCallback(() => {
     if (!currentImagePoint) return;
     const imagePointsInOppositeLane = filteredImagePoints.filter(
-      (ip) =>
+      (ip: IImagePoint) =>
         ip.properties.VEGKATEGORI === currentImagePoint.properties.VEGKATEGORI &&
         ip.properties.VEGSTATUS === currentImagePoint.properties.VEGSTATUS &&
         ip.properties.VEGNUMMER === currentImagePoint.properties.VEGNUMMER &&
@@ -93,15 +103,30 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
         ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
         hasOppositeParity(ip.properties.FELTKODE, currentImagePoint.properties.FELTKODE)
     );
-    if (imagePointsInOppositeLane.length === 0) return;
+    const latlngCurrentImagePoint = getImagePointLatLng(currentImagePoint);
+    if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) return;
     const nearestImagePointInOppositeLane = findNearestImagePoint(
       imagePointsInOppositeLane,
-      getImagePointLatLng(currentImagePoint)
+      latlngCurrentImagePoint
     );
-    const latlng = getImagePointLatLng(nearestImagePointInOppositeLane);
-    setCurrentImagePoint(nearestImagePointInOppositeLane);
-    setCurrentCoordinates({ latlng });
-  }, [currentImagePoint, filteredImagePoints, setCurrentImagePoint, setCurrentCoordinates]);
+    if (nearestImagePointInOppositeLane) {
+      const latlngNearestImagePointInOppositeLane = getImagePointLatLng(
+        nearestImagePointInOppositeLane
+      );
+      if (latlngNearestImagePointInOppositeLane) {
+        setCurrentImagePoint(nearestImagePointInOppositeLane);
+        setCurrentCoordinates({ latlng: latlngNearestImagePointInOppositeLane });
+      }
+    } else {
+      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
+    }
+  }, [
+    currentImagePoint,
+    filteredImagePoints,
+    setCurrentImagePoint,
+    setCurrentCoordinates,
+    showMessage,
+  ]);
 
   /* When currentImagePoint changes, we have to reset imageElement to null. Otherwise the imageElement
    * will briefly contain an image with naturalWidth and naturalHeight of 0 (before the image has finished loading),
@@ -114,7 +139,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
 
   useEffect(() => {
     const getSortedImagePointsForCurrentLane = () => {
-      const currentLaneImagePoints = filteredImagePoints.filter((ip) =>
+      const currentLaneImagePoints = filteredImagePoints.filter((ip: IImagePoint) =>
         shouldIncludeImagePoint(ip, currentImagePoint)
       );
       const primaryFeltkode = parseInt(currentImagePoint.properties.FELTKODE[0], 10);
@@ -172,6 +197,8 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
 
     let nextImagePoint =
       nextIndex < currentLaneImagePoints.length ? currentLaneImagePoints[nextIndex] : null;
+
+    if (nextImagePoint?.id === currentImagePoint) return;
     if (
       nextImagePoint &&
       !areOnSameOrConsecutiveRoadParts(currentImagePoint, nextImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
@@ -182,11 +209,10 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
     let previousImagePoint = previousIndex >= 0 ? currentLaneImagePoints[previousIndex] : null;
     if (
       previousImagePoint &&
-      !areOnSameOrConsecutiveRoadParts(currentImagePoint, previousImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
+      !areOnSameOrConsecutiveRoadParts(previousImagePoint, currentImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
     ) {
       previousImagePoint = null;
     }
-
     setNextImagePoint(nextImagePoint);
     setPreviousImagePoint(previousImagePoint);
   }, [currentImagePoint, currentLaneImagePoints]);
@@ -294,6 +320,6 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }) => {
   );
 };
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default ImageViewer;

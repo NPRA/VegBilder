@@ -49,7 +49,9 @@ function FilteredImagePointsProvider(props) {
           roadReference === currentImageSeries?.roadReference
             ? availableImageSeriesForRoadReference[currentImageSeries.date]
             : findLatestImageSeries(availableImageSeriesForRoadReference);
-        filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
+        if (imagePointsForRoadReference) {
+          filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
+        }
       }
       setFilteredImagePoints(filteredImagePoints);
     }
