@@ -5,7 +5,6 @@ import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
-import { GetElevationByLatLng } from 'apis/openwps/getElevation';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -37,7 +36,6 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
   const [moreInfoAnchorEl, setMoreInfoAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
-  const [elevation, setElevation] = useState('');
 
   const handleMoreInfoButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMoreInfoAnchorEl(event.currentTarget);
@@ -73,19 +71,11 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
     setKommuneNavn(response.kommunenavn);
   };
 
-  const getHoydeMeter = async (latlng: ILatlng) => {
-    const response = await GetElevationByLatLng(latlng);
-    if (response) {
-      setElevation(response);
-    }
-  };
-
   useEffect(() => {
     if (imagePoint) {
       const latlng = getImagePointLatLng(imagePoint);
       if (latlng) {
         getKommuneAndFylke(latlng);
-        getHoydeMeter(latlng);
       }
     }
   }, [imagePoint]);
@@ -133,12 +123,6 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
             <Typography variant="body1" className={classes.lines}>
               {' '}
               {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER}), ${kommuneNavn}`}
-            </Typography>
-          ) : null}
-          {elevation.length ? (
-            <Typography variant="body1" className={classes.lines}>
-              {' '}
-              {`${elevation} Moh.`}
             </Typography>
           ) : null}
           <Typography variant="body1" className={classes.lines}>
