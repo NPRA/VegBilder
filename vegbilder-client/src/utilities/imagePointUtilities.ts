@@ -17,19 +17,21 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
 const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
 
 const findNearestImagePoint = (imagePoints: IImagePoint[], latlng: ILatlng) => {
-  let distance_ = 100000000;
-  let imagePoint;
-  imagePoints.forEach((ip) => {
-    const imageLatlng = getImagePointLatLng(ip);
+  let maxDistance = 50; // meters
+  let imagePoint_ = imagePoints[0];
+  imagePoints.forEach((imagePoint: IImagePoint) => {
+    const imageLatlng = getImagePointLatLng(imagePoint);
     if (imageLatlng) {
       const distance = getDistanceInMetersBetween(latlng, imageLatlng);
-      if (distance < distance_) {
-        distance_ = distance;
-        imagePoint = ip;
+      if (distance < maxDistance) {
+        maxDistance = distance;
+        imagePoint_ = imagePoint;
       }
     }
   });
-  return imagePoint;
+  if (imagePoint_ && maxDistance < 50) {
+    return imagePoint_;
+  }
 };
 
 const getDistanceToBetweenImagePoints = (imagePoint1: IImagePoint, imagePoint2: IImagePoint) => {
@@ -183,10 +185,10 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (
     delstrekning: imagePoint2.properties.DELSTREKNING,
   };
   if (
-    sd1.strekning == null ||
-    sd1.delstrekning == null ||
-    sd2.strekning == null ||
-    sd2.delstrekning == null
+    sd1.strekning === null ||
+    sd1.delstrekning === null ||
+    sd2.strekning === null ||
+    sd2.delstrekning === null
   ) {
     console.error(
       `Could not compare (strekning, delstrekning) for two image points because one or both was null. SD1: (${sd1.strekning}, ${sd1.delstrekning}), SD2: (${sd2.strekning}, ${sd2.delstrekning})`
@@ -194,20 +196,17 @@ const areOnSameOrConsecutiveStrekningDelstrekning = (
     return false;
   }
 
-  const [first, second] =
-    sd1.strekning < sd2.strekning ||
-    (sd1.strekning === sd2.strekning && sd1.delstrekning < sd2.delstrekning)
-      ? [sd1, sd2]
-      : [sd2, sd1];
+  const [first, second] = [sd1, sd2];
 
-  return (
+  const areOnSameOrConsecutiveStrekningDelstrekning =
     // Same strekning and delstrekning
     (second.strekning === first.strekning && second.delstrekning === first.delstrekning) ||
     // Next delstrekning on same strekning
     (second.strekning === first.strekning && second.delstrekning === first.delstrekning + 1) ||
     // First delstrekning on next strekning
-    (second.strekning === first.strekning + 1 && parseInt(second.delstrekning) === 1)
-  );
+    (second.strekning === first.strekning + 1 && parseInt(second.delstrekning) === 1);
+
+  return areOnSameOrConsecutiveStrekningDelstrekning;
 };
 
 // Get image points for the current lane in correct order

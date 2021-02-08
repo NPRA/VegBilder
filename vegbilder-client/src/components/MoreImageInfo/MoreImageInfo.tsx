@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, makeStyles, Popover, Typography } from '@material-ui/core';
+import { IconButton, makeStyles, Popover, Tooltip, Typography } from '@material-ui/core';
 
-import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
-import { getImagePointLatLng, getImageUrl, getRoadReference } from 'utilities/imagePointUtilities';
+import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
-import getImageJsonFile from 'apis/Vegvesen/getImageJsonFile';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
-import { GetElevationByLatLng } from 'apis/openwps/getElevation';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -28,9 +25,10 @@ const useStyles = makeStyles((theme) => ({
 interface IMoreImageInfoProps {
   imagePoint: IImagePoint;
   className?: string;
+  disabled?: boolean;
 }
 
-const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
+const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps) => {
   const classes = useStyles();
   const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
   const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
@@ -38,7 +36,6 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
   const [moreInfoAnchorEl, setMoreInfoAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
-  const [elevation, setElevation] = useState('');
 
   const handleMoreInfoButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMoreInfoAnchorEl(event.currentTarget);
@@ -74,19 +71,11 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
     setKommuneNavn(response.kommunenavn);
   };
 
-  const getHoydeMeter = async (latlng: ILatlng) => {
-    const response = await GetElevationByLatLng(latlng);
-    if (response) {
-      setElevation(response);
-    }
-  };
-
   useEffect(() => {
     if (imagePoint) {
       const latlng = getImagePointLatLng(imagePoint);
       if (latlng) {
         getKommuneAndFylke(latlng);
-        getHoydeMeter(latlng);
       }
     }
   }, [imagePoint]);
@@ -99,15 +88,18 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
 
   return (
     <>
-      <IconButton
-        aria-label="Mer info om bildet"
-        className={className}
-        onClick={(event) => {
-          if (imagePoint) handleMoreInfoButtonClick(event);
-        }}
-      >
-        <InformIcon />
-      </IconButton>
+      <Tooltip title="Mer info om bildet">
+        <IconButton
+          disabled={disabled}
+          aria-label="Mer info om bildet"
+          className={className}
+          onClick={(event) => {
+            if (imagePoint) handleMoreInfoButtonClick(event);
+          }}
+        >
+          <InformIcon />
+        </IconButton>
+      </Tooltip>
       {imagePoint && moreInfoAnchorEl ? (
         <Popover
           id={Boolean(moreInfoAnchorEl) ? 'more-info' : undefined}
@@ -131,12 +123,6 @@ const MoreImageInfo = ({ imagePoint, className }: IMoreImageInfoProps) => {
             <Typography variant="body1" className={classes.lines}>
               {' '}
               {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER}), ${kommuneNavn}`}
-            </Typography>
-          ) : null}
-          {elevation.length ? (
-            <Typography variant="body1" className={classes.lines}>
-              {' '}
-              {`${elevation} Moh.`}
             </Typography>
           ) : null}
           <Typography variant="body1" className={classes.lines}>
