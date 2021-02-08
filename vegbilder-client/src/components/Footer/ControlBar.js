@@ -221,7 +221,7 @@ const ControlBar = ({ showMessage }) => {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title="Start animasjonsmodus">
+          <Tooltip title={playMode ? 'Start animasjonen' : 'Start animasjonsmodus'}>
             <IconButton
               aria-label="Start animasjonsmodus"
               className={classes.button}
@@ -295,10 +295,10 @@ const ControlBar = ({ showMessage }) => {
             </IconButton>
           </Tooltip>
         ) : (
-          <Tooltip title="Mål avstand">
+          <Tooltip title="Deaktiver avstandsmåler">
             <IconButton
               disabled={playVideo}
-              aria-label="Mål avstand"
+              aria-label="Deaktiver avstandsmåler"
               className={classes.button}
               onClick={() => setMeterLineVisible(true)}
             >
