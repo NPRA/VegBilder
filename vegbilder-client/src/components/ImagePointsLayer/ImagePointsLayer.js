@@ -28,11 +28,7 @@ import {
   isHistoryModeState,
 } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
-
-const settings = {
-  targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
-  debugMode: false,
-};
+import { settings } from 'constants/constants';
 
 const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
@@ -61,7 +57,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       paddingX = (west - east) * 0.2;
       paddingY = (south - north) * 0.2;
     }
-
     return {
       south: south - paddingY,
       west: west - paddingX,

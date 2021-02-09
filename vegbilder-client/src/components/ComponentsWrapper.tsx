@@ -73,7 +73,9 @@ const ComponentsWrapper = () => {
   const renderContent = () => {
     switch (view) {
       case views.mapView:
-        return <MapView setView={() => setView(views.imageView)} />;
+        return (
+          <MapView setView={() => setView(views.imageView)} showMessage={showSnackbarMessage} />
+        );
       case views.imageView:
         return (
           <ImageView
