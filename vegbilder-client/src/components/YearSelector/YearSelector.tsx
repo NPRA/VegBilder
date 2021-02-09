@@ -99,8 +99,7 @@ const YearSelector = () => {
       if (newYear === 'Nyeste') {
         setNyeste(true);
         return;
-      }
-      if (parseInt(newYear) !== currentYear) {
+      } else {
         setQueryParamYear(newYear);
         setCurrentYear(parseInt(newYear));
         resetFilteredImagePoints();
@@ -114,7 +113,7 @@ const YearSelector = () => {
     <FormControl>
       <Select
         id="year-select"
-        value={currentYear}
+        value={nyeste ? 'Nyeste' : currentYear}
         onChange={(event) => handleChange(event)}
         className={classes.yearSelect}
         input={<CustomInput />}
@@ -136,9 +135,13 @@ const YearSelector = () => {
             key={year}
             value={year}
             className={classes.item}
-            style={{ color: year === currentYear ? Theme.palette.common.orangeDark : '' }}
+            style={{
+              color: year === currentYear && !nyeste ? Theme.palette.common.orangeDark : '',
+            }}
           >
-            {year === currentYear ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
+            {year === currentYear && !nyeste ? (
+              <CheckmarkIcon className={classes.checkmarkStyle} />
+            ) : null}
             {year}
           </MenuItem>
         ))}

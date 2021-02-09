@@ -29,6 +29,8 @@ const findNearestImagePoint = (imagePoints: IImagePoint[], latlng: ILatlng) => {
       }
     }
   });
+  console.log(imagePoint_);
+  console.log(maxDistance);
   if (imagePoint_ && maxDistance < 50) {
     return imagePoint_;
   }
