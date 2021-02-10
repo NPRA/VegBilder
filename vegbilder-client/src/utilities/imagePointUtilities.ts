@@ -16,8 +16,12 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
 
 const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
 
-const findNearestImagePoint = (imagePoints: IImagePoint[], latlng: ILatlng) => {
-  let maxDistance = 50; // meters
+const findNearestImagePoint = (
+  imagePoints: IImagePoint[],
+  latlng: ILatlng,
+  maxDistanceBetweenInMeters = 50
+) => {
+  let maxDistance = maxDistanceBetweenInMeters;
   let imagePoint_ = imagePoints[0];
   imagePoints.forEach((imagePoint: IImagePoint) => {
     const imageLatlng = getImagePointLatLng(imagePoint);

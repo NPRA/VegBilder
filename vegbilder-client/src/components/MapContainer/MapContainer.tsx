@@ -84,7 +84,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const selectNearestImagePointToClickedCoordinates = useCallback(
     (imagePoints: IImagePoint[], latlng) => {
       if (!imagePoints || !imagePoints.length || !currentCoordinates) return;
-      const nearestImagePoint = findNearestImagePoint(imagePoints, latlng);
+      const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 100);
       if (nearestImagePoint) {
         const year = nearestImagePoint.properties.AAR;
         setCurrentImagePoint(nearestImagePoint);

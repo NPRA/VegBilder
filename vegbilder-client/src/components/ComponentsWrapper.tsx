@@ -55,12 +55,14 @@ const ComponentsWrapper = () => {
   const { setCommand } = useCommand();
   const [currentImageQuery] = useQueryParamState('imageId');
   const [currentZoomQuery] = useQueryParamState('zoom');
+  const [, setCurrentYearQuery] = useQueryParamState('year');
 
   // if a user opens the app with only coordinates we find the nearest image from the newest year
   useEffect(() => {
     if (currentImageQuery === '' && currentZoomQuery && parseInt(currentZoomQuery) > 14) {
       if (currentYear === 'Nyeste') {
         setCurrentYear(availableYears[0]);
+        setCurrentYearQuery(availableYears[0].toString());
       }
       setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
     }
