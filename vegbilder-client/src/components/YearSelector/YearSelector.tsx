@@ -14,6 +14,8 @@ import { availableYearsQuery } from 'recoil/selectors';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { currentYearState, nyesteState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 
 const useStyles = makeStyles((theme) => ({
   yearSelect: {
@@ -87,6 +89,8 @@ const YearSelector = () => {
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
   const [nyeste, setNyeste] = useRecoilState(nyesteState);
+  const { unsetCurrentImagePoint } = useCurrentImagePoint();
+  const { resetLoadedImagePoints } = useLoadedImagePoints();
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -95,16 +99,22 @@ const YearSelector = () => {
     }>
   ) => {
     if (event) {
+      const prevYear = currentYear;
       const newYear = event.target.value as string;
-      setQueryParamYear(newYear);
-      if (newYear === 'Nyeste') {
-        setNyeste(true);
-        return;
-      } else {
-        setCurrentYear(parseInt(newYear));
-        resetFilteredImagePoints();
-        setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
-        setNyeste(false);
+      if (newYear !== currentYear) {
+        setQueryParamYear(newYear);
+        if (newYear === 'Nyeste') {
+          unsetCurrentImagePoint();
+          setNyeste(true);
+          setCurrentYear('Nyeste');
+        } else {
+          setCurrentYear(parseInt(newYear));
+          if (prevYear !== 'nyeste') {
+            resetFilteredImagePoints();
+          }
+          setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
+          setNyeste(false);
+        }
       }
     }
   };

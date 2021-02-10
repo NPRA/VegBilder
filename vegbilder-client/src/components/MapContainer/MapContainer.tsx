@@ -100,7 +100,15 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       }
       return nearestImagePoint;
     },
-    [loadedImagePoints, currentCoordinates, setCurrentImagePoint]
+    [
+      loadedImagePoints,
+      currentCoordinates,
+      setCurrentImagePoint,
+      setCurrentYear,
+      setQueryParamYear,
+      setNyeste,
+      showMessage,
+    ]
   );
 
   /* Fetch image points in new target area when the user clicks on the map. If we find an image, we set the year to the year where we found the image.

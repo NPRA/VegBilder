@@ -3,22 +3,22 @@ import { IImagePoint } from 'types';
 
 const searchParams = new URLSearchParams(window.location.search);
 
-export const playVideoState = atom({
+export const playVideoState = atom<boolean>({
   key: 'playVideoState',
   default: false,
 });
 
-export const timerState = atom({
+export const timerState = atom<number>({
   key: 'timerState',
   default: 2000, // ms
 });
 
-export const currentYearState = atom({
+export const currentYearState = atom<string | number>({
   key: 'currentYear',
-  default: parseInt(searchParams.get('year') || '2020'),
+  default: searchParams.get('year') || 'Nyeste',
 });
 
-export const nyesteState = atom({
+export const nyesteState = atom<boolean>({
   key: 'nyeste',
   default: true,
 });

@@ -43,7 +43,6 @@ const useQueryParamState = (name: queryParamterNames) => {
           defaultYear = 'Nyeste';
         } else {
           defaultYear = availableYears[0].toString();
-          setNyeste(false);
         }
         if (searchParam) {
           const validYearParam = isValidYear(parseInt(searchParam)) || searchParam === 'Nyeste';
