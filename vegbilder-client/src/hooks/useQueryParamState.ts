@@ -1,3 +1,4 @@
+import { defaultCoordinates } from 'constants/constants';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { availableYearsQuery } from 'recoil/selectors';
@@ -20,7 +21,8 @@ const useQueryParamState = (name: queryParamterNames) => {
   const isDefaultCoordinates = () => {
     const lat = searchParams.get('lat');
     const lng = searchParams.get('lng');
-    if (lat && lat !== '65' && lng && lng !== '15') return false;
+    if (lat && lat !== defaultCoordinates.lat && lng && lng !== defaultCoordinates.lng)
+      return false;
     return true;
   };
 

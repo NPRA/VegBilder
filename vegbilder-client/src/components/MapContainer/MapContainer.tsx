@@ -52,34 +52,32 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   }, [south, west, north, east]);
 
   const fetchImagePointsFromNewestYearWhereUserClicked = (latlng: ILatlng) => {
-    (async () => {
-      const bboxVisibleMapArea = createBboxForVisibleMapArea();
-      if (isFetching) return;
-      if (
-        !loadedImagePoints ||
-        currentYear === 'Nyeste' ||
-        !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
-      ) {
-        availableYears.some(async (year) => {
-          setIsFetching(true);
-          const targetBbox = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
-          const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
-            targetBbox,
-            year
-          );
-          if (imagePoints && imagePoints.length > 0) {
-            setLoadedImagePoints({
-              imagePoints: imagePoints,
-              bbox: expandedBbox,
-              year: year,
-            });
-            selectNearestImagePointToClickedCoordinates(imagePoints, latlng);
-            setIsFetching(false);
-            return imagePoints.length > 0;
-          }
-        });
-      }
-    })();
+    const bboxVisibleMapArea = createBboxForVisibleMapArea();
+    if (isFetching) return;
+    if (
+      !loadedImagePoints ||
+      currentYear === 'Nyeste' ||
+      !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
+    ) {
+      availableYears.some(async (year) => {
+        setIsFetching(true);
+        const targetBbox = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
+        const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
+          targetBbox,
+          year
+        );
+        if (imagePoints && imagePoints.length > 0) {
+          setLoadedImagePoints({
+            imagePoints: imagePoints,
+            bbox: expandedBbox,
+            year: year,
+          });
+          selectNearestImagePointToClickedCoordinates(imagePoints, latlng);
+          setIsFetching(false);
+          return imagePoints.length > 0;
+        }
+      });
+    }
   };
 
   const selectNearestImagePointToClickedCoordinates = useCallback(
