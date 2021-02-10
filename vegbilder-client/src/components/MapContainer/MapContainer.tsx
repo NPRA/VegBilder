@@ -62,14 +62,14 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
           nyeste ||
           !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox))
       ) {
-        availableYears.forEach(async (year) => {
+        availableYears.some(async (year) => {
           setIsFetching(true);
           const targetBbox = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
           const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
             targetBbox,
             year
           );
-          if (imagePoints && imagePoints.length) {
+          if (imagePoints && imagePoints.length > 0) {
             setLoadedImagePoints({
               imagePoints: imagePoints,
               bbox: expandedBbox,
@@ -77,7 +77,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
             });
             selectNearestImagePointToClickedCoordinates(imagePoints, latlng);
             setIsFetching(false);
-            return;
+            return imagePoints.length > 0;
           }
         });
       }

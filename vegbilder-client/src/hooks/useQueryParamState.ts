@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
+import { nyesteState } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
 
 type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
@@ -8,6 +9,7 @@ const useQueryParamState = (name: queryParamterNames) => {
   const searchParams = new URLSearchParams(window.location.search);
   const searchParam = searchParams.get(name);
   const availableYears = useRecoilValue(availableYearsQuery);
+  const nyeste = useRecoilValue(nyesteState);
 
   const isValidImageId = (imageId: string) => {
     const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
@@ -16,6 +18,13 @@ const useQueryParamState = (name: queryParamterNames) => {
 
   const isValidYear = (year: number) => availableYears.includes(year);
   const isValidView = (view: string) => view === 'map' || view === 'image';
+
+  const isDefaultCoordinates = () => {
+    const lat = searchParams.get('lat');
+    const lng = searchParams.get('lng');
+    if (lat && lat !== '65' && lng && lng !== '15') return false;
+    return true;
+  };
 
   const getSearchParam = (name: string) => {
     switch (name) {
@@ -29,9 +38,14 @@ const useQueryParamState = (name: queryParamterNames) => {
         }
         return '';
       case 'year':
-        const defaultYear = availableYears[0].toString();
+        let defaultYear;
+        if (isDefaultCoordinates() && nyeste) {
+          defaultYear = 'Nyeste';
+        } else {
+          defaultYear = availableYears[0].toString();
+        }
         if (searchParam) {
-          const validYearParam = isValidYear(parseInt(searchParam));
+          const validYearParam = isValidYear(parseInt(searchParam)) || searchParam === 'Nyeste';
           if (!validYearParam) {
             throw new Error(`Ugyldig verdi for år: ${searchParam}`);
           }
@@ -53,11 +67,7 @@ const useQueryParamState = (name: queryParamterNames) => {
         return searchParam || '15';
       case 'zoom':
         if (!searchParam) {
-          const lat = searchParams.get('lat');
-          const lng = searchParams.get('lng');
-          if (lat && lat !== '65' && lng && lng !== '15') {
-            return '15';
-          }
+          if (!isDefaultCoordinates()) return '15';
         }
         return searchParam || '4';
       default:

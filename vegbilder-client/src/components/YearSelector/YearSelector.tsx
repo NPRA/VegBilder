@@ -96,11 +96,11 @@ const YearSelector = () => {
   ) => {
     if (event) {
       const newYear = event.target.value as string;
+      setQueryParamYear(newYear);
       if (newYear === 'Nyeste') {
         setNyeste(true);
         return;
       } else {
-        setQueryParamYear(newYear);
         setCurrentYear(parseInt(newYear));
         resetFilteredImagePoints();
         setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
