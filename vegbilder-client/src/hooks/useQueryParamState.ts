@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import { nyesteState } from 'recoil/atoms';
+import { useRecoilValue } from 'recoil';
 import { availableYearsQuery } from 'recoil/selectors';
 
 type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
@@ -9,7 +8,6 @@ const useQueryParamState = (name: queryParamterNames) => {
   const searchParams = new URLSearchParams(window.location.search);
   const searchParam = searchParams.get(name);
   const availableYears = useRecoilValue(availableYearsQuery);
-  const [nyeste, setNyeste] = useRecoilState(nyesteState);
 
   const isValidImageId = (imageId: string) => {
     const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
@@ -39,7 +37,7 @@ const useQueryParamState = (name: queryParamterNames) => {
         return '';
       case 'year':
         let defaultYear;
-        if (isDefaultCoordinates() && nyeste) {
+        if (isDefaultCoordinates()) {
           defaultYear = 'Nyeste';
         } else {
           defaultYear = availableYears[0].toString();

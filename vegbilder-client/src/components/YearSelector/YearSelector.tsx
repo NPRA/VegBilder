@@ -12,10 +12,9 @@ import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { availableYearsQuery } from 'recoil/selectors';
 import useQueryParamState from 'hooks/useQueryParamState';
-import { currentYearState, nyesteState } from 'recoil/atoms';
+import { currentYearState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 
 const useStyles = makeStyles((theme) => ({
   yearSelect: {
@@ -88,9 +87,7 @@ const YearSelector = () => {
   const { setCommand } = useCommand();
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
-  const [nyeste, setNyeste] = useRecoilState(nyesteState);
   const { unsetCurrentImagePoint } = useCurrentImagePoint();
-  const { resetLoadedImagePoints } = useLoadedImagePoints();
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -105,7 +102,6 @@ const YearSelector = () => {
         setQueryParamYear(newYear);
         if (newYear === 'Nyeste') {
           unsetCurrentImagePoint();
-          setNyeste(true);
           setCurrentYear('Nyeste');
         } else {
           setCurrentYear(parseInt(newYear));
@@ -113,7 +109,6 @@ const YearSelector = () => {
             resetFilteredImagePoints();
           }
           setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
-          setNyeste(false);
         }
       }
     }
@@ -123,7 +118,7 @@ const YearSelector = () => {
     <FormControl>
       <Select
         id="year-select"
-        value={nyeste ? 'Nyeste' : currentYear}
+        value={currentYear}
         onChange={(event) => handleChange(event)}
         className={classes.yearSelect}
         input={<CustomInput />}
@@ -134,9 +129,9 @@ const YearSelector = () => {
         <MenuItem
           value={'Nyeste'}
           className={classes.item}
-          style={{ color: nyeste ? Theme.palette.common.orangeDark : '' }}
+          style={{ color: currentYear === 'Nyeste' ? Theme.palette.common.orangeDark : '' }}
         >
-          {nyeste ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
+          {currentYear === 'Nyeste' ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
           {'Nyeste'}
         </MenuItem>
         <ListSubheader>Årstall</ListSubheader>
@@ -146,12 +141,10 @@ const YearSelector = () => {
             value={year}
             className={classes.item}
             style={{
-              color: year === currentYear && !nyeste ? Theme.palette.common.orangeDark : '',
+              color: year === currentYear ? Theme.palette.common.orangeDark : '',
             }}
           >
-            {year === currentYear && !nyeste ? (
-              <CheckmarkIcon className={classes.checkmarkStyle} />
-            ) : null}
+            {year === currentYear ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
             {year}
           </MenuItem>
         ))}

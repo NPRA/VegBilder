@@ -9,7 +9,7 @@ import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePo
 import MapControls from 'components/MapControls/MapControls';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { currentYearState, nyesteState } from 'recoil/atoms';
+import { currentYearState } from 'recoil/atoms';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { IImagePoint, ILatlng } from 'types';
 import { findNearestImagePoint } from 'utilities/imagePointUtilities';
@@ -28,9 +28,8 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const [[south, west], [north, east]] = useLeafletBounds();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const [, setCurrentYear] = useRecoilState(currentYearState);
+  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
   const availableYears = useRecoilValue(availableYearsQuery);
-  const [nyeste, setNyeste] = useRecoilState(nyesteState);
   const { setCurrentImagePoint } = useCurrentImagePoint();
   const [, setQueryParamYear] = useQueryParamState('year');
 
@@ -58,7 +57,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       if (isFetching) return;
       if (
         !loadedImagePoints ||
-        nyeste ||
+        currentYear === 'Nyeste' ||
         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
       ) {
         availableYears.some(async (year) => {
@@ -91,7 +90,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         const year = nearestImagePoint.properties.AAR;
         setCurrentImagePoint(nearestImagePoint);
         setCurrentYear(year);
-        setNyeste(false);
         setQueryParamYear(year.toString());
         showMessage(
           `Setter årstallet til ${year}, som er det året med de nyeste bildene i området.`
@@ -109,7 +107,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       setCurrentImagePoint,
       setCurrentYear,
       setQueryParamYear,
-      setNyeste,
       showMessage,
     ]
   );

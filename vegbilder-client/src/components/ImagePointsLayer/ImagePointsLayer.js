@@ -26,7 +26,6 @@ import {
   playVideoState,
   currentHistoryImageState,
   isHistoryModeState,
-  nyesteState,
 } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
 import { settings } from 'constants/constants';
@@ -47,7 +46,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const availableYears = useRecoilValue(availableYearsQuery);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
-  const nyeste = useRecoilValue(nyesteState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const createBboxForVisibleMapArea = useCallback(() => {

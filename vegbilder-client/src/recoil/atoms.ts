@@ -15,12 +15,7 @@ export const timerState = atom<number>({
 
 export const currentYearState = atom<string | number>({
   key: 'currentYear',
-  default: searchParams.get('year') || 'Nyeste',
-});
-
-export const nyesteState = atom<boolean>({
-  key: 'nyeste',
-  default: true,
+  default: searchParams.get('year') ? parseInt(searchParams.get('year') || '') : 'Nyeste',
 });
 
 export const isHistoryModeState = atom({
