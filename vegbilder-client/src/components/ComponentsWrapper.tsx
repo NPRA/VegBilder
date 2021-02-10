@@ -10,6 +10,9 @@ import useQueryParamState from 'hooks/useQueryParamState';
 import MapView from './MapView/MapView';
 import ImageView from './ImageView/ImageView';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { currentYearState } from 'recoil/atoms';
+import { availableYearsQuery } from 'recoil/selectors';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -45,15 +48,20 @@ const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {.
 const ComponentsWrapper = () => {
   const classes = useStyles();
   const [view, setView] = useQueryParamState('view');
+  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
+  const availableYears = useRecoilValue(availableYearsQuery);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const { setCommand } = useCommand();
   const [currentImageQuery] = useQueryParamState('imageId');
   const [currentZoomQuery] = useQueryParamState('zoom');
 
-  // if a user opens the app with only coordinates we find the nearest image
+  // if a user opens the app with only coordinates we find the nearest image from the newest year
   useEffect(() => {
     if (currentImageQuery === '' && currentZoomQuery && parseInt(currentZoomQuery) > 14) {
+      if (currentYear === 'Nyeste') {
+        setCurrentYear(availableYears[0]);
+      }
       setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
     }
   }, [currentImageQuery, currentZoomQuery]);
