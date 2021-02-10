@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { useLeafletBounds } from 'use-leaflet';
+import { LeafletMouseEvent } from 'leaflet';
 
 import { crsUtm33N } from './crs';
 import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
@@ -111,7 +112,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
 
   /* Fetch image points in new target area when the user clicks on the map. If we find an image, we set the year to the year where we found the image.
    */
-  const handleClick = (event: any) => {
+  const handleClick = (event: LeafletMouseEvent) => {
     const userClickedLatLng = event.latlng;
     setCurrentCoordinates({ latlng: userClickedLatLng, zoom: 15 });
     fetchImagePointsFromNewestYearWhereUserClicked(userClickedLatLng);
