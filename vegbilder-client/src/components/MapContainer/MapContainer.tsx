@@ -57,10 +57,9 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       const bboxVisibleMapArea = createBboxForVisibleMapArea();
       if (isFetching) return;
       if (
-        currentCoordinates.zoom > 13 &&
-        (!loadedImagePoints ||
-          nyeste ||
-          !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox))
+        !loadedImagePoints ||
+        nyeste ||
+        !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
       ) {
         availableYears.some(async (year) => {
           setIsFetching(true);
@@ -97,6 +96,10 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         showMessage(
           `Setter årstallet til ${year}, som er det året med de nyeste bildene i området.`
         );
+      } else {
+        showMessage(
+          'Fant ikke noen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
+        );
       }
       return nearestImagePoint;
     },
@@ -115,10 +118,8 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
    */
   const handleClick = (event: any) => {
     const userClickedLatLng = event.latlng;
-    setCurrentCoordinates({ latlng: userClickedLatLng });
-    if (currentCoordinates.zoom > 13) {
-      fetchImagePointsFromNewestYearWhereUserClicked(userClickedLatLng);
-    }
+    setCurrentCoordinates({ latlng: userClickedLatLng, zoom: 15 });
+    fetchImagePointsFromNewestYearWhereUserClicked(userClickedLatLng);
   };
 
   return (
