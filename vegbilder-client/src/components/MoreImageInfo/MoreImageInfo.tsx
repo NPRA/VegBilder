@@ -5,6 +5,7 @@ import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
+import { getDistanceInMetersBetween } from 'utilities/latlngUtilities';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -36,6 +37,12 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
   const [moreInfoAnchorEl, setMoreInfoAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
+  const [position, setPosition] = useState<ILatlng>();
+  const [distanceToNordkapp, setDistanceToNordkapp] = useState<string>();
+  const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
+
+  const NordkappLatLng = { lat: 71.1652089, lng: 25.7909877 };
+  const LindesnesLatLng = { lat: 57.9825904, lng: 7.0483913 };
 
   const handleMoreInfoButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMoreInfoAnchorEl(event.currentTarget);
@@ -74,17 +81,21 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
   useEffect(() => {
     if (imagePoint) {
       const latlng = getImagePointLatLng(imagePoint);
+
       if (latlng) {
         getKommuneAndFylke(latlng);
+        setPosition(latlng);
+        const distanceToLindesnes = (
+          getDistanceInMetersBetween(latlng, LindesnesLatLng) / 1000
+        ).toFixed(2);
+        const distanceToNordkapp = (
+          getDistanceInMetersBetween(latlng, NordkappLatLng) / 1000
+        ).toFixed(2);
+        setDistanceToLindesnes(distanceToLindesnes);
+        setDistanceToNordkapp(distanceToNordkapp);
       }
     }
   }, [imagePoint]);
-
-  let position;
-
-  if (imagePoint) {
-    position = getImagePointLatLng(imagePoint);
-  }
 
   return (
     <>
@@ -125,20 +136,27 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
               {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER}), ${kommuneNavn}`}
             </Typography>
           ) : null}
-          <Typography variant="body1" className={classes.lines}>
-            {' '}
-            {`Breddegrad: ${position?.lat}`}
-          </Typography>
-          <Typography variant="body1" className={classes.lines}>
-            {' '}
-            {`Lengdegrad: ${position?.lng}`}
-          </Typography>
-          {imagePoint.properties.RETNING ? (
-            <Typography variant="body1" className={classes.lines}>
-              {' '}
-              {`Kameraretning: ${imagePoint.properties.RETNING}`}
-            </Typography>
+          {position ? (
+            <>
+              <Typography variant="body1" className={classes.lines}>
+                {' '}
+                {`Breddegrad: ${position?.lat}`}
+              </Typography>
+              <Typography variant="body1" className={classes.lines}>
+                {' '}
+                {`Lengdegrad: ${position?.lng}`}
+              </Typography>
+              <Typography variant="body1" className={classes.lines}>
+                {' '}
+                {`Distanse til Nordkapp: ${distanceToNordkapp} km`}
+              </Typography>
+              <Typography variant="body1" className={classes.lines}>
+                {' '}
+                {`Distanse til Lindesnes: ${distanceToLindesnes} km`}
+              </Typography>
+            </>
           ) : null}
+
           {/*
           <Typography variant="subtitle1" className={classes.lines}>
             Detekterte objekter
