@@ -1,13 +1,9 @@
 import React from 'react';
-import { makeStyles, Paper, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 
 import CloseButton from 'components/CloseButton/CloseButton';
 import { informationText } from 'constants/text';
-import { IImagePoint } from 'types';
-import {
-  createMailtoHrefForFeedbackOrContact,
-  createMailtoHrefForReporting,
-} from 'utilities/mailtoUtilities';
+import { createMailtoHrefForFeedbackOrContact } from 'utilities/mailtoUtilities';
 
 const useStyles = makeStyles((theme) => ({
   information: {

@@ -66,6 +66,7 @@ const ComponentsWrapper = () => {
       }
       setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImageQuery, currentZoomQuery]);
 
   const handleSnackbarClose = (reason: any) => {
