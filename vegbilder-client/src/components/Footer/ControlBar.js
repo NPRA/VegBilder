@@ -383,7 +383,7 @@ const ControlBar = ({ showMessage }) => {
             <ListItemIcon>
               <OpenInNewIcon />
             </ListItemIcon>
-            <ListItemText primary="Åpne bilde i ny fane" />
+            <ListItemText primary="Åpne bilde i nytt vindu" />
           </MenuItem>
         </Menu>
       ) : null}
