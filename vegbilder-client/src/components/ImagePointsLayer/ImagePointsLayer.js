@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Icon } from 'leaflet';
 import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 import { Rectangle, Marker } from 'react-leaflet';
+// eslint-disable-next-line
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
 import { useRecoilValue } from 'recoil';
 
@@ -28,8 +29,6 @@ import {
   isHistoryModeState,
 } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
-
-import { groupBySeries } from 'utilities/imagePointUtilities';
 
 const settings = {
   targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)

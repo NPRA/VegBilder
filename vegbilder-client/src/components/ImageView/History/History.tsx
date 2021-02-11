@@ -225,6 +225,7 @@ const History = () => {
                     }
                   }
                 }
+                return false;
               }
             );
             if (imagePointsInSameDirection.length) {
@@ -251,6 +252,7 @@ const History = () => {
     return () => {
       setHistoryImagePoints([]);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImagePoint, availableYears, setCurrentHistoryImage]);
 
   return (

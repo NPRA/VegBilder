@@ -25,7 +25,6 @@ import {
   isHistoryModeState,
   currentHistoryImageState,
 } from 'recoil/atoms';
-import { getDistanceInMetersBetween } from 'utilities/latlngUtilities';
 import { IImagePoint } from 'types';
 
 const useStyles = makeStyles((theme) => ({
@@ -295,6 +294,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
         showMessage('Stopper film, dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay, nextImagePoint, showMessage, timer]);
 
   return (

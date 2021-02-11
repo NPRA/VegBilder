@@ -122,7 +122,7 @@ const Search = ({ showMessage }) => {
     return () => {
       setResetImagePoint(false);
     };
-  }, [resetImagePoint, resetFilteredImagePoints, resetLoadedImagePoints]);
+  }, [resetImagePoint, resetFilteredImagePoints, resetLoadedImagePoints, unsetCurrentImagePoint]);
 
   useEffect(() => {
     if (findClosestImagePoint) {
