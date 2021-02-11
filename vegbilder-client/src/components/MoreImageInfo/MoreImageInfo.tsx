@@ -31,18 +31,15 @@ interface IMoreImageInfoProps {
 
 const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps) => {
   const classes = useStyles();
-  const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
-  const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
-  const [strekningsnavn, setStrekningsnavn] = useState('');
+  // const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
+  // const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
+  // const [strekningsnavn, setStrekningsnavn] = useState('');
   const [moreInfoAnchorEl, setMoreInfoAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
   const [position, setPosition] = useState<ILatlng>();
   const [distanceToNordkapp, setDistanceToNordkapp] = useState<string>();
   const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
-
-  const NordkappLatLng = { lat: 71.1652089, lng: 25.7909877 };
-  const LindesnesLatLng = { lat: 57.9825904, lng: 7.0483913 };
 
   const handleMoreInfoButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMoreInfoAnchorEl(event.currentTarget);
@@ -80,19 +77,21 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
 
   useEffect(() => {
     if (imagePoint) {
-      const latlng = getImagePointLatLng(imagePoint);
+      const NordkappLatLng = { lat: 71.1652089, lng: 25.7909877 };
+      const LindesnesLatLng = { lat: 57.9825904, lng: 7.0483913 };
+      const imagePointLatlng = getImagePointLatLng(imagePoint);
 
-      if (latlng) {
-        getKommuneAndFylke(latlng);
-        setPosition(latlng);
-        const distanceToLindesnes = (
-          getDistanceInMetersBetween(latlng, LindesnesLatLng) / 1000
+      if (imagePointLatlng) {
+        getKommuneAndFylke(imagePointLatlng);
+        setPosition(imagePointLatlng);
+        const kmToLindesnes = (
+          getDistanceInMetersBetween(imagePointLatlng, LindesnesLatLng) / 1000
         ).toFixed(2);
-        const distanceToNordkapp = (
-          getDistanceInMetersBetween(latlng, NordkappLatLng) / 1000
+        const kmToNordkapp = (
+          getDistanceInMetersBetween(imagePointLatlng, NordkappLatLng) / 1000
         ).toFixed(2);
-        setDistanceToLindesnes(distanceToLindesnes);
-        setDistanceToNordkapp(distanceToNordkapp);
+        setDistanceToLindesnes(kmToLindesnes);
+        setDistanceToNordkapp(kmToNordkapp);
       }
     }
   }, [imagePoint]);
