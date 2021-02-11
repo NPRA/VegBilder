@@ -10,7 +10,7 @@ import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
 import OpenInNewIcon from '@material-ui/icons/OpenInNew';
 import Tooltip from '@material-ui/core/Tooltip';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import clsx from 'clsx';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
@@ -39,7 +39,12 @@ import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
-import { isHistoryModeState, playVideoState, timerState } from 'recoil/atoms';
+import {
+  isHistoryModeState,
+  playVideoState,
+  timerState,
+  currentHistoryImageState,
+} from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 
@@ -78,7 +83,7 @@ const ControlBar = ({ showMessage }) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
   const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
-  const { currentImagePoint } = useCurrentImagePoint();
+  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { copyToClipboard } = useCopyToClipboard();
 
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState(null);
@@ -87,6 +92,7 @@ const ControlBar = ({ showMessage }) => {
   const [currentTime, setTime] = useRecoilState(timerState);
   const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
+  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
   const timerOptions = [1000, 2000, 3000, 4000, 5000];
 
@@ -108,6 +114,17 @@ const ControlBar = ({ showMessage }) => {
     if (currentImagePoint) {
       window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
       showMessage('Åpner e-post-klient');
+    }
+  };
+
+  const handleHistoryButtonClick = () => {
+    if (isHistoryMode) {
+      if (currentHistoryImage) {
+        setCurrentImagePoint(currentHistoryImage);
+      }
+      setHistoryMode(false);
+    } else {
+      setHistoryMode(true);
     }
   };
 
@@ -312,7 +329,7 @@ const ControlBar = ({ showMessage }) => {
             aria-label="Finn bilder herfra på andre datoer"
             className={classes.button}
             disabled={playVideo}
-            onClick={() => setHistoryMode(true)}
+            onClick={handleHistoryButtonClick}
           >
             <HistoryIcon />
           </IconButton>
