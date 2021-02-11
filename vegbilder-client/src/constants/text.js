@@ -22,7 +22,7 @@ const informationText = {
     'og nå er mange av disse tilgjengeliggjort på nett. Bildene blir anonymisert før publisering slik at hverken mennesker eller kjøretøy er gjengjenbare. ' +
     'Bilder blir lagt ut etterhvert som de tas. Til nå er årgangene 2019 og 2020 tilgjengelig, samt noen enkelte bilder fra andre år. Eldre årganger er planlagt, men på grunn av antallet vil det ta litt tid før de er klare.',
   text2:
-    'Vegbilder vil bli oppdatert fortløpende med ny funksjonalitet og forbedringer. Dersom du har forslag til forbedringer eller har oppdaget feil, kan du gjerne rapportere det til mailen under.',
+    'Vegbilder vil bli oppdatert fortløpende med ny funksjonalitet og forbedringer. Dersom du har forslag til forbedringer eller har oppdaget feil, kan du gjerne rapportere det til e-posten under.',
 };
 
 export { reportEmailTemplateText, contactEmailTemplateText, informationText };
