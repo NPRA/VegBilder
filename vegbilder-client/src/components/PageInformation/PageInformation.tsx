@@ -3,7 +3,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 
 import CloseButton from 'components/CloseButton/CloseButton';
 import { informationText } from 'constants/text';
-import { createMailtoHrefForFeedbackOrContact } from 'utilities/mailtoUtilities';
+import FeedbackLink from 'components/FeedbackLink/FeedbackLink';
 
 const useStyles = makeStyles((theme) => ({
   information: {
@@ -44,13 +44,8 @@ interface IInformationProps {
   showMessage: (message: string) => void;
 }
 
-const PageInformation = ({ setVisible, isOnboarding, showMessage }: IInformationProps) => {
+const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
   const classes = useStyles(isOnboarding);
-
-  const openPrefilledEmailInDefaultEmailClient = () => {
-    window.open(createMailtoHrefForFeedbackOrContact(), '_self');
-    showMessage('Åpner e-post-klient');
-  };
 
   return (
     <div className={isOnboarding ? '' : classes.information}>
@@ -68,15 +63,10 @@ const PageInformation = ({ setVisible, isOnboarding, showMessage }: IInformation
           {' '}
           {informationText.text2}{' '}
         </Typography>
+        <FeedbackLink title={'Gi tilbakemelding'}></FeedbackLink>
         <Typography variant="body1" className={classes.paragraphs}>
           {informationText.contact}
-          <button
-            className={classes.openEmailButton}
-            onClick={openPrefilledEmailInDefaultEmailClient}
-          >
-            {' '}
-            {informationText.email}
-          </button>
+          {informationText.email}
         </Typography>
         <Typography variant="body1" className={classes.paragraphs}>
           {informationText.versionNumber}
