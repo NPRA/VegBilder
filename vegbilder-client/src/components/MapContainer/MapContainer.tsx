@@ -115,7 +115,11 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const handleClick = (event: LeafletMouseEvent) => {
     const userClickedLatLng = event.latlng;
     fetchImagePointsFromNewestYearWhereUserClicked(userClickedLatLng);
-    setCurrentCoordinates({ latlng: userClickedLatLng, zoom: 15 });
+    let zoom = currentCoordinates.zoom;
+    if (!currentCoordinates.zoom || currentCoordinates.zoom < 14) {
+      zoom = 15;
+    }
+    setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
   };
 
   return (
