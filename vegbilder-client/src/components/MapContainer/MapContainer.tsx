@@ -52,14 +52,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
     };
   }, [south, west, north, east]);
 
-  //   async.some(['file1','file2','file3'], function(filePath, callback) {
-  //     fs.access(filePath, function(err) {
-  //         callback(null, !err)
-  //     });
-  // }, function(err, result) {
-  //     // if result is true then at least one of the files exists
-  // });
-
   async function fetchImagePointsFromNewestYearWhereUserClicked(latlng: ILatlng) {
     const bboxVisibleMapArea = createBboxForVisibleMapArea();
     if (isFetching) return;
@@ -69,24 +61,40 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
       const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
+      let foundImage = false;
       for (const year of availableYears) {
         const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
           targetBbox,
           year
         );
-        console.log(year);
-        console.log(imagePoints);
-        console.log(imagePoints.length > 0);
         if (imagePoints && imagePoints.length > 0) {
           setLoadedImagePoints({
             imagePoints: imagePoints,
             bbox: expandedBbox,
             year: year,
           });
-          selectNearestImagePointToClickedCoordinates(imagePoints, latlng);
+          const nearestImagePoint = selectNearestImagePointToClickedCoordinates(
+            imagePoints,
+            latlng
+          );
           setIsFetching(false);
-          break;
+          if (nearestImagePoint) {
+            const year = nearestImagePoint.properties.AAR;
+            setCurrentImagePoint(nearestImagePoint);
+            setCurrentYear(year);
+            setQueryParamYear(year.toString());
+            showMessage(
+              `Setter årstallet til ${year}, som er det året med de nyeste bildene i området.`
+            );
+            foundImage = true;
+            break;
+          }
         }
+      }
+      if (!foundImage) {
+        showMessage(
+          'Fant ikke noen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
+        );
       }
     }
   }
@@ -94,31 +102,20 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const selectNearestImagePointToClickedCoordinates = useCallback(
     (imagePoints: IImagePoint[], latlng) => {
       if (!imagePoints || !imagePoints.length || !currentCoordinates) return;
-      const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 100);
+      const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 300);
       if (nearestImagePoint) {
-        const year = nearestImagePoint.properties.AAR;
-        setCurrentImagePoint(nearestImagePoint);
-        setCurrentYear(year);
-        setQueryParamYear(year.toString());
-        showMessage(
-          `Setter årstallet til ${year}, som er det året med de nyeste bildene i området.`
-        );
-      } else {
-        showMessage(
-          'Fant ikke noen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
-        );
+        return nearestImagePoint;
       }
-      return nearestImagePoint;
     },
-    [currentCoordinates, setCurrentImagePoint, setCurrentYear, setQueryParamYear, showMessage]
+    [currentCoordinates, setCurrentImagePoint]
   );
 
   /* Fetch image points in new target area when the user clicks on the map. If we find an image, we set the year to the year where we found the image.
    */
   const handleClick = (event: LeafletMouseEvent) => {
     const userClickedLatLng = event.latlng;
-    setCurrentCoordinates({ latlng: userClickedLatLng, zoom: 15 });
     fetchImagePointsFromNewestYearWhereUserClicked(userClickedLatLng);
+    setCurrentCoordinates({ latlng: userClickedLatLng, zoom: 15 });
   };
 
   return (

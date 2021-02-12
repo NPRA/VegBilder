@@ -3,7 +3,7 @@ import getImagePointsInBbox from './getImagePointsInBbox';
 import { roundDownToNearest, roundUpToNearest } from 'utilities/mathUtilities';
 
 const settings = {
-  bboxSizeInDegrees: 0.01,
+  bboxSizeInDegrees: 0.01, // ~1100 m
   bboxSizeDecimals: 2, // Make sure this equals the number of decimals in bboxSizeInDegrees
 };
 
