@@ -52,7 +52,15 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
     };
   }, [south, west, north, east]);
 
-  const fetchImagePointsFromNewestYearWhereUserClicked = (latlng: ILatlng) => {
+  //   async.some(['file1','file2','file3'], function(filePath, callback) {
+  //     fs.access(filePath, function(err) {
+  //         callback(null, !err)
+  //     });
+  // }, function(err, result) {
+  //     // if result is true then at least one of the files exists
+  // });
+
+  async function fetchImagePointsFromNewestYearWhereUserClicked(latlng: ILatlng) {
     const bboxVisibleMapArea = createBboxForVisibleMapArea();
     if (isFetching) return;
     if (
@@ -60,13 +68,15 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       currentYear === 'Nyeste' ||
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
-      availableYears.some(async (year) => {
-        setIsFetching(true);
-        const targetBbox = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
+      const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
+      for (const year of availableYears) {
         const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
           targetBbox,
           year
         );
+        console.log(year);
+        console.log(imagePoints);
+        console.log(imagePoints.length > 0);
         if (imagePoints && imagePoints.length > 0) {
           setLoadedImagePoints({
             imagePoints: imagePoints,
@@ -75,11 +85,11 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
           });
           selectNearestImagePointToClickedCoordinates(imagePoints, latlng);
           setIsFetching(false);
-          return imagePoints.length > 0;
+          break;
         }
-      });
+      }
     }
-  };
+  }
 
   const selectNearestImagePointToClickedCoordinates = useCallback(
     (imagePoints: IImagePoint[], latlng) => {
@@ -100,14 +110,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       }
       return nearestImagePoint;
     },
-    [
-      loadedImagePoints,
-      currentCoordinates,
-      setCurrentImagePoint,
-      setCurrentYear,
-      setQueryParamYear,
-      showMessage,
-    ]
+    [currentCoordinates, setCurrentImagePoint, setCurrentYear, setQueryParamYear, showMessage]
   );
 
   /* Fetch image points in new target area when the user clicks on the map. If we find an image, we set the year to the year where we found the image.
@@ -127,6 +130,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       maxZoom={16}
       zoomControl={false}
       onclick={handleClick}
+      style={currentYear === 'Nyeste' ? { cursor: 'pointer' } : {}}
       onViewportChanged={({ center, zoom }) => {
         if (center && zoom) {
           // Center and zoom is not defined immediately after rendering, for some reason, so the above if check is necessary. (Or the app would crash if you start dragging the map immediately after rendering.)
