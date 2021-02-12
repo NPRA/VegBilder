@@ -110,9 +110,10 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       const bboxVisibleMapArea = createBboxForVisibleMapArea();
       if (isFetching) return;
       if (
-        !loadedImagePoints ||
-        loadedImagePoints.year !== currentYear ||
-        !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
+        currentYear !== 'Nyeste' &&
+        (!loadedImagePoints ||
+          loadedImagePoints.year !== currentYear ||
+          !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox))
       ) {
         setIsFetching(true);
         const [lat, lng] = mapCenter;

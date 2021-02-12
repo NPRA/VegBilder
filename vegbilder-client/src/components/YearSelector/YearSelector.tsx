@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -83,6 +83,7 @@ const CustomInput = withStyles(() => ({
 const YearSelector = () => {
   const classes = useStyles();
   const [, setQueryParamYear] = useQueryParamState('year');
+  const [currentQueryParamView] = useQueryParamState('view');
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { setCommand } = useCommand();
   const availableYears = useRecoilValue(availableYearsQuery);
@@ -98,13 +99,18 @@ const YearSelector = () => {
     if (event) {
       const prevYear = currentYear;
       const newYear = event.target.value as string;
-      if (newYear !== currentYear) {
-        setQueryParamYear(newYear);
+      if (newYear && newYear !== currentYear) {
         if (newYear === 'Nyeste') {
-          unsetCurrentImagePoint();
-          setCurrentYear('Nyeste');
+          const searchParams = new URLSearchParams(window.location.search);
+          const view = searchParams.get('view');
+          if (view !== 'image') {
+            setQueryParamYear(newYear);
+            unsetCurrentImagePoint();
+            setCurrentYear('Nyeste');
+          }
         } else {
           setCurrentYear(parseInt(newYear));
+          setQueryParamYear(newYear);
           if (prevYear !== 'nyeste') {
             resetFilteredImagePoints();
           }

@@ -7,7 +7,7 @@ type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
 
 const useQueryParamState = (name: queryParamterNames) => {
   const searchParams = new URLSearchParams(window.location.search);
-  const searchParam = searchParams.get(name);
+
   const availableYears = useRecoilValue(availableYearsQuery);
 
   const isValidImageId = (imageId: string) => {
@@ -27,6 +27,7 @@ const useQueryParamState = (name: queryParamterNames) => {
   };
 
   const getSearchParam = (name: string) => {
+    const searchParam = searchParams.get(name);
     switch (name) {
       case 'imageId':
         if (searchParam) {
