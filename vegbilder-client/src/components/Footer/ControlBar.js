@@ -37,7 +37,6 @@ import {
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
 import {
   isHistoryModeState,
@@ -47,6 +46,7 @@ import {
 } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
+import FeedbackLink from 'components/FeedbackLink/FeedbackLink';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -107,13 +107,6 @@ const ControlBar = ({ showMessage }) => {
       showMessage('Lenke kopiert til utklippstavle');
       const shareableUrl = getShareableUrlForImage(currentImagePoint);
       copyToClipboard(shareableUrl);
-    }
-  };
-
-  const openPrefilledEmailInDefaultEmailClient = () => {
-    if (currentImagePoint) {
-      window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
-      showMessage('Åpner e-post-klient');
     }
   };
 
@@ -371,14 +364,16 @@ const ControlBar = ({ showMessage }) => {
         >
           <MenuItem
             onClick={() => {
-              openPrefilledEmailInDefaultEmailClient();
               handleMoreControlsClose();
             }}
           >
             <ListItemIcon>
               <ReportIcon />
             </ListItemIcon>
-            <ListItemText primary="Meld feil" />
+            <FeedbackLink>
+              {' '}
+              <ListItemText primary="Meld feil" />{' '}
+            </FeedbackLink>
           </MenuItem>
           <MenuItem
             onClick={() => {

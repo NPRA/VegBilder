@@ -1,25 +1,20 @@
 import { makeStyles } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   link: {
-    border: 'none',
-    textDecoration: 'none',
-    background: 'inherit',
     color: 'inherit',
-    borderBottom: `1px solid ${theme.palette.common.charcoalLighter}`,
-    fontFamily: 'inherit',
-    fontSize: 'inherit',
     cursor: 'pointer',
     padding: 0,
+    textDecoration: 'none',
   },
 }));
 
 interface IFeedbackProps {
-  title: string;
+  children: React.ReactChildren;
 }
 
-export const FeedbackLink = ({ title }: IFeedbackProps) => {
+export const FeedbackLink = ({ children }: IFeedbackProps) => {
   const classes = useStyles();
 
   const FORM_LINK =
@@ -27,7 +22,7 @@ export const FeedbackLink = ({ title }: IFeedbackProps) => {
 
   return (
     <a className={classes.link} href={`${FORM_LINK}`} target="_blank" rel="noopener noreferrer">
-      {title}
+      {children}
     </a>
   );
 };
