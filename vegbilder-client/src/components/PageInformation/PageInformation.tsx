@@ -18,6 +18,7 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.common.grayDark}`,
     borderRadius: '0.5rem',
     padding: '0.2rem',
+    marginTop: '1rem',
   },
   content: {
     margin: '2rem 2rem 0 2rem',
@@ -31,9 +32,9 @@ const useStyles = makeStyles((theme) => ({
   image: {
     display: 'block',
     margin: 'auto auto',
-    padding: '1rem',
+    padding: '1rem 0 0 0',
   },
-  openEmailButton: {
+  openFeedbackScheme: {
     position: 'sticky',
     border: 'none',
     background: 'inherit',
@@ -44,6 +45,10 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'pointer',
     padding: 0,
     marginBottom: '1rem',
+  },
+  footerText: {
+    display: 'flex',
+    justifyContent: 'space-between',
   },
 }));
 
@@ -73,9 +78,13 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
             <img
               src={`${process.env.PUBLIC_URL}/images/E6-Dovrefjell-Snohetta-lower.jpg`}
               alt="Bilde av E6 ved Dovrefjell Snøhetta"
-              width="90%"
+              width="100%"
               className={classes.image}
             />
+            <Typography variant="body1" className={classes.paragraphs}>
+              {' '}
+              {informationText.photoBy}{' '}
+            </Typography>
             <Typography variant="body1" className={classes.paragraphs}>
               {' '}
               {informationText.text}{' '}
@@ -88,7 +97,7 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
           </>
         ) : null}
         <>
-          <button className={classes.openEmailButton} onClick={() => setOpenForm(!openForm)}>
+          <button className={classes.openFeedbackScheme} onClick={() => setOpenForm(!openForm)}>
             {openForm ? 'Lukk tilbakemeldingskjema' : 'Gi tilbakemelding'}
           </button>
           {openForm ? (
@@ -104,7 +113,7 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
               allowFullScreen
             />
           ) : (
-            <>
+            <div className={classes.footerText}>
               <Typography variant="body1" className={classes.paragraphs}>
                 {informationText.contact}
                 {informationText.email}
@@ -112,7 +121,7 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
               <Typography variant="body1" className={classes.paragraphs}>
                 {informationText.versionNumber}
               </Typography>
-            </>
+            </div>
           )}
         </>
       </div>
