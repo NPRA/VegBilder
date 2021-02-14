@@ -22,8 +22,16 @@ const useStyles = makeStyles((theme) => ({
   content: {
     margin: '2rem 2rem 0 2rem',
   },
+  headline: {
+    textAlign: 'center',
+  },
   paragraphs: {
     paddingBottom: '1rem',
+  },
+  image: {
+    display: 'block',
+    margin: 'auto auto',
+    padding: '1rem',
   },
   openEmailButton: {
     position: 'sticky',
@@ -58,14 +66,21 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
       <div className={classes.content}>
         {!openForm ? (
           <>
-            <Typography variant="h2" className={classes.paragraphs}>
+            <Typography variant="h2" className={classes.headline}>
               {' '}
               {informationText.header}{' '}
             </Typography>
+            <img
+              src={`${process.env.PUBLIC_URL}/images/E6-Dovrefjell-Snohetta-lower.jpg`}
+              alt="Bilde av E6 ved Dovrefjell Snøhetta"
+              width="90%"
+              className={classes.image}
+            />
             <Typography variant="body1" className={classes.paragraphs}>
               {' '}
               {informationText.text}{' '}
             </Typography>
+
             <Typography variant="body1" className={classes.paragraphs}>
               {' '}
               {informationText.text2}{' '}
