@@ -1,25 +1,10 @@
+import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/core';
+
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
-import React, { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
-  information: {
-    position: 'absolute',
-    transform: 'translate(-50%, -50%)',
-    top: '50%',
-    left: '50%',
-    minWidth: '50rem',
-    maxHeight: '98vh',
-    overflowY: 'auto',
-    zIndex: 1000,
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-    border: `1px solid ${theme.palette.common.grayDark}`,
-    borderRadius: '0.5rem',
-    padding: '0.2rem',
-    marginTop: '1rem',
-  },
   content: {
     margin: '2rem 2rem 2rem 2rem',
   },

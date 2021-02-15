@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
 
 const HIDE_SPLASH_ON_STARTUP = 'HideSplashOnStartup';
 
-const Onboarding = (showMessage) => {
+const Onboarding = () => {
   const classes = useStyles();
   const hideWasSet = localStorage.getItem(HIDE_SPLASH_ON_STARTUP) === 'true';
   const [visible, setVisible] = useState(!hideWasSet);

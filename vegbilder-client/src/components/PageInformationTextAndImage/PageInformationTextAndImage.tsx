@@ -1,6 +1,7 @@
-import { makeStyles, Typography } from '@material-ui/core';
-import { informationText } from 'constants/text';
 import React from 'react';
+import { makeStyles, Typography } from '@material-ui/core';
+
+import { informationText } from 'constants/text';
 
 const useStyles = makeStyles(() => ({
   content: {
