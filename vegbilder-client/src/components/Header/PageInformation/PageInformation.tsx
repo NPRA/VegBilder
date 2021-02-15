@@ -52,6 +52,9 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
   const classes = useStyles();
   const [openForm, setOpenForm] = useState(false);
 
+  const webPageHeightInPixels = document.body.offsetHeight;
+  const webPageWidthInPixels = document.body.offsetWidth;
+
   const FORM_LINK =
     'https://forms.office.com/Pages/ResponsePage.aspx?id=VGmFOFXt90mL3XOP-7_TkIgX88vaXV9Notkd5xXWTp5UOVIzNlE0T1hMUVk0N1ZDSzVIMkcyTk84VCQlQCN0PWcu';
 
@@ -72,8 +75,8 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
           <iframe
             title="tilbakemeldingsskjema"
             src={FORM_LINK}
-            width="1000px"
-            height="1200px"
+            width={webPageWidthInPixels / 2}
+            height={webPageHeightInPixels - 150} // this have to be specified in pixels..
             frameBorder="0"
             marginWidth={0}
             marginHeight={0}
