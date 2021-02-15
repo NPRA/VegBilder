@@ -37,7 +37,6 @@ import {
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
 import {
   isHistoryModeState,
@@ -79,7 +78,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ControlBar = ({ showMessage }) => {
+const ControlBar = ({ showMessage, setShowReportErrorsScheme }) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
   const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
@@ -107,13 +106,6 @@ const ControlBar = ({ showMessage }) => {
       showMessage('Lenke kopiert til utklippstavle');
       const shareableUrl = getShareableUrlForImage(currentImagePoint);
       copyToClipboard(shareableUrl);
-    }
-  };
-
-  const openPrefilledEmailInDefaultEmailClient = () => {
-    if (currentImagePoint) {
-      window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
-      showMessage('Åpner e-post-klient');
     }
   };
 
@@ -371,15 +363,16 @@ const ControlBar = ({ showMessage }) => {
         >
           <MenuItem
             onClick={() => {
-              openPrefilledEmailInDefaultEmailClient();
               handleMoreControlsClose();
+              setShowReportErrorsScheme(true);
             }}
           >
             <ListItemIcon>
               <ReportIcon />
             </ListItemIcon>
-            <ListItemText primary="Meld feil" />
+            <ListItemText primary="Meld feil" />{' '}
           </MenuItem>
+
           <MenuItem
             onClick={() => {
               copyShareableUrlToClipboard();
@@ -391,6 +384,7 @@ const ControlBar = ({ showMessage }) => {
             </ListItemIcon>
             <ListItemText primary="Del" />
           </MenuItem>
+
           <MenuItem
             onClick={() => {
               window.open(getImageUrl(currentImagePoint), '_blank', 'noopener noreferer');
