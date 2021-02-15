@@ -17,10 +17,8 @@ interface IFeedbackProps {
 const ReportErrorFeedback = ({ setVisible }: IFeedbackProps) => {
   const classes = useStyles();
 
-  console.log('hello');
-
   const FORM_LINK =
-    'https://forms.office.com/Pages/ResponsePage.aspx?id=VGmFOFXt90mL3XOP-7_TkIgX88vaXV9Notkd5xXWTp5UOVIzNlE0T1hMUVk0N1ZDSzVIMkcyTk84VCQlQCN0PWcu';
+    'https://forms.office.com/Pages/ResponsePage.aspx?id=VGmFOFXt90mL3XOP-7_TkIgX88vaXV9Notkd5xXWTp5UNUFGVlQ1MVRHT1E5SzI5UEdMRTlLSUhOUyQlQCN0PWcu';
 
   return (
     <PopUpWrapper setVisible={setVisible}>
