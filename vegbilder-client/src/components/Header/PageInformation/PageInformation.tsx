@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
+import { informationText } from 'constants/text';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -44,14 +45,21 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
   return (
     <PopUpWrapper setVisible={setVisible}>
       <div className={classes.content}>
-        {!openForm ? <PageInformationTextAndImage /> : null}
+        {!openForm ? (
+          <>
+            <PageInformationTextAndImage />
+            <Typography className={classes.paragraphs} variant="body1">
+              {informationText.text4}
+            </Typography>{' '}
+          </>
+        ) : null}
         <div className={classes.rigthLeftText}>
           <button className={classes.openFeedbackScheme} onClick={() => setOpenForm(!openForm)}>
             {openForm ? 'Lukk tilbakemeldingskjema' : 'Gi tilbakemelding'}
           </button>
-          {/* <Typography variant="body1" className={classes.paragraphs}>
-            {informationText.versionNumber}
-          </Typography> */}
+          <Typography variant="body1" className={classes.paragraphs}>
+            {openForm ? '' : informationText.versionNumber}
+          </Typography>
         </div>
         {openForm ? <FeedbackFormFrame formLink={FORM_LINK} /> : null}
       </div>

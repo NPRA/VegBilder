@@ -51,7 +51,7 @@ const PageInformationTextAndImage = () => {
       </div>
       <Typography variant="body1" className={classes.paragraphs}>
         {' '}
-        {informationText.text}{' '}
+        {informationText.text1}{' '}
       </Typography>
 
       <Typography variant="body1" className={classes.paragraphs}>

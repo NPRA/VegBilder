@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
+import { Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui/core';
 
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
+import { informationText } from 'constants/text';
 
 const useStyles = makeStyles((theme) => ({
   contentPadding: {
@@ -16,6 +17,9 @@ const useStyles = makeStyles((theme) => ({
     padding: 0,
     backgroundColor: 'transparent',
     color: theme.palette.primary.contrastText,
+  },
+  paragraphs: {
+    paddingBottom: '1rem',
   },
 }));
 
@@ -41,6 +45,10 @@ const Onboarding = () => {
     <PopUpWrapper setVisible={closeOnboarding}>
       <div className={classes.contentPadding}>
         <PageInformationTextAndImage />
+        <Typography variant="body1" className={classes.paragraphs}>
+          {' '}
+          {informationText.text3}{' '}
+        </Typography>
         <FormControlLabel
           className={classes.formControl}
           control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
