@@ -10,15 +10,14 @@ const useStyles = makeStyles((theme) => ({
     top: '50%',
     left: '50%',
     minWidth: '50rem',
-    maxHeight: '98vh',
+    maxHeight: '100vh',
     overflowY: 'auto',
-    zIndex: 10000,
+    zIndex: 100000,
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     border: `1px solid ${theme.palette.common.grayDark}`,
     borderRadius: '0.5rem',
     padding: '0.2rem',
-    marginTop: '1rem',
   },
 }));
 
