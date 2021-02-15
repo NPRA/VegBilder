@@ -16,6 +16,7 @@ const informationText = {
   header: 'Velkommen til Vegbilder',
   versionNumber: 'Versjonsnummer: 1.0.3',
   contact: 'Kontakt: ',
+  photoDescription: 'E6 ved Hjerkinn med Snøhetta i bakgrunnen.',
   photoBy: 'Foto: Knut Opeide, Statens Vegvesen',
   email: 'vegbilder@vegvesen.no',
   text:

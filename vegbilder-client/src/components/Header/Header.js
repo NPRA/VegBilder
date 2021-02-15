@@ -7,7 +7,7 @@ import Search from 'components/Search/Search';
 import YearSelector from 'components/YearSelector/YearSelector';
 import ImageSeriesSelector from 'components/ImageSeriesSelector/ImageSeriesSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
-import PageInformation from '../PageInformation/PageInformation';
+import PageInformation from './PageInformation/PageInformation';
 
 const useStyles = makeStyles({
   headerAppBar: {
@@ -15,7 +15,6 @@ const useStyles = makeStyles({
   },
   headerToolBar: {
     height: '100%',
-    marginLeft: '4.125rem',
     marginRight: '1.125rem',
   },
   logoContainer: {
@@ -34,6 +33,7 @@ const useStyles = makeStyles({
   },
   logo: {
     width: '7.5rem',
+    marginLeft: '0.5rem',
   },
   rightItem: {
     width: '7.5rem',

@@ -2,27 +2,27 @@ import React, { useState } from 'react';
 import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
-import PageInformation from 'components/PageInformation/PageInformation';
+import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 
 const useStyles = makeStyles((theme) => ({
   onboarding: {
     position: 'absolute',
+    zIndex: 100,
     transform: 'translate(-50%, -50%)',
     top: '50%',
     left: '50%',
-    width: '50rem',
-    maxHeight: '98vh',
+    width: '100vh',
+    maxHeight: '90vh',
     overflowY: 'auto',
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     border: `1px solid ${theme.palette.common.grayDark}`,
     borderRadius: '0.5rem',
+    padding: '2rem',
     marginTop: '1rem',
   },
   formControl: {
     marginTop: 0,
-    marginLeft: '1.35rem',
-    marginBottom: '2rem',
   },
   checkbox: {
     margin: 0,
@@ -53,11 +53,7 @@ const Onboarding = (showMessage) => {
   return (
     <ClickAwayListener onClickAway={closeOnboarding}>
       <div className={classes.onboarding}>
-        <PageInformation
-          showMessage={showMessage}
-          isOnboarding={true}
-          setVisible={closeOnboarding}
-        />
+        <PageInformationTextAndImage />
         <FormControlLabel
           className={classes.formControl}
           control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
