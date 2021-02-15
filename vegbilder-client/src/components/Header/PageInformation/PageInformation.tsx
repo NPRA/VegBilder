@@ -76,11 +76,10 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
             title="tilbakemeldingsskjema"
             src={FORM_LINK}
             width={webPageWidthInPixels / 2}
-            height={webPageHeightInPixels - 150} // this have to be specified in pixels..
+            height={webPageHeightInPixels - 150} // iframe needs height and width in pixels.
             frameBorder="0"
             marginWidth={0}
             marginHeight={0}
-            style={{ border: 'none', maxWidth: '100%', maxHeight: '100vh' }}
             allowFullScreen
           />
         ) : null}

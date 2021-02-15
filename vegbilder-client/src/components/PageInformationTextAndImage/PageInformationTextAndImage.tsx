@@ -2,7 +2,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { informationText } from 'constants/text';
 import React from 'react';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   content: {
     margin: '2rem 2rem 0 2rem',
   },
