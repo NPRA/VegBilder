@@ -3,6 +3,7 @@ import { makeStyles } from '@material-ui/core';
 
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
+import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -37,9 +38,6 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
   const classes = useStyles();
   const [openForm, setOpenForm] = useState(false);
 
-  const webPageHeightInPixels = document.body.offsetHeight;
-  const webPageWidthInPixels = document.body.offsetWidth;
-
   const FORM_LINK =
     'https://forms.office.com/Pages/ResponsePage.aspx?id=VGmFOFXt90mL3XOP-7_TkIgX88vaXV9Notkd5xXWTp5UOVIzNlE0T1hMUVk0N1ZDSzVIMkcyTk84VCQlQCN0PWcu';
 
@@ -55,18 +53,7 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
             {informationText.versionNumber}
           </Typography> */}
         </div>
-        {openForm ? (
-          <iframe
-            title="tilbakemeldingsskjema"
-            src={FORM_LINK}
-            width={webPageWidthInPixels / 2}
-            height={webPageHeightInPixels - 150} // iframe needs height and width in pixels.
-            frameBorder="0"
-            marginWidth={0}
-            marginHeight={0}
-            allowFullScreen
-          />
-        ) : null}
+        {openForm ? <FeedbackFormFrame formLink={FORM_LINK} /> : null}
       </div>
     </PopUpWrapper>
   );
