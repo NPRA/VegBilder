@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
@@ -9,6 +9,7 @@ import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
 import { isHistoryModeState } from 'recoil/atoms';
 import History from './History/History';
+import ReportErrorFeedback from 'components/ImageView/ReportErrorFeedback/ReportErrorFeedback';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -35,6 +36,7 @@ interface IImageViewProps {
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const isHistoryMode = useRecoilValue(isHistoryModeState);
+  const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
 
   return (
     <TogglesProvider>
@@ -59,8 +61,14 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         <SmallMapContainer />
       </Grid>
       <Grid item className={classes.footer}>
-        <Footer showMessage={showSnackbarMessage} />
+        <Footer
+          showMessage={showSnackbarMessage}
+          setShowReportErrorsScheme={setShowReportErrorsScheme}
+        />
       </Grid>
+      {showReportErrorsScheme ? (
+        <ReportErrorFeedback setVisible={() => setShowReportErrorsScheme(false)} />
+      ) : null}
     </TogglesProvider>
   );
 };

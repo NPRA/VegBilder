@@ -47,6 +47,7 @@ import {
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 import FeedbackLink from 'components/FeedbackLink/FeedbackLink';
+import ReportErrorFeedback from '../ImageView/ReportErrorFeedback/ReportErrorFeedback';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -79,7 +80,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ControlBar = ({ showMessage }) => {
+const ControlBar = ({ showMessage, setShowReportErrorsScheme }) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
   const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
@@ -365,16 +366,15 @@ const ControlBar = ({ showMessage }) => {
           <MenuItem
             onClick={() => {
               handleMoreControlsClose();
+              setShowReportErrorsScheme(true);
             }}
           >
             <ListItemIcon>
               <ReportIcon />
             </ListItemIcon>
-            <FeedbackLink>
-              {' '}
-              <ListItemText primary="Meld feil" />{' '}
-            </FeedbackLink>
+            <ListItemText primary="Meld feil" />{' '}
           </MenuItem>
+
           <MenuItem
             onClick={() => {
               copyShareableUrlToClipboard();
@@ -386,6 +386,7 @@ const ControlBar = ({ showMessage }) => {
             </ListItemIcon>
             <ListItemText primary="Del" />
           </MenuItem>
+
           <MenuItem
             onClick={() => {
               window.open(getImageUrl(currentImagePoint), '_blank', 'noopener noreferer');

@@ -12,7 +12,7 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '50rem',
     maxHeight: '98vh',
     overflowY: 'auto',
-    zIndex: 1000,
+    zIndex: 10000,
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     border: `1px solid ${theme.palette.common.grayDark}`,

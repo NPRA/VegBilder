@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
@@ -39,18 +38,16 @@ const Onboarding = () => {
 
   if (!visible) return null;
   return (
-    <ClickAwayListener onClickAway={closeOnboarding}>
-      <PopUpWrapper setVisible={closeOnboarding}>
-        <div className={classes.contentPadding}>
-          <PageInformationTextAndImage />
-          <FormControlLabel
-            className={classes.formControl}
-            control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
-            label={'Ikke vis ved oppstart'}
-          />
-        </div>
-      </PopUpWrapper>
-    </ClickAwayListener>
+    <PopUpWrapper setVisible={closeOnboarding}>
+      <div className={classes.contentPadding}>
+        <PageInformationTextAndImage />
+        <FormControlLabel
+          className={classes.formControl}
+          control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
+          label={'Ikke vis ved oppstart'}
+        />
+      </div>
+    </PopUpWrapper>
   );
 };
 
