@@ -5,7 +5,7 @@ import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
-import { getDistanceInMetersBetween } from 'utilities/latlngUtilities';
+import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -84,12 +84,10 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
       if (imagePointLatlng) {
         getKommuneAndFylke(imagePointLatlng);
         setPosition(imagePointLatlng);
-        const kmToLindesnes = (
-          getDistanceInMetersBetween(imagePointLatlng, LindesnesLatLng) / 1000
-        ).toFixed(2);
-        const kmToNordkapp = (
-          getDistanceInMetersBetween(imagePointLatlng, NordkappLatLng) / 1000
-        ).toFixed(2);
+        const kmToLindesnes = getDistanceFromLatLonInKm(imagePointLatlng, LindesnesLatLng).toFixed(
+          2
+        );
+        const kmToNordkapp = getDistanceFromLatLonInKm(imagePointLatlng, NordkappLatLng).toFixed(2);
         setDistanceToLindesnes(kmToLindesnes);
         setDistanceToNordkapp(kmToNordkapp);
       }
