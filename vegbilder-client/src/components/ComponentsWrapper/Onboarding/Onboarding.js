@@ -3,23 +3,11 @@ import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
+import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 
 const useStyles = makeStyles((theme) => ({
-  onboarding: {
-    position: 'absolute',
-    zIndex: 100,
-    transform: 'translate(-50%, -50%)',
-    top: '50%',
-    left: '50%',
-    width: '100vh',
-    maxHeight: '90vh',
-    overflowY: 'auto',
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-    border: `1px solid ${theme.palette.common.grayDark}`,
-    borderRadius: '0.5rem',
+  contentPadding: {
     padding: '2rem',
-    marginTop: '1rem',
   },
   formControl: {
     marginTop: 0,
@@ -52,14 +40,16 @@ const Onboarding = (showMessage) => {
   if (!visible) return null;
   return (
     <ClickAwayListener onClickAway={closeOnboarding}>
-      <div className={classes.onboarding}>
-        <PageInformationTextAndImage />
-        <FormControlLabel
-          className={classes.formControl}
-          control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
-          label={'Ikke vis ved oppstart'}
-        />
-      </div>
+      <PopUpWrapper setVisible={closeOnboarding}>
+        <div className={classes.contentPadding}>
+          <PageInformationTextAndImage />
+          <FormControlLabel
+            className={classes.formControl}
+            control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
+            label={'Ikke vis ved oppstart'}
+          />
+        </div>
+      </PopUpWrapper>
     </ClickAwayListener>
   );
 };

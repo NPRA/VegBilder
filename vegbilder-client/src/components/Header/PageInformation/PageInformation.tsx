@@ -1,6 +1,6 @@
 import { makeStyles } from '@material-ui/core';
-import CloseButton from 'components/CloseButton/CloseButton';
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
+import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import React, { useState } from 'react';
 
 const useStyles = makeStyles((theme) => ({
@@ -59,8 +59,7 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
     'https://forms.office.com/Pages/ResponsePage.aspx?id=VGmFOFXt90mL3XOP-7_TkIgX88vaXV9Notkd5xXWTp5UOVIzNlE0T1hMUVk0N1ZDSzVIMkcyTk84VCQlQCN0PWcu';
 
   return (
-    <div className={classes.information}>
-      <CloseButton transparent={true} onClick={setVisible} />
+    <PopUpWrapper setVisible={setVisible}>
       <div className={classes.content}>
         {!openForm ? <PageInformationTextAndImage /> : null}
         <div className={classes.rigthLeftText}>
@@ -84,7 +83,7 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
           />
         ) : null}
       </div>
-    </div>
+    </PopUpWrapper>
   );
 };
 
