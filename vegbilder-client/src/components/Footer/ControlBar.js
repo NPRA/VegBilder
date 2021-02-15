@@ -46,8 +46,6 @@ import {
 } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
-import FeedbackLink from 'components/FeedbackLink/FeedbackLink';
-import ReportErrorFeedback from '../ImageView/ReportErrorFeedback/ReportErrorFeedback';
 
 const useStyles = makeStyles((theme) => ({
   button: {
