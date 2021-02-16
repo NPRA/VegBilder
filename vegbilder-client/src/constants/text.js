@@ -24,9 +24,11 @@ const informationText = {
   text2:
     'Nye bilder blir tilgjengelig etter hvert som de tas. Til nå er årgangene 2019 og 2020 tilgjengelig. Eldre årganger er planlagt, men på grunn av antallet bilder vil det ta litt tid før de er klare.',
   text3:
-    'Feil eller eventuelle forslag til løsningen formidles med egne skjema. Lenke til disse finnes under «Informasjon om Vegbilder» i øvre høyre hjørne, og for hvert enkelt bilde under «۰۰۰». ',
+    'Feil eller eventuelle forslag til løsningen formidles med egne skjema. Lenke til disse finnes under «Informasjon om Vegbilder» i øvre høyre hjørne, og for hvert enkelt bilde under ikonet "',
   text4:
-    'Feil eller eventuelle forslag til løsningen formidles med egne skjema. Du kan klikke på linken under for å gi tilbakemelding, eller melde feil for hvert enkelt bilde under «۰۰۰».',
+    'Feil eller eventuelle forslag til løsningen formidles med egne skjema. Du kan klikke på linken under for å gi tilbakemelding, eller melde feil for hvert enkelt bilde under ikonet "',
 };
+
+const helpText = {};
 
 export { reportEmailTemplateText, contactEmailTemplateText, informationText };

@@ -4,6 +4,7 @@ import { Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import { informationText } from 'constants/text';
+import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   contentPadding: {
@@ -45,10 +46,13 @@ const Onboarding = () => {
     <PopUpWrapper setVisible={closeOnboarding}>
       <div className={classes.contentPadding}>
         <PageInformationTextAndImage />
-        <Typography variant="body1" className={classes.paragraphs}>
-          {' '}
-          {informationText.text3}{' '}
-        </Typography>
+        <div className={classes.paragraphs}>
+          <Typography variant="body1">
+            {' '}
+            {informationText.text3} <DotsHorizontalSmallIcon />
+            {' ".'}
+          </Typography>
+        </div>
         <FormControlLabel
           className={classes.formControl}
           control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}

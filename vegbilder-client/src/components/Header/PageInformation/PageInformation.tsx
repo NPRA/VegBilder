@@ -5,6 +5,7 @@ import PageInformationTextAndImage from 'components/PageInformationTextAndImage/
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
 import { informationText } from 'constants/text';
+import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -49,7 +50,8 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
           <>
             <PageInformationTextAndImage />
             <Typography className={classes.paragraphs} variant="body1">
-              {informationText.text4}
+              {informationText.text4} <DotsHorizontalSmallIcon />
+              {' ".'}
             </Typography>{' '}
           </>
         ) : null}
