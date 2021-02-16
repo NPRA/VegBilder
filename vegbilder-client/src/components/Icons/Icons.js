@@ -24,6 +24,7 @@ import { ReactComponent as InformIcon } from './Inform.svg';
 import { ReactComponent as InformDisabledIcon } from './InformDisabled.svg';
 import { ReactComponent as HistoryDisabledIcon } from './HistoryDisabled.svg';
 import { ReactComponent as DotsHorizontalSmallIcon } from './Dots-Horizontal-small.svg';
+import { ReactComponent as HistorySmallIcon } from './HistorySmall.svg';
 
 export {
   ArrowDownIcon,
@@ -52,4 +53,5 @@ export {
   InformDisabledIcon,
   HistoryDisabledIcon,
   DotsHorizontalSmallIcon,
+  HistorySmallIcon,
 };

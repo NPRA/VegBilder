@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Divider, makeStyles, Typography } from '@material-ui/core';
 
 import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
-import { informationText } from 'constants/text';
-import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
+import { helpText, informationText } from 'constants/text';
+import { DotsHorizontalSmallIcon, HistorySmallIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   content: {
-    margin: '2rem 2rem 2rem 2rem',
+    margin: '2rem 2rem 1rem 2rem',
   },
   paragraphs: {
     paddingBottom: '1rem',
@@ -30,6 +30,11 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     justifyContent: 'space-between',
   },
+  icon: {
+    width: '0.8rem',
+    height: '0.8rem',
+    margin: '0 0.1rem',
+  },
 }));
 
 interface IInformationProps {
@@ -48,9 +53,34 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
       <div className={classes.content}>
         {!openForm ? (
           <>
-            <PageInformationTextAndImage />
+            <Typography variant="h3" className={classes.paragraphs}>
+              {' '}
+              {helpText.header1}
+            </Typography>
+            <Divider />
+            <Typography variant="body1" className={classes.paragraphs}>
+              {' '}
+              {helpText.text1}{' '}
+            </Typography>
+            <Typography variant="body1" className={classes.paragraphs}>
+              {' '}
+              {helpText.text2}{' '}
+            </Typography>
+            <Typography variant="body1" className={classes.paragraphs}>
+              {' '}
+              {helpText.text3} <DotsHorizontalSmallIcon /> {helpText.text3Cont}
+            </Typography>
+            <Typography variant="body1" className={classes.paragraphs}>
+              {' '}
+              {helpText.text4} <HistorySmallIcon className={classes.icon} /> {helpText.text4Cont}
+            </Typography>
+            <Divider />
+            <Typography variant="h3" className={classes.paragraphs}>
+              {' '}
+              {helpText.header2}
+            </Typography>
             <Typography className={classes.paragraphs} variant="body1">
-              {informationText.text4} <DotsHorizontalSmallIcon />
+              {helpText.text5} <DotsHorizontalSmallIcon />
               {' ".'}
             </Typography>{' '}
           </>
@@ -60,7 +90,7 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
             {openForm ? 'Lukk tilbakemeldingskjema' : 'Gi tilbakemelding'}
           </button>
           <Typography variant="body1" className={classes.paragraphs}>
-            {openForm ? '' : informationText.versionNumber}
+            {openForm ? '' : helpText.versionNumber}
           </Typography>
         </div>
         {openForm ? <FeedbackFormFrame formLink={FORM_LINK} /> : null}
