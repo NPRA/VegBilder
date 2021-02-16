@@ -34,6 +34,7 @@ import {
   ArrowTurnDisabledIcon,
   DotsHorizontalDisabledIcon,
   PlayDisabledIcon,
+  HistoryDisabledIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -238,6 +239,7 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }) => {
               onClick={() => {
                 setPlayVideo(true);
                 setPlayMode(true);
+                setMeterLineVisible(false);
               }}
             >
               {isHistoryMode ? <PlayDisabledIcon /> : <PlayIcon />}
@@ -323,7 +325,7 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }) => {
             disabled={playVideo}
             onClick={handleHistoryButtonClick}
           >
-            <HistoryIcon />
+            {playVideo ? <HistoryDisabledIcon /> : <HistoryIcon />}
           </IconButton>
         </Tooltip>
 
