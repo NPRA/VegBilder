@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Divider, makeStyles, Typography } from '@material-ui/core';
 
-import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
-import { helpText, informationText } from 'constants/text';
+import { helpText } from 'constants/text';
 import { DotsHorizontalSmallIcon, HistorySmallIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({

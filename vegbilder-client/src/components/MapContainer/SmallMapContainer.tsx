@@ -8,6 +8,8 @@ import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useToggles } from 'contexts/TogglesContext';
 import './MapContainer.css';
+import { IconButton, Tooltip } from '@material-ui/core';
+import { EnlargeIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   minimap: {
@@ -22,9 +24,19 @@ const useStyles = makeStyles((theme) => ({
   minimapHidden: {
     display: 'none',
   },
+  enlargeButton: {
+    position: 'absolute',
+    zIndex: 1000,
+    top: 2,
+    right: 2,
+  },
 }));
 
-const SmallMapContainer = () => {
+interface ISmallMapContainerProps {
+  exitImageView: () => void;
+}
+
+const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const { miniMapVisible } = useToggles();
   const classes = useStyles();
@@ -48,6 +60,11 @@ const SmallMapContainer = () => {
         }}
         attributionControl={false}
       >
+        <Tooltip title="Åpne kart">
+          <IconButton className={classes.enlargeButton} onClick={exitImageView}>
+            <EnlargeIcon />
+          </IconButton>
+        </Tooltip>
         <TileLayer
           url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
           attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
