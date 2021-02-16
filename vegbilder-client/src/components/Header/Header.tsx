@@ -7,7 +7,7 @@ import Search from 'components/Search/Search';
 import YearSelector from 'components/YearSelector/YearSelector';
 import ImageSeriesSelector from 'components/ImageSeriesSelector/ImageSeriesSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
-import PageInformation from '../PageInformation/PageInformation';
+import PageInformation from './PageInformation/PageInformation';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
@@ -18,7 +18,6 @@ const useStyles = makeStyles({
   },
   headerToolBar: {
     height: '100%',
-    marginLeft: '4.125rem',
     marginRight: '1.125rem',
   },
   logoContainer: {
@@ -38,6 +37,7 @@ const useStyles = makeStyles({
   logo: {
     width: '7.5rem',
     cursor: 'pointer',
+    marginLeft: '0.5rem',
   },
   rightItem: {
     width: '7.5rem',
@@ -94,10 +94,7 @@ const Header = ({ showMessage }: IHeaderProps) => {
         </Grid>
       </Toolbar>
       {showInformation && (
-        <PageInformation
-          showMessage={showMessage}
-          setVisible={() => setShowInformation(!showInformation)}
-        />
+        <PageInformation setVisible={() => setShowInformation(!showInformation)} />
       )}
     </AppBar>
   );

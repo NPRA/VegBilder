@@ -21,6 +21,10 @@ import { ReactComponent as DotsHorizontalDisabledIcon } from './DotsHorizontalDi
 import { ReactComponent as SelectIcon } from './selectedImage.svg';
 import { ReactComponent as PlayDisabledIcon } from './PlayDisabled.svg';
 import { ReactComponent as InformIcon } from './Inform.svg';
+import { ReactComponent as InformDisabledIcon } from './InformDisabled.svg';
+import { ReactComponent as HistoryDisabledIcon } from './HistoryDisabled.svg';
+import { ReactComponent as DotsHorizontalSmallIcon } from './Dots-Horizontal-small.svg';
+import { ReactComponent as HistorySmallIcon } from './HistorySmall.svg';
 
 export {
   ArrowDownIcon,
@@ -46,4 +50,8 @@ export {
   SelectIcon,
   PlayDisabledIcon,
   InformIcon,
+  InformDisabledIcon,
+  HistoryDisabledIcon,
+  DotsHorizontalSmallIcon,
+  HistorySmallIcon,
 };
