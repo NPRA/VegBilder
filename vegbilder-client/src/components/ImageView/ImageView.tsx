@@ -58,7 +58,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             showCloseButton={true}
           />
         )}
-        <SmallMapContainer />
+        <SmallMapContainer exitImageView={setView} />
       </Grid>
       <Grid item className={classes.footer}>
         <Footer
