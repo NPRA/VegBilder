@@ -22,7 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Footer = ({ showMessage }) => {
+const Footer = ({ showMessage, setShowReportErrorsScheme }) => {
   const classes = useStyles();
 
   return (
@@ -32,7 +32,10 @@ const Footer = ({ showMessage }) => {
           <ImageMetadata />
         </Grid>
         <Grid item>
-          <ControlBar showMessage={showMessage} />
+          <ControlBar
+            showMessage={showMessage}
+            setShowReportErrorsScheme={setShowReportErrorsScheme}
+          />
         </Grid>
         <Grid item className={classes.rightItem} />
       </Grid>

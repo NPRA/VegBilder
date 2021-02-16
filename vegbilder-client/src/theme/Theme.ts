@@ -215,5 +215,12 @@ export default createMuiTheme({
         padding: '0.5rem',
       },
     },
+    MuiDivider: {
+      root: {
+        backgroundColor: grayMenuItems,
+        heigth: '0.5px',
+        marginBottom: '1rem',
+      },
+    },
   },
 });

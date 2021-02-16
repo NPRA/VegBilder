@@ -259,7 +259,7 @@ const History = () => {
     <Paper className={classes.historyContent} square={true}>
       <div className={classes.historyHeader}>
         <Typography variant="h3" className={classes.headerText}>
-          Vegbilder fra samme sted
+          Vegbilder fra samme lokasjon og kjøreretning
         </Typography>
         <IconButton onClick={onClose} className={classes.closeButton}>
           <CloseIcon />

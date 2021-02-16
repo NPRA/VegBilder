@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, IconButton } from '@material-ui/core';
+import { Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
@@ -75,9 +75,11 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
           <ImageMetadata />
           <div>
             <MoreImageInfo imagePoint={currentImagePoint} className={classes.infoButton} />
-            <IconButton className={classes.enlargeButton} onClick={openImage}>
-              <EnlargeIcon />
-            </IconButton>
+            <Tooltip title="Åpne bilde">
+              <IconButton className={classes.enlargeButton} onClick={openImage}>
+                <EnlargeIcon />
+              </IconButton>
+            </Tooltip>
           </div>
         </Box>
       </Box>

@@ -11,6 +11,25 @@ const getDistanceInMetersBetween = (pointA: ILatlng, pointB: ILatlng) => {
   return Math.sqrt(dx * dx + dy * dy);
 };
 
+const getDistanceFromLatLonInKm = (pointA: ILatlng, pointB: ILatlng) => {
+  const earthRadiusInKm = 6371;
+  const dLat = deg2rad(pointB.lat - pointA.lat);
+  const dLon = deg2rad(pointB.lng - pointA.lng);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(deg2rad(pointA.lat)) *
+      Math.cos(deg2rad(pointB.lat)) *
+      Math.sin(dLon / 2) *
+      Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = earthRadiusInKm * c; // Distance in km
+  return distance;
+};
+
+const deg2rad = (deg: number) => {
+  return deg * (Math.PI / 180);
+};
+
 const getBearingBetween = (pointA: ILatlng, pointB: ILatlng) => {
   const φ1 = pointA.lat;
   const λ1 = pointA.lng;
@@ -70,4 +89,5 @@ export {
   isOutsideBbox,
   isBboxWithinContainingBbox,
   getBearingBetween,
+  getDistanceFromLatLonInKm,
 };

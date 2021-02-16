@@ -34,10 +34,10 @@ import {
   ArrowTurnDisabledIcon,
   DotsHorizontalDisabledIcon,
   PlayDisabledIcon,
+  HistoryDisabledIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import { createMailtoHrefForReporting } from 'utilities/mailtoUtilities';
 import { getImageUrl } from 'utilities/imagePointUtilities';
 import {
   isHistoryModeState,
@@ -79,7 +79,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const ControlBar = ({ showMessage }) => {
+const ControlBar = ({ showMessage, setShowReportErrorsScheme }) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
   const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
@@ -107,13 +107,6 @@ const ControlBar = ({ showMessage }) => {
       showMessage('Lenke kopiert til utklippstavle');
       const shareableUrl = getShareableUrlForImage(currentImagePoint);
       copyToClipboard(shareableUrl);
-    }
-  };
-
-  const openPrefilledEmailInDefaultEmailClient = () => {
-    if (currentImagePoint) {
-      window.open(createMailtoHrefForReporting(currentImagePoint), '_self');
-      showMessage('Åpner e-post-klient');
     }
   };
 
@@ -246,6 +239,7 @@ const ControlBar = ({ showMessage }) => {
               onClick={() => {
                 setPlayVideo(true);
                 setPlayMode(true);
+                setMeterLineVisible(false);
               }}
             >
               {isHistoryMode ? <PlayDisabledIcon /> : <PlayIcon />}
@@ -324,14 +318,14 @@ const ControlBar = ({ showMessage }) => {
           </Tooltip>
         )}
 
-        <Tooltip title="Finn bilder herfra på andre datoer">
+        <Tooltip title="Bilder fra andre datoer">
           <IconButton
-            aria-label="Finn bilder herfra på andre datoer"
+            aria-label="Bilder fra andre datoer"
             className={classes.button}
             disabled={playVideo}
             onClick={handleHistoryButtonClick}
           >
-            <HistoryIcon />
+            {playVideo ? <HistoryDisabledIcon /> : <HistoryIcon />}
           </IconButton>
         </Tooltip>
 
@@ -371,15 +365,16 @@ const ControlBar = ({ showMessage }) => {
         >
           <MenuItem
             onClick={() => {
-              openPrefilledEmailInDefaultEmailClient();
               handleMoreControlsClose();
+              setShowReportErrorsScheme(true);
             }}
           >
             <ListItemIcon>
               <ReportIcon />
             </ListItemIcon>
-            <ListItemText primary="Meld feil" />
+            <ListItemText primary="Meld feil" />{' '}
           </MenuItem>
+
           <MenuItem
             onClick={() => {
               copyShareableUrlToClipboard();
@@ -391,6 +386,7 @@ const ControlBar = ({ showMessage }) => {
             </ListItemIcon>
             <ListItemText primary="Del" />
           </MenuItem>
+
           <MenuItem
             onClick={() => {
               window.open(getImageUrl(currentImagePoint), '_blank', 'noopener noreferer');

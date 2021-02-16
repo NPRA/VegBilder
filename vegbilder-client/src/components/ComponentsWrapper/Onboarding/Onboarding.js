@@ -1,27 +1,17 @@
 import React, { useState } from 'react';
-import { Checkbox, FormControlLabel, makeStyles } from '@material-ui/core';
-import ClickAwayListener from '@material-ui/core/ClickAwayListener';
+import { Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui/core';
 
-import PageInformation from 'components/PageInformation/PageInformation';
+import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
+import PopUpWrapper from 'components/wrappers/PopUpWrapper';
+import { informationText } from 'constants/text';
+import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
-  onboarding: {
-    position: 'absolute',
-    transform: 'translate(-50%, -50%)',
-    top: '50%',
-    left: '50%',
-    width: '50rem',
-    maxHeight: '70vh',
-    overflowY: 'auto',
-    backgroundColor: theme.palette.primary.main,
-    color: theme.palette.primary.contrastText,
-    border: `1px solid ${theme.palette.common.grayDark}`,
-    borderRadius: '0.5rem',
+  contentPadding: {
+    padding: '2rem',
   },
   formControl: {
     marginTop: 0,
-    marginLeft: '1.35rem',
-    marginBottom: '2rem',
   },
   checkbox: {
     margin: 0,
@@ -29,11 +19,14 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: 'transparent',
     color: theme.palette.primary.contrastText,
   },
+  paragraphs: {
+    paddingBottom: '1rem',
+  },
 }));
 
 const HIDE_SPLASH_ON_STARTUP = 'HideSplashOnStartup';
 
-const Onboarding = (showMessage) => {
+const Onboarding = () => {
   const classes = useStyles();
   const hideWasSet = localStorage.getItem(HIDE_SPLASH_ON_STARTUP) === 'true';
   const [visible, setVisible] = useState(!hideWasSet);
@@ -50,20 +43,23 @@ const Onboarding = (showMessage) => {
 
   if (!visible) return null;
   return (
-    <ClickAwayListener onClickAway={closeOnboarding}>
-      <div className={classes.onboarding}>
-        <PageInformation
-          showMessage={showMessage}
-          isOnboarding={true}
-          setVisible={closeOnboarding}
-        />
+    <PopUpWrapper setVisible={closeOnboarding}>
+      <div className={classes.contentPadding}>
+        <PageInformationTextAndImage />
+        <div className={classes.paragraphs}>
+          <Typography variant="body1">
+            {' '}
+            {informationText.text3} <DotsHorizontalSmallIcon />
+            {' ".'}
+          </Typography>
+        </div>
         <FormControlLabel
           className={classes.formControl}
           control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
           label={'Ikke vis ved oppstart'}
         />
       </div>
-    </ClickAwayListener>
+    </PopUpWrapper>
   );
 };
 

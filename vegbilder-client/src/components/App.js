@@ -11,7 +11,7 @@ import { CommandProvider } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
 import { ImageSeriesProvider } from 'contexts/ImageSeriesContext';
 import { FilteredImagePointsProvider } from 'contexts/FilteredImagePointsContext';
-import ComponentsWrapper from './ComponentsWrapper';
+import ComponentsWrapper from './ComponentsWrapper/ComponentsWrapper';
 
 const App = () => {
   return (

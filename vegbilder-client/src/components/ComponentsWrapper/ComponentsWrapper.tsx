@@ -4,11 +4,11 @@ import Snackbar from '@material-ui/core/Snackbar';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { makeStyles } from '@material-ui/styles';
 
-import Header from './Header/Header';
+import Header from '../Header/Header';
 import Onboarding from './Onboarding/Onboarding';
 import useQueryParamState from 'hooks/useQueryParamState';
-import MapView from './MapView/MapView';
-import ImageView from './ImageView/ImageView';
+import MapView from '../MapView/MapView';
+import ImageView from '../ImageView/ImageView';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentYearState } from 'recoil/atoms';
@@ -118,7 +118,7 @@ const ComponentsWrapper = () => {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <Onboarding showMessage={showSnackbarMessage} />
+      <Onboarding />
     </>
   );
 };
