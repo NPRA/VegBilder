@@ -318,9 +318,9 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }) => {
           </Tooltip>
         )}
 
-        <Tooltip title="Finn bilder herfra på andre datoer">
+        <Tooltip title="Bilder fra andre datoer">
           <IconButton
-            aria-label="Finn bilder herfra på andre datoer"
+            aria-label="Bilder fra andre datoer"
             className={classes.button}
             disabled={playVideo}
             onClick={handleHistoryButtonClick}
