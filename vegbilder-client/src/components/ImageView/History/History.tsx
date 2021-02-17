@@ -29,11 +29,11 @@ import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 const useStyles = makeStyles((theme) => ({
   historyContent: {
     padding: '1rem',
-    width: '40%',
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'auto',
     overflowX: 'hidden',
+    width: '100%',
   },
   historyHeader: {
     display: 'flex',
@@ -98,6 +98,10 @@ const getDateAndTimeString = (imagePoint: IImagePoint) => {
   return `${dateTime?.date} kl. ${dateTime?.time}`;
 };
 
+const imagePointsAreOnSameVegkategori = (imagePointA: IImagePoint, imagePointB: IImagePoint) => {
+  return imagePointA.properties.VEGKATEGORI === imagePointB.properties.VEGKATEGORI;
+};
+
 const History = () => {
   const classes = useStyles();
 
@@ -156,7 +160,7 @@ const History = () => {
   // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
   // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
-    if (currentImagePoint) {
+    if (currentImagePoint && filteredImagePoints) {
       setCurrentHistoryImage(currentImagePoint);
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
 
@@ -197,30 +201,32 @@ const History = () => {
             const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
               (imagePoint: IImagePoint) => {
                 if (imagePoint) {
-                  const distanceBetween = getDistanceToBetweenImagePoints(
-                    currentImagePoint,
-                    imagePoint
-                  );
-                  if (distanceBetween && distanceBetween < maxDistance) {
-                    const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                    if (imagePointDirection && currentImagePointDirection) {
-                      if (
-                        imagePointDirection < currentImagePointDirection + 10 &&
-                        imagePointDirection > currentImagePointDirection - 10
-                      )
-                        return imagePoint;
-                    } else {
-                      const bearingBetween = getBearingBetweenImagePoints(
-                        currentImagePoint,
-                        imagePoint
-                      );
-                      if (
-                        currentImagePointBearing &&
-                        bearingBetween &&
-                        bearingBetween < currentImagePointBearing + 10 &&
-                        bearingBetween > currentImagePointBearing - 10
-                      ) {
-                        return imagePoint;
+                  if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
+                    const distanceBetween = getDistanceToBetweenImagePoints(
+                      currentImagePoint,
+                      imagePoint
+                    );
+                    if (distanceBetween && distanceBetween < maxDistance) {
+                      const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
+                      if (imagePointDirection && currentImagePointDirection) {
+                        if (
+                          imagePointDirection < currentImagePointDirection + 10 &&
+                          imagePointDirection > currentImagePointDirection - 10
+                        )
+                          return imagePoint;
+                      } else {
+                        const bearingBetween = getBearingBetweenImagePoints(
+                          currentImagePoint,
+                          imagePoint
+                        );
+                        if (
+                          currentImagePointBearing &&
+                          bearingBetween &&
+                          bearingBetween < currentImagePointBearing + 10 &&
+                          bearingBetween > currentImagePointBearing - 10
+                        ) {
+                          return imagePoint;
+                        }
                       }
                     }
                   }
