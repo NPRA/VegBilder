@@ -29,7 +29,6 @@ import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 const useStyles = makeStyles((theme) => ({
   historyContent: {
     padding: '1rem',
-    width: '40%',
     display: 'flex',
     flexDirection: 'column',
     overflowY: 'auto',
