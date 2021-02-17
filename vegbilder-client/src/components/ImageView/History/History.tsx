@@ -98,6 +98,10 @@ const getDateAndTimeString = (imagePoint: IImagePoint) => {
   return `${dateTime?.date} kl. ${dateTime?.time}`;
 };
 
+const imagePointsAreOnSameVegkategori = (imagePointA: IImagePoint, imagePointB: IImagePoint) => {
+  return imagePointA.properties.VEGKATEGORI === imagePointB.properties.VEGKATEGORI;
+};
+
 const History = () => {
   const classes = useStyles();
 
@@ -197,30 +201,32 @@ const History = () => {
             const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
               (imagePoint: IImagePoint) => {
                 if (imagePoint) {
-                  const distanceBetween = getDistanceToBetweenImagePoints(
-                    currentImagePoint,
-                    imagePoint
-                  );
-                  if (distanceBetween && distanceBetween < maxDistance) {
-                    const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                    if (imagePointDirection && currentImagePointDirection) {
-                      if (
-                        imagePointDirection < currentImagePointDirection + 10 &&
-                        imagePointDirection > currentImagePointDirection - 10
-                      )
-                        return imagePoint;
-                    } else {
-                      const bearingBetween = getBearingBetweenImagePoints(
-                        currentImagePoint,
-                        imagePoint
-                      );
-                      if (
-                        currentImagePointBearing &&
-                        bearingBetween &&
-                        bearingBetween < currentImagePointBearing + 10 &&
-                        bearingBetween > currentImagePointBearing - 10
-                      ) {
-                        return imagePoint;
+                  if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
+                    const distanceBetween = getDistanceToBetweenImagePoints(
+                      currentImagePoint,
+                      imagePoint
+                    );
+                    if (distanceBetween && distanceBetween < maxDistance) {
+                      const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
+                      if (imagePointDirection && currentImagePointDirection) {
+                        if (
+                          imagePointDirection < currentImagePointDirection + 10 &&
+                          imagePointDirection > currentImagePointDirection - 10
+                        )
+                          return imagePoint;
+                      } else {
+                        const bearingBetween = getBearingBetweenImagePoints(
+                          currentImagePoint,
+                          imagePoint
+                        );
+                        if (
+                          currentImagePointBearing &&
+                          bearingBetween &&
+                          bearingBetween < currentImagePointBearing + 10 &&
+                          bearingBetween > currentImagePointBearing - 10
+                        ) {
+                          return imagePoint;
+                        }
                       }
                     }
                   }
