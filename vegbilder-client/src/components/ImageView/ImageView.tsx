@@ -25,6 +25,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     position: 'relative',
     height: '100%',
+    width: '100%',
   },
 }));
 

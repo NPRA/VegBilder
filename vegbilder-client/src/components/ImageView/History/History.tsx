@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     overflowY: 'auto',
     overflowX: 'hidden',
+    width: '100%',
   },
   historyHeader: {
     display: 'flex',
@@ -155,7 +156,7 @@ const History = () => {
   // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
   // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
-    if (currentImagePoint) {
+    if (currentImagePoint && filteredImagePoints) {
       setCurrentHistoryImage(currentImagePoint);
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
 
