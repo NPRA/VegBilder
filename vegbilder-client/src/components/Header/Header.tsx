@@ -49,9 +49,10 @@ const useStyles = makeStyles({
 
 interface IHeaderProps {
   showMessage: (message: string) => void;
+  setMapView: () => void;
 }
 
-const Header = ({ showMessage }: IHeaderProps) => {
+const Header = ({ showMessage, setMapView }: IHeaderProps) => {
   const classes = useStyles();
   const [showInformation, setShowInformation] = useState(false);
   const { setCurrentCoordinates } = useCurrentCoordinates();
@@ -60,6 +61,7 @@ const Header = ({ showMessage }: IHeaderProps) => {
   const resetToDefaultStates = () => {
     setCurrentCoordinates({ latlng: DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
     unsetCurrentImagePoint();
+    setMapView();
   };
 
   return (
