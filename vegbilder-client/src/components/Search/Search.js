@@ -241,24 +241,24 @@ const Search = ({ showMessage }) => {
   };
 
   return (
-    <div className={classes.search}>
-      <div className={classes.searchIcon}>
-        <MagnifyingGlassIcon />
-      </div>
-      <InputBase
-        placeholder="Søk etter sted eller vegsystemreferanse (ERF-veger)"
-        classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput,
-        }}
-        inputProps={{ 'aria-label': 'search' }}
-        onChange={onChange}
-        value={searchString}
-        onKeyUp={onKeyUp}
-        onFocus={onFocus}
-      />
-      {openMenu && (
-        <ClickAwayListener onClickAway={() => setOpenMenu(false)}>
+    <ClickAwayListener onClickAway={() => setOpenMenu(false)}>
+      <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <MagnifyingGlassIcon />
+        </div>
+        <InputBase
+          placeholder="Søk etter sted eller vegsystemreferanse (ERF-veger)"
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          inputProps={{ 'aria-label': 'search' }}
+          onChange={onChange}
+          value={searchString}
+          onKeyUp={onKeyUp}
+          onFocus={onFocus}
+        />
+        {openMenu && (
           <div className={classes.menu} tabIndex="1">
             {vegSystemReferanser.length > 0 && (
               <>
@@ -306,9 +306,9 @@ const Search = ({ showMessage }) => {
               </>
             )}
           </div>
-        </ClickAwayListener>
-      )}
-    </div>
+        )}
+      </div>
+    </ClickAwayListener>
   );
 };
 
