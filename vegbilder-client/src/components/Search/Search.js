@@ -76,6 +76,7 @@ const Search = ({ showMessage }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [resetImagePoint, setResetImagePoint] = useState(false);
   const [findClosestImagePoint, setFindClosestImagePoint] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
@@ -140,6 +141,7 @@ const Search = ({ showMessage }) => {
      * the nearest of the image points in the previous location.)
      */
     setOpenMenu(false);
+    setSelectedIndex(0);
     if (latlng && latlng.lat && latlng.lng) {
       setCurrentCoordinates({ latlng: latlng, zoom: zoom });
       setResetImagePoint(true);
@@ -205,6 +207,7 @@ const Search = ({ showMessage }) => {
         setOpenMenu(true);
       } else {
         setOpenMenu(false);
+        setSelectedIndex(0);
       }
     }
   };
@@ -212,19 +215,29 @@ const Search = ({ showMessage }) => {
   const onKeyUp = (event) => {
     if (event.key === 'Enter') {
       if (vegSystemReferanser.length) {
-        handleVegSystemReferanseClick(vegSystemReferanser[0].geometri.wkt);
+        const referance = vegSystemReferanser[selectedIndex];
+        if (referance) handleVegSystemReferanseClick(referance.geometri.wkt);
       }
       if (stedsnavnOptions.length) {
-        const stedsnavn = stedsnavnOptions[0];
-        const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
-        handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+        const stedsnavn = stedsnavnOptions[selectedIndex];
+        if (stedsnavn) {
+          const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
+          handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+        }
       }
+    }
+    if (event.key === 'ArrowDown') {
+      setSelectedIndex((prevState) => prevState + 1);
+    }
+    if (event.key === 'ArrowUp') {
+      setSelectedIndex((prevState) => prevState - 1);
     }
   };
 
   const onFocus = () => {
     if (searchString.length && (vegSystemReferanser.length || stedsnavnOptions.length)) {
       setOpenMenu(true);
+      setSelectedIndex(0);
     }
   };
 
@@ -256,7 +269,7 @@ const Search = ({ showMessage }) => {
                 </ListSubheader>
                 {vegSystemReferanser.map((referanse, i) => (
                   <MenuItem
-                    selected={i === 0}
+                    selected={i === selectedIndex}
                     key={i}
                     style={{ paddingLeft: '1.875rem' }}
                     onClick={() => {
@@ -277,7 +290,7 @@ const Search = ({ showMessage }) => {
                 {stedsnavnOptions.map((stedsnavn, i) => (
                   <MenuItem
                     key={i}
-                    selected={i === 0}
+                    selected={i === selectedIndex}
                     style={{ paddingLeft: '1.875rem' }}
                     onClick={() => {
                       const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
