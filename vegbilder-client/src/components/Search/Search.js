@@ -206,7 +206,6 @@ const Search = ({ showMessage }) => {
         await delayedStedsnavnQuery(trimmedSearch);
         setOpenMenu(true);
       } else {
-        setOpenMenu(false);
         setSelectedIndex(0);
       }
     }
