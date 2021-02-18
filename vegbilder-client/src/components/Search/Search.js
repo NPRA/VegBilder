@@ -223,7 +223,7 @@ const Search = ({ showMessage }) => {
   };
 
   const onFocus = () => {
-    if (vegSystemReferanser.length || stedsnavnOptions.length) {
+    if (searchString.length && (vegSystemReferanser.length || stedsnavnOptions.length)) {
       setOpenMenu(true);
     }
   };
