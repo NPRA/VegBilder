@@ -30,7 +30,7 @@ import { IImagePoint } from 'types';
 const useStyles = makeStyles((theme) => ({
   imageArea: {
     height: '100%',
-    minWidth: '60%',
+    minWidth: '70%',
     backgroundColor: theme.palette.primary.main,
     display: 'flex',
     justifyContent: 'center',
