@@ -3,7 +3,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { ListSubheader } from '@material-ui/core';
+import { ClickAwayListener, ListSubheader } from '@material-ui/core';
 import { debounce } from 'lodash';
 
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
@@ -222,6 +222,12 @@ const Search = ({ showMessage }) => {
     }
   };
 
+  const onFocus = () => {
+    if (vegSystemReferanser.length || stedsnavnOptions.length) {
+      setOpenMenu(true);
+    }
+  };
+
   return (
     <div className={classes.search}>
       <div className={classes.searchIcon}>
@@ -237,50 +243,56 @@ const Search = ({ showMessage }) => {
         onChange={onChange}
         value={searchString}
         onKeyUp={onKeyUp}
+        onFocus={onFocus}
       />
       {openMenu && (
-        <div className={classes.menu} tabIndex="1">
-          {vegSystemReferanser.length > 0 && (
-            <>
-              <ListSubheader style={{ paddingTop: '0.5rem' }}> Vegsystemreferanser </ListSubheader>
-              {vegSystemReferanser.map((referanse, i) => (
-                <MenuItem
-                  key={i}
-                  style={{ paddingLeft: '1.875rem' }}
-                  onClick={() => {
-                    handleVegSystemReferanseClick(referanse.geometri.wkt);
-                  }}
-                >
-                  <ListItemText
-                    key={`Textkey${i}`}
-                    primary={referanse.vegsystemreferanse.kortform}
-                  />
-                </MenuItem>
-              ))}
-            </>
-          )}
-          {stedsnavnOptions.length > 0 && (
-            <>
-              <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
-              {stedsnavnOptions.map((stedsnavn, i) => (
-                <MenuItem
-                  key={i}
-                  style={{ paddingLeft: '1.875rem' }}
-                  onClick={() => {
-                    const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
-                    handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
-                  }}
-                >
-                  <ListItemText
-                    key={`Textkey${i}`}
-                    primary={stedsnavn.stedsnavn}
-                    secondary={`${stedsnavn.navnetype}, ${stedsnavn.kommunenavn} (${stedsnavn.fylkesnavn})`}
-                  />
-                </MenuItem>
-              ))}
-            </>
-          )}
-        </div>
+        <ClickAwayListener onClickAway={() => setOpenMenu(false)}>
+          <div className={classes.menu} tabIndex="1">
+            {vegSystemReferanser.length > 0 && (
+              <>
+                <ListSubheader style={{ paddingTop: '0.5rem' }}>
+                  {' '}
+                  Vegsystemreferanser{' '}
+                </ListSubheader>
+                {vegSystemReferanser.map((referanse, i) => (
+                  <MenuItem
+                    key={i}
+                    style={{ paddingLeft: '1.875rem' }}
+                    onClick={() => {
+                      handleVegSystemReferanseClick(referanse.geometri.wkt);
+                    }}
+                  >
+                    <ListItemText
+                      key={`Textkey${i}`}
+                      primary={referanse.vegsystemreferanse.kortform}
+                    />
+                  </MenuItem>
+                ))}
+              </>
+            )}
+            {stedsnavnOptions.length > 0 && (
+              <>
+                <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
+                {stedsnavnOptions.map((stedsnavn, i) => (
+                  <MenuItem
+                    key={i}
+                    style={{ paddingLeft: '1.875rem' }}
+                    onClick={() => {
+                      const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
+                      handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+                    }}
+                  >
+                    <ListItemText
+                      key={`Textkey${i}`}
+                      primary={stedsnavn.stedsnavn}
+                      secondary={`${stedsnavn.navnetype}, ${stedsnavn.kommunenavn} (${stedsnavn.fylkesnavn})`}
+                    />
+                  </MenuItem>
+                ))}
+              </>
+            )}
+          </div>
+        </ClickAwayListener>
       )}
     </div>
   );
