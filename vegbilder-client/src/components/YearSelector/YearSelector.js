@@ -109,6 +109,7 @@ const YearSelector = () => {
             key={year}
             value={year}
             className={classes.item}
+            selected={year === currentYear}
             style={{ color: year === currentYear ? Theme.palette.common.orangeDark : '' }}
           >
             {year === currentYear && <CheckmarkIcon className={classes.checkmarkStyle} />}

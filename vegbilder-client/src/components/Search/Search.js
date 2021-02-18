@@ -256,6 +256,7 @@ const Search = ({ showMessage }) => {
                 </ListSubheader>
                 {vegSystemReferanser.map((referanse, i) => (
                   <MenuItem
+                    selected={i === 0}
                     key={i}
                     style={{ paddingLeft: '1.875rem' }}
                     onClick={() => {
@@ -276,6 +277,7 @@ const Search = ({ showMessage }) => {
                 {stedsnavnOptions.map((stedsnavn, i) => (
                   <MenuItem
                     key={i}
+                    selected={i === 0}
                     style={{ paddingLeft: '1.875rem' }}
                     onClick={() => {
                       const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
