@@ -209,6 +209,19 @@ const Search = ({ showMessage }) => {
     }
   };
 
+  const onKeyUp = (event) => {
+    if (event.key === 'Enter') {
+      if (vegSystemReferanser.length) {
+        handleVegSystemReferanseClick(vegSystemReferanser[0].geometri.wkt);
+      }
+      if (stedsnavnOptions.length) {
+        const stedsnavn = stedsnavnOptions[0];
+        const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
+        handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+      }
+    }
+  };
+
   return (
     <div className={classes.search}>
       <div className={classes.searchIcon}>
@@ -223,9 +236,10 @@ const Search = ({ showMessage }) => {
         inputProps={{ 'aria-label': 'search' }}
         onChange={onChange}
         value={searchString}
+        onKeyUp={onKeyUp}
       />
       {openMenu && (
-        <div className={classes.menu}>
+        <div className={classes.menu} tabIndex="1">
           {vegSystemReferanser.length > 0 && (
             <>
               <ListSubheader style={{ paddingTop: '0.5rem' }}> Vegsystemreferanser </ListSubheader>
