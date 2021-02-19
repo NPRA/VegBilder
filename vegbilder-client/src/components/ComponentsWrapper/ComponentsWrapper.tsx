@@ -103,7 +103,7 @@ const ComponentsWrapper = () => {
     <>
       <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
         <Grid item className={classes.header}>
-          <Header showMessage={showSnackbarMessage} />
+          <Header showMessage={showSnackbarMessage} setMapView={() => setView(views.mapView)} />
         </Grid>
         {renderContent()}
       </Grid>

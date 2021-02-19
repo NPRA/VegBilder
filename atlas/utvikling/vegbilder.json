@@ -16,6 +16,29 @@
           "path": "/ready"
         }
       }
+    },
+    "config": {
+      "type": "EnvironmentConfig",
+      "spec": {
+        "S3GW_ENDPOINT": "s3vegbilder.utv.atlas.vegvesen.no",
+        "SHA_KEYS": "VF1"
+      }
+    },
+    "vault": {
+      "type": "LocalVault",
+      "spec": {
+        "encryption": {
+          "id": "jkfwc0kYj6qqhvTp1kthMltiEWQbpbTwNo5m8gtdWEc=",
+          "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAoG09JJlKg0wrIax9PTYVHgSZLUe3hOiY7hxPygAP90NZQHi3zTThqemOn0k7MgRgPyxTkQuruiOYzssdnzwAAZjwxTL9oH8lzKBAqHfVkdBVTopGCaYc0VZDyWIqjjl7xTOuT8gNmoU1OrLE7Inxsg89DW1DyvL3mOjucMiwbmO3UPQ8noVN9KvFfOaDmEixpeSgva7W3CaogtMwV37WHVqqa0/fMy9mJVifVnDI4C5vMiciy/Nfkg1uhcpFbr6CRHmB5hs5eBXO7L4/9VdBWSlF9FrxenDlSYm/fWmGAkuC6Z+EedZNYQ1JMk5ze/K9LXRzOvnjH3bQHgMEVNNETQIDAQAB"
+        },
+        "data": {
+          "VF1": {
+            "cipher": "DiB48/HJTyyDu+95lvd8PmjOJMBo9/Yuv0Pz4pln7OaTFZlxsV4Pjdo5WVsgJF4FJQWExi2i2V11u1bqcM4c79wkwHeeyKjTxHNYjrCM2XFj6usYCmmwcrGf+gbIarxMO1lxvtFm/muCR36OPmnn00hl4gslfR9WVKIgQiVVXO1MNVo4HHlnYsvpGz8Q+5xYBj99yHw85IcTLJMwMVBuJEopqurTKS4v6rat3WoXcFyEr70IgxYlhk0OPCXWJlcxr0Oes8tXne8nvlail1COugUSmkdmEdnIHZIa8cZrQTzlHeLwZ/REv4kjs+e9+gyY78rLYtxwAwGAFF3dznaKxw==",
+            "type": "env",
+            "value": "gOJNwCzo34jjHaexuYN5fUp6Um7oDg=="
+          }
+        }
+      }
     }
   }
 }

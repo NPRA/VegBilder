@@ -8,6 +8,9 @@ import YearSelector from 'components/YearSelector/YearSelector';
 import ImageSeriesSelector from 'components/ImageSeriesSelector/ImageSeriesSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import PageInformation from './PageInformation/PageInformation';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 
 const useStyles = makeStyles({
   headerAppBar: {
@@ -33,6 +36,7 @@ const useStyles = makeStyles({
   },
   logo: {
     width: '7.5rem',
+    cursor: 'pointer',
     marginLeft: '0.5rem',
   },
   rightItem: {
@@ -43,16 +47,34 @@ const useStyles = makeStyles({
   },
 });
 
-const Header = ({ showMessage }) => {
+interface IHeaderProps {
+  showMessage: (message: string) => void;
+  setMapView: () => void;
+}
+
+const Header = ({ showMessage, setMapView }: IHeaderProps) => {
   const classes = useStyles();
   const [showInformation, setShowInformation] = useState(false);
+  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const { unsetCurrentImagePoint } = useCurrentImagePoint();
+
+  const resetToDefaultStates = () => {
+    setCurrentCoordinates({ latlng: DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
+    unsetCurrentImagePoint();
+    setMapView();
+  };
 
   return (
     <AppBar position="static" color="primary" elevation={3} className={classes.headerAppBar}>
       <Toolbar className={classes.headerToolBar} disableGutters>
         <Grid container direction="row" justify="space-between" alignItems="center">
           <Grid item className={classes.logoContainer}>
-            <img src="images/svv-logo.svg" alt="Logo - Statens vegvesen" className={classes.logo} />
+            <img
+              src="images/svv-logo.svg"
+              alt="Logo - Statens vegvesen"
+              className={classes.logo}
+              onClick={() => resetToDefaultStates()}
+            />
           </Grid>
           <Grid item className={classes.searchContainer}>
             <Search showMessage={showMessage} />
@@ -74,10 +96,7 @@ const Header = ({ showMessage }) => {
         </Grid>
       </Toolbar>
       {showInformation && (
-        <PageInformation
-          showMessage={showMessage}
-          setVisible={() => setShowInformation(!showInformation)}
-        />
+        <PageInformation setVisible={() => setShowInformation(!showInformation)} />
       )}
     </AppBar>
   );

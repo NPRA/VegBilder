@@ -30,7 +30,7 @@ import { IImagePoint } from 'types';
 const useStyles = makeStyles((theme) => ({
   imageArea: {
     height: '100%',
-    minWidth: '60%',
+    minWidth: '70%',
     backgroundColor: theme.palette.primary.main,
     display: 'flex',
     justifyContent: 'center',
@@ -39,6 +39,15 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 'calc(100vh - 9.5rem)', // Total view height minus the height of the header and footer combined
     maxWidth: '100%',
     objectFit: 'contain',
+    cursor: 'zoom-in',
+  },
+  enlargedImage: {
+    position: 'absolute',
+    zIndex: 1,
+    width: 'auto',
+    height: 'auto',
+    overflow: 'auto',
+    cursor: 'zoom-out',
   },
   canvas: {
     position: 'absolute',
@@ -66,6 +75,7 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
   const timer = useRecoilValue(timerState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
+  const [isEnlargedImage, setIsEnlargedImage] = useState(false);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -308,9 +318,12 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
                 : getImageUrl(currentImagePoint)
             }
             alt="vegbilde"
-            className={classes.image}
+            className={isEnlargedImage ? classes.enlargedImage : classes.image}
             ref={imgRef}
             onLoad={onImageLoaded}
+            onClick={() => {
+              if (!isHistoryMode) setIsEnlargedImage(!isEnlargedImage);
+            }}
           />
           {renderMeterLine()}
         </>

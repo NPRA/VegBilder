@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -83,7 +83,6 @@ const CustomInput = withStyles(() => ({
 const YearSelector = () => {
   const classes = useStyles();
   const [, setQueryParamYear] = useQueryParamState('year');
-  const [currentQueryParamView] = useQueryParamState('view');
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { setCommand } = useCommand();
   const availableYears = useRecoilValue(availableYearsQuery);
@@ -146,9 +145,8 @@ const YearSelector = () => {
             key={year}
             value={year}
             className={classes.item}
-            style={{
-              color: year === currentYear ? Theme.palette.common.orangeDark : '',
-            }}
+            selected={year === currentYear}
+            style={{ color: year === currentYear ? Theme.palette.common.orangeDark : '' }}
           >
             {year === currentYear ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
             {year}
