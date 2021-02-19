@@ -42,12 +42,12 @@ const useStyles = makeStyles((theme) => ({
     cursor: 'zoom-in',
   },
   enlargedImage: {
-    position: 'absolute',
-    zIndex: 1,
     width: 'auto',
     height: 'auto',
+    position: 'absolute',
+    zIndex: 1,
     overflow: 'auto',
-    cursor: 'zoom-out',
+    cursor: 'grab',
   },
   canvas: {
     position: 'absolute',
@@ -56,6 +56,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '100%',
     maxHeight: '100%',
   },
+  enlargedImageContainer: {},
 }));
 
 interface IImageViewerProps {

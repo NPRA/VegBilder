@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
@@ -38,10 +38,45 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
+  const [isScrolling, setIsScrolling] = useState(false);
+  const [clientX, setClientX] = useState(0);
+  const [scrollX, setScrollX] = useState(0);
+
+  const ref = useRef<HTMLImageElement>(null);
+
+  const onMouseDown = (event: React.MouseEvent<Element, MouseEvent>) => {
+    event.preventDefault();
+    setClientX(event.clientX);
+    setIsScrolling(true);
+  };
+
+  const onMouseUp = () => {
+    setIsScrolling(false);
+  };
+
+  const onMouseMove = (event: React.MouseEvent<Element, MouseEvent>) => {
+    event.preventDefault();
+    if (isScrolling) {
+      if (ref.current) {
+        ref.current.scrollLeft = scrollX + event.clientX - clientX;
+        ref.current.scrollTop = 200;
+        console.log(ref.current.scrollLeft);
+      }
+      setScrollX(scrollX + event.clientX - clientX);
+      setClientX(event.clientX);
+    }
+  };
 
   return (
     <TogglesProvider>
-      <Grid item className={classes.content}>
+      <Grid
+        item
+        className={classes.content}
+        onMouseDown={(event) => onMouseDown(event)}
+        onMouseUp={() => onMouseUp}
+        onMouseMove={(event) => onMouseMove(event)}
+        ref={ref}
+      >
         {isHistoryMode ? (
           <div className={classes.imageseries}>
             {' '}
