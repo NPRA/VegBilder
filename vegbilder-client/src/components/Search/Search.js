@@ -3,7 +3,7 @@ import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
-import { ListSubheader } from '@material-ui/core';
+import { ClickAwayListener, ListSubheader } from '@material-ui/core';
 import { debounce } from 'lodash';
 
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
@@ -76,6 +76,7 @@ const Search = ({ showMessage }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [resetImagePoint, setResetImagePoint] = useState(false);
   const [findClosestImagePoint, setFindClosestImagePoint] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(0);
 
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
@@ -140,6 +141,7 @@ const Search = ({ showMessage }) => {
      * the nearest of the image points in the previous location.)
      */
     setOpenMenu(false);
+    setSelectedIndex(0);
     if (latlng && latlng.lat && latlng.lng) {
       setCurrentCoordinates({ latlng: latlng, zoom: zoom });
       setResetImagePoint(true);
@@ -204,71 +206,109 @@ const Search = ({ showMessage }) => {
         await delayedStedsnavnQuery(trimmedSearch);
         setOpenMenu(true);
       } else {
-        setOpenMenu(false);
+        setSelectedIndex(0);
       }
     }
   };
 
+  const onKeyUp = (event) => {
+    if (event.key === 'Enter') {
+      if (vegSystemReferanser.length) {
+        const referance = vegSystemReferanser[selectedIndex];
+        if (referance) handleVegSystemReferanseClick(referance.geometri.wkt);
+      }
+      if (stedsnavnOptions.length) {
+        const stedsnavn = stedsnavnOptions[selectedIndex];
+        if (stedsnavn) {
+          const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
+          handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+        }
+      }
+    }
+    if (event.key === 'ArrowDown') {
+      setSelectedIndex((prevState) => prevState + 1);
+    }
+    if (event.key === 'ArrowUp') {
+      setSelectedIndex((prevState) => prevState - 1);
+    }
+  };
+
+  const onFocus = () => {
+    if (searchString.length && (vegSystemReferanser.length || stedsnavnOptions.length)) {
+      setOpenMenu(true);
+      setSelectedIndex(0);
+    }
+  };
+
   return (
-    <div className={classes.search}>
-      <div className={classes.searchIcon}>
-        <MagnifyingGlassIcon />
-      </div>
-      <InputBase
-        placeholder="Søk etter sted eller vegsystemreferanse (ERF-veger)"
-        classes={{
-          root: classes.inputRoot,
-          input: classes.inputInput,
-        }}
-        inputProps={{ 'aria-label': 'search' }}
-        onChange={onChange}
-        value={searchString}
-      />
-      {openMenu && (
-        <div className={classes.menu}>
-          {vegSystemReferanser.length > 0 && (
-            <>
-              <ListSubheader style={{ paddingTop: '0.5rem' }}> Vegsystemreferanser </ListSubheader>
-              {vegSystemReferanser.map((referanse, i) => (
-                <MenuItem
-                  key={i}
-                  style={{ paddingLeft: '1.875rem' }}
-                  onClick={() => {
-                    handleVegSystemReferanseClick(referanse.geometri.wkt);
-                  }}
-                >
-                  <ListItemText
-                    key={`Textkey${i}`}
-                    primary={referanse.vegsystemreferanse.kortform}
-                  />
-                </MenuItem>
-              ))}
-            </>
-          )}
-          {stedsnavnOptions.length > 0 && (
-            <>
-              <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
-              {stedsnavnOptions.map((stedsnavn, i) => (
-                <MenuItem
-                  key={i}
-                  style={{ paddingLeft: '1.875rem' }}
-                  onClick={() => {
-                    const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
-                    handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
-                  }}
-                >
-                  <ListItemText
-                    key={`Textkey${i}`}
-                    primary={stedsnavn.stedsnavn}
-                    secondary={`${stedsnavn.navnetype}, ${stedsnavn.kommunenavn} (${stedsnavn.fylkesnavn})`}
-                  />
-                </MenuItem>
-              ))}
-            </>
-          )}
+    <ClickAwayListener onClickAway={() => setOpenMenu(false)}>
+      <div className={classes.search}>
+        <div className={classes.searchIcon}>
+          <MagnifyingGlassIcon />
         </div>
-      )}
-    </div>
+        <InputBase
+          placeholder="Søk etter sted eller vegsystemreferanse (ERF-veger)"
+          classes={{
+            root: classes.inputRoot,
+            input: classes.inputInput,
+          }}
+          inputProps={{ 'aria-label': 'search' }}
+          onChange={onChange}
+          value={searchString}
+          onKeyUp={onKeyUp}
+          onFocus={onFocus}
+        />
+        {openMenu && (
+          <div className={classes.menu} tabIndex="1">
+            {vegSystemReferanser.length > 0 && (
+              <>
+                <ListSubheader style={{ paddingTop: '0.5rem' }}>
+                  {' '}
+                  Vegsystemreferanser{' '}
+                </ListSubheader>
+                {vegSystemReferanser.map((referanse, i) => (
+                  <MenuItem
+                    selected={i === selectedIndex}
+                    key={i}
+                    style={{ paddingLeft: '1.875rem' }}
+                    onClick={() => {
+                      handleVegSystemReferanseClick(referanse.geometri.wkt);
+                    }}
+                  >
+                    <ListItemText
+                      key={`Textkey${i}`}
+                      primary={referanse.vegsystemreferanse.kortform}
+                    />
+                  </MenuItem>
+                ))}
+              </>
+            )}
+            {stedsnavnOptions.length > 0 && (
+              <>
+                <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
+                {stedsnavnOptions.map((stedsnavn, i) => (
+                  <MenuItem
+                    key={i}
+                    selected={i === selectedIndex}
+                    style={{ paddingLeft: '1.875rem' }}
+                    onClick={() => {
+                      const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
+                      handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+                    }}
+                  >
+                    <ListItemText
+                      key={`Textkey${i}`}
+                      primary={stedsnavn.stedsnavn}
+                      secondary={`${stedsnavn.navnetype}, ${stedsnavn.kommunenavn} (${stedsnavn.fylkesnavn})`}
+                    />
+                  </MenuItem>
+                ))}
+              </>
+            )}
+          </div>
+        )}
+      </div>
+    </ClickAwayListener>
   );
 };
 
