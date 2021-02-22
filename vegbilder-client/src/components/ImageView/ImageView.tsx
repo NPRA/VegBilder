@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useReducer, useRef, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
@@ -35,29 +35,79 @@ interface IImageViewProps {
   showSnackbarMessage: (message: string) => void;
 }
 
+interface IScrollState {
+  clientY: number;
+  clientX: number;
+  scrollX: number;
+  scrollY: number;
+}
+
+type ScrollAction =
+  | { type: 'clientX'; newVal: number }
+  | { type: 'clientY'; newVal: number }
+  | { type: 'scrollY'; newVal: number }
+  | { type: 'scrollX'; newVal: number };
+
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
   const [isEnlargedImage, setIsEnLargedImage] = useState(false);
-  const [clientX, setClientX] = useState(0);
-  const [scrollX, setScrollX] = useState(0);
-  const [clientY, setClientY] = useState(0);
-  const [scrollY, setScrollY] = useState(0);
-
   const containerRef = useRef<HTMLImageElement>(null);
 
+  const initialScrollState = {
+    clientX: 0,
+    clientY: 0,
+    scrollX: 0,
+    scrollY: 0,
+  };
+
+  const scrollReducer = (state: IScrollState, action: ScrollAction) => {
+    switch (action.type) {
+      case 'clientX': {
+        return {
+          ...state,
+          clientX: action.newVal,
+        };
+      }
+      case 'clientY': {
+        return {
+          ...state,
+          clientY: action.newVal,
+        };
+      }
+      case 'scrollX': {
+        return {
+          ...state,
+          scrollX: state.scrollX + action.newVal - state.clientX,
+          clientX: action.newVal,
+        };
+      }
+      case 'scrollY': {
+        return {
+          ...state,
+          scrollY: state.scrollY + action.newVal - state.clientY,
+          clientY: action.newVal,
+        };
+      }
+      default:
+        return state;
+    }
+  };
+
+  const [scrollState, dispatch] = useReducer(scrollReducer, initialScrollState);
+
   useEffect(() => {
-    const currentCardRef = containerRef.current;
-    if (!currentCardRef) return;
+    const currentImageContainerRef = containerRef.current;
+    if (!currentImageContainerRef) return;
 
     let shouldScroll = false;
     let mouseMoved = false;
 
     const onMouseDown = (event: MouseEvent) => {
       event.preventDefault();
-      setClientX(event.clientX);
-      setClientY(event.clientY);
+      dispatch({ type: 'clientX', newVal: event.clientX });
+      dispatch({ type: 'clientY', newVal: event.clientY });
       shouldScroll = true;
       mouseMoved = false;
     };
@@ -75,27 +125,27 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       event.preventDefault();
       mouseMoved = true;
       if (shouldScroll) {
-        if (containerRef.current) {
-          containerRef.current.scrollLeft = scrollX + event.clientX - clientX;
-          containerRef.current.scrollTop = scrollY + event.clientY - clientY;
+        if (currentImageContainerRef) {
+          currentImageContainerRef.scrollLeft =
+            scrollState.scrollX + event.clientX - scrollState.clientX;
+          currentImageContainerRef.scrollTop =
+            scrollState.scrollY + event.clientY - scrollState.clientY;
         }
-        setScrollX((prevState) => prevState + event.clientX - clientX);
-        setClientX(event.clientX);
-        setScrollY((prevState) => prevState + event.clientY - clientY);
-        setClientY(event.clientY);
+        dispatch({ type: 'scrollX', newVal: event.clientX });
+        dispatch({ type: 'scrollY', newVal: event.clientY });
       }
     };
 
-    currentCardRef.addEventListener('mousedown', (event) => onMouseDown(event));
-    currentCardRef.addEventListener('mouseup', () => onMouseUp());
-    currentCardRef.addEventListener('mouseout', () => onMouseOut());
-    currentCardRef.addEventListener('mousemove', (event) => onMouseMove(event));
+    currentImageContainerRef.addEventListener('mousedown', (event) => onMouseDown(event));
+    currentImageContainerRef.addEventListener('mouseup', () => onMouseUp());
+    currentImageContainerRef.addEventListener('mouseout', () => onMouseOut());
+    currentImageContainerRef.addEventListener('mousemove', (event) => onMouseMove(event));
 
     return () => {
-      currentCardRef.removeEventListener('mousedown', (event) => onMouseDown(event));
-      currentCardRef.removeEventListener('mouseup', () => onMouseUp());
-      currentCardRef.removeEventListener('mouseout', () => onMouseOut());
-      currentCardRef.removeEventListener('mousemove', (event) => onMouseMove(event));
+      currentImageContainerRef.removeEventListener('mousedown', (event) => onMouseDown(event));
+      currentImageContainerRef.removeEventListener('mouseup', () => onMouseUp());
+      currentImageContainerRef.removeEventListener('mouseout', () => onMouseOut());
+      currentImageContainerRef.removeEventListener('mousemove', (event) => onMouseMove(event));
     };
   }, [containerRef]);
 
