@@ -61,14 +61,14 @@ interface IImageViewerProps {
   exitImageView: () => void;
   showMessage: (message: string) => void;
   showCloseButton: boolean;
-  isEnlargedImage?: boolean;
+  isZoomedInImage?: boolean;
 }
 
 const ImageViewer = ({
   exitImageView,
   showMessage,
   showCloseButton,
-  isEnlargedImage,
+  isZoomedInImage,
 }: IImageViewerProps) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
@@ -322,12 +322,9 @@ const ImageViewer = ({
                 : getImageUrl(currentImagePoint)
             }
             alt="vegbilde"
-            className={isEnlargedImage ? classes.enlargedImage : classes.image}
+            className={isZoomedInImage ? classes.enlargedImage : classes.image}
             ref={imgRef}
             onLoad={onImageLoaded}
-            // onClick={() => {
-            //   if (!isHistoryMode) setIsEnlargedImage(!isEnlargedImage);
-            // }}
           />
           {renderMeterLine()}
         </>

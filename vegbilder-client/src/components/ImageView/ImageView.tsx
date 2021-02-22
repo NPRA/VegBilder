@@ -17,7 +17,6 @@ const useStyles = makeStyles(() => ({
     position: 'relative', // Needed for the small map to be positioned correctly relative to the top left corner of the content container
     height: '100%',
     overflow: 'hidden',
-    cursor: 'grab',
   },
   footer: {
     flex: '0 1 4.5rem',
@@ -52,8 +51,9 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
-  const [isEnlargedImage, setIsEnLargedImage] = useState(false);
-  const containerRef = useRef<HTMLImageElement>(null);
+  const [isZoomedInImage, setIsZoomedInImage] = useState(false);
+  const imageContainerRef = useRef<HTMLImageElement>(null);
+  const [cursor, setCursor] = useState('zoom-out');
 
   const initialScrollState = {
     clientX: 0,
@@ -97,8 +97,9 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
   const [scrollState, dispatch] = useReducer(scrollReducer, initialScrollState);
 
+  // We add mouse event handlers that lets the user drag the image to scroll. If the user only clicks we zoom in/out.
   useEffect(() => {
-    const currentImageContainerRef = containerRef.current;
+    const currentImageContainerRef = imageContainerRef.current;
     if (!currentImageContainerRef) return;
 
     let shouldScroll = false;
@@ -114,7 +115,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
     const onMouseUp = () => {
       shouldScroll = false;
-      if (!mouseMoved) setIsEnLargedImage((prevState) => !prevState);
+      setCursor('zoom-out');
+      if (!mouseMoved) setIsZoomedInImage((prevState) => !prevState);
     };
 
     const onMouseOut = () => {
@@ -125,6 +127,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       event.preventDefault();
       mouseMoved = true;
       if (shouldScroll) {
+        setCursor('grab');
         if (currentImageContainerRef) {
           currentImageContainerRef.scrollLeft =
             scrollState.scrollX + event.clientX - scrollState.clientX;
@@ -147,11 +150,11 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mouseout', () => onMouseOut());
       currentImageContainerRef.removeEventListener('mousemove', (event) => onMouseMove(event));
     };
-  }, [containerRef]);
+  }, [imageContainerRef]);
 
   return (
     <TogglesProvider>
-      <Grid item className={classes.content} ref={containerRef}>
+      <Grid item className={classes.content} ref={imageContainerRef} style={{ cursor: cursor }}>
         {isHistoryMode ? (
           <div className={classes.imageseries}>
             {' '}
@@ -167,7 +170,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             exitImageView={setView}
             showMessage={showSnackbarMessage}
             showCloseButton={true}
-            isEnlargedImage={isEnlargedImage}
+            isZoomedInImage={isZoomedInImage}
           />
         )}
         <SmallMapContainer exitImageView={setView} />
