@@ -139,16 +139,16 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       }
     };
 
-    currentImageContainerRef.addEventListener('mousedown', (event) => onMouseDown(event));
-    currentImageContainerRef.addEventListener('mouseup', () => onMouseUp());
-    currentImageContainerRef.addEventListener('mouseout', () => onMouseOut());
-    currentImageContainerRef.addEventListener('mousemove', (event) => onMouseMove(event));
+    currentImageContainerRef.addEventListener('mousedown', onMouseDown);
+    currentImageContainerRef.addEventListener('mouseup', onMouseUp);
+    currentImageContainerRef.addEventListener('mouseout', onMouseOut);
+    currentImageContainerRef.addEventListener('mousemove', onMouseMove);
 
     return () => {
-      currentImageContainerRef.removeEventListener('mousedown', (event) => onMouseDown(event));
-      currentImageContainerRef.removeEventListener('mouseup', () => onMouseUp());
-      currentImageContainerRef.removeEventListener('mouseout', () => onMouseOut());
-      currentImageContainerRef.removeEventListener('mousemove', (event) => onMouseMove(event));
+      currentImageContainerRef.removeEventListener('mousedown', onMouseDown);
+      currentImageContainerRef.removeEventListener('mouseup', onMouseUp);
+      currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
+      currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
     };
   }, [imageContainerRef]);
 
