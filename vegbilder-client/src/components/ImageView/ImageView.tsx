@@ -35,17 +35,13 @@ interface IImageViewProps {
 }
 
 interface IScrollState {
-  clientY: number;
-  clientX: number;
-  scrollX: number;
-  scrollY: number;
+  mousePosition: { x: number; y: number };
+  scroll: { x: number; y: number };
 }
 
 type ScrollAction =
-  | { type: 'clientX'; newVal: number }
-  | { type: 'clientY'; newVal: number }
-  | { type: 'scrollY'; newVal: number }
-  | { type: 'scrollX'; newVal: number };
+  | { type: 'mousePosition'; newVal: { x: number; y: number } }
+  | { type: 'scroll'; newVal: { x: number; y: number } };
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
@@ -56,38 +52,25 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [cursor, setCursor] = useState('zoom-out');
 
   const initialScrollState = {
-    clientX: 0,
-    clientY: 0,
-    scrollX: 0,
-    scrollY: 0,
+    mousePosition: { x: 0, y: 0 },
+    scroll: { x: 0, y: 0 },
   };
 
   const scrollReducer = (state: IScrollState, action: ScrollAction) => {
     switch (action.type) {
-      case 'clientX': {
+      case 'mousePosition': {
         return {
           ...state,
-          clientX: action.newVal,
+          mousePosition: { x: action.newVal.x, y: action.newVal.y },
         };
       }
-      case 'clientY': {
+      case 'scroll': {
         return {
           ...state,
-          clientY: action.newVal,
-        };
-      }
-      case 'scrollX': {
-        return {
-          ...state,
-          scrollX: state.scrollX + action.newVal - state.clientX,
-          clientX: action.newVal,
-        };
-      }
-      case 'scrollY': {
-        return {
-          ...state,
-          scrollY: state.scrollY + action.newVal - state.clientY,
-          clientY: action.newVal,
+          x: state.scroll.x + action.newVal.x - state.mousePosition.x,
+          mousePositionX: action.newVal.x,
+          y: state.scroll.y + action.newVal.y - state.mousePosition.y,
+          mousePositionY: action.newVal.y,
         };
       }
       default:
@@ -107,8 +90,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
     const onMouseDown = (event: MouseEvent) => {
       event.preventDefault();
-      dispatch({ type: 'clientX', newVal: event.clientX });
-      dispatch({ type: 'clientY', newVal: event.clientY });
+      dispatch({ type: 'mousePosition', newVal: { x: event.clientX, y: event.clientY } });
       shouldScroll = true;
       mouseMoved = false;
     };
@@ -130,12 +112,11 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         setCursor('grab');
         if (currentImageContainerRef) {
           currentImageContainerRef.scrollLeft =
-            scrollState.scrollX + event.clientX - scrollState.clientX;
+            scrollState.scroll.x + event.clientX - scrollState.mousePosition.x;
           currentImageContainerRef.scrollTop =
-            scrollState.scrollY + event.clientY - scrollState.clientY;
+            scrollState.scroll.y + event.clientY - scrollState.mousePosition.y;
         }
-        dispatch({ type: 'scrollX', newVal: event.clientX });
-        dispatch({ type: 'scrollY', newVal: event.clientY });
+        dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
       }
     };
 
@@ -150,7 +131,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
     };
-  }, [imageContainerRef]);
+  }, []);
 
   return (
     <TogglesProvider>
