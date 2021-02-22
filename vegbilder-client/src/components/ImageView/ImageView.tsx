@@ -111,6 +111,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             exitImageView={setView}
             showMessage={showSnackbarMessage}
             showCloseButton={true}
+            isEnlargedImage={isEnlargedImage}
           />
         )}
         <SmallMapContainer exitImageView={setView} />

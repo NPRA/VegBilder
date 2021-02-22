@@ -46,9 +46,6 @@ const useStyles = makeStyles((theme) => ({
     height: 'auto',
     position: 'absolute',
     zIndex: 1,
-    //cursor: 'zoom-out',
-    //overflow: 'auto',
-    //cursor: 'grab',
   },
   canvas: {
     position: 'absolute',
@@ -64,9 +61,15 @@ interface IImageViewerProps {
   exitImageView: () => void;
   showMessage: (message: string) => void;
   showCloseButton: boolean;
+  isEnlargedImage?: boolean;
 }
 
-const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageViewerProps) => {
+const ImageViewer = ({
+  exitImageView,
+  showMessage,
+  showCloseButton,
+  isEnlargedImage,
+}: IImageViewerProps) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -77,7 +80,6 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
   const timer = useRecoilValue(timerState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
-  const [isEnlargedImage, setIsEnlargedImage] = useState(false);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -323,9 +325,9 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
             className={isEnlargedImage ? classes.enlargedImage : classes.image}
             ref={imgRef}
             onLoad={onImageLoaded}
-            onClick={() => {
-              if (!isHistoryMode) setIsEnlargedImage(!isEnlargedImage);
-            }}
+            // onClick={() => {
+            //   if (!isHistoryMode) setIsEnlargedImage(!isEnlargedImage);
+            // }}
           />
           {renderMeterLine()}
         </>
