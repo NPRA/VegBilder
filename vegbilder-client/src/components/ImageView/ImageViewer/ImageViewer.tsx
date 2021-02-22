@@ -46,8 +46,9 @@ const useStyles = makeStyles((theme) => ({
     height: 'auto',
     position: 'absolute',
     zIndex: 1,
-    overflow: 'auto',
-    cursor: 'grab',
+    //cursor: 'zoom-out',
+    //overflow: 'auto',
+    //cursor: 'grab',
   },
   canvas: {
     position: 'absolute',

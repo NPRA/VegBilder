@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
@@ -17,6 +17,7 @@ const useStyles = makeStyles(() => ({
     position: 'relative', // Needed for the small map to be positioned correctly relative to the top left corner of the content container
     height: '100%',
     overflow: 'auto',
+    cursor: 'grab',
   },
   footer: {
     flex: '0 1 4.5rem',
@@ -38,45 +39,63 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
-  const [isScrolling, setIsScrolling] = useState(false);
+  const [isEnlargedImage, setIsEnLargedImage] = useState(false);
   const [clientX, setClientX] = useState(0);
   const [scrollX, setScrollX] = useState(0);
+  const [clientY, setClientY] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
 
-  const ref = useRef<HTMLImageElement>(null);
+  const containerRef = useRef<HTMLImageElement>(null);
 
-  const onMouseDown = (event: React.MouseEvent<Element, MouseEvent>) => {
-    event.preventDefault();
-    setClientX(event.clientX);
-    setIsScrolling(true);
-  };
+  useEffect(() => {
+    const currentCardRef = containerRef.current;
+    if (!currentCardRef) return;
 
-  const onMouseUp = () => {
-    setIsScrolling(false);
-  };
+    let shouldScroll = false;
+    let mouseMoved = false;
 
-  const onMouseMove = (event: React.MouseEvent<Element, MouseEvent>) => {
-    event.preventDefault();
-    if (isScrolling) {
-      if (ref.current) {
-        ref.current.scrollLeft = scrollX + event.clientX - clientX;
-        ref.current.scrollTop = 200;
-        console.log(ref.current.scrollLeft);
-      }
-      setScrollX(scrollX + event.clientX - clientX);
+    const onMouseDown = (event: MouseEvent) => {
+      event.preventDefault();
       setClientX(event.clientX);
-    }
-  };
+      setClientY(event.clientY);
+      shouldScroll = true;
+      mouseMoved = false;
+    };
+
+    const onMouseUp = () => {
+      shouldScroll = false;
+      if (!mouseMoved) setIsEnLargedImage((prevState) => !prevState);
+    };
+
+    const onMouseMove = (event: MouseEvent) => {
+      event.preventDefault();
+      mouseMoved = true;
+      if (shouldScroll) {
+        if (containerRef.current) {
+          containerRef.current.scrollLeft = scrollX + event.clientX - clientX;
+          containerRef.current.scrollTop = scrollY + event.clientY - clientY;
+        }
+        setScrollX((prevState) => prevState + event.clientX - clientX);
+        setClientX(event.clientX);
+        setScrollY((prevState) => prevState + event.clientY - clientY);
+        setClientY(event.clientY);
+      }
+    };
+
+    currentCardRef.addEventListener('mousedown', (event) => onMouseDown(event));
+    currentCardRef.addEventListener('mouseup', () => onMouseUp());
+    currentCardRef.addEventListener('mousemove', (event) => onMouseMove(event));
+
+    return () => {
+      currentCardRef.removeEventListener('mousedown', (event) => onMouseDown(event));
+      currentCardRef.removeEventListener('mouseup', () => onMouseUp());
+      currentCardRef.removeEventListener('mousemove', (event) => onMouseMove(event));
+    };
+  }, [containerRef]);
 
   return (
     <TogglesProvider>
-      <Grid
-        item
-        className={classes.content}
-        onMouseDown={(event) => onMouseDown(event)}
-        onMouseUp={() => onMouseUp}
-        onMouseMove={(event) => onMouseMove(event)}
-        ref={ref}
-      >
+      <Grid item className={classes.content} ref={containerRef}>
         {isHistoryMode ? (
           <div className={classes.imageseries}>
             {' '}
