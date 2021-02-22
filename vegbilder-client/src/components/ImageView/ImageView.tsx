@@ -16,7 +16,7 @@ const useStyles = makeStyles(() => ({
     flex: '1 1 auto', // Allow the grid item containing the main content to grow and shrink to fill the available height.
     position: 'relative', // Needed for the small map to be positioned correctly relative to the top left corner of the content container
     height: '100%',
-    overflow: 'auto',
+    overflow: 'hidden',
     cursor: 'grab',
   },
   footer: {
@@ -67,6 +67,10 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       if (!mouseMoved) setIsEnLargedImage((prevState) => !prevState);
     };
 
+    const onMouseOut = () => {
+      shouldScroll = false;
+    };
+
     const onMouseMove = (event: MouseEvent) => {
       event.preventDefault();
       mouseMoved = true;
@@ -84,11 +88,13 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
     currentCardRef.addEventListener('mousedown', (event) => onMouseDown(event));
     currentCardRef.addEventListener('mouseup', () => onMouseUp());
+    currentCardRef.addEventListener('mouseout', () => onMouseOut());
     currentCardRef.addEventListener('mousemove', (event) => onMouseMove(event));
 
     return () => {
       currentCardRef.removeEventListener('mousedown', (event) => onMouseDown(event));
       currentCardRef.removeEventListener('mouseup', () => onMouseUp());
+      currentCardRef.removeEventListener('mouseout', () => onMouseOut());
       currentCardRef.removeEventListener('mousemove', (event) => onMouseMove(event));
     };
   }, [containerRef]);
