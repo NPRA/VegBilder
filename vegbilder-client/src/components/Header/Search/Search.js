@@ -14,7 +14,7 @@ import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
-import { MagnifyingGlassIcon } from '../Icons/Icons';
+import { MagnifyingGlassIcon } from '../../Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   root: {

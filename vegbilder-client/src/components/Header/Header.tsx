@@ -3,8 +3,8 @@ import AppBar from '@material-ui/core/AppBar';
 import { Toolbar, Grid, Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
-import Search from 'components/Search/Search';
-import YearSelector from 'components/YearSelector/YearSelector';
+import Search from 'components/Header/Search/Search';
+import YearSelector from 'components/Header/YearSelector/YearSelector';
 import ImageSeriesSelector from 'components/ImageSeriesSelector/ImageSeriesSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import PageInformation from './PageInformation/PageInformation';
