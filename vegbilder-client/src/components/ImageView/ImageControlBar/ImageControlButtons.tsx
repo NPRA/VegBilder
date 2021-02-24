@@ -30,7 +30,7 @@ import {
   TimerIcon,
   CheckmarkIcon,
   PauseIcon,
-} from '../Icons/Icons';
+} from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import {
@@ -78,12 +78,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IControlBarProps {
+interface IImageControlButtonsProps {
   showMessage: (message: string) => void;
   setShowReportErrorsScheme: (value: boolean) => void;
 }
 
-const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps) => {
+const ImageControlButtons = ({
+  showMessage,
+  setShowReportErrorsScheme,
+}: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
   const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
@@ -429,4 +432,4 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
   );
 };
 
-export default ControlBar;
+export default ImageControlButtons;

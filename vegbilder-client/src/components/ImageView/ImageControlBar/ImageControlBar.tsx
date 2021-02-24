@@ -3,7 +3,7 @@ import { AppBar, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
-import ControlBar from './ControlBar';
+import ImageControlButtons from './ImageControlButtons';
 
 const useStyles = makeStyles((theme) => ({
   appbar: {
@@ -22,7 +22,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Footer = ({ showMessage, setShowReportErrorsScheme }) => {
+interface IImageControlBarProps {
+  showMessage: (message: string) => void;
+  setShowReportErrorsScheme: (value: boolean) => void;
+}
+
+const ImageControlBar = ({ showMessage, setShowReportErrorsScheme }: IImageControlBarProps) => {
   const classes = useStyles();
 
   return (
@@ -32,7 +37,7 @@ const Footer = ({ showMessage, setShowReportErrorsScheme }) => {
           <ImageMetadata />
         </Grid>
         <Grid item>
-          <ControlBar
+          <ImageControlButtons
             showMessage={showMessage}
             setShowReportErrorsScheme={setShowReportErrorsScheme}
           />
@@ -43,4 +48,4 @@ const Footer = ({ showMessage, setShowReportErrorsScheme }) => {
   );
 };
 
-export default Footer;
+export default ImageControlBar;

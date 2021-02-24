@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
 
-import Footer from 'components/Footer/Footer';
+import ImageControlBar from 'components/ImageView/ImageControlBar/ImageControlBar';
 import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
 import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
 import { TogglesProvider } from 'contexts/TogglesContext';
@@ -179,7 +179,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         {!isZoomedInImage ? <SmallMapContainer exitImageView={setView} /> : null}
       </Grid>
       <Grid item className={classes.footer}>
-        <Footer
+        <ImageControlBar
           showMessage={showSnackbarMessage}
           setShowReportErrorsScheme={setShowReportErrorsScheme}
         />

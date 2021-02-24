@@ -9,6 +9,7 @@ export const playVideoState = atom({
 });
 
 export const timerState = atom({
+  /// denne trenger ikke å være en global
   key: 'timerState',
   default: 2000, // ms
 });
