@@ -39,15 +39,11 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 'calc(100vh - 9.5rem)', // Total view height minus the height of the header and footer combined
     maxWidth: '100%',
     objectFit: 'contain',
-    cursor: 'zoom-in',
   },
   enlargedImage: {
-    position: 'absolute',
-    zIndex: 1,
     width: 'auto',
     height: 'auto',
-    overflow: 'auto',
-    cursor: 'zoom-out',
+    position: 'absolute',
   },
   canvas: {
     position: 'absolute',
@@ -56,15 +52,22 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '100%',
     maxHeight: '100%',
   },
+  enlargedImageContainer: {},
 }));
 
 interface IImageViewerProps {
   exitImageView: () => void;
   showMessage: (message: string) => void;
   showCloseButton: boolean;
+  isZoomedInImage?: boolean;
 }
 
-const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageViewerProps) => {
+const ImageViewer = ({
+  exitImageView,
+  showMessage,
+  showCloseButton,
+  isZoomedInImage,
+}: IImageViewerProps) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
@@ -75,7 +78,6 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
   const timer = useRecoilValue(timerState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
-  const [isEnlargedImage, setIsEnlargedImage] = useState(false);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -318,12 +320,9 @@ const ImageViewer = ({ exitImageView, showMessage, showCloseButton }: IImageView
                 : getImageUrl(currentImagePoint)
             }
             alt="vegbilde"
-            className={isEnlargedImage ? classes.enlargedImage : classes.image}
+            className={isZoomedInImage ? classes.enlargedImage : classes.image}
             ref={imgRef}
             onLoad={onImageLoaded}
-            onClick={() => {
-              if (!isHistoryMode) setIsEnlargedImage(!isEnlargedImage);
-            }}
           />
           {renderMeterLine()}
         </>
