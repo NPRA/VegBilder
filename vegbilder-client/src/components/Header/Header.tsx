@@ -13,32 +13,24 @@ import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 
 const useStyles = makeStyles({
-  headerAppBar: {
-    minHeight: '4.375rem',
-  },
   headerToolBar: {
     height: '100%',
     marginRight: '1.125rem',
     minHeight: '4.375rem',
   },
   logoContainer: {
-    display: 'flex',
     flex: '1 1 auto',
-    justifyContent: 'flex-start',
   },
   yearSelectorContainer: {
-    display: 'flex',
     flex: '1 1 auto',
-    justifyContent: 'flex-start',
   },
   searchContainer: {
-    marginLeft: '1.125rem',
-    marginRight: '1.125rem',
+    margin: '0 1.125rem',
   },
   logo: {
     width: '7.5rem',
     cursor: 'pointer',
-    marginLeft: '0.5rem',
+    margin: '0.5rem',
   },
   rightItem: {
     width: '7.5rem',
@@ -66,7 +58,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
   };
 
   return (
-    <AppBar position="static" color="primary" elevation={3} className={classes.headerAppBar}>
+    <AppBar position="static" color="primary" elevation={3}>
       <Toolbar className={classes.headerToolBar} disableGutters>
         <Grid container direction="row" justify="space-between" alignItems="center">
           <Grid item className={classes.logoContainer}>
