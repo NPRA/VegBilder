@@ -14,8 +14,8 @@ import { EnlargeIcon } from 'components/Icons/Icons';
 const useStyles = makeStyles((theme) => ({
   minimap: {
     position: 'absolute',
-    width: '20vw',
-    height: '20vw',
+    width: '18vw',
+    height: '18vw',
     left: '1.25rem',
     top: '1.25rem',
     border: `1px ${theme.palette.primary.main} solid`,

@@ -14,11 +14,12 @@ import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 
 const useStyles = makeStyles({
   headerAppBar: {
-    height: '100%',
+    minHeight: '4.375rem',
   },
   headerToolBar: {
     height: '100%',
     marginRight: '1.125rem',
+    minHeight: '4.375rem',
   },
   logoContainer: {
     display: 'flex',
