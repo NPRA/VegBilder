@@ -3,7 +3,7 @@ import { IconButton, makeStyles, Popover, Tooltip, Typography } from '@material-
 
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
-import { InformDisabledIcon, InformIcon } from 'components/Icons/Icons';
+import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
 
@@ -105,7 +105,7 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
             if (imagePoint) handleMoreInfoButtonClick(event);
           }}
         >
-          {disabled ? <InformDisabledIcon /> : <InformIcon />}
+          <InformIcon />
         </IconButton>
       </Tooltip>
       {imagePoint && moreInfoAnchorEl ? (

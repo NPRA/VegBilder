@@ -30,10 +30,6 @@ import {
   TimerIcon,
   CheckmarkIcon,
   PauseIcon,
-  ArrowTurnDisabledIcon,
-  DotsHorizontalDisabledIcon,
-  PlayDisabledIcon,
-  HistoryDisabledIcon,
 } from '../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -50,6 +46,11 @@ const useStyles = makeStyles((theme) => ({
   button: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
+  },
+  buttonDisabled: {
+    margin: '1.25rem',
+    backgroundColor: 'transparent',
+    opacity: '30%',
   },
   arrowTurnButton: {
     '& .MuiIconButton-label': {
@@ -140,7 +141,7 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
       }
     };
     document.body.addEventListener('keydown', onKeyDown);
-    return function cleanUp() {
+    return () => {
       document.body.removeEventListener('keydown', onKeyDown);
     };
   }, [setCommand]);
@@ -260,7 +261,7 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
           onClick={handleMoreControlsClick}
           className={classes.button}
         >
-          {playVideo ? <DotsHorizontalDisabledIcon /> : <DotsHorizontalIcon />}
+          <DotsHorizontalIcon />
         </IconButton>
       </Tooltip>
     );
@@ -271,7 +272,7 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
       <Tooltip title={tooltip}>
         <IconButton
           aria-label="Start animasjonsmodus"
-          className={classes.button}
+          className={isHistoryMode ? classes.buttonDisabled : classes.button}
           disabled={isHistoryMode}
           onClick={() => {
             setPlayVideo(true);
@@ -373,9 +374,7 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
             </Tooltip>
 
             {changeDirectionButton()}
-
             {playIconButton('Start animasjonsmodus')}
-
             {hideShowBasisLineButton()}
             {historyButton()}
             <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
@@ -383,6 +382,8 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
           </>
         ) : null}
       </Toolbar>
+
+      {/* more functions menu  */}
       {currentImagePoint ? (
         <Menu
           id="more-controls-menu"
