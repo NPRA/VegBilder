@@ -17,9 +17,6 @@ const useStyles = makeStyles(() => ({
     position: 'relative', // Needed for the small map to be positioned correctly relative to the top left corner of the content container
     height: '100%',
     overflow: 'hidden',
-    '&:focus': {
-      boxShadow: '5px 10px #888888',
-    },
   },
   footer: {
     flex: '0 1 4.5rem',
@@ -48,8 +45,7 @@ interface IScrollState {
 
 type ScrollAction =
   | { type: 'mousePosition'; newVal: { x: number; y: number } }
-  | { type: 'scroll'; newVal: { x: number; y: number } }
-  | { type: 'pressLeft' };
+  | { type: 'scroll'; newVal: { x: number; y: number } };
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
@@ -79,13 +75,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           mousePositionX: action.newVal.x,
           y: state.scroll.y + action.newVal.y - state.mousePosition.y,
           mousePositionY: action.newVal.y,
-        };
-      }
-      case 'pressLeft': {
-        return {
-          ...state,
-          mousePositionX: state.mousePosition.x - 10,
-          x: state.scroll.x - 10,
         };
       }
       default:
