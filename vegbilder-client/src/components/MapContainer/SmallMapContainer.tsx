@@ -14,10 +14,10 @@ import { EnlargeIcon } from 'components/Icons/Icons';
 const useStyles = makeStyles((theme) => ({
   minimap: {
     position: 'absolute',
-    width: '300px',
-    height: '300px',
-    left: '20px',
-    top: '20px',
+    width: '20vw',
+    height: '20vw',
+    left: '1.25rem',
+    top: '1.25rem',
     border: `1px ${theme.palette.primary.main} solid`,
     boxShadow: '1px 2px 2px 2px rgba(0, 0, 0, 0.4)',
   },
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
   enlargeButton: {
     position: 'absolute',
     zIndex: 1000,
-    top: 2,
+    bottom: 2,
     right: 2,
   },
 }));
