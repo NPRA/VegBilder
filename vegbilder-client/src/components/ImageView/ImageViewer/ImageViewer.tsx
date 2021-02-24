@@ -39,13 +39,11 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: 'calc(100vh - 9.5rem)', // Total view height minus the height of the header and footer combined
     maxWidth: '100%',
     objectFit: 'contain',
-    cursor: 'zoom-in',
   },
   enlargedImage: {
     width: 'auto',
     height: 'auto',
     position: 'absolute',
-    zIndex: 1,
   },
   canvas: {
     position: 'absolute',

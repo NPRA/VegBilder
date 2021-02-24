@@ -17,6 +17,9 @@ const useStyles = makeStyles(() => ({
     position: 'relative', // Needed for the small map to be positioned correctly relative to the top left corner of the content container
     height: '100%',
     overflow: 'hidden',
+    '&:focus': {
+      boxShadow: '5px 10px #888888',
+    },
   },
   footer: {
     flex: '0 1 4.5rem',
@@ -26,6 +29,10 @@ const useStyles = makeStyles(() => ({
     position: 'relative',
     height: '100%',
     width: '100%',
+  },
+  imageCointainer: {
+    height: '100%',
+    overflow: 'hidden',
   },
 }));
 
@@ -41,7 +48,8 @@ interface IScrollState {
 
 type ScrollAction =
   | { type: 'mousePosition'; newVal: { x: number; y: number } }
-  | { type: 'scroll'; newVal: { x: number; y: number } };
+  | { type: 'scroll'; newVal: { x: number; y: number } }
+  | { type: 'pressLeft' };
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
@@ -49,7 +57,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
   const imageContainerRef = useRef<HTMLImageElement>(null);
-  const [cursor, setCursor] = useState('zoom-out');
+  const [cursor, setCursor] = useState('zoom-in');
 
   const initialScrollState = {
     mousePosition: { x: 0, y: 0 },
@@ -71,6 +79,13 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           mousePositionX: action.newVal.x,
           y: state.scroll.y + action.newVal.y - state.mousePosition.y,
           mousePositionY: action.newVal.y,
+        };
+      }
+      case 'pressLeft': {
+        return {
+          ...state,
+          mousePositionX: state.mousePosition.x - 10,
+          x: state.scroll.x - 10,
         };
       }
       default:
@@ -97,8 +112,13 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
     const onMouseUp = () => {
       shouldScroll = false;
-      setCursor('zoom-out');
-      if (!mouseMoved) setIsZoomedInImage((prevState) => !prevState);
+      if (!mouseMoved && !isHistoryMode) {
+        setIsZoomedInImage((prevState) => !prevState);
+        setCursor((prevState) => (prevState === 'zoom-in' ? 'zoom-out' : 'zoom-in'));
+      }
+      if (mouseMoved) {
+        setCursor('zoom-out');
+      }
     };
 
     const onMouseOut = () => {
@@ -120,22 +140,35 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       }
     };
 
+    const onScroll = (event: WheelEvent) => {
+      currentImageContainerRef.scrollLeft = scrollState.scroll.x + event.clientX;
+      currentImageContainerRef.scrollTop = scrollState.scroll.y + event.clientY;
+      dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
+    };
+
     currentImageContainerRef.addEventListener('mousedown', onMouseDown);
     currentImageContainerRef.addEventListener('mouseup', onMouseUp);
     currentImageContainerRef.addEventListener('mouseout', onMouseOut);
     currentImageContainerRef.addEventListener('mousemove', onMouseMove);
+    currentImageContainerRef.addEventListener('wheel', onScroll);
 
     return () => {
       currentImageContainerRef.removeEventListener('mousedown', onMouseDown);
       currentImageContainerRef.removeEventListener('mouseup', onMouseUp);
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
+      currentImageContainerRef.removeEventListener('wheel', onScroll);
     };
-  }, []);
+  }, [isHistoryMode]);
 
   return (
     <TogglesProvider>
-      <Grid item className={classes.content} ref={imageContainerRef} style={{ cursor: cursor }}>
+      <Grid
+        item
+        className={classes.content}
+        ref={imageContainerRef}
+        style={{ cursor: isHistoryMode ? 'initial' : cursor }}
+      >
         {isHistoryMode ? (
           <div className={classes.imageseries}>
             {' '}
@@ -154,7 +187,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             isZoomedInImage={isZoomedInImage}
           />
         )}
-        <SmallMapContainer exitImageView={setView} />
+        {!isZoomedInImage ? <SmallMapContainer exitImageView={setView} /> : null}
       </Grid>
       <Grid item className={classes.footer}>
         <Footer
