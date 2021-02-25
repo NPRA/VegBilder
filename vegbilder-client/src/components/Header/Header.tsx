@@ -5,6 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 
 import Search from './Search/Search';
 import YearSelector from './YearSelector/YearSelector';
+import DateSelector from './DateSelector/DateSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import PageInformation from './PageInformation/PageInformation';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';

@@ -1,16 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import Grid from '@material-ui/core/Grid';
-import Snackbar from '@material-ui/core/Snackbar';
+import { Grid, makeStyles, Snackbar, ThemeProvider } from '@material-ui/core';
+import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { makeStyles } from '@material-ui/styles';
-
-import Header from '../Header/Header';
-import Onboarding from './Onboarding/Onboarding';
-import useQueryParamState from 'hooks/useQueryParamState';
-import MapView from '../MapView/MapView';
-import ImageView from '../ImageView/ImageView';
-import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useRecoilState, useRecoilValue } from 'recoil';
+
+import { CurrentImagePointProvider } from 'contexts/CurrentImagePointContext';
+import { CurrentCoordinatesProvider } from 'contexts/CurrentCoordinatesContext';
+import { LoadedImagePointsProvider } from 'contexts/LoadedImagePointsContext';
+import { commandTypes, useCommand } from 'contexts/CommandContext';
+import theme from 'theme/Theme';
+import { ImageSeriesProvider } from 'contexts/ImageSeriesContext';
+import { FilteredImagePointsProvider } from 'contexts/FilteredImagePointsContext';
+import Header from './Header/Header';
+import useQueryParamState from 'hooks/useQueryParamState';
+import ImageView from './ImageView/ImageView';
+import MapView from './MapView/MapView';
+import Onboarding from './Onboarding/Onboarding';
 import { currentYearState } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
 
@@ -45,7 +50,7 @@ const views = {
 
 const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {...props} />;
 
-const ComponentsWrapper = () => {
+const App = () => {
   const classes = useStyles();
   const [view, setView] = useQueryParamState('view');
   const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
@@ -100,27 +105,43 @@ const ComponentsWrapper = () => {
   };
 
   return (
-    <>
-      <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
-        <Grid item className={classes.header}>
-          <Header showMessage={showSnackbarMessage} setMapView={() => setView(views.mapView)} />
-        </Grid>
-        {renderContent()}
-      </Grid>
-      <Snackbar
-        key={snackbarMessage}
-        open={snackbarVisible}
-        autoHideDuration={5000}
-        onClose={(reason) => handleSnackbarClose(reason)}
-        className={classes.snackbar}
-      >
-        <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
-          {snackbarMessage}
-        </Alert>
-      </Snackbar>
-      <Onboarding />
-    </>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <CurrentCoordinatesProvider>
+        <LoadedImagePointsProvider>
+          <CurrentImagePointProvider>
+            <ImageSeriesProvider>
+              <FilteredImagePointsProvider>
+                <>
+                  <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
+                    <Grid item className={classes.header}>
+                      <Header
+                        showMessage={showSnackbarMessage}
+                        setMapView={() => setView(views.mapView)}
+                      />
+                    </Grid>
+                    {renderContent()}
+                  </Grid>
+                  <Snackbar
+                    key={snackbarMessage}
+                    open={snackbarVisible}
+                    autoHideDuration={5000}
+                    onClose={(reason) => handleSnackbarClose(reason)}
+                    className={classes.snackbar}
+                  >
+                    <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
+                      {snackbarMessage}
+                    </Alert>
+                  </Snackbar>
+                  <Onboarding />{' '}
+                </>
+              </FilteredImagePointsProvider>
+            </ImageSeriesProvider>
+          </CurrentImagePointProvider>
+        </LoadedImagePointsProvider>
+      </CurrentCoordinatesProvider>
+    </ThemeProvider>
   );
 };
 
-export default ComponentsWrapper;
+export default App;

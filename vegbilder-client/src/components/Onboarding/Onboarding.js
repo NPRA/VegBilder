@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui/core';
 
-import PageInformationTextAndImage from 'components/PageInformationTextAndImage/PageInformationTextAndImage';
+import PageInformationTextAndImage from 'components/Onboarding/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import { informationText } from 'constants/text';
 import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';

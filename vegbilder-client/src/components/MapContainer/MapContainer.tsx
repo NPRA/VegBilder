@@ -7,7 +7,7 @@ import { LeafletMouseEvent } from 'leaflet';
 
 import { crsUtm33N } from './crs';
 import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
-import MapControls from 'components/MapControls/MapControls';
+import MapControls from './MapControls/MapControls';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { currentYearState } from 'recoil/atoms';
@@ -107,7 +107,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         return nearestImagePoint;
       }
     },
-    [currentCoordinates, setCurrentImagePoint]
+    [currentCoordinates]
   );
 
   /* Fetch image points in new target area when the user clicks on the map. If we find an image, we set the year to the year where we found the image.
