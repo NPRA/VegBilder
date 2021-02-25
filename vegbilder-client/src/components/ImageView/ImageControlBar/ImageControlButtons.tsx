@@ -13,7 +13,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import clsx from 'clsx';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
-import { useToggles } from 'contexts/TogglesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
   ArrowDownIcon,
@@ -70,6 +69,10 @@ interface IImageControlButtonsProps {
   setShowReportErrorsScheme: (value: boolean) => void;
   timeBetweenImages: number;
   setTimeBetweenImages: (newTime: number) => void;
+  miniMapVisible: boolean;
+  setMiniMapVisible: (visible: boolean) => void;
+  meterLineVisible: boolean;
+  setMeterLineVisible: (visible: boolean) => void;
 }
 
 const ImageControlButtons = ({
@@ -77,10 +80,13 @@ const ImageControlButtons = ({
   setShowReportErrorsScheme,
   timeBetweenImages,
   setTimeBetweenImages,
+  miniMapVisible,
+  meterLineVisible,
+  setMiniMapVisible,
+  setMeterLineVisible,
 }: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
-  const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { copyToClipboard } = useCopyToClipboard();
 

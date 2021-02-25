@@ -27,6 +27,10 @@ interface IImageControlBarProps {
   setShowReportErrorsScheme: (value: boolean) => void;
   timeBetweenImages: number;
   setTimeBetweenImages: (newTime: number) => void;
+  miniMapVisible: boolean;
+  setMiniMapVisible: (visible: boolean) => void;
+  meterLineVisible: boolean;
+  setMeterLineVisible: (visible: boolean) => void;
 }
 
 const ImageControlBar = ({
@@ -34,6 +38,10 @@ const ImageControlBar = ({
   setShowReportErrorsScheme,
   timeBetweenImages,
   setTimeBetweenImages,
+  miniMapVisible,
+  meterLineVisible,
+  setMiniMapVisible,
+  setMeterLineVisible,
 }: IImageControlBarProps) => {
   const classes = useStyles();
 
@@ -45,6 +53,10 @@ const ImageControlBar = ({
         </Grid>
         <Grid item>
           <ImageControlButtons
+            miniMapVisible={miniMapVisible}
+            meterLineVisible={meterLineVisible}
+            setMeterLineVisible={setMeterLineVisible}
+            setMiniMapVisible={setMiniMapVisible}
             timeBetweenImages={timeBetweenImages}
             setTimeBetweenImages={setTimeBetweenImages}
             showMessage={showMessage}

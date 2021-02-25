@@ -18,7 +18,6 @@ import {
 } from 'utilities/imagePointUtilities';
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
-import { useToggles } from 'contexts/TogglesContext';
 import { playVideoState, isHistoryModeState, currentHistoryImageState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 
@@ -56,6 +55,7 @@ interface IImageViewerProps {
   showCloseButton: boolean;
   isZoomedInImage?: boolean;
   timeBetweenImages: number;
+  meterLineVisible: boolean;
 }
 
 const ImageViewer = ({
@@ -64,13 +64,13 @@ const ImageViewer = ({
   showCloseButton,
   isZoomedInImage,
   timeBetweenImages,
+  meterLineVisible,
 }: IImageViewerProps) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
   const { command, resetCommand } = useCommand();
   const { setCurrentCoordinates } = useCurrentCoordinates();
-  const { meterLineVisible } = useToggles();
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);

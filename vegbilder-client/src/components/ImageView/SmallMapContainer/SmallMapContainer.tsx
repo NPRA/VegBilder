@@ -3,11 +3,10 @@ import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { crsUtm33N } from './crs';
+import { crsUtm33N } from '../../MapContainer/crs';
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { useToggles } from 'contexts/TogglesContext';
-import './MapContainer.css';
+import 'components/MapContainer/MapContainer.css';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { EnlargeIcon } from 'components/Icons/Icons';
 
@@ -38,13 +37,12 @@ interface ISmallMapContainerProps {
 
 const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
-  const { miniMapVisible } = useToggles();
   const classes = useStyles();
   const minZoom = 15;
   const maxZoom = 16;
 
   return (
-    <div className={miniMapVisible ? classes.minimap : classes.minimapHidden}>
+    <div className={classes.minimap}>
       <Map
         center={currentCoordinates.latlng}
         zoom={Math.max(currentCoordinates.zoom, minZoom)}
