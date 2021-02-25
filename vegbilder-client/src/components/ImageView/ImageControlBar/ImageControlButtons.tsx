@@ -41,8 +41,9 @@ import {
 } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
+import { ListSubheader } from '@material-ui/core';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   button: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
@@ -58,16 +59,6 @@ const useStyles = makeStyles((theme) => ({
         width: '30px',
       },
     },
-  },
-  speedHeading: {
-    color: theme.palette.common.grayMenuItems,
-    textTransform: 'uppercase',
-    paddingTop: '1.21875rem',
-    paddingLeft: '1.875rem',
-    paddingRight: '1.875rem',
-    paddingBottom: '0.75rem',
-    margin: 0,
-    fontWeight: 600,
   },
   speedMenuItem: {
     padding: '0.25rem 2.125rem',
@@ -176,7 +167,7 @@ const ImageControlButtons = ({
             horizontal: 'center',
           }}
         >
-          <p className={classes.speedHeading}> Hastighet </p>
+          <ListSubheader> Hastighet </ListSubheader>
           {timerOptions.map((option, i) => (
             <MenuItem
               key={i}
