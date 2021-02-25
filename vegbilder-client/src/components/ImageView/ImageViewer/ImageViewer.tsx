@@ -19,12 +19,7 @@ import {
 import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { useToggles } from 'contexts/TogglesContext';
-import {
-  playVideoState,
-  timerState,
-  isHistoryModeState,
-  currentHistoryImageState,
-} from 'recoil/atoms';
+import { playVideoState, isHistoryModeState, currentHistoryImageState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 
 const useStyles = makeStyles((theme) => ({
@@ -60,6 +55,7 @@ interface IImageViewerProps {
   showMessage: (message: string) => void;
   showCloseButton: boolean;
   isZoomedInImage?: boolean;
+  timeBetweenImages: number;
 }
 
 const ImageViewer = ({
@@ -67,6 +63,7 @@ const ImageViewer = ({
   showMessage,
   showCloseButton,
   isZoomedInImage,
+  timeBetweenImages,
 }: IImageViewerProps) => {
   const classes = useStyles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
@@ -75,7 +72,6 @@ const ImageViewer = ({
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { meterLineVisible } = useToggles();
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
-  const timer = useRecoilValue(timerState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
@@ -296,7 +292,7 @@ const ImageViewer = ({
   useEffect(() => {
     if (autoPlay) {
       if (nextImagePoint) {
-        sleep(timer).then(() => {
+        sleep(timeBetweenImages).then(() => {
           const latlng = getImagePointLatLng(nextImagePoint);
           setCurrentImagePoint(nextImagePoint);
           setCurrentCoordinates({ latlng: latlng });
@@ -307,7 +303,7 @@ const ImageViewer = ({
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoPlay, nextImagePoint, showMessage, timer]);
+  }, [autoPlay, nextImagePoint, showMessage, timeBetweenImages]);
 
   return (
     <div className={classes.imageArea}>

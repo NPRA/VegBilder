@@ -25,9 +25,16 @@ const useStyles = makeStyles((theme) => ({
 interface IImageControlBarProps {
   showMessage: (message: string) => void;
   setShowReportErrorsScheme: (value: boolean) => void;
+  timeBetweenImages: number;
+  setTimeBetweenImages: (newTime: number) => void;
 }
 
-const ImageControlBar = ({ showMessage, setShowReportErrorsScheme }: IImageControlBarProps) => {
+const ImageControlBar = ({
+  showMessage,
+  setShowReportErrorsScheme,
+  timeBetweenImages,
+  setTimeBetweenImages,
+}: IImageControlBarProps) => {
   const classes = useStyles();
 
   return (
@@ -38,6 +45,8 @@ const ImageControlBar = ({ showMessage, setShowReportErrorsScheme }: IImageContr
         </Grid>
         <Grid item>
           <ImageControlButtons
+            timeBetweenImages={timeBetweenImages}
+            setTimeBetweenImages={setTimeBetweenImages}
             showMessage={showMessage}
             setShowReportErrorsScheme={setShowReportErrorsScheme}
           />

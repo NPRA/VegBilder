@@ -8,12 +8,6 @@ export const playVideoState = atom({
   default: false,
 });
 
-export const timerState = atom({
-  /// denne trenger ikke å være en global
-  key: 'timerState',
-  default: 2000, // ms
-});
-
 export const currentYearState = atom({
   key: 'currentYear',
   default: parseInt(searchParams.get('year') || '2020'),

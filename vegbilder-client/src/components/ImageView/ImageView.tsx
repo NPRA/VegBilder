@@ -10,6 +10,7 @@ import { TogglesProvider } from 'contexts/TogglesContext';
 import { isHistoryModeState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from 'components/ImageView/ReportErrorFeedback/ReportErrorFeedback';
+import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -54,6 +55,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
   const imageContainerRef = useRef<HTMLImageElement>(null);
   const [cursor, setCursor] = useState('zoom-in');
+  const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
 
   const initialScrollState = {
     mousePosition: { x: 0, y: 0 },
@@ -162,6 +164,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           <div className={classes.imageseries}>
             {' '}
             <ImageViewer
+              timeBetweenImages={timeBetweenImages}
               exitImageView={setView}
               showMessage={showSnackbarMessage}
               showCloseButton={false}
@@ -170,6 +173,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           </div>
         ) : (
           <ImageViewer
+            timeBetweenImages={timeBetweenImages}
             exitImageView={setView}
             showMessage={showSnackbarMessage}
             showCloseButton={true}
@@ -182,6 +186,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         <ImageControlBar
           showMessage={showSnackbarMessage}
           setShowReportErrorsScheme={setShowReportErrorsScheme}
+          timeBetweenImages={timeBetweenImages}
+          setTimeBetweenImages={setTimeBetweenImages}
         />
       </Grid>
       {showReportErrorsScheme ? (

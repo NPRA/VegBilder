@@ -33,12 +33,7 @@ import {
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import {
-  isHistoryModeState,
-  playVideoState,
-  timerState,
-  currentHistoryImageState,
-} from 'recoil/atoms';
+import { isHistoryModeState, playVideoState, currentHistoryImageState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 import { ListSubheader } from '@material-ui/core';
@@ -73,11 +68,15 @@ const useStyles = makeStyles(() => ({
 interface IImageControlButtonsProps {
   showMessage: (message: string) => void;
   setShowReportErrorsScheme: (value: boolean) => void;
+  timeBetweenImages: number;
+  setTimeBetweenImages: (newTime: number) => void;
 }
 
 const ImageControlButtons = ({
   showMessage,
   setShowReportErrorsScheme,
+  timeBetweenImages,
+  setTimeBetweenImages,
 }: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
@@ -88,14 +87,13 @@ const ImageControlButtons = ({
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState<Element | null>(null);
   const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState<Element | null>(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
-  const [currentTime, setTime] = useRecoilState(timerState);
   const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
-  const handleTimerOptionSelect = (time: number) => setTime(time);
+  const handleTimerOptionSelect = (time: number) => setTimeBetweenImages(time);
   const handleTimerOptionsClick = (event: MouseEvent) =>
     setTimerOptionsAnchorEl(event.currentTarget);
   const handleMoreControlsClick = (event: MouseEvent) =>
@@ -176,11 +174,13 @@ const ImageControlButtons = ({
               }}
               className={classes.speedMenuItem}
             >
-              {option === currentTime && <CheckmarkIcon className={classes.iconStyle} />}
+              {option === timeBetweenImages && <CheckmarkIcon className={classes.iconStyle} />}
               <ListItemText
                 key={`Text${i}`}
                 primary={(option / 1000).toString() + ' sekunder'}
-                style={{ color: option === currentTime ? Theme.palette.common.orangeDark : '' }}
+                style={{
+                  color: option === timeBetweenImages ? Theme.palette.common.orangeDark : '',
+                }}
               />
             </MenuItem>
           ))}
