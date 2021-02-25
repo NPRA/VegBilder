@@ -45,7 +45,8 @@ interface IScrollState {
 
 type ScrollAction =
   | { type: 'mousePosition'; newVal: { x: number; y: number } }
-  | { type: 'scroll'; newVal: { x: number; y: number } };
+  | { type: 'scroll'; newVal: { x: number; y: number } }
+  | { type: 'reset' };
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
@@ -72,13 +73,30 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         };
       }
       case 'scroll': {
+        const currentImageContainerRef = imageContainerRef.current;
+        if (currentImageContainerRef) {
+          currentImageContainerRef.scrollLeft =
+            state.scroll.x - action.newVal.x + state.mousePosition.x;
+          currentImageContainerRef.scrollTop =
+            state.scroll.y - action.newVal.y + state.mousePosition.y;
+        }
+        //console.log('action.newVal  ' + (state.scroll.x - action.newVal.x + state.mousePosition.x));
         return {
           ...state,
           scroll: {
-            x: state.scroll.x, //+ action.newVal.x - state.mousePosition.x,
-            y: state.scroll.y, //+ action.newVal.y + state.mousePosition.y,
+            x: state.scroll.x - action.newVal.x + state.mousePosition.x,
+            y: state.scroll.y - action.newVal.y + state.mousePosition.y,
           },
           mousePosition: { x: action.newVal.x, y: action.newVal.y },
+        };
+      }
+      case 'reset': {
+        return {
+          scroll: {
+            x: 0,
+            y: 0,
+          },
+          mousePosition: { x: 0, y: 0 },
         };
       }
       default:
@@ -107,7 +125,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       shouldScroll = false;
       if (!mouseMoved && !isHistoryMode) {
         setIsZoomedInImage((prevState) => !prevState);
-        setCursor('zoom-in');
+        setCursor((prevState) => (prevState === 'grab' ? 'zoom-in' : 'grab'));
       }
       if (mouseMoved) {
         setCursor('grab');
@@ -116,7 +134,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
     const onMouseOut = () => {
       shouldScroll = false;
-      //setCursor('initial');
     };
 
     const onMouseMove = (event: MouseEvent) => {
@@ -125,35 +142,22 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       if (shouldScroll) {
         setCursor('grabbing');
         if (currentImageContainerRef) {
-          currentImageContainerRef.scrollLeft =
-            scrollState.scroll.x + event.clientX - scrollState.mousePosition.x;
-          currentImageContainerRef.scrollTop =
-            scrollState.scroll.y + event.clientY + scrollState.mousePosition.y;
+          dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
         }
-        dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
       }
-    };
-
-    const onScroll = (event: WheelEvent) => {
-      currentImageContainerRef.scrollLeft = scrollState.scroll.x + event.clientX;
-      currentImageContainerRef.scrollTop = scrollState.scroll.y + event.clientY;
-      dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
     };
 
     currentImageContainerRef.addEventListener('mousedown', onMouseDown);
     currentImageContainerRef.addEventListener('mouseup', onMouseUp);
     currentImageContainerRef.addEventListener('mouseout', onMouseOut);
     currentImageContainerRef.addEventListener('mousemove', onMouseMove);
-    currentImageContainerRef.addEventListener('wheel', onScroll);
-
     return () => {
       currentImageContainerRef.removeEventListener('mousedown', onMouseDown);
       currentImageContainerRef.removeEventListener('mouseup', onMouseUp);
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
-      currentImageContainerRef.removeEventListener('wheel', onScroll);
     };
-  }, [isHistoryMode]);
+  }, []);
 
   return (
     <>
