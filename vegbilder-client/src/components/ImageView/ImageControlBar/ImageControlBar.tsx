@@ -3,7 +3,7 @@ import { AppBar, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
-import ControlBar from './ControlBar';
+import ImageControlButtons from './ImageControlButtons';
 
 const useStyles = makeStyles((theme) => ({
   appbar: {
@@ -22,7 +22,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Footer = ({ showMessage, setShowReportErrorsScheme }) => {
+interface IImageControlBarProps {
+  showMessage: (message: string) => void;
+  setShowReportErrorsScheme: (value: boolean) => void;
+  timeBetweenImages: number;
+  setTimeBetweenImages: (newTime: number) => void;
+  miniMapVisible: boolean;
+  setMiniMapVisible: (visible: boolean) => void;
+  meterLineVisible: boolean;
+  setMeterLineVisible: (visible: boolean) => void;
+}
+
+const ImageControlBar = ({
+  showMessage,
+  setShowReportErrorsScheme,
+  timeBetweenImages,
+  setTimeBetweenImages,
+  miniMapVisible,
+  meterLineVisible,
+  setMiniMapVisible,
+  setMeterLineVisible,
+}: IImageControlBarProps) => {
   const classes = useStyles();
 
   return (
@@ -32,7 +52,13 @@ const Footer = ({ showMessage, setShowReportErrorsScheme }) => {
           <ImageMetadata />
         </Grid>
         <Grid item>
-          <ControlBar
+          <ImageControlButtons
+            miniMapVisible={miniMapVisible}
+            meterLineVisible={meterLineVisible}
+            setMeterLineVisible={setMeterLineVisible}
+            setMiniMapVisible={setMiniMapVisible}
+            timeBetweenImages={timeBetweenImages}
+            setTimeBetweenImages={setTimeBetweenImages}
             showMessage={showMessage}
             setShowReportErrorsScheme={setShowReportErrorsScheme}
           />
@@ -43,4 +69,4 @@ const Footer = ({ showMessage, setShowReportErrorsScheme }) => {
   );
 };
 
-export default Footer;
+export default ImageControlBar;

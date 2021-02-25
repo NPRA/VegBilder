@@ -3,13 +3,13 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
 
-import Footer from 'components/Footer/Footer';
-import SmallMapContainer from 'components/MapContainer/SmallMapContainer';
-import ImageViewer from 'components/ImageView/ImageViewer/ImageViewer';
-import { TogglesProvider } from 'contexts/TogglesContext';
+import ImageControlBar from './ImageControlBar/ImageControlBar';
+import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
+import ImageViewer from './ImageViewer/ImageViewer';
 import { isHistoryModeState } from 'recoil/atoms';
 import History from './History/History';
-import ReportErrorFeedback from 'components/ImageView/ReportErrorFeedback/ReportErrorFeedback';
+import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
+import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -54,6 +54,9 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
   const imageContainerRef = useRef<HTMLImageElement>(null);
   const [cursor, setCursor] = useState('zoom-in');
+  const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
+  const [miniMapVisible, setMiniMapVisible] = useState(true);
+  const [meterLineVisible, setMeterLineVisible] = useState(false);
 
   const initialScrollState = {
     mousePosition: { x: 0, y: 0 },
@@ -151,7 +154,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   }, [isHistoryMode]);
 
   return (
-    <TogglesProvider>
+    <>
       <Grid
         item
         className={classes.content}
@@ -162,6 +165,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           <div className={classes.imageseries}>
             {' '}
             <ImageViewer
+              meterLineVisible={meterLineVisible}
+              timeBetweenImages={timeBetweenImages}
               exitImageView={setView}
               showMessage={showSnackbarMessage}
               showCloseButton={false}
@@ -170,24 +175,32 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           </div>
         ) : (
           <ImageViewer
+            meterLineVisible={meterLineVisible}
+            timeBetweenImages={timeBetweenImages}
             exitImageView={setView}
             showMessage={showSnackbarMessage}
             showCloseButton={true}
             isZoomedInImage={isZoomedInImage}
           />
         )}
-        {!isZoomedInImage ? <SmallMapContainer exitImageView={setView} /> : null}
+        {miniMapVisible && !isZoomedInImage ? <SmallMapContainer exitImageView={setView} /> : null}
       </Grid>
       <Grid item className={classes.footer}>
-        <Footer
+        <ImageControlBar
+          miniMapVisible={miniMapVisible}
+          meterLineVisible={meterLineVisible}
+          setMeterLineVisible={setMeterLineVisible}
+          setMiniMapVisible={setMiniMapVisible}
           showMessage={showSnackbarMessage}
           setShowReportErrorsScheme={setShowReportErrorsScheme}
+          timeBetweenImages={timeBetweenImages}
+          setTimeBetweenImages={setTimeBetweenImages}
         />
       </Grid>
       {showReportErrorsScheme ? (
         <ReportErrorFeedback setVisible={() => setShowReportErrorsScheme(false)} />
       ) : null}
-    </TogglesProvider>
+    </>
   );
 };
 

@@ -5,7 +5,7 @@ import { makeStyles } from '@material-ui/styles';
 
 import Search from 'components/Header/Search/Search';
 import YearSelector from 'components/Header/YearSelector/YearSelector';
-import ImageSeriesSelector from 'components/ImageSeriesSelector/ImageSeriesSelector';
+import DateSelector from './DateSelector/DateSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import PageInformation from './PageInformation/PageInformation';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
@@ -75,7 +75,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
           <Grid item className={classes.yearSelectorContainer}>
             <YearSelector />
             <Box width={'1.125rem'} />
-            <ImageSeriesSelector />
+            <DateSelector />
           </Grid>
           <Tooltip title="Informasjon om Vegbilder">
             <IconButton

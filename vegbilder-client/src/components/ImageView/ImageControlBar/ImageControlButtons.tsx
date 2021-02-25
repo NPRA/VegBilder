@@ -13,7 +13,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import clsx from 'clsx';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
-import { useToggles } from 'contexts/TogglesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
   ArrowDownIcon,
@@ -30,19 +29,16 @@ import {
   TimerIcon,
   CheckmarkIcon,
   PauseIcon,
-} from '../Icons/Icons';
+} from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import {
-  isHistoryModeState,
-  playVideoState,
-  timerState,
-  currentHistoryImageState,
-} from 'recoil/atoms';
+import { isHistoryModeState, playVideoState, currentHistoryImageState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
+import { ListSubheader } from '@material-ui/core';
+import { TIMER_OPTIONS } from 'constants/defaultParamters';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   button: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
@@ -59,16 +55,6 @@ const useStyles = makeStyles((theme) => ({
       },
     },
   },
-  speedHeading: {
-    color: theme.palette.common.grayMenuItems,
-    textTransform: 'uppercase',
-    paddingTop: '1.21875rem',
-    paddingLeft: '1.875rem',
-    paddingRight: '1.875rem',
-    paddingBottom: '0.75rem',
-    margin: 0,
-    fontWeight: 600,
-  },
   speedMenuItem: {
     padding: '0.25rem 2.125rem',
   },
@@ -78,31 +64,42 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IControlBarProps {
+interface IImageControlButtonsProps {
   showMessage: (message: string) => void;
   setShowReportErrorsScheme: (value: boolean) => void;
+  timeBetweenImages: number;
+  setTimeBetweenImages: (newTime: number) => void;
+  miniMapVisible: boolean;
+  setMiniMapVisible: (visible: boolean) => void;
+  meterLineVisible: boolean;
+  setMeterLineVisible: (visible: boolean) => void;
 }
 
-const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps) => {
+const ImageControlButtons = ({
+  showMessage,
+  setShowReportErrorsScheme,
+  timeBetweenImages,
+  setTimeBetweenImages,
+  miniMapVisible,
+  meterLineVisible,
+  setMiniMapVisible,
+  setMeterLineVisible,
+}: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
-  const { miniMapVisible, meterLineVisible, setMiniMapVisible, setMeterLineVisible } = useToggles();
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { copyToClipboard } = useCopyToClipboard();
 
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState<Element | null>(null);
   const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState<Element | null>(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
-  const [currentTime, setTime] = useRecoilState(timerState);
   const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
-  const timerOptions = [1000, 2000, 3000, 4000, 5000];
-
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
-  const handleTimerOptionSelect = (time: number) => setTime(time);
+  const handleTimerOptionSelect = (time: number) => setTimeBetweenImages(time);
   const handleTimerOptionsClick = (event: MouseEvent) =>
     setTimerOptionsAnchorEl(event.currentTarget);
   const handleMoreControlsClick = (event: MouseEvent) =>
@@ -173,8 +170,8 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
             horizontal: 'center',
           }}
         >
-          <p className={classes.speedHeading}> Hastighet </p>
-          {timerOptions.map((option, i) => (
+          <ListSubheader> Hastighet </ListSubheader>
+          {TIMER_OPTIONS.map((option, i) => (
             <MenuItem
               key={i}
               onClick={() => {
@@ -183,11 +180,13 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
               }}
               className={classes.speedMenuItem}
             >
-              {option === currentTime && <CheckmarkIcon className={classes.iconStyle} />}
+              {option === timeBetweenImages && <CheckmarkIcon className={classes.iconStyle} />}
               <ListItemText
                 key={`Text${i}`}
                 primary={(option / 1000).toString() + ' sekunder'}
-                style={{ color: option === currentTime ? Theme.palette.common.orangeDark : '' }}
+                style={{
+                  color: option === timeBetweenImages ? Theme.palette.common.orangeDark : '',
+                }}
               />
             </MenuItem>
           ))}
@@ -429,4 +428,4 @@ const ControlBar = ({ showMessage, setShowReportErrorsScheme }: IControlBarProps
   );
 };
 
-export default ControlBar;
+export default ImageControlButtons;
