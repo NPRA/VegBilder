@@ -122,27 +122,6 @@ const App = () => {
                     </Alert>
                   </Snackbar>
                   <Onboarding />{' '}
-                  <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
-                    <Grid item className={classes.header}>
-                      <Header
-                        showMessage={showSnackbarMessage}
-                        setMapView={() => setView(views.mapView)}
-                      />
-                    </Grid>
-                    {renderContent()}
-                  </Grid>
-                  <Snackbar
-                    key={snackbarMessage}
-                    open={snackbarVisible}
-                    autoHideDuration={5000}
-                    onClose={(reason) => handleSnackbarClose(reason)}
-                    className={classes.snackbar}
-                  >
-                    <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
-                      {snackbarMessage}
-                    </Alert>
-                  </Snackbar>
-                  <Onboarding />
                 </>
               </FilteredImagePointsProvider>
             </ImageSeriesProvider>
