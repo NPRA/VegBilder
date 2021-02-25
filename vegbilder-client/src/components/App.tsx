@@ -1,13 +1,12 @@
-import React, { Suspense, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, makeStyles, Snackbar, ThemeProvider } from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 
 import { CurrentImagePointProvider } from 'contexts/CurrentImagePointContext';
 import { CurrentCoordinatesProvider } from 'contexts/CurrentCoordinatesContext';
 import { LoadedImagePointsProvider } from 'contexts/LoadedImagePointsContext';
-import { CommandProvider, commandTypes, useCommand } from 'contexts/CommandContext';
+import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
 import { ImageSeriesProvider } from 'contexts/ImageSeriesContext';
 import { FilteredImagePointsProvider } from 'contexts/FilteredImagePointsContext';
@@ -39,7 +38,6 @@ const useStyles = makeStyles({
       },
     },
   },
-  circularProgress: { position: 'absolute', top: '50%', left: '50%' },
 });
 
 const views = {
@@ -95,67 +93,63 @@ const App = () => {
   };
 
   return (
-    <Suspense fallback={<CircularProgress className={classes.circularProgress} />}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <CurrentCoordinatesProvider>
-          <LoadedImagePointsProvider>
-            <CurrentImagePointProvider>
-              <ImageSeriesProvider>
-                <FilteredImagePointsProvider>
-                  <CommandProvider>
-                    <>
-                      <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
-                        <Grid item className={classes.header}>
-                          <Header
-                            showMessage={showSnackbarMessage}
-                            setMapView={() => setView(views.mapView)}
-                          />
-                        </Grid>
-                        {renderContent()}
-                      </Grid>
-                      <Snackbar
-                        key={snackbarMessage}
-                        open={snackbarVisible}
-                        autoHideDuration={5000}
-                        onClose={(reason) => handleSnackbarClose(reason)}
-                        className={classes.snackbar}
-                      >
-                        <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
-                          {snackbarMessage}
-                        </Alert>
-                      </Snackbar>
-                      <Onboarding />{' '}
-                      <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
-                        <Grid item className={classes.header}>
-                          <Header
-                            showMessage={showSnackbarMessage}
-                            setMapView={() => setView(views.mapView)}
-                          />
-                        </Grid>
-                        {renderContent()}
-                      </Grid>
-                      <Snackbar
-                        key={snackbarMessage}
-                        open={snackbarVisible}
-                        autoHideDuration={5000}
-                        onClose={(reason) => handleSnackbarClose(reason)}
-                        className={classes.snackbar}
-                      >
-                        <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
-                          {snackbarMessage}
-                        </Alert>
-                      </Snackbar>
-                      <Onboarding />
-                    </>
-                  </CommandProvider>
-                </FilteredImagePointsProvider>
-              </ImageSeriesProvider>
-            </CurrentImagePointProvider>
-          </LoadedImagePointsProvider>
-        </CurrentCoordinatesProvider>
-      </ThemeProvider>
-    </Suspense>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <CurrentCoordinatesProvider>
+        <LoadedImagePointsProvider>
+          <CurrentImagePointProvider>
+            <ImageSeriesProvider>
+              <FilteredImagePointsProvider>
+                <>
+                  <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
+                    <Grid item className={classes.header}>
+                      <Header
+                        showMessage={showSnackbarMessage}
+                        setMapView={() => setView(views.mapView)}
+                      />
+                    </Grid>
+                    {renderContent()}
+                  </Grid>
+                  <Snackbar
+                    key={snackbarMessage}
+                    open={snackbarVisible}
+                    autoHideDuration={5000}
+                    onClose={(reason) => handleSnackbarClose(reason)}
+                    className={classes.snackbar}
+                  >
+                    <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
+                      {snackbarMessage}
+                    </Alert>
+                  </Snackbar>
+                  <Onboarding />{' '}
+                  <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
+                    <Grid item className={classes.header}>
+                      <Header
+                        showMessage={showSnackbarMessage}
+                        setMapView={() => setView(views.mapView)}
+                      />
+                    </Grid>
+                    {renderContent()}
+                  </Grid>
+                  <Snackbar
+                    key={snackbarMessage}
+                    open={snackbarVisible}
+                    autoHideDuration={5000}
+                    onClose={(reason) => handleSnackbarClose(reason)}
+                    className={classes.snackbar}
+                  >
+                    <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
+                      {snackbarMessage}
+                    </Alert>
+                  </Snackbar>
+                  <Onboarding />
+                </>
+              </FilteredImagePointsProvider>
+            </ImageSeriesProvider>
+          </CurrentImagePointProvider>
+        </LoadedImagePointsProvider>
+      </CurrentCoordinatesProvider>
+    </ThemeProvider>
   );
 };
 
