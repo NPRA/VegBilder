@@ -42,6 +42,7 @@ import {
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 import { ListSubheader } from '@material-ui/core';
+import { TIMER_OPTIONS } from 'constants/defaultParamters';
 
 const useStyles = makeStyles(() => ({
   button: {
@@ -91,8 +92,6 @@ const ImageControlButtons = ({
   const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
-
-  const timerOptions = [1000, 2000, 3000, 4000, 5000];
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
@@ -168,7 +167,7 @@ const ImageControlButtons = ({
           }}
         >
           <ListSubheader> Hastighet </ListSubheader>
-          {timerOptions.map((option, i) => (
+          {TIMER_OPTIONS.map((option, i) => (
             <MenuItem
               key={i}
               onClick={() => {

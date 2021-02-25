@@ -5,6 +5,7 @@ import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
 import { helpText } from 'constants/text';
 import { DotsHorizontalSmallIcon, HistorySmallIcon } from 'components/Icons/Icons';
+import { FEEDBACK_SCHEME_URL } from 'constants/urls';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -43,9 +44,6 @@ interface IInformationProps {
 const PageInformation = ({ setVisible }: IInformationProps) => {
   const classes = useStyles();
   const [openForm, setOpenForm] = useState(false);
-
-  const FORM_LINK =
-    'https://forms.office.com/Pages/ResponsePage.aspx?id=VGmFOFXt90mL3XOP-7_TkIgX88vaXV9Notkd5xXWTp5UOVIzNlE0T1hMUVk0N1ZDSzVIMkcyTk84VCQlQCN0PWcu';
 
   return (
     <PopUpWrapper setVisible={setVisible}>
@@ -92,7 +90,7 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
             {openForm ? '' : helpText.versionNumber}
           </Typography>
         </div>
-        {openForm ? <FeedbackFormFrame formLink={FORM_LINK} /> : null}
+        {openForm ? <FeedbackFormFrame formLink={FEEDBACK_SCHEME_URL} /> : null}
       </div>
     </PopUpWrapper>
   );
