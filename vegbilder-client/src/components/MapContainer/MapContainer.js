@@ -4,7 +4,7 @@ import 'leaflet/dist/leaflet.css';
 
 import { crsUtm33N } from './crs';
 import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
-import MapControls from 'components/MapControls/MapControls';
+import MapControls from 'components/MapContainer/MapControls/MapControls';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 
 const MapContainer = () => {

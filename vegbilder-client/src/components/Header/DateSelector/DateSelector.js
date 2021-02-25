@@ -61,7 +61,7 @@ const CustomExpandMoreIcon = withStyles(iconStyles)(({ className, classes, ...re
   <ExpandMoreIcon {...rest} className={`${className} ${classes.selectIcon}`} />
 ));
 
-const ImageSeriesSelector = () => {
+const DateSelector = () => {
   const classes = useStyles();
   const { availableImageSeries, currentImageSeries, setCurrentImageSeries } = useImageSeries();
   const { setCommand } = useCommand();
@@ -107,4 +107,4 @@ const ImageSeriesSelector = () => {
   );
 };
 
-export default ImageSeriesSelector;
+export default DateSelector;
