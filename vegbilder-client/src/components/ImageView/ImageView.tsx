@@ -10,6 +10,7 @@ import { isHistoryModeState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
+import CloseButton from 'components/CloseButton/CloseButton';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -161,6 +162,11 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     };
   }, []);
 
+  const handleZoomOut = () => {
+    setIsZoomedInImage(false);
+    setCursor('zoom-in');
+  };
+
   return (
     <>
       <Grid item className={classes.content}>
@@ -172,7 +178,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               timeBetweenImages={timeBetweenImages}
               exitImageView={setView}
               showMessage={showSnackbarMessage}
-              showCloseButton={false}
             />
             <History />
           </div>
@@ -187,7 +192,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               timeBetweenImages={timeBetweenImages}
               exitImageView={setView}
               showMessage={showSnackbarMessage}
-              showCloseButton={true}
               isZoomedInImage={isZoomedInImage}
             />
           </div>
@@ -210,6 +214,9 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       {showReportErrorsScheme ? (
         <ReportErrorFeedback setVisible={() => setShowReportErrorsScheme(false)} />
       ) : null}
+      {isHistoryMode ? null : (
+        <CloseButton onClick={isZoomedInImage ? handleZoomOut : setView} positionToTop={'5.5rem'} />
+      )}
     </>
   );
 };

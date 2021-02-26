@@ -244,8 +244,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={meterLineVisible ? 'Deaktiver basislinje' : 'Aktiver basislinje'}>
         <IconButton
+          disabled={isEnlargedImage}
           aria-label="Deaktiver/Aktiver basislinje"
-          className={classes.button}
+          className={isEnlargedImage ? classes.buttonDisabled : classes.button}
           onClick={() => setMeterLineVisible(!meterLineVisible)}
         >
           {meterLineVisible ? <MeasureIcon /> : <MeasureDisabledIcon />}
