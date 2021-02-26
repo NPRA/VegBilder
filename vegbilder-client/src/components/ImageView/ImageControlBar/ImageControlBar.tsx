@@ -31,6 +31,7 @@ interface IImageControlBarProps {
   setMiniMapVisible: (visible: boolean) => void;
   meterLineVisible: boolean;
   setMeterLineVisible: (visible: boolean) => void;
+  isEnlargedImage: boolean;
 }
 
 const ImageControlBar = ({
@@ -42,6 +43,7 @@ const ImageControlBar = ({
   meterLineVisible,
   setMiniMapVisible,
   setMeterLineVisible,
+  isEnlargedImage,
 }: IImageControlBarProps) => {
   const classes = useStyles();
 
@@ -61,6 +63,7 @@ const ImageControlBar = ({
             setTimeBetweenImages={setTimeBetweenImages}
             showMessage={showMessage}
             setShowReportErrorsScheme={setShowReportErrorsScheme}
+            isEnlargedImage={isEnlargedImage}
           />
         </Grid>
         <Grid item className={classes.rightItem} />

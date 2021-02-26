@@ -16,7 +16,6 @@ import {
   areOnSameOrConsecutiveRoadParts,
   shouldIncludeImagePoint,
 } from 'utilities/imagePointUtilities';
-import CloseButton from 'components/CloseButton/CloseButton';
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, isHistoryModeState, currentHistoryImageState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
@@ -27,12 +26,12 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '70%',
     backgroundColor: theme.palette.primary.main,
     display: 'flex',
-    justifyContent: 'center',
+    maxHeight: 'calc(100vh - 10rem)', // Total view height minus the height of the header and footer combined
+    maxWidth: '100%',
   },
   image: {
-    maxHeight: 'calc(100vh - 9.5rem)', // Total view height minus the height of the header and footer combined
-    maxWidth: '100%',
     objectFit: 'contain',
+    margin: '0 auto',
   },
   enlargedImage: {
     width: 'auto',
@@ -46,13 +45,11 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '100%',
     maxHeight: '100%',
   },
-  enlargedImageContainer: {},
 }));
 
 interface IImageViewerProps {
   exitImageView: () => void;
   showMessage: (message: string) => void;
-  showCloseButton: boolean;
   isZoomedInImage?: boolean;
   timeBetweenImages: number;
   meterLineVisible: boolean;
@@ -61,7 +58,6 @@ interface IImageViewerProps {
 const ImageViewer = ({
   exitImageView,
   showMessage,
-  showCloseButton,
   isZoomedInImage,
   timeBetweenImages,
   meterLineVisible,
@@ -306,25 +302,26 @@ const ImageViewer = ({
   }, [autoPlay, nextImagePoint, showMessage, timeBetweenImages]);
 
   return (
-    <div className={classes.imageArea}>
-      {currentImagePoint && (
-        <>
-          <img
-            src={
-              isHistoryMode && currentHistoryImage
-                ? getImageUrl(currentHistoryImage)
-                : getImageUrl(currentImagePoint)
-            }
-            alt="vegbilde"
-            className={isZoomedInImage ? classes.enlargedImage : classes.image}
-            ref={imgRef}
-            onLoad={onImageLoaded}
-          />
-          {renderMeterLine()}
-        </>
-      )}
-      {showCloseButton && <CloseButton onClick={exitImageView} />}
-    </div>
+    <>
+      <div className={classes.imageArea}>
+        {currentImagePoint && (
+          <>
+            <img
+              src={
+                isHistoryMode && currentHistoryImage
+                  ? getImageUrl(currentHistoryImage)
+                  : getImageUrl(currentImagePoint)
+              }
+              alt="vegbilde"
+              className={isZoomedInImage ? classes.enlargedImage : classes.image}
+              ref={imgRef}
+              onLoad={onImageLoaded}
+            />
+            {renderMeterLine()}
+          </>
+        )}
+      </div>
+    </>
   );
 };
 

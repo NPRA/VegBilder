@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     top: '1.25rem',
     border: `1px ${theme.palette.primary.main} solid`,
     boxShadow: '1px 2px 2px 2px rgba(0, 0, 0, 0.4)',
+    zIndex: 5,
   },
   minimapHidden: {
     display: 'none',
