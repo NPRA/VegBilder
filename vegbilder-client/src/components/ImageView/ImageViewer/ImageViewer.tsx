@@ -27,12 +27,12 @@ const useStyles = makeStyles((theme) => ({
     minWidth: '70%',
     backgroundColor: theme.palette.primary.main,
     display: 'flex',
-    justifyContent: 'center',
+    maxHeight: 'calc(100vh - 10rem)', // Total view height minus the height of the header and footer combined
+    maxWidth: '100%',
   },
   image: {
-    maxHeight: 'calc(100vh - 9.5rem)', // Total view height minus the height of the header and footer combined
-    maxWidth: '100%',
     objectFit: 'contain',
+    margin: '0 auto',
   },
   enlargedImage: {
     width: 'auto',
@@ -46,7 +46,6 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '100%',
     maxHeight: '100%',
   },
-  enlargedImageContainer: {},
 }));
 
 interface IImageViewerProps {

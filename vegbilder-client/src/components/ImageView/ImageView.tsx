@@ -28,6 +28,7 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
   imageCointainer: {
+    position: 'relative',
     height: '100%',
     overflow: 'hidden',
   },
@@ -80,7 +81,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           currentImageContainerRef.scrollTop =
             state.scroll.y - action.newVal.y + state.mousePosition.y;
         }
-        //console.log('action.newVal  ' + (state.scroll.x - action.newVal.x + state.mousePosition.x));
         return {
           ...state,
           scroll: {
@@ -126,6 +126,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       if (!mouseMoved && !isHistoryMode) {
         setIsZoomedInImage((prevState) => !prevState);
         setCursor((prevState) => (prevState === 'grab' ? 'zoom-in' : 'grab'));
+        dispatch({ type: 'reset' });
       }
       if (mouseMoved) {
         setCursor('grab');
@@ -156,17 +157,13 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mouseup', onMouseUp);
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
+      dispatch({ type: 'reset' });
     };
   }, []);
 
   return (
     <>
-      <Grid
-        item
-        className={classes.content}
-        ref={imageContainerRef}
-        style={{ cursor: isHistoryMode ? 'initial' : cursor }}
-      >
+      <Grid item className={classes.content}>
         {isHistoryMode ? (
           <div className={classes.imageseries}>
             {' '}
@@ -180,14 +177,20 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             <History />
           </div>
         ) : (
-          <ImageViewer
-            meterLineVisible={meterLineVisible}
-            timeBetweenImages={timeBetweenImages}
-            exitImageView={setView}
-            showMessage={showSnackbarMessage}
-            showCloseButton={true}
-            isZoomedInImage={isZoomedInImage}
-          />
+          <div
+            className={classes.imageCointainer}
+            style={{ cursor: isHistoryMode ? 'initial' : cursor }}
+            ref={imageContainerRef}
+          >
+            <ImageViewer
+              meterLineVisible={meterLineVisible}
+              timeBetweenImages={timeBetweenImages}
+              exitImageView={setView}
+              showMessage={showSnackbarMessage}
+              showCloseButton={true}
+              isZoomedInImage={isZoomedInImage}
+            />
+          </div>
         )}
         {miniMapVisible && !isZoomedInImage ? <SmallMapContainer exitImageView={setView} /> : null}
       </Grid>
