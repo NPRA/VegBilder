@@ -73,6 +73,7 @@ interface IImageControlButtonsProps {
   setMiniMapVisible: (visible: boolean) => void;
   meterLineVisible: boolean;
   setMeterLineVisible: (visible: boolean) => void;
+  isEnlargedImage: boolean;
 }
 
 const ImageControlButtons = ({
@@ -84,6 +85,7 @@ const ImageControlButtons = ({
   meterLineVisible,
   setMiniMapVisible,
   setMeterLineVisible,
+  isEnlargedImage,
 }: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
@@ -199,8 +201,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={miniMapVisible ? 'Skjul kart' : 'Vis kart'}>
         <IconButton
+          disabled={isEnlargedImage}
           aria-label="Vis/skjul kart"
-          className={classes.button}
+          className={isEnlargedImage ? classes.buttonDisabled : classes.button}
           onClick={() => setMiniMapVisible(!miniMapVisible)}
         >
           {miniMapVisible ? <MapIcon /> : <MapDisabledIcon />}

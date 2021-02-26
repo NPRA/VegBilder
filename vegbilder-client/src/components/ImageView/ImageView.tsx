@@ -204,6 +204,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           setShowReportErrorsScheme={setShowReportErrorsScheme}
           timeBetweenImages={timeBetweenImages}
           setTimeBetweenImages={setTimeBetweenImages}
+          isEnlargedImage={isZoomedInImage}
         />
       </Grid>
       {showReportErrorsScheme ? (
