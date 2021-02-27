@@ -42,4 +42,15 @@ const helpText = {
     'Feil eller forslag til løsningen formidles med egne skjema (lenke under). Feil for hvert enkelt bilde meldes under ikonet "',
 };
 
-export { reportEmailTemplateText, contactEmailTemplateText, informationText, helpText };
+const settingsText = {
+  header: 'Innstillinger',
+  onboarding: 'Vis velkomstmelding ved oppstart',
+};
+
+export {
+  reportEmailTemplateText,
+  contactEmailTemplateText,
+  informationText,
+  helpText,
+  settingsText,
+};
