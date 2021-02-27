@@ -21,7 +21,8 @@ const useStyles = makeStyles({
   logoContainer: {
     flex: '1 1 auto',
   },
-  yearSelectorContainer: {
+  dateAndYearSelectorContainer: {
+    display: 'flex',
     flex: '1 1 auto',
   },
   searchContainer: {
@@ -72,7 +73,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
           <Grid item className={classes.searchContainer}>
             <Search showMessage={showMessage} />
           </Grid>
-          <Grid item className={classes.yearSelectorContainer}>
+          <Grid item className={classes.dateAndYearSelectorContainer}>
             <YearSelector />
             <Box width={'1.125rem'} />
             <DateSelector />
