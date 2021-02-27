@@ -11,6 +11,7 @@ import PageInformation from './PageInformation/PageInformation';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
+import Settings from './Settings/Settings';
 
 const useStyles = makeStyles({
   headerToolBar: {
@@ -78,6 +79,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
             <Box width={'1.125rem'} />
             <DateSelector />
           </Grid>
+          <Settings />
           <Tooltip title="Informasjon om Vegbilder">
             <IconButton
               aria-label="Informasjon om Vegbilder"
@@ -89,9 +91,9 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
           </Tooltip>
         </Grid>
       </Toolbar>
-      {showInformation && (
+      {showInformation ? (
         <PageInformation setVisible={() => setShowInformation(!showInformation)} />
-      )}
+      ) : null}
     </AppBar>
   );
 };

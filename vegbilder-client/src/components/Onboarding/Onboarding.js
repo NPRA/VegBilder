@@ -1,23 +1,15 @@
 import React, { useState } from 'react';
-import { Checkbox, FormControlLabel, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 
 import PageInformationTextAndImage from 'components/Onboarding/PageInformationTextAndImage/PageInformationTextAndImage';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import { informationText } from 'constants/text';
 import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
+import CheckBox from 'components/CheckBox/CheckBox';
 
 const useStyles = makeStyles((theme) => ({
   contentPadding: {
     padding: '2rem',
-  },
-  formControl: {
-    marginTop: 0,
-  },
-  checkbox: {
-    margin: 0,
-    padding: 0,
-    backgroundColor: 'transparent',
-    color: theme.palette.primary.contrastText,
   },
   paragraphs: {
     paddingBottom: '1rem',
@@ -53,11 +45,7 @@ const Onboarding = () => {
             {' ".'}
           </Typography>
         </div>
-        <FormControlLabel
-          className={classes.formControl}
-          control={<Checkbox className={classes.checkbox} onChange={handleStartupChange} />}
-          label={'Ikke vis ved oppstart'}
-        />
+        <CheckBox handleChange={handleStartupChange} label={'Ikke vis ved oppstart'} />
       </div>
     </PopUpWrapper>
   );
