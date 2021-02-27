@@ -1,6 +1,6 @@
 import { IconButton, makeStyles, Popover, Tooltip, Typography } from '@material-ui/core';
 import SettingsIcon from '@material-ui/icons/Settings';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import CheckBox from 'components/CheckBox/CheckBox';
 import { settingsText } from 'constants/text';
@@ -28,6 +28,8 @@ const Settings = () => {
     localStorage.getItem('HideSplashOnStartup') === 'false'
   );
 
+  const showOnBoarding = localStorage.getItem('HideSplashOnStartup');
+
   const handleSettingsButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setSettingsAnchorEl(event.currentTarget);
   };
@@ -37,7 +39,6 @@ const Settings = () => {
   };
 
   const handleShowOnboarding = () => {
-    const showOnBoarding = localStorage.getItem('HideSplashOnStartup');
     if (showOnBoarding === 'true') {
       localStorage.setItem('HideSplashOnStartup', 'false');
       setIsCheked(true);
@@ -46,6 +47,10 @@ const Settings = () => {
       setIsCheked(false);
     }
   };
+
+  useEffect(() => {
+    setIsCheked(showOnBoarding === 'false');
+  }, [showOnBoarding]);
 
   return (
     <>
