@@ -20,6 +20,7 @@ import { ReactComponent as SelectIcon } from './selectedImage.svg';
 import { ReactComponent as InformIcon } from './Inform.svg';
 import { ReactComponent as DotsHorizontalSmallIcon } from './Dots-Horizontal-small.svg';
 import { ReactComponent as HistorySmallIcon } from './HistorySmall.svg';
+import { ReactComponent as EightySignIcon } from './sign_80.svg';
 
 export {
   ArrowDownIcon,
@@ -44,4 +45,5 @@ export {
   InformIcon,
   DotsHorizontalSmallIcon,
   HistorySmallIcon,
+  EightySignIcon,
 };

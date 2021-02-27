@@ -4,6 +4,7 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import ImageControlButtons from './ImageControlButtons';
+import { EightySignIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   appbar: {
@@ -19,6 +20,11 @@ const useStyles = makeStyles((theme) => ({
   },
   rightItem: {
     flex: '0 1 20rem',
+  },
+  icon: {
+    width: '3rem',
+    height: '3rem',
+    paddingRight: '1rem',
   },
 }));
 
@@ -50,6 +56,10 @@ const ImageControlBar = ({
   return (
     <AppBar position="relative" className={classes.appbar}>
       <Grid container direction="row" justify="space-between" alignItems="center" wrap="nowrap">
+        <Grid item>
+          {' '}
+          <EightySignIcon className={classes.icon}></EightySignIcon>
+        </Grid>
         <Grid item className={classes.imageMetadata}>
           <ImageMetadata />
         </Grid>
