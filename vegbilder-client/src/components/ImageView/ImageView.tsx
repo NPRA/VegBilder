@@ -105,7 +105,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     }
   };
 
-  const [scrollState, dispatch] = useReducer(scrollReducer, initialScrollState);
+  const [, dispatch] = useReducer(scrollReducer, initialScrollState);
 
   // We add mouse event handlers that lets the user drag the image to scroll. If the user only clicks we zoom in/out.
   useEffect(() => {
@@ -129,7 +129,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         setCursor((prevState) => (prevState === 'grab' ? 'zoom-in' : 'grab'));
         dispatch({ type: 'reset' });
       }
-      if (mouseMoved) {
+      if (mouseMoved && isZoomedInImage) {
         setCursor('grab');
       }
     };
@@ -141,7 +141,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     const onMouseMove = (event: MouseEvent) => {
       event.preventDefault();
       mouseMoved = true;
-      if (shouldScroll) {
+      if (shouldScroll && isZoomedInImage) {
         setCursor('grabbing');
         if (currentImageContainerRef) {
           dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
@@ -160,7 +160,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
       dispatch({ type: 'reset' });
     };
-  }, []);
+  }, [isZoomedInImage]);
 
   const handleZoomOut = () => {
     setIsZoomedInImage(false);
