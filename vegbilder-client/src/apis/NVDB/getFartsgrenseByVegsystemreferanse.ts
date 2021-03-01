@@ -14,11 +14,8 @@ const getFartsgrenseByVegsystemreferanse = async (vegsystemreferanse: string) =>
       return response.data;
     })
     .catch((error) => {
-      if (error.message === 'Request failed with status code 404') {
-        console.warn(error);
-      } else {
-        throw error;
-      }
+      console.warn(error);
+      return null;
     });
 };
 

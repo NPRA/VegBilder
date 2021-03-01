@@ -4,7 +4,17 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import ImageControlButtons from './ImageControlButtons';
-import { EightySignIcon } from 'components/Icons/Icons';
+import {
+  EightySignIcon,
+  FiftySignIcon,
+  FourtySignIcon,
+  HundredSignIcon,
+  HundredTenSignIcon,
+  NighntySignIcon,
+  SeventySignIcon,
+  SixtySignIcon,
+  ThirthySignIcon,
+} from 'components/Icons/Icons';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import getFartsgrenseByVegsystemreferanse from 'apis/NVDB/getFartsgrenseByVegsystemreferanse';
 import { getRoadReference } from 'utilities/imagePointUtilities';
@@ -19,15 +29,16 @@ const useStyles = makeStyles((theme) => ({
     paddingRight: '2rem',
   },
   imageMetadata: {
+    display: 'flex',
     flex: '0 1 20rem',
   },
   rightItem: {
     flex: '0 1 20rem',
   },
   icon: {
-    width: '3rem',
-    height: '3rem',
-    paddingRight: '1rem',
+    width: '3.5rem',
+    height: '3.5rem',
+    marginRight: '1rem',
   },
 }));
 
@@ -64,10 +75,37 @@ const ImageControlBar = ({
       .withoutFelt.replace(/\s/g, '')
       .toLocaleLowerCase();
     await getFartsgrenseByVegsystemreferanse(vegsystemreferanse).then((res) => {
-      const egenskaper = res.objekter[0].egenskaper;
-      const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
-      setFartsgrense(fartsgrense.verdi);
+      if (res) {
+        const egenskaper = res.objekter[0].egenskaper;
+        const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
+        setFartsgrense(fartsgrense.verdi);
+      }
     });
+  };
+
+  const getFartsgrenseIcon = (fartsgrense: number) => {
+    switch (fartsgrense) {
+      case 30:
+        return <ThirthySignIcon className={classes.icon} />;
+      case 40:
+        return <FourtySignIcon className={classes.icon} />;
+      case 50:
+        return <FiftySignIcon className={classes.icon} />;
+      case 60:
+        return <SixtySignIcon className={classes.icon} />;
+      case 70:
+        return <SeventySignIcon className={classes.icon} />;
+      case 80:
+        return <EightySignIcon className={classes.icon} />;
+      case 90:
+        return <NighntySignIcon className={classes.icon} />;
+      case 100:
+        return <HundredSignIcon className={classes.icon} />;
+      case 110:
+        return <HundredTenSignIcon className={classes.icon} />;
+      default:
+        return null;
+    }
   };
 
   useEffect(() => {
@@ -79,11 +117,8 @@ const ImageControlBar = ({
   return (
     <AppBar position="relative" className={classes.appbar}>
       <Grid container direction="row" justify="space-between" alignItems="center" wrap="nowrap">
-        <Grid item>
-          {' '}
-          <EightySignIcon className={classes.icon} />
-        </Grid>
         <Grid item className={classes.imageMetadata}>
+          {getFartsgrenseIcon(fartsgrense)}
           <ImageMetadata />
         </Grid>
         <Grid item>

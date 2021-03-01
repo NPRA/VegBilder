@@ -1,5 +1,5 @@
 import React from 'react';
-import { Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 import { useRecoilValue } from 'recoil';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
@@ -7,7 +7,17 @@ import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import { getRoadReference } from 'utilities/imagePointUtilities';
 import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
 
+const useStyles = makeStyles(() => ({
+  metadata: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignSelf: 'center',
+  },
+}));
+
 const ImageMetadata = () => {
+  const classes = useStyles();
+
   const { currentImagePoint } = useCurrentImagePoint();
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
@@ -30,7 +40,7 @@ const ImageMetadata = () => {
   }
 
   return (
-    <div>
+    <div className={classes.metadata}>
       <Typography variant="subtitle1">{roadReference}</Typography>
       <Typography variant="body1">{dateAndTime}</Typography>
     </div>
