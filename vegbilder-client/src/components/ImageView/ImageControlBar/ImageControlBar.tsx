@@ -109,11 +109,10 @@ const ImageControlBar = ({
   };
 
   useEffect(() => {
-    if (currentImagePoint && currentImagePoint.properties.AAR >= 2020) {
-      getFartsgrense();
-    }
-    if (currentImagePoint.properties.AAR < 2020) {
-      setFartsgrense(0);
+    if (currentImagePoint) {
+      if (currentImagePoint.properties.AAR >= 2020) {
+        getFartsgrense();
+      } else setFartsgrense(0);
     }
   }, [currentImagePoint]);
 

@@ -7,7 +7,7 @@ const getFartsgrenseByVegsystemreferanse = async (vegsystemreferanse: string) =>
         vegsystemreferanse: vegsystemreferanse,
         srid: '4326',
         alle_versjoner: 'true',
-        inkluder: 'alle',
+        inkluder: 'egenskaper',
       },
     })
     .then((response) => {
