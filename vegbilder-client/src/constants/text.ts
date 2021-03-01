@@ -27,7 +27,7 @@ const informationText = {
 const helpText = {
   header1: 'Bruk av vegbilder',
   header2: 'Tilbakemelding',
-  versionNumber: 'v1.1.3',
+  versionNumber: 'v1.1.4',
   text1:
     'For å finne bilder der du ønsker kan du enten zoome inn på kartet eller søke etter stedsnavn eller vegsystemreferanse. Når du har zoomet inn på en veg vil du få opp markører du kan klikke på for å se bildet. ',
   text2:
@@ -42,4 +42,15 @@ const helpText = {
     'Feil eller forslag til løsningen formidles med egne skjema (lenke under). Feil for hvert enkelt bilde meldes under ikonet "',
 };
 
-export { reportEmailTemplateText, contactEmailTemplateText, informationText, helpText };
+const settingsText = {
+  header: 'Innstillinger',
+  onboarding: 'Vis velkomstmelding ved oppstart',
+};
+
+export {
+  reportEmailTemplateText,
+  contactEmailTemplateText,
+  informationText,
+  helpText,
+  settingsText,
+};
