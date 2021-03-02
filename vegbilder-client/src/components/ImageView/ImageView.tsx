@@ -10,6 +10,7 @@ import { isHistoryModeState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
+import CloseButton from 'components/CloseButton/CloseButton';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -28,6 +29,7 @@ const useStyles = makeStyles(() => ({
     width: '100%',
   },
   imageCointainer: {
+    position: 'relative',
     height: '100%',
     overflow: 'hidden',
   },
@@ -45,7 +47,8 @@ interface IScrollState {
 
 type ScrollAction =
   | { type: 'mousePosition'; newVal: { x: number; y: number } }
-  | { type: 'scroll'; newVal: { x: number; y: number } };
+  | { type: 'scroll'; newVal: { x: number; y: number } }
+  | { type: 'reset' };
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
@@ -57,6 +60,24 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
   const [miniMapVisible, setMiniMapVisible] = useState(true);
   const [meterLineVisible, setMeterLineVisible] = useState(false);
+
+  const maxScrollHeight = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.body.clientHeight,
+    document.documentElement.clientHeight
+  );
+
+  const maxScrollWidth = Math.max(
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth,
+    document.body.clientWidth,
+    document.documentElement.clientWidth
+  );
 
   const initialScrollState = {
     mousePosition: { x: 0, y: 0 },
@@ -72,12 +93,33 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         };
       }
       case 'scroll': {
+        let newScrollLeft = state.scroll.x - action.newVal.x + state.mousePosition.x;
+        let newScrollTop = state.scroll.y - action.newVal.y + state.mousePosition.y;
+
+        if (newScrollLeft >= maxScrollWidth || newScrollLeft < 0) newScrollLeft = state.scroll.x;
+        if (newScrollTop >= maxScrollHeight || newScrollTop < 0) newScrollTop = state.scroll.y;
+
+        const currentImageContainerRef = imageContainerRef.current;
+        if (currentImageContainerRef) {
+          currentImageContainerRef.scrollLeft = newScrollLeft;
+          currentImageContainerRef.scrollTop = newScrollTop;
+        }
         return {
           ...state,
-          x: state.scroll.x + action.newVal.x - state.mousePosition.x,
-          mousePositionX: action.newVal.x,
-          y: state.scroll.y + action.newVal.y - state.mousePosition.y,
-          mousePositionY: action.newVal.y,
+          scroll: {
+            x: newScrollLeft,
+            y: newScrollTop,
+          },
+          mousePosition: { x: action.newVal.x, y: action.newVal.y },
+        };
+      }
+      case 'reset': {
+        return {
+          scroll: {
+            x: 0,
+            y: 0,
+          },
+          mousePosition: { x: 0, y: 0 },
         };
       }
       default:
@@ -85,7 +127,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     }
   };
 
-  const [scrollState, dispatch] = useReducer(scrollReducer, initialScrollState);
+  const [, dispatch] = useReducer(scrollReducer, initialScrollState);
 
   // We add mouse event handlers that lets the user drag the image to scroll. If the user only clicks we zoom in/out.
   useEffect(() => {
@@ -106,10 +148,11 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       shouldScroll = false;
       if (!mouseMoved && !isHistoryMode) {
         setIsZoomedInImage((prevState) => !prevState);
-        setCursor((prevState) => (prevState === 'zoom-in' ? 'zoom-out' : 'zoom-in'));
+        setCursor((prevState) => (prevState === 'grab' ? 'zoom-in' : 'grab'));
+        dispatch({ type: 'reset' });
       }
-      if (mouseMoved) {
-        setCursor('zoom-out');
+      if (mouseMoved && isZoomedInImage) {
+        setCursor('grab');
       }
     };
 
@@ -120,47 +163,35 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     const onMouseMove = (event: MouseEvent) => {
       event.preventDefault();
       mouseMoved = true;
-      if (shouldScroll) {
-        setCursor('grab');
+      if (shouldScroll && isZoomedInImage) {
+        setCursor('grabbing');
         if (currentImageContainerRef) {
-          currentImageContainerRef.scrollLeft =
-            scrollState.scroll.x + event.clientX - scrollState.mousePosition.x;
-          currentImageContainerRef.scrollTop =
-            scrollState.scroll.y + event.clientY - scrollState.mousePosition.y;
+          dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
         }
-        dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
       }
-    };
-
-    const onScroll = (event: WheelEvent) => {
-      currentImageContainerRef.scrollLeft = scrollState.scroll.x + event.clientX;
-      currentImageContainerRef.scrollTop = scrollState.scroll.y + event.clientY;
-      dispatch({ type: 'scroll', newVal: { x: event.clientX, y: event.clientY } });
     };
 
     currentImageContainerRef.addEventListener('mousedown', onMouseDown);
     currentImageContainerRef.addEventListener('mouseup', onMouseUp);
     currentImageContainerRef.addEventListener('mouseout', onMouseOut);
     currentImageContainerRef.addEventListener('mousemove', onMouseMove);
-    currentImageContainerRef.addEventListener('wheel', onScroll);
-
     return () => {
       currentImageContainerRef.removeEventListener('mousedown', onMouseDown);
       currentImageContainerRef.removeEventListener('mouseup', onMouseUp);
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
-      currentImageContainerRef.removeEventListener('wheel', onScroll);
+      dispatch({ type: 'reset' });
     };
-  }, [isHistoryMode]);
+  }, [isZoomedInImage]);
+
+  const handleZoomOut = () => {
+    setIsZoomedInImage(false);
+    setCursor('zoom-in');
+  };
 
   return (
     <>
-      <Grid
-        item
-        className={classes.content}
-        ref={imageContainerRef}
-        style={{ cursor: isHistoryMode ? 'initial' : cursor }}
-      >
+      <Grid item className={classes.content}>
         {isHistoryMode ? (
           <div className={classes.imageseries}>
             {' '}
@@ -169,19 +200,23 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               timeBetweenImages={timeBetweenImages}
               exitImageView={setView}
               showMessage={showSnackbarMessage}
-              showCloseButton={false}
             />
             <History />
           </div>
         ) : (
-          <ImageViewer
-            meterLineVisible={meterLineVisible}
-            timeBetweenImages={timeBetweenImages}
-            exitImageView={setView}
-            showMessage={showSnackbarMessage}
-            showCloseButton={true}
-            isZoomedInImage={isZoomedInImage}
-          />
+          <div
+            className={classes.imageCointainer}
+            style={{ cursor: isHistoryMode ? 'initial' : cursor }}
+            ref={imageContainerRef}
+          >
+            <ImageViewer
+              meterLineVisible={meterLineVisible}
+              timeBetweenImages={timeBetweenImages}
+              exitImageView={setView}
+              showMessage={showSnackbarMessage}
+              isZoomedInImage={isZoomedInImage}
+            />
+          </div>
         )}
         {miniMapVisible && !isZoomedInImage ? <SmallMapContainer exitImageView={setView} /> : null}
       </Grid>
@@ -195,11 +230,15 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           setShowReportErrorsScheme={setShowReportErrorsScheme}
           timeBetweenImages={timeBetweenImages}
           setTimeBetweenImages={setTimeBetweenImages}
+          isEnlargedImage={isZoomedInImage}
         />
       </Grid>
       {showReportErrorsScheme ? (
         <ReportErrorFeedback setVisible={() => setShowReportErrorsScheme(false)} />
       ) : null}
+      {isHistoryMode ? null : (
+        <CloseButton onClick={isZoomedInImage ? handleZoomOut : setView} positionToTop={'5.5rem'} />
+      )}
     </>
   );
 };

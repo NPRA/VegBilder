@@ -81,15 +81,17 @@ const getRoadReference = (imagePoint: IImagePoint) => {
       withoutMeter = `${vegOgStrekning}`;
     }
     const complete = withoutMeter + meterPart + feltPart;
+    const withoutFelt = withoutMeter + meterPart;
     withoutMeter += feltPart;
-    return { complete, withoutMeter };
+    return { complete, withoutMeter, withoutFelt };
   };
 
   const createVegreferanse = () => {
     let withoutMeter = `${VEGKATEGORI}${VEGSTATUS}${VEGNUMMER} HP${HP}`;
+    const withoutFelt = withoutMeter + meterPart;
     let complete = withoutMeter + meterPart + feltPart;
     withoutMeter += feltPart;
-    return { complete, withoutMeter };
+    return { complete, withoutMeter, withoutFelt };
   };
 
   return imagePoint.properties.AAR >= 2020 ? createVegsystemreferanse() : createVegreferanse();
