@@ -103,7 +103,7 @@ const YearSelector = () => {
           const searchParams = new URLSearchParams(window.location.search);
           const view = searchParams.get('view');
           if (view !== 'image') {
-            setQueryParamYear(newYear);
+            setQueryParamYear('latest');
             unsetCurrentImagePoint();
             setCurrentYear('Nyeste');
           }

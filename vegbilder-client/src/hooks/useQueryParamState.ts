@@ -39,14 +39,9 @@ const useQueryParamState = (name: queryParamterNames) => {
         }
         return '';
       case 'year':
-        let defaultYear;
-        if (isDefaultCoordinates()) {
-          defaultYear = 'Nyeste';
-        } else {
-          defaultYear = availableYears[0].toString();
-        }
+        const defaultYear = 'latest';
         if (searchParam) {
-          const validYearParam = isValidYear(parseInt(searchParam)) || searchParam === 'Nyeste';
+          const validYearParam = isValidYear(parseInt(searchParam)) || searchParam === 'latest';
           if (!validYearParam) {
             throw new Error(`Ugyldig verdi for år: ${searchParam}`);
           }
