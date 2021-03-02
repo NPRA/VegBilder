@@ -61,6 +61,24 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [miniMapVisible, setMiniMapVisible] = useState(true);
   const [meterLineVisible, setMeterLineVisible] = useState(false);
 
+  const maxScrollHeight = Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.body.clientHeight,
+    document.documentElement.clientHeight
+  );
+
+  const maxScrollWidth = Math.max(
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth,
+    document.body.clientWidth,
+    document.documentElement.clientWidth
+  );
+
   const initialScrollState = {
     mousePosition: { x: 0, y: 0 },
     scroll: { x: 0, y: 0 },
@@ -75,18 +93,22 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         };
       }
       case 'scroll': {
+        let newScrollLeft = state.scroll.x - action.newVal.x + state.mousePosition.x;
+        let newScrollTop = state.scroll.y - action.newVal.y + state.mousePosition.y;
+
+        if (newScrollLeft >= maxScrollWidth || newScrollLeft < 0) newScrollLeft = state.scroll.x;
+        if (newScrollTop >= maxScrollHeight || newScrollTop < 0) newScrollTop = state.scroll.y;
+
         const currentImageContainerRef = imageContainerRef.current;
         if (currentImageContainerRef) {
-          currentImageContainerRef.scrollLeft =
-            state.scroll.x - action.newVal.x + state.mousePosition.x;
-          currentImageContainerRef.scrollTop =
-            state.scroll.y - action.newVal.y + state.mousePosition.y;
+          currentImageContainerRef.scrollLeft = newScrollLeft;
+          currentImageContainerRef.scrollTop = newScrollTop;
         }
         return {
           ...state,
           scroll: {
-            x: state.scroll.x - action.newVal.x + state.mousePosition.x,
-            y: state.scroll.y - action.newVal.y + state.mousePosition.y,
+            x: newScrollLeft,
+            y: newScrollTop,
           },
           mousePosition: { x: action.newVal.x, y: action.newVal.y },
         };
