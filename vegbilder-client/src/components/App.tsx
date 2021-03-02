@@ -2,10 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Grid, makeStyles, Snackbar, ThemeProvider } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
 import { ImageSeriesProvider } from 'contexts/ImageSeriesContext';
@@ -16,7 +15,6 @@ import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
 import { currentYearState } from 'recoil/atoms';
-import { availableYearsQuery } from 'recoil/selectors';
 import useNearestImagePoint from 'hooks/useNearestImagepoint';
 
 const useStyles = makeStyles({
@@ -59,7 +57,6 @@ const App = () => {
   const { setCommand } = useCommand();
   const [currentImageQuery] = useQueryParamState('imageId');
   const [currentZoomQuery] = useQueryParamState('zoom');
-  const { currentCoordinates } = useCurrentCoordinates();
   const { setCurrentImagePoint } = useCurrentImagePoint();
 
   const showSnackbarMessage = (message: string) => {
@@ -69,8 +66,7 @@ const App = () => {
 
   const nearestImagePoint = useNearestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten av angitte koordinater',
-    currentCoordinates.latlng
+    'Fant ingen bilder i nærheten av angitte koordinater'
   );
 
   // if a user opens the app with only coordinates we find the nearest image from the newest year
