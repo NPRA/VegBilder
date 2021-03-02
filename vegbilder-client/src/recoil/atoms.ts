@@ -8,7 +8,7 @@ export const playVideoState = atom<boolean>({
   default: false,
 });
 
-export const currentYearState = atom({
+export const currentYearState = atom<string | number>({
   key: 'currentYear',
   default: parseInt(searchParams.get('year')!) || 'Nyeste',
 });

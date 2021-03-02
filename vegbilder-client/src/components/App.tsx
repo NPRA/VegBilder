@@ -4,9 +4,8 @@ import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { CurrentImagePointProvider } from 'contexts/CurrentImagePointContext';
-import { CurrentCoordinatesProvider } from 'contexts/CurrentCoordinatesContext';
-import { LoadedImagePointsProvider } from 'contexts/LoadedImagePointsContext';
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
 import { ImageSeriesProvider } from 'contexts/ImageSeriesContext';
@@ -18,6 +17,7 @@ import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
 import { currentYearState } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
+import useNearestImagePoint from 'hooks/useNearestImagepoint';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -53,23 +53,34 @@ const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {.
 const App = () => {
   const classes = useStyles();
   const [view, setView] = useQueryParamState('view');
-  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
-  const availableYears = useRecoilValue(availableYearsQuery);
+  const [currentYear] = useRecoilState(currentYearState);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const { setCommand } = useCommand();
   const [currentImageQuery] = useQueryParamState('imageId');
   const [currentZoomQuery] = useQueryParamState('zoom');
-  const [, setCurrentYearQuery] = useQueryParamState('year');
+  const { currentCoordinates } = useCurrentCoordinates();
+  const { setCurrentImagePoint } = useCurrentImagePoint();
+
+  const showSnackbarMessage = (message: string) => {
+    setSnackbarMessage(message);
+    setSnackbarVisible(true);
+  };
+
+  const nearestImagePoint = useNearestImagePoint(
+    showSnackbarMessage,
+    'Fant ingen bilder i nærheten av angitte koordinater',
+    currentCoordinates.latlng
+  );
 
   // if a user opens the app with only coordinates we find the nearest image from the newest year
   useEffect(() => {
     if (currentImageQuery === '' && currentZoomQuery && parseInt(currentZoomQuery) > 14) {
       if (currentYear === 'Nyeste') {
-        setCurrentYear(availableYears[0]);
-        setCurrentYearQuery(availableYears[0].toString());
+        setCurrentImagePoint(nearestImagePoint);
+      } else {
+        setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
-      setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImageQuery, currentZoomQuery]);
@@ -79,11 +90,6 @@ const App = () => {
       return;
     }
     setSnackbarVisible(false);
-  };
-
-  const showSnackbarMessage = (message: string) => {
-    setSnackbarMessage(message);
-    setSnackbarVisible(true);
   };
 
   const renderContent = () => {
@@ -107,39 +113,33 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <CurrentCoordinatesProvider>
-        <LoadedImagePointsProvider>
-          <CurrentImagePointProvider>
-            <ImageSeriesProvider>
-              <FilteredImagePointsProvider>
-                <>
-                  <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
-                    <Grid item className={classes.header}>
-                      <Header
-                        showMessage={showSnackbarMessage}
-                        setMapView={() => setView(views.mapView)}
-                      />
-                    </Grid>
-                    {renderContent()}
-                  </Grid>
-                  <Snackbar
-                    key={snackbarMessage}
-                    open={snackbarVisible}
-                    autoHideDuration={5000}
-                    onClose={(reason) => handleSnackbarClose(reason)}
-                    className={classes.snackbar}
-                  >
-                    <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
-                      {snackbarMessage}
-                    </Alert>
-                  </Snackbar>
-                  <Onboarding />{' '}
-                </>
-              </FilteredImagePointsProvider>
-            </ImageSeriesProvider>
-          </CurrentImagePointProvider>
-        </LoadedImagePointsProvider>
-      </CurrentCoordinatesProvider>
+      <ImageSeriesProvider>
+        <FilteredImagePointsProvider>
+          <>
+            <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
+              <Grid item className={classes.header}>
+                <Header
+                  showMessage={showSnackbarMessage}
+                  setMapView={() => setView(views.mapView)}
+                />
+              </Grid>
+              {renderContent()}
+            </Grid>
+            <Snackbar
+              key={snackbarMessage}
+              open={snackbarVisible}
+              autoHideDuration={5000}
+              onClose={(reason) => handleSnackbarClose(reason)}
+              className={classes.snackbar}
+            >
+              <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
+                {snackbarMessage}
+              </Alert>
+            </Snackbar>
+            <Onboarding />{' '}
+          </>
+        </FilteredImagePointsProvider>
+      </ImageSeriesProvider>
     </ThemeProvider>
   );
 };
