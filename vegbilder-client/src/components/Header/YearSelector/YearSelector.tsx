@@ -110,7 +110,7 @@ const YearSelector = () => {
         } else {
           setCurrentYear(parseInt(newYear));
           setQueryParamYear(newYear);
-          if (prevYear !== 'nyeste') {
+          if (prevYear !== 'Nyeste') {
             resetFilteredImagePoints();
           }
           setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);

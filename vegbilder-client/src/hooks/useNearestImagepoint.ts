@@ -73,7 +73,7 @@ const useNearestImagePoint = (showMessage: (message: string) => void, notFoundMe
 
   useEffect(() => {
     fetchImagePointsFromNewestYearByLatLng(currentCoordinates.latlng);
-  }, [currentCoordinates]);
+  }, [currentCoordinates.latlng]);
 
   return nearestImagePoint;
 };
