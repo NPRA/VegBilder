@@ -1,7 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
 
 import { crsUtm33N } from './crs';
@@ -9,16 +9,7 @@ import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePo
 import MapControls from './MapControls/MapControls';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { currentYearState } from 'recoil/atoms';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import useNearestImagePoint from 'hooks/useNearestImagepoint';
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { settings } from 'constants/constants';
-import useQueryParamState from 'hooks/useQueryParamState';
-import { availableYearsQuery } from 'recoil/selectors';
-import { ILatlng, IImagePoint } from 'types';
-import { findNearestImagePoint } from 'utilities/imagePointUtilities';
-import { createSquareBboxAroundPoint } from 'utilities/latlngUtilities';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -26,16 +17,16 @@ interface IMapContainerProps {
 
 const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
-  const { setCurrentImagePoint } = useCurrentImagePoint();
   const [cursor, setCursor] = useState('pointer');
-  const [isFetching, setIsFetching] = useState(false);
-  const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
-  const availableYears = useRecoilValue(availableYearsQuery);
-  const [, setQueryParamYear] = useQueryParamState('year');
+  const currentYear = useRecoilValue(currentYearState);
 
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
+
+  const fetchNearestNewestImagePoint = useNearestImagePoint(
+    showMessage,
+    'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
+  );
 
   /* Fetch image points in new target area when the user clicks on the map. If we find an image, we set the year to the year where we found the image.
    */
@@ -46,7 +37,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       zoom = 15;
     }
     setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
-    fetchImagePointsFromNewestYearByLatLng(userClickedLatLng);
+    fetchNearestNewestImagePoint(userClickedLatLng);
   };
 
   const onMouseDown = (event: LeafletMouseEvent) => {
@@ -70,56 +61,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       setCursor('grabbing');
     }
   };
-
-  async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
-    if (isFetching) return;
-    if (!loadedImagePoints || currentYear === 'Nyeste') {
-      const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
-      let foundImage = false;
-      for (const year of availableYears) {
-        const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
-          targetBbox,
-          year
-        );
-        if (imagePoints && imagePoints.length > 0) {
-          setLoadedImagePoints({
-            imagePoints: imagePoints,
-            bbox: expandedBbox,
-            year: year,
-          });
-          const nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
-          setIsFetching(false);
-          if (nearestImagePoint) {
-            const year = nearestImagePoint.properties.AAR;
-            setCurrentImagePoint(nearestImagePoint);
-            setCurrentYear(year);
-            setQueryParamYear(year.toString());
-            showMessage(
-              `Setter årstallet til ${year}, som er det året med de nyeste bildene i området.`
-            );
-            foundImage = true;
-            break;
-          }
-        }
-      }
-      if (!foundImage) {
-        showMessage(
-          'Finner ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
-        );
-      }
-    }
-  }
-
-  const selectNearestImagePointToCoordinates = useCallback(
-    (imagePoints: IImagePoint[], latlng) => {
-      if (!imagePoints || !imagePoints.length || !currentCoordinates) return;
-      const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 300);
-      if (nearestImagePoint) {
-        return nearestImagePoint;
-      }
-    },
-    [currentCoordinates]
-  );
 
   return (
     <Map
