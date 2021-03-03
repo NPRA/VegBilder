@@ -9,7 +9,7 @@ import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePo
 import MapControls from './MapControls/MapControls';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { currentYearState } from 'recoil/atoms';
-import useNearestImagePoint from 'hooks/useNearestImagepoint';
+import useFetchNearestLatestImagePoint from 'hooks/useNearestLatestImagepoint';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -23,7 +23,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
 
-  const fetchNearestNewestImagePoint = useNearestImagePoint(
+  const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
     'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
   );
@@ -37,7 +37,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       zoom = 15;
     }
     setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
-    fetchNearestNewestImagePoint(userClickedLatLng);
+    fetchNearestLatestImagePoint(userClickedLatLng);
   };
 
   const onMouseDown = (event: LeafletMouseEvent) => {

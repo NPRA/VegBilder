@@ -12,7 +12,10 @@ import { ILatlng, IImagePoint } from 'types';
 import { findNearestImagePoint } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint } from 'utilities/latlngUtilities';
 
-const useNearestImagePoint = (showMessage: (message: string) => void, notFoundMessage: string) => {
+const useFetchNearestLatestImagePoint = (
+  showMessage: (message: string) => void,
+  notFoundMessage: string
+) => {
   const { currentCoordinates } = useCurrentCoordinates();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
@@ -74,4 +77,4 @@ const useNearestImagePoint = (showMessage: (message: string) => void, notFoundMe
   return (latlng: ILatlng) => fetchImagePointsFromNewestYearByLatLng(latlng);
 };
 
-export default useNearestImagePoint;
+export default useFetchNearestLatestImagePoint;
