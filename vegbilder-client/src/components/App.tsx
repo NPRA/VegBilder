@@ -14,7 +14,7 @@ import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
 import { currentYearState } from 'recoil/atoms';
-import useNearestImagePoint from 'hooks/useNearestImagepoint';
+import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 
 const useStyles = makeStyles({
@@ -64,7 +64,7 @@ const App = () => {
     setSnackbarVisible(true);
   };
 
-  const fetchNearestNewestImagePoint = useNearestImagePoint(
+  const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
     'Fant ingen bilder i nærheten av angitte koordinater'
   );
@@ -73,7 +73,7 @@ const App = () => {
   useEffect(() => {
     if (currentImageQuery === '' && currentZoomQuery && parseInt(currentZoomQuery) > 14) {
       if (currentYear === 'Nyeste') {
-        fetchNearestNewestImagePoint(currentCoordinates.latlng);
+        fetchNearestLatestImagePoint(currentCoordinates.latlng);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
