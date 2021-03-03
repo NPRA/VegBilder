@@ -4,7 +4,7 @@ import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import useQueryParamState from 'hooks/useQueryParamState';
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentYearState } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
