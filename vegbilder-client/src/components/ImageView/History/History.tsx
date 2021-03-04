@@ -25,6 +25,7 @@ import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
+import useSetCurrentYear from 'hooks/useSetCurrentYear';
 
 const useStyles = makeStyles((theme) => ({
   historyContent: {
@@ -106,16 +107,15 @@ const History = () => {
   const classes = useStyles();
 
   const availableYears = useRecoilValue(availableYearsQuery);
-  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
+  const currentYear = useRecoilValue(currentYearState);
   const [currentHistoryImage, setCurrentHistoryImage] = useRecoilState(currentHistoryImageState);
   const [, setHistoryMode] = useRecoilState(isHistoryModeState);
 
   const { setCurrentCoordinates } = useCurrentCoordinates();
-  const [, setQueryParamYear] = useQueryParamState('year');
   const [, setQueryParamImageId] = useQueryParamState('imageId');
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
-
+  const setCurrentYear = useSetCurrentYear();
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
 
   const handleImageClick = (imagePoint: IImagePoint) => {
@@ -124,7 +124,6 @@ const History = () => {
     setQueryParamImageId(imagePoint.id);
     if (imagePoint.properties.AAR !== currentYear) {
       setCurrentYear(imagePoint.properties.AAR);
-      setQueryParamYear(imagePoint.properties.AAR.toString());
     }
   };
 

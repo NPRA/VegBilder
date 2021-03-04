@@ -3,14 +3,14 @@ import { settings } from 'constants/constants';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import useQueryParamState from 'hooks/useQueryParamState';
 import { useState, useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { currentYearState } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
 import { ILatlng, IImagePoint } from 'types';
 import { findNearestImagePoint } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint } from 'utilities/latlngUtilities';
+import useSetCurrentYear from './useSetCurrentYear';
 
 const useFetchNearestLatestImagePoint = (
   showMessage: (message: string) => void,
@@ -19,10 +19,10 @@ const useFetchNearestLatestImagePoint = (
   const { currentCoordinates } = useCurrentCoordinates();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
+  const currentYear = useRecoilValue(currentYearState);
   const availableYears = useRecoilValue(availableYearsQuery);
   const { setCurrentImagePoint } = useCurrentImagePoint();
-  const [, setQueryParamYear] = useQueryParamState('year');
+  const setCurrentYear = useSetCurrentYear();
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
     if (isFetching) return;
@@ -47,7 +47,6 @@ const useFetchNearestLatestImagePoint = (
             const year = nearestImagePoint.properties.AAR;
             setCurrentImagePoint(nearestImagePoint);
             setCurrentYear(year);
-            setQueryParamYear(year.toString());
             showMessage(
               `Setter årstallet til ${year}, som er det året med de nyeste bildene i området.`
             );
