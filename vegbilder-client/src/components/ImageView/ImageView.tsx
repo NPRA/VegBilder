@@ -61,6 +61,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [miniMapVisible, setMiniMapVisible] = useState(true);
   const [meterLineVisible, setMeterLineVisible] = useState(false);
 
+  const showMiniMap = (miniMapVisible && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
+
   const maxScrollHeight = Math.max(
     document.body.scrollHeight,
     document.documentElement.scrollHeight,
@@ -182,7 +184,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
       dispatch({ type: 'reset' });
     };
-  }, [isZoomedInImage]);
+  }, [isZoomedInImage, isHistoryMode]);
 
   const handleZoomOut = () => {
     setIsZoomedInImage(false);
@@ -216,7 +218,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             />
           </div>
         )}
-        {miniMapVisible && !isZoomedInImage ? <SmallMapContainer exitImageView={setView} /> : null}
+        {showMiniMap ? <SmallMapContainer exitImageView={setView} /> : null}
       </Grid>
       <Grid item className={classes.footer}>
         <ImageControlBar
@@ -228,7 +230,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           setShowReportErrorsScheme={setShowReportErrorsScheme}
           timeBetweenImages={timeBetweenImages}
           setTimeBetweenImages={setTimeBetweenImages}
-          isEnlargedImage={isZoomedInImage}
+          isEnlargedImage={isHistoryMode ? false : isZoomedInImage}
         />
       </Grid>
       {showReportErrorsScheme ? (
