@@ -198,7 +198,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             <ImageViewer
               meterLineVisible={meterLineVisible}
               timeBetweenImages={timeBetweenImages}
-              exitImageView={setView}
               showMessage={showSnackbarMessage}
             />
             <History />
@@ -212,7 +211,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             <ImageViewer
               meterLineVisible={meterLineVisible}
               timeBetweenImages={timeBetweenImages}
-              exitImageView={setView}
               showMessage={showSnackbarMessage}
               isZoomedInImage={isZoomedInImage}
             />

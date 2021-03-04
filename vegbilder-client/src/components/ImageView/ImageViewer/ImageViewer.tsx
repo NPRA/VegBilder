@@ -32,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
   image: {
     objectFit: 'contain',
     margin: '0 auto',
+    width: '100%',
   },
   enlargedImage: {
     width: 'auto',
@@ -48,7 +49,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 interface IImageViewerProps {
-  exitImageView: () => void;
   showMessage: (message: string) => void;
   isZoomedInImage?: boolean;
   timeBetweenImages: number;
@@ -56,7 +56,6 @@ interface IImageViewerProps {
 }
 
 const ImageViewer = ({
-  exitImageView,
   showMessage,
   isZoomedInImage,
   timeBetweenImages,
