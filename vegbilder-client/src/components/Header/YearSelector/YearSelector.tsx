@@ -95,26 +95,24 @@ const YearSelector = () => {
       value: unknown;
     }>
   ) => {
-    if (event) {
-      const prevYear = currentYear;
-      const newYear = event.target.value as string;
-      if (newYear && newYear !== currentYear) {
-        if (newYear === 'Nyeste') {
-          const searchParams = new URLSearchParams(window.location.search);
-          const view = searchParams.get('view');
-          if (view !== 'image') {
-            setQueryParamYear('latest');
-            unsetCurrentImagePoint();
-            setCurrentYear('Nyeste');
-          }
-        } else {
-          setCurrentYear(parseInt(newYear));
-          setQueryParamYear(newYear);
-          if (prevYear !== 'Nyeste') {
-            resetFilteredImagePoints();
-          }
-          setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
+    const prevYear = currentYear;
+    const newYear = event.target.value as string;
+    if (newYear && newYear !== currentYear) {
+      if (newYear === 'Nyeste') {
+        const searchParams = new URLSearchParams(window.location.search);
+        const view = searchParams.get('view');
+        if (view !== 'image') {
+          setQueryParamYear('latest');
+          unsetCurrentImagePoint();
+          setCurrentYear('Nyeste');
         }
+      } else {
+        setCurrentYear(parseInt(newYear));
+        setQueryParamYear(newYear);
+        if (prevYear !== 'Nyeste') {
+          resetFilteredImagePoints();
+        }
+        setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
     }
   };
