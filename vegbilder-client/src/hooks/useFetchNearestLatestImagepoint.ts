@@ -23,11 +23,11 @@ const useFetchNearestLatestImagePoint = (
   const availableYears = useRecoilValue(availableYearsQuery);
   const { setCurrentImagePoint } = useCurrentImagePoint();
   const [, setQueryParamYear] = useQueryParamState('year');
-  const [nearestImagePoint, setNearestImagePoint] = useState<IImagePoint | null>(null);
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
     if (isFetching) return;
     if (!loadedImagePoints || currentYear === 'Nyeste') {
+      setIsFetching(true);
       const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
       let foundImage = false;
       for (const year of availableYears) {
@@ -44,7 +44,6 @@ const useFetchNearestLatestImagePoint = (
           const nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
           setIsFetching(false);
           if (nearestImagePoint) {
-            setNearestImagePoint(nearestImagePoint);
             const year = nearestImagePoint.properties.AAR;
             setCurrentImagePoint(nearestImagePoint);
             setCurrentYear(year);
@@ -58,6 +57,7 @@ const useFetchNearestLatestImagePoint = (
         }
       }
       if (!foundImage) {
+        setIsFetching(false);
         showMessage(notFoundMessage);
       }
     }
