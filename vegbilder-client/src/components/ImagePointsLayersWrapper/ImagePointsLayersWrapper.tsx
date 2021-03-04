@@ -8,15 +8,26 @@ import { currentYearState } from 'recoil/atoms';
 
 const ImagePointLayersWrapper = () => {
   const zoom = useLeafletZoom();
-  const year = useRecoilValue(currentYearState);
+  const currentYear = useRecoilValue(currentYearState);
+
+  const showImagePointsMarkers = zoom > 14 && currentYear !== 'Nyeste';
+  const showNyesteKartlag = currentYear === 'Nyeste';
+
+  const oversiktsKartlag = showNyesteKartlag
+    ? `Vegbilder_oversikt_${2020}`
+    : `Vegbilder_oversikt_${currentYear}`;
+
+  const prikkeKart = showNyesteKartlag ? `Vegbilder_${2020}` : `Vegbilder_${currentYear}`;
 
   const getLayers = () => {
-    if (zoom > 9) return year === 'Nyeste' ? `Vegbilder_${2020}` : `Vegbilder_${year}`; // det skal komme et annet kartlag her for nyeste (nå brukes 2020 som placeholder)
-    return year === 'Nyeste' ? `Vegbilder_oversikt_${2020}` : `Vegbilder_oversikt_${year}`;
+    if (zoom > 9) {
+      return prikkeKart;
+    }
+    return oversiktsKartlag;
   };
 
   const renderImagePointsLayer = () => {
-    if (zoom > 14 && year !== 'Nyeste') {
+    if (showImagePointsMarkers) {
       return <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={true} />;
     } else {
       return (
