@@ -48,7 +48,7 @@ const useFetchNearestLatestImagePoint = (
             setCurrentImagePoint(nearestImagePoint);
             setCurrentYear(year);
             showMessage(
-              `Setter årstallet til ${year}, som er det året med de nyeste bildene i området.`
+              `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
             );
             foundImage = true;
             break;
