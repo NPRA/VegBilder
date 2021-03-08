@@ -10,6 +10,8 @@ import MapControls from './MapControls/MapControls';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
+import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -19,14 +21,19 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const [cursor, setCursor] = useState('pointer');
   const currentYear = useRecoilValue(currentYearState);
+  const { currentImagePoint } = useCurrentImagePoint();
 
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
+
+  const clickableMap = currentYear === 'Nyeste' || !currentImagePoint;
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
     'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
   );
+
+  const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(showMessage);
 
   /* Fetch image points in new target area when the user clicks on the map. If we find an image, we set the year to the year where we found the image.
    */
@@ -37,7 +44,11 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       zoom = 15;
     }
     setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
-    fetchNearestLatestImagePoint(userClickedLatLng);
+    if (currentYear === 'Nyeste') {
+      fetchNearestLatestImagePoint(userClickedLatLng);
+    } else {
+      fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number);
+    }
   };
 
   const onMouseDown = (event: LeafletMouseEvent) => {
@@ -65,7 +76,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   return (
     <Map
       center={currentCoordinates.latlng}
-      style={currentYear === 'Nyeste' ? { cursor: cursor } : {}}
+      style={clickableMap ? { cursor: cursor } : {}}
       zoom={currentCoordinates.zoom}
       crs={crsUtm33N}
       minZoom={4}

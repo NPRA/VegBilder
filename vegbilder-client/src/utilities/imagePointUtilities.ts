@@ -33,7 +33,7 @@ const findNearestImagePoint = (
       }
     }
   });
-  if (imagePoint_ && maxDistance < 50) {
+  if (imagePoint_ && maxDistance < maxDistanceBetweenInMeters) {
     return imagePoint_;
   }
 };
