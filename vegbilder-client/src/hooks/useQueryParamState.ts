@@ -21,7 +21,11 @@ const useQueryParamState = (name: queryParamterNames) => {
   const isDefaultCoordinates = () => {
     const lat = searchParams.get('lat');
     const lng = searchParams.get('lng');
-    return lat === defaultCoordinates.lat && lng === defaultCoordinates.lng;
+    return (
+      lat === null ||
+      lng === null ||
+      (lat === defaultCoordinates.lat && lng === defaultCoordinates.lng)
+    );
   };
 
   const getSearchParam = (name: string) => {
