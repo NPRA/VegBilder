@@ -26,6 +26,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
 
+  /* We use "prikkekartet" when no image point is selected or when we are in nyeste mode. Then, the user can click on the map to select an image. */
   const clickableMap = currentYear === 'Nyeste' || !currentImagePoint;
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
@@ -35,7 +36,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
 
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(showMessage);
 
-  /* Fetch image points in new target area when the user clicks on the map. If we find an image, we set the year to the year where we found the image.
+  /* Fetch image points in new target area when the user clicks on the map. If the app is in "nyeste mode" we set the year to the newest year where we find an image. Otherwise, we find an image from current year.
    */
   const handleClick = (event: LeafletMouseEvent) => {
     const userClickedLatLng = event.latlng;
@@ -43,11 +44,12 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
     if (!currentCoordinates.zoom || currentCoordinates.zoom < 14) {
       zoom = 15;
     }
-    setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
     if (currentYear === 'Nyeste') {
+      setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
       fetchNearestLatestImagePoint(userClickedLatLng);
     } else {
-      fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number);
+      if (!currentImagePoint)
+        fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number);
     }
   };
 

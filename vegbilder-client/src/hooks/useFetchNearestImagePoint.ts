@@ -1,18 +1,15 @@
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useState, useCallback } from 'react';
 import { ILatlng, IImagePoint } from 'types';
-import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
+import { useLeafletBounds } from 'use-leaflet';
 import { findNearestImagePoint } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 
 const useFetchNearestImagePoint = (showMessage: (message: string) => void) => {
   const [[south, west], [north, east]] = useLeafletBounds();
-  const mapCenter = useLeafletCenter();
-  const { currentCoordinates } = useCurrentCoordinates();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const { setCurrentImagePoint } = useCurrentImagePoint();
