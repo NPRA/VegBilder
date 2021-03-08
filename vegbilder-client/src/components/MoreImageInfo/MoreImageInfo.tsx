@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { IconButton, makeStyles, Popover, Tooltip, Typography } from '@material-ui/core';
 
-import { getImagePointLatLng } from 'utilities/imagePointUtilities';
+import { getImagePointLatLng, getRoadReference } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
+import getFartsgrenseByVegsystemreferanse from 'apis/NVDB/getFartsgrenseByVegsystemreferanse';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -40,6 +41,20 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
   const [position, setPosition] = useState<ILatlng>();
   const [distanceToNordkapp, setDistanceToNordkapp] = useState<string>();
   const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
+  const [fartsgrense, setFartsgrense] = useState(0);
+
+  const getFartsgrense = async (imagePoint: IImagePoint) => {
+    const vegsystemreferanse = getRoadReference(imagePoint)
+      .withoutFelt.replace(/\s/g, '')
+      .toLocaleLowerCase();
+    await getFartsgrenseByVegsystemreferanse(vegsystemreferanse).then((res) => {
+      if (res) {
+        const egenskaper = res.objekter[0].egenskaper;
+        const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
+        setFartsgrense(fartsgrense.verdi);
+      }
+    });
+  };
 
   const handleMoreInfoButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setMoreInfoAnchorEl(event.currentTarget);
@@ -80,6 +95,10 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
       const NordkappLatLng = { lat: 71.1652089, lng: 25.7909877 };
       const LindesnesLatLng = { lat: 57.9825904, lng: 7.0483913 };
       const imagePointLatlng = getImagePointLatLng(imagePoint);
+
+      if (imagePoint.properties.AAR >= 2020) {
+        getFartsgrense(imagePoint);
+      } else setFartsgrense(0);
 
       if (imagePointLatlng) {
         getKommuneAndFylke(imagePointLatlng);
@@ -132,6 +151,12 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
               {' '}
               {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER}), ${kommuneNavn}`}
             </Typography>
+          ) : null}
+          {fartsgrense > 0 ? (
+            <Typography
+              variant="body1"
+              className={classes.lines}
+            >{`Fartsgrense: ${fartsgrense}km/h`}</Typography>
           ) : null}
           {position ? (
             <>
