@@ -41,15 +41,19 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const handleClick = (event: LeafletMouseEvent) => {
     const userClickedLatLng = event.latlng;
     let zoom = currentCoordinates.zoom;
-    if (!currentCoordinates.zoom || currentCoordinates.zoom < 14) {
+    if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
       zoom = 15;
+      setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
     }
     if (currentYear === 'Nyeste') {
-      setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
+      //setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
       fetchNearestLatestImagePoint(userClickedLatLng);
     } else {
-      if (!currentImagePoint)
+      if (!currentImagePoint) {
+        console.log('hei 1');
+        //setCurrentCoordinates({ latlng: currentCoordinates.latlng, zoom: zoom });
         fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number);
+      }
     }
   };
 

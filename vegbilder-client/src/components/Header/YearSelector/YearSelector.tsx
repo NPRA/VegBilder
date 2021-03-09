@@ -15,6 +15,8 @@ import { currentYearState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import useSetCurrentYear from 'hooks/useSetCurrentYear';
+import { getImagePointLatLng } from 'utilities/imagePointUtilities';
+import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 
 const useStyles = makeStyles((theme) => ({
   yearSelect: {
@@ -80,14 +82,19 @@ const CustomInput = withStyles(() => ({
   },
 }))(InputBase);
 
-const YearSelector = () => {
+interface IYearSelectorProps {
+  showMessage: (message: string) => void;
+}
+
+const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const classes = useStyles();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const { setCommand } = useCommand();
   const availableYears = useRecoilValue(availableYearsQuery);
   const currentYear = useRecoilValue(currentYearState);
-  const { unsetCurrentImagePoint } = useCurrentImagePoint();
+  const { currentImagePoint, unsetCurrentImagePoint } = useCurrentImagePoint();
   const setCurrentYear = useSetCurrentYear();
+  const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(showMessage);
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -110,7 +117,10 @@ const YearSelector = () => {
         if (prevYear !== 'Nyeste') {
           resetFilteredImagePoints();
         }
-        setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
+        const coordinates = getImagePointLatLng(currentImagePoint);
+        if (coordinates) {
+          fetchNearestImagePointByYearAndLatLng(coordinates, parseInt(newYear));
+        }
       }
     }
   };

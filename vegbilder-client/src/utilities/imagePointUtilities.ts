@@ -33,6 +33,8 @@ const findNearestImagePoint = (
       }
     }
   });
+  console.log(imagePoint_);
+  console.log(maxDistance);
   if (imagePoint_ && maxDistance < maxDistanceBetweenInMeters) {
     return imagePoint_;
   }

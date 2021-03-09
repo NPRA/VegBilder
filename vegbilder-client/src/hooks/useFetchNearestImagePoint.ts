@@ -31,7 +31,7 @@ const useFetchNearestImagePoint = (showMessage: (message: string) => void) => {
     };
   }, [south, west, north, east]);
 
-  async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng, year: number) {
+  async function fetchImagePointsYearByLatLng(latlng: ILatlng, year: number) {
     if (isFetching) return;
     const bboxVisibleMapArea = createBboxForVisibleMapArea();
     if (
@@ -56,7 +56,6 @@ const useFetchNearestImagePoint = (showMessage: (message: string) => void) => {
         if (nearestImagePoint) {
           setCurrentImagePoint(nearestImagePoint);
         } else {
-          setIsFetching(false);
           showMessage(
             'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
           );
@@ -77,12 +76,13 @@ const useFetchNearestImagePoint = (showMessage: (message: string) => void) => {
   const selectNearestImagePointToCoordinates = (imagePoints: IImagePoint[], latlng: ILatlng) => {
     if (!imagePoints || !imagePoints.length) return;
     const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 300);
+    console.log(nearestImagePoint);
     if (nearestImagePoint) {
       return nearestImagePoint;
     }
   };
 
-  return (latlng: ILatlng, year: number) => fetchImagePointsFromNewestYearByLatLng(latlng, year);
+  return (latlng: ILatlng, year: number) => fetchImagePointsYearByLatLng(latlng, year);
 };
 
 export default useFetchNearestImagePoint;

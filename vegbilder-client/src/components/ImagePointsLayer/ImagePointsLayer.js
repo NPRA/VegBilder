@@ -105,48 +105,48 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   /* Fetch image points in new target area whenever the map bounds exceed the currently fetched area
    * or user has selected a new year.
    */
-  useEffect(() => {
-    (async () => {
-      const bboxVisibleMapArea = createBboxForVisibleMapArea();
-      if (isFetching) return;
-      if (
-        currentYear !== 'Nyeste' &&
-        (!loadedImagePoints ||
-          loadedImagePoints.year !== currentYear ||
-          !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox))
-      ) {
-        setIsFetching(true);
-        const [lat, lng] = mapCenter;
-        let targetBbox;
-        if (shouldUseMapBoundsAsTargetBbox) {
-          targetBbox = bboxVisibleMapArea;
-        } else {
-          targetBbox = createSquareBboxAroundPoint({ lat, lng }, settings.targetBboxSize);
-        }
-        const {
-          imagePoints,
-          expandedBbox,
-          fetchedBboxes,
-        } = await getImagePointsInTilesOverlappingBbox(targetBbox, currentYear);
-        setLoadedImagePoints({
-          imagePoints: imagePoints,
-          bbox: expandedBbox,
-          year: currentYear,
-        });
-        setFetchedBboxes(fetchedBboxes);
-        setTargetBbox(targetBbox);
-        setIsFetching(false);
-      }
-    })();
-  }, [
-    mapCenter,
-    loadedImagePoints,
-    currentYear,
-    isFetching,
-    createBboxForVisibleMapArea,
-    shouldUseMapBoundsAsTargetBbox,
-    setLoadedImagePoints,
-  ]);
+  // useEffect(() => {
+  //   (async () => {
+  //     const bboxVisibleMapArea = createBboxForVisibleMapArea();
+  //     if (isFetching) return;
+  //     if (
+  //       currentYear !== 'Nyeste' &&
+  //       (!loadedImagePoints ||
+  //         loadedImagePoints.year !== currentYear ||
+  //         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox))
+  //     ) {
+  //       setIsFetching(true);
+  //       const [lat, lng] = mapCenter;
+  //       let targetBbox;
+  //       if (shouldUseMapBoundsAsTargetBbox) {
+  //         targetBbox = bboxVisibleMapArea;
+  //       } else {
+  //         targetBbox = createSquareBboxAroundPoint({ lat, lng }, settings.targetBboxSize);
+  //       }
+  //       const {
+  //         imagePoints,
+  //         expandedBbox,
+  //         fetchedBboxes,
+  //       } = await getImagePointsInTilesOverlappingBbox(targetBbox, currentYear);
+  //       setLoadedImagePoints({
+  //         imagePoints: imagePoints,
+  //         bbox: expandedBbox,
+  //         year: currentYear,
+  //       });
+  //       setFetchedBboxes(fetchedBboxes);
+  //       setTargetBbox(targetBbox);
+  //       setIsFetching(false);
+  //     }
+  //   })();
+  // }, [
+  //   mapCenter,
+  //   loadedImagePoints,
+  //   currentYear,
+  //   isFetching,
+  //   createBboxForVisibleMapArea,
+  //   shouldUseMapBoundsAsTargetBbox,
+  //   setLoadedImagePoints,
+  // ]);
 
   // Apply command if present
   useEffect(() => {
