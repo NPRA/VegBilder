@@ -50,7 +50,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       fetchNearestLatestImagePoint(userClickedLatLng);
     } else {
       if (!currentImagePoint) {
-        console.log('hei 1');
         //setCurrentCoordinates({ latlng: currentCoordinates.latlng, zoom: zoom });
         fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number);
       }

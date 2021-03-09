@@ -94,7 +94,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const setCurrentYear = useSetCurrentYear();
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder fra valg år på dette stedet.'
+    'Fant ingen bilder fra valgt år på dette stedet.'
   );
 
   const handleChange = (

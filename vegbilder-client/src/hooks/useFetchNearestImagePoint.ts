@@ -64,7 +64,7 @@ const useFetchNearestImagePoint = (
         });
         let nearestImagePoint;
         if (currentImagePoint) {
-          nearestImagePoint = selectNearestImagePointToCurrentImagePoint(latlng);
+          nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
         } else {
           nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
         }
@@ -91,14 +91,13 @@ const useFetchNearestImagePoint = (
   const selectNearestImagePointToCoordinates = (imagePoints: IImagePoint[], latlng: ILatlng) => {
     if (!imagePoints || !imagePoints.length) return;
     const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 300);
-    console.log(nearestImagePoint);
     if (nearestImagePoint) {
       return nearestImagePoint;
     }
   };
 
   const selectNearestImagePointToCurrentImagePoint = useCallback(
-    (latlng: ILatlng) => {
+    (imagePoints: IImagePoint[], latlng: ILatlng) => {
       /* We want to find the nearest image point in the road reference of the current image point
        * (The actually nearest image point may be in the opposite lane, for example.)
        *
@@ -109,17 +108,17 @@ const useFetchNearestImagePoint = (
        * this way, or we may end up finding an image point in the opposite lane because the metering
        * direction of the road was changed, thus also changing the FELTKODE.
        */
-      const sameRoadReferenceImagePoints = filteredImagePoints.filter((imagePoint: IImagePoint) => {
+      const sameRoadReferenceImagePoints = imagePoints.filter((imagePoint: IImagePoint) => {
         const roadRef = getGenericRoadReference(imagePoint);
         const currentRoadRef = getGenericRoadReference(currentImagePoint);
         return roadRef === currentRoadRef;
       });
 
-      const nearestImagePoint = findNearestImagePoint(sameRoadReferenceImagePoints, latlng);
+      const nearestImagePoint = findNearestImagePoint(sameRoadReferenceImagePoints, latlng, 300);
 
       return nearestImagePoint;
     },
-    [filteredImagePoints, currentImagePoint]
+    [currentImagePoint]
   );
 
   return (latlng: ILatlng, year: number) => fetchImagePointsYearByLatLng(latlng, year);
