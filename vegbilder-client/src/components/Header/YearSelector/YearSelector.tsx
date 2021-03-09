@@ -8,7 +8,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useRecoilValue } from 'recoil';
 
 import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
-import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { availableYearsQuery } from 'recoil/selectors';
 import { currentYearState } from 'recoil/atoms';
@@ -89,12 +88,14 @@ interface IYearSelectorProps {
 const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const classes = useStyles();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
-  const { setCommand } = useCommand();
   const availableYears = useRecoilValue(availableYearsQuery);
   const currentYear = useRecoilValue(currentYearState);
   const { currentImagePoint, unsetCurrentImagePoint } = useCurrentImagePoint();
   const setCurrentYear = useSetCurrentYear();
-  const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(showMessage);
+  const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
+    showMessage,
+    'Fant ingen bilder fra valg år på dette stedet.'
+  );
 
   const handleChange = (
     event: React.ChangeEvent<{
