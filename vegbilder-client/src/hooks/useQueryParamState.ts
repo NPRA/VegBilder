@@ -1,6 +1,7 @@
 import { defaultCoordinates } from 'constants/constants';
 import { useEffect, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { currentYearState } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
 
 type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
@@ -9,6 +10,7 @@ const useQueryParamState = (name: queryParamterNames) => {
   const searchParams = new URLSearchParams(window.location.search);
 
   const availableYears = useRecoilValue(availableYearsQuery);
+  const [year, setYear] = useRecoilState(currentYearState);
 
   const isValidImageId = (imageId: string) => {
     const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
@@ -76,9 +78,12 @@ const useQueryParamState = (name: queryParamterNames) => {
   const [state, setState] = useState<string>(getSearchParam(name));
 
   useEffect(() => {
-    const newSearchParams = new URLSearchParams(window.location.search);
-    newSearchParams.set(name, state);
-    window.history.replaceState(null, '', '?' + newSearchParams.toString());
+    if (name !== 'year') {
+      const newSearchParams = new URLSearchParams(window.location.search);
+      newSearchParams.set(name, state);
+      window.history.replaceState(null, '', '?' + newSearchParams.toString());
+      console.log(newSearchParams.toString());
+    }
   }, [name, state]);
 
   return [state, setState] as const;

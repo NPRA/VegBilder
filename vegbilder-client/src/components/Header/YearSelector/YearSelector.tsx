@@ -5,11 +5,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { InputBase, ListSubheader } from '@material-ui/core';
 import { createStyles, fade, makeStyles, WithStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { availableYearsQuery } from 'recoil/selectors';
+import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
 import { currentYearState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
@@ -83,9 +83,8 @@ const YearSelector = () => {
   const classes = useStyles();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const availableYears = useRecoilValue(availableYearsQuery);
-  const currentYear = useRecoilValue(currentYearState);
   const { unsetCurrentImagePoint } = useCurrentImagePoint();
-  const setCurrentYear = useSetCurrentYear();
+  const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
   const handleChange = (
     event: React.ChangeEvent<{

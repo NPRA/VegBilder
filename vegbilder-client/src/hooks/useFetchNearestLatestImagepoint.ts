@@ -4,9 +4,9 @@ import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useState, useCallback } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentYearState } from 'recoil/atoms';
-import { availableYearsQuery } from 'recoil/selectors';
+import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
 import { ILatlng, IImagePoint } from 'types';
 import { findNearestImagePoint } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint } from 'utilities/latlngUtilities';
@@ -19,10 +19,11 @@ const useFetchNearestLatestImagePoint = (
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const currentYear = useRecoilValue(currentYearState);
+  //const currentYear = useRecoilValue(currentYearState);
   const availableYears = useRecoilValue(availableYearsQuery);
   const { setCurrentImagePoint } = useCurrentImagePoint();
-  const setCurrentYear = useSetCurrentYear();
+  //const setCurrentYear = useSetCurrentYear();
+  const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
     if (isFetching) return;

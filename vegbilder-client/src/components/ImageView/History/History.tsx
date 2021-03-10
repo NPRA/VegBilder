@@ -18,7 +18,7 @@ import {
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
-import { availableYearsQuery } from 'recoil/selectors';
+import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { currentHistoryImageState, currentYearState, isHistoryModeState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
@@ -107,7 +107,6 @@ const History = () => {
   const classes = useStyles();
 
   const availableYears = useRecoilValue(availableYearsQuery);
-  const currentYear = useRecoilValue(currentYearState);
   const [currentHistoryImage, setCurrentHistoryImage] = useRecoilState(currentHistoryImageState);
   const [, setHistoryMode] = useRecoilState(isHistoryModeState);
 
@@ -115,8 +114,8 @@ const History = () => {
   const [, setQueryParamImageId] = useQueryParamState('imageId');
   const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
   const { filteredImagePoints } = useFilteredImagePoints();
-  const setCurrentYear = useSetCurrentYear();
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
+  const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
   const handleImageClick = (imagePoint: IImagePoint) => {
     setCurrentHistoryImage(imagePoint);

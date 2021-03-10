@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, makeStyles, Snackbar, ThemeProvider } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
@@ -16,6 +16,7 @@ import Onboarding from './Onboarding/Onboarding';
 import { currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import { yearQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -57,7 +58,8 @@ const App = () => {
   const [currentImageQuery] = useQueryParamState('imageId');
   const [currentZoomQuery] = useQueryParamState('zoom');
   const { currentCoordinates } = useCurrentCoordinates();
-  const currentYear = useRecoilValue(currentYearState);
+  //const currentYear = useRecoilValue(currentYearState);
+  const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
   const showSnackbarMessage = (message: string) => {
     setSnackbarMessage(message);
@@ -80,6 +82,13 @@ const App = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentZoomQuery, currentImageQuery]);
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (!searchParams.get('year')) {
+      setCurrentYear('Nyeste');
+    }
+  }, []);
 
   const handleSnackbarClose = (reason: any) => {
     if (reason && reason._reactName !== 'onClick') {
