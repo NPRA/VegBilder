@@ -42,7 +42,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   /* Fetch image points in new target area when the user clicks on the map. If the app is in "nyeste mode" we set the year to the newest year where we find an image. Otherwise, we find an image from current year.
    */
   const handleClick = (event: LeafletMouseEvent) => {
-    createBboxForVisibleMapArea();
     const userClickedLatLng = event.latlng;
     let zoom = currentCoordinates.zoom;
     if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {

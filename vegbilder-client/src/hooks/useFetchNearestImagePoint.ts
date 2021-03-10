@@ -23,8 +23,6 @@ const useFetchNearestImagePoint = (
     unsetCurrentImagePoint,
   } = useCurrentImagePoint();
 
-  const [bbox, setBbox] = useState<null | IBbox>();
-
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
     let paddingX = (east - west) * 0.1;
@@ -42,18 +40,18 @@ const useFetchNearestImagePoint = (
     };
   }, [south, west, north, east]);
 
-  async function fetchImagePointsYearByLatLng(
+  async function fetchImagePointsByYearAndLatLng(
     latlng: ILatlng,
     year: number,
     isSmallMapConatiner = false
   ) {
     if (isFetching) return;
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
-    if (
+    const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
       loadedImagePoints.year !== year ||
-      !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
-    ) {
+      !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox);
+    if (shouldFetchNewImagePointsFromOGC) {
       setIsFetching(true);
       let targetBbox;
       if (isSmallMapConatiner) {
@@ -132,7 +130,7 @@ const useFetchNearestImagePoint = (
     [currentImagePoint]
   );
 
-  return (latlng: ILatlng, year: number) => fetchImagePointsYearByLatLng(latlng, year);
+  return (latlng: ILatlng, year: number) => fetchImagePointsByYearAndLatLng(latlng, year);
 };
 
 export default useFetchNearestImagePoint;

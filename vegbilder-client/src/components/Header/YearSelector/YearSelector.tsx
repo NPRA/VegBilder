@@ -118,10 +118,10 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
         if (prevYear !== 'Nyeste') {
           resetFilteredImagePoints();
         }
-        const coordinates = getImagePointLatLng(currentImagePoint);
-        if (coordinates) {
-          fetchNearestImagePointByYearAndLatLng(coordinates, parseInt(newYear));
-        }
+        // const coordinates = getImagePointLatLng(currentImagePoint);
+        // if (coordinates) {
+        //   fetchNearestImagePointByYearAndLatLng(coordinates, parseInt(newYear));
+        // }
       }
     }
   };

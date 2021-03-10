@@ -111,7 +111,9 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   useEffect(() => {
     const [lat, lng] = mapCenter;
     const latlng = { lat: lat, lng: lng };
-    fetchImagePointsByYearAndLatLng(latlng, currentYear);
+    if (!currentImagePoint) {
+      fetchImagePointsByYearAndLatLng(latlng, currentYear);
+    }
   }, [mapCenter, currentYear]);
 
   // Apply command if present
