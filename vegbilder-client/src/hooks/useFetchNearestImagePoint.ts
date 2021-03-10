@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
+import { useLeafletCenter } from 'use-leaflet';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
@@ -15,7 +15,6 @@ const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
 ) => {
-  const [[south, west], [north, east]] = useLeafletBounds();
   const mapCenter = useLeafletCenter();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();

@@ -23,7 +23,7 @@ import {
   yearQueryParameterState,
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { currentHistoryImageState, currentYearState, isHistoryModeState } from 'recoil/atoms';
+import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';

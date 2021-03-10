@@ -85,7 +85,7 @@ const YearSelector = () => {
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
-  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const handleChange = (
     event: React.ChangeEvent<{

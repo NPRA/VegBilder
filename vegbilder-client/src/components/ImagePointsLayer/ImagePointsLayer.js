@@ -13,7 +13,6 @@ import {
   isBboxWithinContainingBbox,
 } from 'utilities/latlngUtilities';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {

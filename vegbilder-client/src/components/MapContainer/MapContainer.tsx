@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useRecoilValue } from 'recoil';
@@ -11,7 +11,6 @@ import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
-import { useLeafletBounds } from 'use-leaflet';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -25,8 +24,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
 
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
-
-  const [[south, west], [north, east]] = useLeafletBounds();
 
   /* We use "prikkekartet" when no image point is selected or when we are in nyeste mode. Then, the user can click on the map to select an image. */
   const clickableMap = currentYear === 'Nyeste' || !currentImagePoint;
@@ -72,22 +69,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       setCursor('grabbing');
     }
   };
-
-  const createBboxForVisibleMapArea = useCallback(() => {
-    console.log([
-      [south, west],
-      [north, east],
-    ]);
-    // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
-    let paddingX = (east - west) * 0.1;
-    let paddingY = (north - south) * 0.1;
-    return {
-      south: south - paddingY,
-      west: west - paddingX,
-      north: north + paddingY,
-      east: east + paddingX,
-    };
-  }, [south, west, north, east]);
 
   return (
     <Map

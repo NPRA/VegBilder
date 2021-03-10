@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, makeStyles, Snackbar, ThemeProvider } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
@@ -13,12 +13,9 @@ import useQueryParamState from 'hooks/useQueryParamState';
 import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
-import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { imagePointQueryParameterState, yearQueryParameterState } from 'recoil/selectors';
-import { find } from 'lodash';
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
+import { yearQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles({
   gridRoot: {

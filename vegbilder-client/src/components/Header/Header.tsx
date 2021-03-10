@@ -52,7 +52,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
   const classes = useStyles();
   const [showInformation, setShowInformation] = useState(false);
   const { setCurrentCoordinates } = useCurrentCoordinates();
-  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const resetToDefaultStates = () => {
     setCurrentCoordinates({ latlng: DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
