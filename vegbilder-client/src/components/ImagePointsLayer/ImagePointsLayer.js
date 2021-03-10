@@ -30,6 +30,7 @@ import {
 } from 'recoil/atoms';
 import { availableYearsQuery } from 'recoil/selectors';
 import { settings } from 'constants/constants';
+import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 
 const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
@@ -48,6 +49,8 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
+
+  const fetchImagePointsByYearAndLatLng = useFetchNearestImagePoint();
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -105,48 +108,11 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   /* Fetch image points in new target area whenever the map bounds exceed the currently fetched area
    * or user has selected a new year.
    */
-  // useEffect(() => {
-  //   (async () => {
-  //     const bboxVisibleMapArea = createBboxForVisibleMapArea();
-  //     if (isFetching) return;
-  //     if (
-  //       currentYear !== 'Nyeste' &&
-  //       (!loadedImagePoints ||
-  //         loadedImagePoints.year !== currentYear ||
-  //         !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox))
-  //     ) {
-  //       setIsFetching(true);
-  //       const [lat, lng] = mapCenter;
-  //       let targetBbox;
-  //       if (shouldUseMapBoundsAsTargetBbox) {
-  //         targetBbox = bboxVisibleMapArea;
-  //       } else {
-  //         targetBbox = createSquareBboxAroundPoint({ lat, lng }, settings.targetBboxSize);
-  //       }
-  //       const {
-  //         imagePoints,
-  //         expandedBbox,
-  //         fetchedBboxes,
-  //       } = await getImagePointsInTilesOverlappingBbox(targetBbox, currentYear);
-  //       setLoadedImagePoints({
-  //         imagePoints: imagePoints,
-  //         bbox: expandedBbox,
-  //         year: currentYear,
-  //       });
-  //       setFetchedBboxes(fetchedBboxes);
-  //       setTargetBbox(targetBbox);
-  //       setIsFetching(false);
-  //     }
-  //   })();
-  // }, [
-  //   mapCenter,
-  //   loadedImagePoints,
-  //   currentYear,
-  //   isFetching,
-  //   createBboxForVisibleMapArea,
-  //   shouldUseMapBoundsAsTargetBbox,
-  //   setLoadedImagePoints,
-  // ]);
+  useEffect(() => {
+    const [lat, lng] = mapCenter;
+    const latlng = { lat: lat, lng: lng };
+    fetchImagePointsByYearAndLatLng(latlng, currentYear);
+  }, [mapCenter, currentYear]);
 
   // Apply command if present
   useEffect(() => {

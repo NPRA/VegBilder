@@ -1,12 +1,11 @@
-import { useState, useCallback } from 'react';
-import { useLeafletBounds } from 'use-leaflet';
+import { useState, useCallback, useEffect } from 'react';
+import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
-import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { ILatlng, IImagePoint } from 'types';
+import { ILatlng, IImagePoint, IBbox } from 'types';
 import { findNearestImagePoint, getGenericRoadReference } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 
@@ -15,6 +14,7 @@ const useFetchNearestImagePoint = (
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
 ) => {
   const [[south, west], [north, east]] = useLeafletBounds();
+  const mapCenter = useLeafletCenter();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const {
@@ -23,7 +23,7 @@ const useFetchNearestImagePoint = (
     unsetCurrentImagePoint,
   } = useCurrentImagePoint();
 
-  const { filteredImagePoints } = useFilteredImagePoints();
+  const [bbox, setBbox] = useState<null | IBbox>();
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -42,20 +42,31 @@ const useFetchNearestImagePoint = (
     };
   }, [south, west, north, east]);
 
-  async function fetchImagePointsYearByLatLng(latlng: ILatlng, year: number) {
+  async function fetchImagePointsYearByLatLng(
+    latlng: ILatlng,
+    year: number,
+    isSmallMapConatiner = false
+  ) {
     if (isFetching) return;
-    const bboxVisibleMapArea = createBboxForVisibleMapArea();
+    const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
     if (
       !loadedImagePoints ||
       loadedImagePoints.year !== year ||
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
       setIsFetching(true);
-      const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
+      let targetBbox;
+      if (isSmallMapConatiner) {
+        const [lat, lng] = mapCenter;
+        targetBbox = createSquareBboxAroundPoint({ lat, lng }, settings.targetBboxSize);
+      } else {
+        targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
+      }
       const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
         targetBbox,
         year
       );
+      console.info('Antall bildepunkter returnert fra ogc: ' + imagePoints.length);
       if (imagePoints && imagePoints.length > 0) {
         setLoadedImagePoints({
           imagePoints: imagePoints,

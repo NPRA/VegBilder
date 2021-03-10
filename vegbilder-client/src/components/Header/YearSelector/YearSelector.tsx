@@ -106,9 +106,9 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
     const prevYear = currentYear;
     const newYear = event.target.value as string;
     if (newYear && newYear !== currentYear) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const view = searchParams.get('view');
       if (newYear === 'Nyeste') {
-        const searchParams = new URLSearchParams(window.location.search);
-        const view = searchParams.get('view');
         if (view !== 'image') {
           setCurrentYear('Nyeste');
           unsetCurrentImagePoint();
