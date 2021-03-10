@@ -109,12 +109,17 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
    * or user has selected a new year.
    */
   useEffect(() => {
-    const [lat, lng] = mapCenter;
-    const latlng = { lat: lat, lng: lng };
-    if (!currentImagePoint) {
+    const bboxVisibleMapArea = createBboxForVisibleMapArea();
+    if (
+      (!currentImagePoint && currentCoordinates.zoom > 14) ||
+      currentImagePoint.properties.AAR !== currentYear ||
+      !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
+    ) {
+      const [lat, lng] = mapCenter;
+      const latlng = { lat: lat, lng: lng };
       fetchImagePointsByYearAndLatLng(latlng, currentYear);
     }
-  }, [mapCenter, currentYear]);
+  }, [mapCenter, currentYear, currentCoordinates.zoom]);
 
   // Apply command if present
   useEffect(() => {

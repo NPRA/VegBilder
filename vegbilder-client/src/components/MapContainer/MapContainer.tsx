@@ -43,11 +43,6 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
    */
   const handleClick = (event: LeafletMouseEvent) => {
     const userClickedLatLng = event.latlng;
-    let zoom = currentCoordinates.zoom;
-    if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
-      zoom = 15;
-      setCurrentCoordinates({ latlng: userClickedLatLng, zoom: zoom });
-    }
     if (currentYear === 'Nyeste') {
       fetchNearestLatestImagePoint(userClickedLatLng);
     } else {

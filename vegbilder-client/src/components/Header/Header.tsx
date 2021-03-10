@@ -75,7 +75,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
             <Search showMessage={showMessage} />
           </Grid>
           <Grid item className={classes.dateAndYearSelectorContainer}>
-            <YearSelector showMessage={showMessage} />
+            <YearSelector />
             <Box width={'1.125rem'} />
             <DateSelector />
           </Grid>

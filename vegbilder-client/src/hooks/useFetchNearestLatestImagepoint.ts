@@ -16,7 +16,7 @@ const useFetchNearestLatestImagePoint = (
   showMessage: (message: string) => void,
   notFoundMessage: string
 ) => {
-  const { currentCoordinates } = useCurrentCoordinates();
+  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const currentYear = useRecoilValue(currentYearState);
@@ -47,6 +47,11 @@ const useFetchNearestLatestImagePoint = (
             const year = nearestImagePoint.properties.AAR;
             setCurrentImagePoint(nearestImagePoint);
             setCurrentYear(year);
+            let zoom = currentCoordinates.zoom;
+            if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
+              zoom = 15;
+              setCurrentCoordinates({ latlng: latlng, zoom: zoom });
+            }
             showMessage(
               `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
             );

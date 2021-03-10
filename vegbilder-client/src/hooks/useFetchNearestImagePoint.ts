@@ -1,13 +1,14 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback } from 'react';
 import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
 import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { ILatlng, IImagePoint, IBbox } from 'types';
+import { ILatlng, IImagePoint } from 'types';
 import { findNearestImagePoint, getGenericRoadReference } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
+import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
@@ -22,23 +23,7 @@ const useFetchNearestImagePoint = (
     setCurrentImagePoint,
     unsetCurrentImagePoint,
   } = useCurrentImagePoint();
-
-  const createBboxForVisibleMapArea = useCallback(() => {
-    // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
-    let paddingX = (east - west) * 0.1;
-    let paddingY = (north - south) * 0.1;
-    if (settings.debugMode) {
-      // Simulate a smaller visible map area for debugging purposes.
-      paddingX = (west - east) * 0.2;
-      paddingY = (south - north) * 0.2;
-    }
-    return {
-      south: south - paddingY,
-      west: west - paddingX,
-      north: north + paddingY,
-      east: east + paddingX,
-    };
-  }, [south, west, north, east]);
+  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
 
   async function fetchImagePointsByYearAndLatLng(
     latlng: ILatlng,
@@ -79,10 +64,10 @@ const useFetchNearestImagePoint = (
         }
         setIsFetching(false);
         if (nearestImagePoint) {
-          setCurrentImagePoint(nearestImagePoint);
+          handleFoundNearestImagePoint(nearestImagePoint, latlng);
         } else {
           showMessage(errorMessage);
-          unsetCurrentImagePoint(); // if the user switch year and there are no images from that year, image point needs to be unset.
+          unsetCurrentImagePoint(); // if the user switch year and there are no images from that year, image point should be unset.
         }
       }
     } else {
@@ -92,10 +77,19 @@ const useFetchNearestImagePoint = (
       );
       setIsFetching(false);
       if (nearestImagePoint) {
-        setCurrentImagePoint(nearestImagePoint);
+        handleFoundNearestImagePoint(nearestImagePoint, latlng);
       }
     }
   }
+
+  const handleFoundNearestImagePoint = (nearestImagePoint: IImagePoint, latlng: ILatlng) => {
+    setCurrentImagePoint(nearestImagePoint);
+    let zoom = currentCoordinates.zoom;
+    if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
+      zoom = 15;
+      setCurrentCoordinates({ latlng: latlng, zoom: zoom });
+    }
+  };
 
   const selectNearestImagePointToCoordinates = (imagePoints: IImagePoint[], latlng: ILatlng) => {
     if (!imagePoints || !imagePoints.length) return;
