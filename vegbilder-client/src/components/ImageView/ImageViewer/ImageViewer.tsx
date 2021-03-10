@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import orderBy from 'lodash/orderBy';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
@@ -19,6 +18,7 @@ import {
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, isHistoryModeState, currentHistoryImageState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
+import { imagePointQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -62,7 +62,7 @@ const ImageViewer = ({
   meterLineVisible,
 }: IImageViewerProps) => {
   const classes = useStyles();
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { filteredImagePoints } = useFilteredImagePoints();
   const { command, resetCommand } = useCommand();
   const { setCurrentCoordinates } = useCurrentCoordinates();
@@ -140,29 +140,31 @@ const ImageViewer = ({
   }, [currentImagePoint]);
 
   useEffect(() => {
-    const getSortedImagePointsForCurrentLane = () => {
-      const currentLaneImagePoints = filteredImagePoints.filter((ip: IImagePoint) =>
-        shouldIncludeImagePoint(ip, currentImagePoint)
-      );
-      const primaryFeltkode = parseInt(currentImagePoint.properties.FELTKODE[0], 10);
-      const sortOrder = isEvenNumber(primaryFeltkode) ? 'desc' : 'asc'; // Feltkode is odd in the metering direction and even in the opposite direction
-      if (usesOldVegreferanse(currentImagePoint)) {
-        return orderBy(
-          currentLaneImagePoints,
-          ['properties.HP', 'properties.METER'],
-          [sortOrder, sortOrder]
+    if (currentImagePoint) {
+      const getSortedImagePointsForCurrentLane = () => {
+        const currentLaneImagePoints = filteredImagePoints.filter((ip: IImagePoint) =>
+          shouldIncludeImagePoint(ip, currentImagePoint)
         );
-      } else {
-        return orderBy(
-          currentLaneImagePoints,
-          ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'],
-          [sortOrder, sortOrder, sortOrder]
-        );
+        const primaryFeltkode = parseInt(currentImagePoint.properties.FELTKODE[0], 10);
+        const sortOrder = isEvenNumber(primaryFeltkode) ? 'desc' : 'asc'; // Feltkode is odd in the metering direction and even in the opposite direction
+        if (usesOldVegreferanse(currentImagePoint)) {
+          return orderBy(
+            currentLaneImagePoints,
+            ['properties.HP', 'properties.METER'],
+            [sortOrder, sortOrder]
+          );
+        } else {
+          return orderBy(
+            currentLaneImagePoints,
+            ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'],
+            [sortOrder, sortOrder, sortOrder]
+          );
+        }
+      };
+      if (filteredImagePoints && currentImagePoint) {
+        const sortedImagePointsForCurrentLane = getSortedImagePointsForCurrentLane();
+        setCurrentLaneImagePoints(sortedImagePointsForCurrentLane);
       }
-    };
-    if (filteredImagePoints && currentImagePoint) {
-      const sortedImagePointsForCurrentLane = getSortedImagePointsForCurrentLane();
-      setCurrentLaneImagePoints(sortedImagePointsForCurrentLane);
     }
   }, [filteredImagePoints, currentImagePoint]);
 
@@ -200,7 +202,7 @@ const ImageViewer = ({
     let nextImagePoint =
       nextIndex < currentLaneImagePoints.length ? currentLaneImagePoints[nextIndex] : null;
 
-    if (nextImagePoint?.id === currentImagePoint) return;
+    if (nextImagePoint?.id === currentImagePoint.id) return;
     if (
       nextImagePoint &&
       !areOnSameOrConsecutiveRoadParts(currentImagePoint, nextImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
@@ -269,7 +271,8 @@ const ImageViewer = ({
       meterLineVisible &&
       imageElement &&
       imageElement.naturalWidth > 0 &&
-      imageElement.naturalHeight > 0
+      imageElement.naturalHeight > 0 &&
+      currentImagePoint
     ) {
       return (
         <MeterLineCanvas

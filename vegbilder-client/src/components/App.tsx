@@ -13,10 +13,12 @@ import useQueryParamState from 'hooks/useQueryParamState';
 import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
-import { currentYearState } from 'recoil/atoms';
+import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { yearQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, yearQueryParameterState } from 'recoil/selectors';
+import { find } from 'lodash';
+import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -55,11 +57,10 @@ const App = () => {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const { setCommand } = useCommand();
-  const [currentImageQuery] = useQueryParamState('imageId');
-  const [currentZoomQuery] = useQueryParamState('zoom');
   const { currentCoordinates } = useCurrentCoordinates();
-  //const currentYear = useRecoilValue(currentYearState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
+
+  const searchParams = new URLSearchParams(window.location.search);
 
   const showSnackbarMessage = (message: string) => {
     setSnackbarMessage(message);
@@ -73,21 +74,26 @@ const App = () => {
 
   // if a user opens the app with only coordinates we find the nearest image from the newest year
   useEffect(() => {
-    if (currentImageQuery === '' && currentZoomQuery && parseInt(currentZoomQuery) > 14) {
+    const currentZoomQuery = searchParams.get('zoom');
+    const currentImageId = searchParams.get('imageId');
+    if (
+      currentImageId === '' ||
+      (!currentImageId && currentZoomQuery && parseInt(currentZoomQuery) > 14)
+    ) {
       if (currentYear === 'Nyeste') {
         fetchNearestLatestImagePoint(currentCoordinates.latlng);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentZoomQuery, currentImageQuery]);
+  }, []);
 
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     if (!searchParams.get('year')) {
       setCurrentYear('Nyeste');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSnackbarClose = (reason: any) => {

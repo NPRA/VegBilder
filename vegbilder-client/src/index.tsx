@@ -7,7 +7,6 @@ import App from './components/App';
 import './index.css';
 import { CommandProvider } from 'contexts/CommandContext';
 import { CurrentCoordinatesProvider } from 'contexts/CurrentCoordinatesContext';
-import { CurrentImagePointProvider } from 'contexts/CurrentImagePointContext';
 import { LoadedImagePointsProvider } from 'contexts/LoadedImagePointsContext';
 
 ReactDOM.render(
@@ -18,11 +17,9 @@ ReactDOM.render(
       >
         <LoadedImagePointsProvider>
           <CurrentCoordinatesProvider>
-            <CurrentImagePointProvider>
-              <CommandProvider>
-                <App />
-              </CommandProvider>
-            </CurrentImagePointProvider>
+            <CommandProvider>
+              <App />
+            </CommandProvider>
           </CurrentCoordinatesProvider>
         </LoadedImagePointsProvider>
       </Suspense>

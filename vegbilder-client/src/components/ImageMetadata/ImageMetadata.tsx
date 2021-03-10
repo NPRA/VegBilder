@@ -2,10 +2,9 @@ import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { useRecoilValue } from 'recoil';
 
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import { getRoadReference } from 'utilities/imagePointUtilities';
-import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
+import { currentHistoryImageState, currentImagePointState, isHistoryModeState } from 'recoil/atoms';
 
 const useStyles = makeStyles(() => ({
   metadata: {
@@ -18,7 +17,7 @@ const useStyles = makeStyles(() => ({
 const ImageMetadata = () => {
   const classes = useStyles();
 
-  const { currentImagePoint } = useCurrentImagePoint();
+  const currentImagePoint = useRecoilValue(currentImagePointState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
 

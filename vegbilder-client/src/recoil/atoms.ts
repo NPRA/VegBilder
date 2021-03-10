@@ -22,3 +22,8 @@ export const currentHistoryImageState = atom<IImagePoint | null>({
   key: 'currentHistoryImage',
   default: null,
 });
+
+export const currentImagePointState = atom<IImagePoint | null>({
+  key: 'currentImagePoint',
+  default: null,
+});

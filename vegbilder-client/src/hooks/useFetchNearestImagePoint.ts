@@ -3,12 +3,13 @@ import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { ILatlng, IImagePoint } from 'types';
 import { findNearestImagePoint, getGenericRoadReference } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
+import { imagePointQueryParameterState } from 'recoil/selectors';
+import { useRecoilState } from 'recoil';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
@@ -18,11 +19,7 @@ const useFetchNearestImagePoint = (
   const mapCenter = useLeafletCenter();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
-  const {
-    currentImagePoint,
-    setCurrentImagePoint,
-    unsetCurrentImagePoint,
-  } = useCurrentImagePoint();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
 
   async function fetchImagePointsByYearAndLatLng(
@@ -67,7 +64,7 @@ const useFetchNearestImagePoint = (
           handleFoundNearestImagePoint(nearestImagePoint, latlng);
         } else {
           showMessage(errorMessage);
-          unsetCurrentImagePoint(); // if the user switch year and there are no images from that year, image point should be unset.
+          setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
         }
       }
     } else {
@@ -112,9 +109,12 @@ const useFetchNearestImagePoint = (
        * direction of the road was changed, thus also changing the FELTKODE.
        */
       const sameRoadReferenceImagePoints = imagePoints.filter((imagePoint: IImagePoint) => {
-        const roadRef = getGenericRoadReference(imagePoint);
-        const currentRoadRef = getGenericRoadReference(currentImagePoint);
-        return roadRef === currentRoadRef;
+        if (currentImagePoint) {
+          const roadRef = getGenericRoadReference(imagePoint);
+          const currentRoadRef = getGenericRoadReference(currentImagePoint);
+          return roadRef === currentRoadRef;
+        }
+        return true;
       });
 
       const nearestImagePoint = findNearestImagePoint(sameRoadReferenceImagePoints, latlng, 300);

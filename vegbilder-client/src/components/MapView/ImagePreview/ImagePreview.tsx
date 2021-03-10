@@ -2,13 +2,14 @@ import React from 'react';
 import { Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import { EnlargeIcon } from 'components/Icons/Icons';
 import CloseButton from 'components/CloseButton/CloseButton';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
+import { useRecoilState } from 'recoil';
+import { imagePointQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -34,7 +35,8 @@ interface IImagePreviewProps {
 
 const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
   const classes = useStyles();
-  const { currentImagePoint, unsetCurrentImagePoint } = useCurrentImagePoint();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+
   const { setCurrentCoordinates } = useCurrentCoordinates();
 
   if (currentImagePoint) {
@@ -64,7 +66,7 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
             className={classes.image}
             alt="Bilde tatt langs veg"
           />
-          <CloseButton onClick={unsetCurrentImagePoint} />
+          <CloseButton onClick={() => setCurrentImagePoint(null)} />
         </>
         <Box
           padding="0.25rem 0.75rem 0.75rem 0.75rem"

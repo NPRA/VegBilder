@@ -5,6 +5,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ClickAwayListener, ListSubheader } from '@material-ui/core';
 import { debounce } from 'lodash';
+import { useRecoilState } from 'recoil';
 
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
@@ -12,9 +13,9 @@ import { useCommand, commandTypes } from 'contexts/CommandContext';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
 import { MagnifyingGlassIcon } from '../../Icons/Icons';
+import { imagePointQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,7 +82,7 @@ const Search = ({ showMessage }) => {
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
-  const { unsetCurrentImagePoint } = useCurrentImagePoint();
+  const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { setCommand } = useCommand();
 
   const delayedStedsnavnQuery = useCallback(
@@ -116,14 +117,14 @@ const Search = ({ showMessage }) => {
 
   useEffect(() => {
     if (resetImagePoint) {
-      unsetCurrentImagePoint();
+      setCurrentImagePoint(null);
       resetLoadedImagePoints();
       resetFilteredImagePoints();
     }
     return () => {
       setResetImagePoint(false);
     };
-  }, [resetImagePoint, resetFilteredImagePoints, resetLoadedImagePoints, unsetCurrentImagePoint]);
+  }, [resetImagePoint, resetFilteredImagePoints, resetLoadedImagePoints, setCurrentImagePoint]);
 
   useEffect(() => {
     if (findClosestImagePoint) {

@@ -4,13 +4,12 @@ import { WMSTileLayer } from 'react-leaflet';
 import { useRecoilValue } from 'recoil';
 
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
-import { currentYearState } from 'recoil/atoms';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
+import { currentImagePointState, currentYearState } from 'recoil/atoms';
 
 const ImagePointLayersWrapper = () => {
   const zoom = useLeafletZoom();
   const currentYear = useRecoilValue(currentYearState);
-  const { currentImagePoint } = useCurrentImagePoint();
+  const currentImagePoint = useRecoilValue(currentImagePointState);
 
   const showImagePointsMarkers = zoom > 14 && currentYear !== 'Nyeste' && currentImagePoint;
   const showNyesteKartlag = currentYear === 'Nyeste';

@@ -1,12 +1,15 @@
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useState, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { currentYearState } from 'recoil/atoms';
-import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
+import {
+  availableYearsQuery,
+  imagePointQueryParameterState,
+  yearQueryParameterState,
+} from 'recoil/selectors';
 import { ILatlng, IImagePoint } from 'types';
 import { findNearestImagePoint } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint } from 'utilities/latlngUtilities';
@@ -21,7 +24,7 @@ const useFetchNearestLatestImagePoint = (
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   //const currentYear = useRecoilValue(currentYearState);
   const availableYears = useRecoilValue(availableYearsQuery);
-  const { setCurrentImagePoint } = useCurrentImagePoint();
+  const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   //const setCurrentYear = useSetCurrentYear();
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 

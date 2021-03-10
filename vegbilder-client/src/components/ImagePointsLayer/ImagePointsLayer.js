@@ -4,7 +4,7 @@ import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
 import { Rectangle, Marker } from 'react-leaflet';
 // eslint-disable-next-line
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import {
@@ -28,7 +28,7 @@ import {
   currentHistoryImageState,
   isHistoryModeState,
 } from 'recoil/atoms';
-import { availableYearsQuery } from 'recoil/selectors';
+import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/constants';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 
@@ -39,7 +39,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [targetBbox, setTargetBbox] = useState(null);
   const [isFetching, setIsFetching] = useState(false);
   const { filteredImagePoints } = useFilteredImagePoints();
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { currentCoordinates } = useCurrentCoordinates();
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const currentYear = useRecoilValue(currentYearState);

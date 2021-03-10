@@ -10,7 +10,6 @@ const useQueryParamState = (name: queryParamterNames) => {
   const searchParams = new URLSearchParams(window.location.search);
 
   const availableYears = useRecoilValue(availableYearsQuery);
-  const [year, setYear] = useRecoilState(currentYearState);
 
   const isValidImageId = (imageId: string) => {
     const regexp = /^[a-zA-Z\d-_.]{1,100}$/;
@@ -33,15 +32,15 @@ const useQueryParamState = (name: queryParamterNames) => {
   const getSearchParam = (name: string) => {
     const searchParam = searchParams.get(name);
     switch (name) {
-      case 'imageId':
-        if (searchParam) {
-          const validImageIdParam = isValidImageId(searchParam);
-          if (!validImageIdParam) {
-            throw new Error(`Ugyldig id for bilde: ${searchParam}`);
-          }
-          return searchParam;
-        }
-        return '';
+      // case 'imageId':
+      //   if (searchParam) {
+      //     const validImageIdParam = isValidImageId(searchParam);
+      //     if (!validImageIdParam) {
+      //       throw new Error(`Ugyldig id for bilde: ${searchParam}`);
+      //     }
+      //     return searchParam;
+      //   }
+      //   return '';
       case 'year':
         const defaultYear = 'latest';
         if (searchParam) {
@@ -78,11 +77,10 @@ const useQueryParamState = (name: queryParamterNames) => {
   const [state, setState] = useState<string>(getSearchParam(name));
 
   useEffect(() => {
-    if (name !== 'year') {
+    if (name !== 'year' && name !== 'imageId') {
       const newSearchParams = new URLSearchParams(window.location.search);
       newSearchParams.set(name, state);
       window.history.replaceState(null, '', '?' + newSearchParams.toString());
-      console.log(newSearchParams.toString());
     }
   }, [name, state]);
 

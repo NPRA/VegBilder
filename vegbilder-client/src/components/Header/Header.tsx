@@ -9,9 +9,10 @@ import DateSelector from './DateSelector/DateSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import PageInformation from './PageInformation/PageInformation';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import Settings from './Settings/Settings';
+import { useRecoilState } from 'recoil';
+import { imagePointQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles({
   headerToolBar: {
@@ -51,11 +52,11 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
   const classes = useStyles();
   const [showInformation, setShowInformation] = useState(false);
   const { setCurrentCoordinates } = useCurrentCoordinates();
-  const { unsetCurrentImagePoint } = useCurrentImagePoint();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const resetToDefaultStates = () => {
     setCurrentCoordinates({ latlng: DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
-    unsetCurrentImagePoint();
+    setCurrentImagePoint(null);
     setMapView();
   };
 

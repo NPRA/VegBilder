@@ -40,3 +40,5 @@ export interface IBbox {
   north: number;
   south: number;
 }
+
+export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';

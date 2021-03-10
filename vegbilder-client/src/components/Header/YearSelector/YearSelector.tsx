@@ -9,11 +9,12 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
-import { currentYearState } from 'recoil/atoms';
+import {
+  availableYearsQuery,
+  imagePointQueryParameterState,
+  yearQueryParameterState,
+} from 'recoil/selectors';
 import Theme from 'theme/Theme';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
-import useSetCurrentYear from 'hooks/useSetCurrentYear';
 
 const useStyles = makeStyles((theme) => ({
   yearSelect: {
@@ -83,8 +84,8 @@ const YearSelector = () => {
   const classes = useStyles();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const availableYears = useRecoilValue(availableYearsQuery);
-  const { unsetCurrentImagePoint } = useCurrentImagePoint();
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -100,7 +101,7 @@ const YearSelector = () => {
       if (newYear === 'Nyeste') {
         if (view !== 'image') {
           setCurrentYear('Nyeste');
-          unsetCurrentImagePoint();
+          setCurrentImagePoint(null);
         }
       } else {
         setCurrentYear(parseInt(newYear));

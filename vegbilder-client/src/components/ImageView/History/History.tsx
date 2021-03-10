@@ -7,7 +7,6 @@ import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
 import { Dictionary } from 'lodash';
 
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
   getBearingBetweenImagePoints,
   getDateString,
@@ -18,14 +17,17 @@ import {
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
-import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
+import {
+  availableYearsQuery,
+  imagePointQueryParameterState,
+  yearQueryParameterState,
+} from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { currentHistoryImageState, currentYearState, isHistoryModeState } from 'recoil/atoms';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import useQueryParamState from 'hooks/useQueryParamState';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
-import useSetCurrentYear from 'hooks/useSetCurrentYear';
 
 const useStyles = makeStyles((theme) => ({
   historyContent: {
@@ -112,7 +114,7 @@ const History = () => {
 
   const { setCurrentCoordinates } = useCurrentCoordinates();
   const [, setQueryParamImageId] = useQueryParamState('imageId');
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { filteredImagePoints } = useFilteredImagePoints();
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);

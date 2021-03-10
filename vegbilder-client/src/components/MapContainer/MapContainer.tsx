@@ -8,9 +8,8 @@ import { crsUtm33N } from './crs';
 import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
 import MapControls from './MapControls/MapControls';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { currentYearState } from 'recoil/atoms';
+import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { useLeafletBounds } from 'use-leaflet';
 
@@ -22,7 +21,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
   const [cursor, setCursor] = useState('pointer');
   const currentYear = useRecoilValue(currentYearState);
-  const { currentImagePoint } = useCurrentImagePoint();
+  const currentImagePoint = useRecoilValue(currentImagePointState);
 
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);

@@ -1,6 +1,7 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
-import { selector } from 'recoil';
-import { currentYearState } from './atoms';
+import { DefaultValue, selector } from 'recoil';
+import { IImagePoint, queryParamterNames } from 'types';
+import { currentImagePointState, currentYearState } from './atoms';
 
 export const availableYearsQuery = selector({
   key: 'availableYears',
@@ -16,15 +17,32 @@ export const yearQueryParameterState = selector({
     return get(currentYearState);
   },
   set: ({ get, set }, newYear) => {
-    const newSearchParams = new URLSearchParams(window.location.search);
     if (newYear === 'Nyeste') {
-      newSearchParams.set('year', 'latest');
-      window.history.replaceState(null, '', '?' + newSearchParams.toString());
+      setNewQueryParamter('year', 'latest');
       set(currentYearState, newYear);
     } else if (typeof newYear === 'number' && get(availableYearsQuery).includes(newYear)) {
-      newSearchParams.set('year', newYear.toString());
-      window.history.replaceState(null, '', '?' + newSearchParams.toString());
+      setNewQueryParamter('year', newYear.toString());
       set(currentYearState, newYear);
     }
   },
 });
+
+export const imagePointQueryParameterState = selector({
+  key: 'imagePointQueryParamterState',
+  get: ({ get }) => {
+    return get(currentImagePointState);
+  },
+  set: ({ set }, newImagePoint: IImagePoint | null | DefaultValue) => {
+    if (!(newImagePoint instanceof DefaultValue)) {
+      const imagePointId = newImagePoint ? newImagePoint.id : '';
+      setNewQueryParamter('imageId', imagePointId);
+    }
+    set(currentImagePointState, newImagePoint);
+  },
+});
+
+const setNewQueryParamter = (name: queryParamterNames, value: string) => {
+  const newSearchParams = new URLSearchParams(window.location.search);
+  newSearchParams.set(name, value);
+  window.history.replaceState(null, '', '?' + newSearchParams.toString());
+};
