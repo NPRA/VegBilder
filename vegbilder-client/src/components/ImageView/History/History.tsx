@@ -25,7 +25,6 @@ import {
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
-import useQueryParamState from 'hooks/useQueryParamState';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 
@@ -113,7 +112,6 @@ const History = () => {
   const [, setHistoryMode] = useRecoilState(isHistoryModeState);
 
   const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
-  const [, setQueryParamImageId] = useQueryParamState('imageId');
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { filteredImagePoints } = useFilteredImagePoints();
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
@@ -123,7 +121,6 @@ const History = () => {
     setCurrentHistoryImage(imagePoint);
     const latlng = getImagePointLatLng(imagePoint);
     if (latlng) setCurrentCoordinates(latlng);
-    setQueryParamImageId(imagePoint.id);
     if (imagePoint.properties.AAR !== currentYear) {
       setCurrentYear(imagePoint.properties.AAR);
     }

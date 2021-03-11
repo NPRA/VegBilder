@@ -9,18 +9,18 @@ import theme from 'theme/Theme';
 import { ImageSeriesProvider } from 'contexts/ImageSeriesContext';
 import { FilteredImagePointsProvider } from 'contexts/FilteredImagePointsContext';
 import Header from './Header/Header';
-import useQueryParamState from 'hooks/useQueryParamState';
 import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import {
   latLngQueryParameterState,
+  viewQueryParamterState,
   yearQueryParameterState,
   zoomQueryParameterState,
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
-import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
+import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import { defaultCoordinates } from 'constants/constants';
 
 const useStyles = makeStyles({
@@ -56,13 +56,14 @@ const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {.
 
 const App = () => {
   const classes = useStyles();
-  const [view, setView] = useQueryParamState('view');
+  const [view, setView] = useRecoilState(viewQueryParamterState);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const { setCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
-  const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
-  const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
+  const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
+  const [, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
+  const [, setCurrentView] = useRecoilState(viewQueryParamterState);
 
   const searchParams = new URLSearchParams(window.location.search);
 
@@ -96,6 +97,7 @@ const App = () => {
     const latQuery = searchParams.get('lat');
     const lngQuery = searchParams.get('lng');
     const yearQuery = searchParams.get('year');
+    const viewQuery = searchParams.get('view');
 
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
@@ -125,6 +127,9 @@ const App = () => {
       if (!zoomQuery) {
         setCurrentZoom(DEFAULT_ZOOM);
       }
+      if (!viewQuery) {
+        setCurrentView(DEFAULT_VIEW);
+      }
     }
   }, []);
 
@@ -138,15 +143,10 @@ const App = () => {
   const renderContent = () => {
     switch (view) {
       case views.mapView:
-        return (
-          <MapView setView={() => setView(views.imageView)} showMessage={showSnackbarMessage} />
-        );
+        return <MapView setView={() => setView('image')} showMessage={showSnackbarMessage} />;
       case views.imageView:
         return (
-          <ImageView
-            setView={() => setView(views.mapView)}
-            showSnackbarMessage={showSnackbarMessage}
-          />
+          <ImageView setView={() => setView('map')} showSnackbarMessage={showSnackbarMessage} />
         );
       default:
         throw Error('No valid view set');
@@ -160,7 +160,7 @@ const App = () => {
         <FilteredImagePointsProvider>
           <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
             <Grid item className={classes.header}>
-              <Header showMessage={showSnackbarMessage} setMapView={() => setView(views.mapView)} />
+              <Header showMessage={showSnackbarMessage} setMapView={() => setView('map')} />
             </Grid>
             {renderContent()}
           </Grid>
