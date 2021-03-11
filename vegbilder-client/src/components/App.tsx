@@ -21,6 +21,7 @@ import {
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
+import { defaultCoordinates } from 'constants/constants';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -81,48 +82,48 @@ const App = () => {
     'findByImageId'
   );
 
-  // if a user opens the app with only coordinates we find the nearest image from the newest year
+  const isDefaultCoordinates = (lat: string | null, lng: string | null) => {
+    return (
+      lat === null ||
+      lng === null ||
+      (lat === defaultCoordinates.lat && lng === defaultCoordinates.lng)
+    );
+  };
+
   useEffect(() => {
-    const currentZoomQuery = searchParams.get('zoom');
-    const currentImageId = searchParams.get('imageId');
-    if (
-      currentImageId === '' ||
-      (!currentImageId && currentZoomQuery && parseInt(currentZoomQuery) > 14)
-    ) {
-      if (currentYear === 'Nyeste') {
+    const zoomQuery = searchParams.get('zoom');
+    const imageIdQuery = searchParams.get('imageId');
+    const latQuery = searchParams.get('lat');
+    const lngQuery = searchParams.get('lng');
+    const yearQuery = searchParams.get('year');
+
+    // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
+    if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
+      setCurrentZoom(15);
+      if (yearQuery === 'Nyeste' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
     }
-  }, []);
-
-  // Initialize year, zoom, lat, and lng when opening the app
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (!searchParams.get('year')) {
-      setCurrentYear('Nyeste');
+    // if the user shares and image or refresh the page with a selected image, we need to find that image on startup. We assume that year, lat and lng are set when imageId is.
+    else if (imageIdQuery && imageIdQuery.length > 1) {
+      if (latQuery && lngQuery && yearQuery && yearQuery !== 'latest') {
+        const latlng = { lat: parseFloat(latQuery), lng: parseFloat(lngQuery) };
+        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery));
+      }
     }
-    if (!searchParams.get('lat') || searchParams.get('lng')) {
-      setCurrentCoordinates(DEFAULT_COORDINATES);
-    }
-    if (!searchParams.get('zoom')) {
-      setCurrentZoom(DEFAULT_ZOOM);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
-  // if the user shares and image or refresh the page with a selected image, we need to find that image on startup. We assume that year, lat and lng are set when imageId is.
-  useEffect(() => {
-    const currentImageId = searchParams.get('imageId');
-    const currentLat = searchParams.get('lat');
-    const currentLng = searchParams.get('lng');
-    const currentYear = searchParams.get('year');
-
-    if (currentImageId && currentImageId.length > 1) {
-      if (currentLat && currentLng && currentYear && currentYear !== 'latest') {
-        const latlng = { lat: parseFloat(currentLat), lng: parseFloat(currentLng) };
-        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(currentYear));
+    // Initialize year, zoom, lat, and lng when opening the app the default way
+    else {
+      if (!yearQuery) {
+        setCurrentYear('Nyeste');
+      }
+      if (!latQuery || lngQuery) {
+        setCurrentCoordinates(DEFAULT_COORDINATES);
+      }
+      if (!zoomQuery) {
+        setCurrentZoom(DEFAULT_ZOOM);
       }
     }
   }, []);

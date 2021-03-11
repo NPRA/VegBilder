@@ -31,10 +31,13 @@ export const currentImagePointState = atom<IImagePoint | null>({
 
 export const currentLatLngState = atom<ILatlng>({
   key: 'currentLatLng',
-  default: { lat: DEFAULT_COORDINATES.lat, lng: DEFAULT_COORDINATES.lng },
+  default: {
+    lat: parseFloat(searchParams.get('lat')!) || DEFAULT_COORDINATES.lat,
+    lng: parseFloat(searchParams.get('lng')!) || DEFAULT_COORDINATES.lng,
+  },
 });
 
 export const currentZoomState = atom<number>({
   key: 'currentZoom',
-  default: 4,
+  default: parseInt(searchParams.get('zoom')!) || 4,
 });
