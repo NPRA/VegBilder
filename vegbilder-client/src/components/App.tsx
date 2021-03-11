@@ -16,6 +16,7 @@ import Onboarding from './Onboarding/Onboarding';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { yearQueryParameterState } from 'recoil/selectors';
+import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -69,6 +70,12 @@ const App = () => {
     'Fant ingen bilder i nærheten av angitte koordinater'
   );
 
+  const fetchNearestImagePointToYearAndCoordinates = useFetchNearestImagePoint(
+    showSnackbarMessage,
+    'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.',
+    'findByImageId'
+  );
+
   // if a user opens the app with only coordinates we find the nearest image from the newest year
   useEffect(() => {
     const currentZoomQuery = searchParams.get('zoom');
@@ -85,12 +92,28 @@ const App = () => {
     }
   }, []);
 
+  // Initialize year when opening the app
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     if (!searchParams.get('year')) {
       setCurrentYear('Nyeste');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // if the user shares and image or refresh the page with a selected image, we need to find that image on startup. We assume that year, lat and lng are set when imageId is.
+  useEffect(() => {
+    const currentImageId = searchParams.get('imageId');
+    const currentLat = searchParams.get('lat');
+    const currentLng = searchParams.get('lng');
+    const currentYear = searchParams.get('year');
+
+    if (currentImageId && currentImageId.length > 1) {
+      if (currentLat && currentLng && currentYear && currentYear !== 'latest') {
+        const latlng = { lat: parseFloat(currentLat), lng: parseFloat(currentLng) };
+        fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(currentYear));
+      }
+    }
   }, []);
 
   const handleSnackbarClose = (reason: any) => {

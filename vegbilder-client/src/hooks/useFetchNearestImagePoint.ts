@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { useLeafletCenter } from 'use-leaflet';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
@@ -10,22 +9,21 @@ import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utiliti
 import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { useRecoilState } from 'recoil';
+import { find } from 'lodash';
+
+type action = 'default' | 'findByImageId';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
-  errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
+  errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
+  action: action = 'default'
 ) => {
-  const mapCenter = useLeafletCenter();
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
 
-  async function fetchImagePointsByYearAndLatLng(
-    latlng: ILatlng,
-    year: number,
-    isSmallMapConatiner = false
-  ) {
+  async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
     if (isFetching) return;
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
@@ -34,13 +32,7 @@ const useFetchNearestImagePoint = (
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox);
     if (shouldFetchNewImagePointsFromOGC) {
       setIsFetching(true);
-      let targetBbox;
-      if (isSmallMapConatiner) {
-        const [lat, lng] = mapCenter;
-        targetBbox = createSquareBboxAroundPoint({ lat, lng }, settings.targetBboxSize);
-      } else {
-        targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
-      }
+      const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
       const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
         targetBbox,
         year
@@ -53,7 +45,9 @@ const useFetchNearestImagePoint = (
           year: year,
         });
         let nearestImagePoint;
-        if (currentImagePoint) {
+        if (action === 'findByImageId') {
+          nearestImagePoint = findImagePointByQueryId(imagePoints);
+        } else if (currentImagePoint && action === 'default') {
           nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
         } else {
           nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
@@ -122,6 +116,15 @@ const useFetchNearestImagePoint = (
     },
     [currentImagePoint]
   );
+
+  const findImagePointByQueryId = (imagePoints: IImagePoint[]) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const currentImageId = searchParams.get('imageId');
+    if (imagePoints && imagePoints.length && currentImageId) {
+      const imagePoint = find(imagePoints, (imagePoint) => imagePoint.id === currentImageId);
+      return imagePoint;
+    }
+  };
 
   return (latlng: ILatlng, year: number) => fetchImagePointsByYearAndLatLng(latlng, year);
 };
