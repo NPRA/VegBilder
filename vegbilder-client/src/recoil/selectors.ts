@@ -1,9 +1,10 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { DefaultValue, selector } from 'recoil';
-import { IImagePoint, ILatlng, queryParamterNames } from 'types';
+import { IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import {
   currentImagePointState,
   currentLatLngState,
+  currentViewState,
   currentYearState,
   currentZoomState,
 } from './atoms';
@@ -70,6 +71,19 @@ export const zoomQueryParameterState = selector({
       setNewQueryParamter('zoom', zoom.toString());
     }
     set(currentZoomState, zoom);
+  },
+});
+
+export const viewQueryParamterState = selector({
+  key: 'viewQueryParamterState',
+  get: ({ get }) => {
+    return get(currentViewState);
+  },
+  set: ({ set }, view: viewTypes | DefaultValue) => {
+    if (!(view instanceof DefaultValue)) {
+      setNewQueryParamter('view', view);
+    }
+    set(currentViewState, view);
   },
 });
 

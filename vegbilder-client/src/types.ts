@@ -42,3 +42,5 @@ export interface IBbox {
 }
 
 export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
+
+export type viewTypes = 'map' | 'image';
