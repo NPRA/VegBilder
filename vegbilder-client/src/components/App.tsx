@@ -14,8 +14,13 @@ import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
-import { latLngQueryParameterState, yearQueryParameterState } from 'recoil/selectors';
+import {
+  latLngQueryParameterState,
+  yearQueryParameterState,
+  zoomQueryParameterState,
+} from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
+import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -56,6 +61,7 @@ const App = () => {
   const { setCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
+  const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
 
   const searchParams = new URLSearchParams(window.location.search);
 
@@ -91,11 +97,17 @@ const App = () => {
     }
   }, []);
 
-  // Initialize year when opening the app
+  // Initialize year, zoom, lat, and lng when opening the app
   useEffect(() => {
     const searchParams = new URLSearchParams(window.location.search);
     if (!searchParams.get('year')) {
       setCurrentYear('Nyeste');
+    }
+    if (!searchParams.get('lat') || searchParams.get('lng')) {
+      setCurrentCoordinates(DEFAULT_COORDINATES);
+    }
+    if (!searchParams.get('zoom')) {
+      setCurrentZoom(DEFAULT_ZOOM);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
