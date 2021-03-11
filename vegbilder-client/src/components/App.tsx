@@ -14,8 +14,7 @@ import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { yearQueryParameterState } from 'recoil/selectors';
+import { latLngQueryParameterState, yearQueryParameterState } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 
 const useStyles = makeStyles({
@@ -55,7 +54,7 @@ const App = () => {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const { setCommand } = useCommand();
-  const { currentCoordinates } = useCurrentCoordinates();
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
   const searchParams = new URLSearchParams(window.location.search);
@@ -85,7 +84,7 @@ const App = () => {
       (!currentImageId && currentZoomQuery && parseInt(currentZoomQuery) > 14)
     ) {
       if (currentYear === 'Nyeste') {
-        fetchNearestLatestImagePoint(currentCoordinates.latlng);
+        fetchNearestLatestImagePoint(currentCoordinates);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }

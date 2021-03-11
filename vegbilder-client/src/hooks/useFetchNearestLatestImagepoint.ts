@@ -1,13 +1,14 @@
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useState, useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
+  latLngQueryParameterState,
   yearQueryParameterState,
+  zoomQueryParameterState,
 } from 'recoil/selectors';
 import { ILatlng, IImagePoint } from 'types';
 import { findNearestImagePoint } from 'utilities/imagePointUtilities';
@@ -17,7 +18,8 @@ const useFetchNearestLatestImagePoint = (
   showMessage: (message: string) => void,
   notFoundMessage: string
 ) => {
-  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const availableYears = useRecoilValue(availableYearsQuery);
@@ -47,10 +49,9 @@ const useFetchNearestLatestImagePoint = (
             const year = nearestImagePoint.properties.AAR;
             setCurrentImagePoint(nearestImagePoint);
             setCurrentYear(year);
-            let zoom = currentCoordinates.zoom;
-            if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
-              zoom = 15;
-              setCurrentCoordinates({ latlng: latlng, zoom: zoom });
+            if (!currentZoom || currentZoom < 15) {
+              setCurrentZoom(15);
+              setCurrentCoordinates(latlng);
             }
             showMessage(
               `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`

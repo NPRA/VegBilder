@@ -77,7 +77,13 @@ const useQueryParamState = (name: queryParamterNames) => {
   const [state, setState] = useState<string>(getSearchParam(name));
 
   useEffect(() => {
-    if (name !== 'year' && name !== 'imageId') {
+    if (
+      name !== 'year' &&
+      name !== 'imageId' &&
+      name !== 'lat' &&
+      name !== 'lng' &&
+      name !== 'zoom'
+    ) {
       const newSearchParams = new URLSearchParams(window.location.search);
       newSearchParams.set(name, state);
       window.history.replaceState(null, '', '?' + newSearchParams.toString());

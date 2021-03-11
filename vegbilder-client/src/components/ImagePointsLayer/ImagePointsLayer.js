@@ -13,7 +13,6 @@ import {
   isBboxWithinContainingBbox,
 } from 'utilities/latlngUtilities';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
   getImagePointLatLng,
@@ -26,6 +25,8 @@ import {
   playVideoState,
   currentHistoryImageState,
   isHistoryModeState,
+  currentLatLngState,
+  currentZoomState,
 } from 'recoil/atoms';
 import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/constants';
@@ -39,7 +40,8 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [isFetching, setIsFetching] = useState(false);
   const { filteredImagePoints } = useFilteredImagePoints();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  const { currentCoordinates } = useCurrentCoordinates();
+  const currentCoordinates = useRecoilValue(currentLatLngState);
+  const currentZoom = useRecoilValue(currentZoomState);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
@@ -70,7 +72,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
 
   const selectNearestImagePointToCurrentCoordinates = useCallback(() => {
     if (!filteredImagePoints || !currentCoordinates) return false;
-    const nearestImagePoint = findNearestImagePoint(filteredImagePoints, currentCoordinates.latlng);
+    const nearestImagePoint = findNearestImagePoint(filteredImagePoints, currentCoordinates);
     if (nearestImagePoint) {
       setCurrentImagePoint(nearestImagePoint);
     }
@@ -110,7 +112,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   useEffect(() => {
     const bboxVisibleMapArea = createBboxForVisibleMapArea();
     if (
-      (!currentImagePoint && currentCoordinates.zoom > 14) ||
+      (!currentImagePoint && currentZoom > 14) ||
       currentImagePoint.properties.AAR !== currentYear ||
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
@@ -118,7 +120,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       const latlng = { lat: lat, lng: lng };
       fetchImagePointsByYearAndLatLng(latlng, currentYear);
     }
-  }, [mapCenter, currentYear, currentCoordinates.zoom]);
+  }, [mapCenter, currentYear, currentZoom]);
 
   // Apply command if present
   useEffect(() => {
@@ -174,7 +176,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       iconSizeX = isSelected ? 14 : 10;
       iconSizeY = iconSizeX;
     }
-    if (currentCoordinates.zoom < 16) {
+    if (currentZoom < 16) {
       iconSizeX *= 0.8;
       iconSizeY *= 0.8;
     }

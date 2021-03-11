@@ -2,17 +2,20 @@ import React, { useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { Toolbar, Grid, Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { useRecoilState } from 'recoil';
 
 import Search from './Search/Search';
 import YearSelector from './YearSelector/YearSelector';
 import DateSelector from './DateSelector/DateSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import PageInformation from './PageInformation/PageInformation';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import Settings from './Settings/Settings';
-import { useRecoilState } from 'recoil';
-import { imagePointQueryParameterState } from 'recoil/selectors';
+import {
+  imagePointQueryParameterState,
+  latLngQueryParameterState,
+  zoomQueryParameterState,
+} from 'recoil/selectors';
 
 const useStyles = makeStyles({
   headerToolBar: {
@@ -51,11 +54,13 @@ interface IHeaderProps {
 const Header = ({ showMessage, setMapView }: IHeaderProps) => {
   const classes = useStyles();
   const [showInformation, setShowInformation] = useState(false);
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const resetToDefaultStates = () => {
-    setCurrentCoordinates({ latlng: DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
+    setCurrentCoordinates(DEFAULT_COORDINATES);
+    setCurrentZoom(DEFAULT_ZOOM);
     setCurrentImagePoint(null);
     setMapView();
   };

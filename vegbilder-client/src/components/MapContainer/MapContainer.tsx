@@ -1,23 +1,24 @@
 import React, { useState } from 'react';
 import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
 
 import { crsUtm33N } from './crs';
 import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
 import MapControls from './MapControls/MapControls';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
+import { latLngQueryParameterState, zoomQueryParameterState } from 'recoil/selectors';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
 }
 
 const MapContainer = ({ showMessage }: IMapContainerProps) => {
-  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
   const [cursor, setCursor] = useState('pointer');
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
@@ -72,9 +73,9 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
 
   return (
     <Map
-      center={currentCoordinates.latlng}
+      center={currentCoordinates}
       style={clickableMap ? { cursor: cursor } : {}}
-      zoom={currentCoordinates.zoom}
+      zoom={currentZoom}
       crs={crsUtm33N}
       minZoom={4}
       maxZoom={16}
@@ -86,7 +87,8 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         if (center && zoom) {
           // Center and zoom is not defined immediately after rendering, for some reason, so the above if check is necessary. (Or the app would crash if you start dragging the map immediately after rendering.)
           const latlng = { lat: center[0], lng: center[1] };
-          setCurrentCoordinates({ latlng, zoom });
+          setCurrentCoordinates(latlng);
+          setCurrentZoom(zoom);
         }
       }}
     >

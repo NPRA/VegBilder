@@ -6,8 +6,11 @@ import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { ILatlng, IImagePoint } from 'types';
 import { findNearestImagePoint, getGenericRoadReference } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import { imagePointQueryParameterState } from 'recoil/selectors';
+import {
+  imagePointQueryParameterState,
+  latLngQueryParameterState,
+  zoomQueryParameterState,
+} from 'recoil/selectors';
 import { useRecoilState } from 'recoil';
 import { find } from 'lodash';
 
@@ -21,7 +24,8 @@ const useFetchNearestImagePoint = (
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  const { currentCoordinates, setCurrentCoordinates } = useCurrentCoordinates();
+  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
 
   async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
     if (isFetching) return;
@@ -74,10 +78,9 @@ const useFetchNearestImagePoint = (
 
   const handleFoundNearestImagePoint = (nearestImagePoint: IImagePoint, latlng: ILatlng) => {
     setCurrentImagePoint(nearestImagePoint);
-    let zoom = currentCoordinates.zoom;
-    if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
-      zoom = 15;
-      setCurrentCoordinates({ latlng: latlng, zoom: zoom });
+    if (!currentZoom || currentZoom < 15) {
+      setCurrentZoom(15);
+      setCurrentCoordinates(latlng);
     }
   };
 

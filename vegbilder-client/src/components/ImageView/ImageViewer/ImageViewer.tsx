@@ -4,7 +4,6 @@ import orderBy from 'lodash/orderBy';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { isEvenNumber } from 'utilities/mathUtilities';
 import {
@@ -18,7 +17,7 @@ import {
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, isHistoryModeState, currentHistoryImageState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
-import { imagePointQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -65,7 +64,7 @@ const ImageViewer = ({
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { filteredImagePoints } = useFilteredImagePoints();
   const { command, resetCommand } = useCommand();
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
@@ -117,7 +116,7 @@ const ImageViewer = ({
       );
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
-        setCurrentCoordinates({ latlng: latlngNearestImagePointInOppositeLane });
+        setCurrentCoordinates(latlngNearestImagePointInOppositeLane);
       }
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
@@ -230,7 +229,7 @@ const ImageViewer = ({
           if (nextImagePoint) {
             const latlng = getImagePointLatLng(nextImagePoint);
             setCurrentImagePoint(nextImagePoint);
-            setCurrentCoordinates({ latlng: latlng });
+            if (latlng) setCurrentCoordinates(latlng);
           } else {
             showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
           }
@@ -239,7 +238,7 @@ const ImageViewer = ({
           if (previousImagePoint) {
             const latlng = getImagePointLatLng(previousImagePoint);
             setCurrentImagePoint(previousImagePoint);
-            setCurrentCoordinates({ latlng: latlng });
+            if (latlng) setCurrentCoordinates(latlng);
           } else {
             showMessage('Dette er første bilde i serien. Velg nytt bildepunkt i kartet.');
           }
@@ -293,7 +292,7 @@ const ImageViewer = ({
         sleep(timeBetweenImages).then(() => {
           const latlng = getImagePointLatLng(nextImagePoint);
           setCurrentImagePoint(nextImagePoint);
-          setCurrentCoordinates({ latlng: latlng });
+          if (latlng) setCurrentCoordinates(latlng);
         });
       } else {
         setAutoPlay(false);

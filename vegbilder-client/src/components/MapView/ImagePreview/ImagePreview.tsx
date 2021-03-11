@@ -2,14 +2,17 @@ import React from 'react';
 import { Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import { EnlargeIcon } from 'components/Icons/Icons';
 import CloseButton from 'components/CloseButton/CloseButton';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 import { useRecoilState } from 'recoil';
-import { imagePointQueryParameterState } from 'recoil/selectors';
+import {
+  imagePointQueryParameterState,
+  latLngQueryParameterState,
+  zoomQueryParameterState,
+} from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -36,14 +39,15 @@ interface IImagePreviewProps {
 const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
 
   if (currentImagePoint) {
     const latlng = getImagePointLatLng(currentImagePoint);
 
     const openImage = () => {
-      setCurrentCoordinates({ latlng: latlng, zoom: 16 });
+      if (latlng) setCurrentCoordinates(latlng);
+      setCurrentZoom(16);
       openImageView();
     };
 
