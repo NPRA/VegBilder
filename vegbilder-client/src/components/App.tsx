@@ -70,7 +70,7 @@ const App = () => {
     'Fant ingen bilder i nærheten av angitte koordinater'
   );
 
-  const fetchNearestImagePointToYearAndCoordinates = useFetchNearestImagePoint(
+  const fetchNearestImagePointToYearAndCoordinatesByImageId = useFetchNearestImagePoint(
     showSnackbarMessage,
     'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.',
     'findByImageId'
@@ -111,7 +111,7 @@ const App = () => {
     if (currentImageId && currentImageId.length > 1) {
       if (currentLat && currentLng && currentYear && currentYear !== 'latest') {
         const latlng = { lat: parseFloat(currentLat), lng: parseFloat(currentLng) };
-        fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(currentYear));
+        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(currentYear));
       }
     }
   }, []);

@@ -1,7 +1,12 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { DefaultValue, selector } from 'recoil';
-import { IImagePoint, queryParamterNames } from 'types';
-import { currentImagePointState, currentYearState } from './atoms';
+import { IImagePoint, ILatlng, queryParamterNames } from 'types';
+import {
+  currentImagePointState,
+  currentLatLngState,
+  currentYearState,
+  currentZoomState,
+} from './atoms';
 
 export const availableYearsQuery = selector({
   key: 'availableYears',
@@ -38,6 +43,33 @@ export const imagePointQueryParameterState = selector({
       setNewQueryParamter('imageId', imagePointId);
     }
     set(currentImagePointState, newImagePoint);
+  },
+});
+
+export const latLngQueryParameterState = selector({
+  key: 'latLngQueryParamterState',
+  get: ({ get }) => {
+    return get(currentLatLngState);
+  },
+  set: ({ set }, newCoordinates: ILatlng | DefaultValue) => {
+    if (!(newCoordinates instanceof DefaultValue)) {
+      setNewQueryParamter('lat', newCoordinates.lat.toString());
+      setNewQueryParamter('lng', newCoordinates.lng.toString());
+    }
+    set(currentLatLngState, newCoordinates);
+  },
+});
+
+export const zoomQueryParameterState = selector({
+  key: 'zoomQueryParamterState',
+  get: ({ get }) => {
+    return get(currentZoomState);
+  },
+  set: ({ set }, zoom: number | DefaultValue) => {
+    if (!(zoom instanceof DefaultValue)) {
+      setNewQueryParamter('zoom', zoom.toString());
+    }
+    set(currentZoomState, zoom);
   },
 });
 
