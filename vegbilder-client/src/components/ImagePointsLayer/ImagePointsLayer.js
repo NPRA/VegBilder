@@ -30,7 +30,7 @@ import {
 } from 'recoil/atoms';
 import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/constants';
-import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
+import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
@@ -51,7 +51,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
-  const fetchImagePointsByYearAndLatLng = useFetchNearestImagePoint();
+  const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)

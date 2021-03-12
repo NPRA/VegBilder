@@ -14,7 +14,7 @@ import {
 import { useRecoilState } from 'recoil';
 import { find } from 'lodash';
 
-type action = 'default' | 'findByImageId';
+type action = 'default' | 'findByImageId' | 'imagePointsOnly';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
@@ -48,20 +48,22 @@ const useFetchNearestImagePoint = (
           bbox: expandedBbox,
           year: year,
         });
-        let nearestImagePoint;
-        if (action === 'findByImageId') {
-          nearestImagePoint = findImagePointByQueryId(imagePoints);
-        } else if (currentImagePoint && action === 'default') {
-          nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
-        } else {
-          nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
-        }
-        setIsFetching(false);
-        if (nearestImagePoint) {
-          handleFoundNearestImagePoint(nearestImagePoint, latlng);
-        } else {
-          showMessage(errorMessage);
-          setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
+        if (!'imagePointsOnly') {
+          let nearestImagePoint;
+          if (action === 'findByImageId') {
+            nearestImagePoint = findImagePointByQueryId(imagePoints);
+          } else if (currentImagePoint && action === 'default') {
+            nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
+          } else {
+            nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
+          }
+          setIsFetching(false);
+          if (nearestImagePoint) {
+            handleFoundNearestImagePoint(nearestImagePoint, latlng);
+          } else {
+            showMessage(errorMessage);
+            setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
+          }
         }
       }
     } else {
