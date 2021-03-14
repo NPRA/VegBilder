@@ -15,6 +15,8 @@ import {
   yearQueryParameterState,
 } from 'recoil/selectors';
 import Theme from 'theme/Theme';
+import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
+import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 
 const useStyles = makeStyles((theme) => ({
   yearSelect: {
@@ -80,12 +82,20 @@ const CustomInput = withStyles(() => ({
   },
 }))(InputBase);
 
-const YearSelector = () => {
+interface IYearSelectorProps {
+  showMessage: (message: string) => void;
+}
+
+const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const classes = useStyles();
-  const { resetFilteredImagePoints } = useFilteredImagePoints();
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
-  const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+
+  const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
+    showMessage,
+    'Fant ingen bilder fra valgt år på samme punktet. Prøv å klikke et annet sted.'
+  );
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -93,7 +103,6 @@ const YearSelector = () => {
       value: unknown;
     }>
   ) => {
-    const prevYear = currentYear;
     const newYear = event.target.value as string;
     if (newYear && newYear !== currentYear) {
       const searchParams = new URLSearchParams(window.location.search);
@@ -105,8 +114,9 @@ const YearSelector = () => {
         }
       } else {
         setCurrentYear(parseInt(newYear));
-        if (prevYear !== 'Nyeste') {
-          resetFilteredImagePoints();
+        if (currentImagePoint) {
+          const latlng = getImagePointLatLng(currentImagePoint);
+          if (latlng) fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear));
         }
       }
     }

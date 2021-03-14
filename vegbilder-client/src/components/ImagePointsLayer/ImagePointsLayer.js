@@ -113,14 +113,14 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     const bboxVisibleMapArea = createBboxForVisibleMapArea();
     if (
       (!currentImagePoint && currentZoom > 14) ||
-      currentImagePoint.properties.AAR !== currentYear ||
+      //currentImagePoint.properties.AAR !== currentYear ||
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
       const [lat, lng] = mapCenter;
       const latlng = { lat: lat, lng: lng };
-      fetchImagePointsByYearAndLatLng(latlng, currentYear);
+      fetchImagePointsByYearAndLatLng(latlng, currentYear, bboxVisibleMapArea);
     }
-  }, [mapCenter, currentYear, currentZoom]);
+  }, [mapCenter, currentZoom]);
 
   // Apply command if present
   useEffect(() => {

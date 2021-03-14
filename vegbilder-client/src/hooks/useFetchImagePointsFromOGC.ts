@@ -1,29 +1,23 @@
 import { useState } from 'react';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { settings } from 'constants/constants';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { ILatlng } from 'types';
-import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
+import { IBbox, ILatlng } from 'types';
+import { isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 
 const useFetchImagePointsFromOGC = () => {
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
 
-  async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
+  async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number, bbox: IBbox) {
     if (isFetching) return;
-    const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
       loadedImagePoints.year !== year ||
-      !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox);
+      !isBboxWithinContainingBbox(bbox, loadedImagePoints.bbox);
     if (shouldFetchNewImagePointsFromOGC) {
       setIsFetching(true);
-      const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
-      const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
-        targetBbox,
-        year
-      );
+      const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(bbox, year);
       console.info('Antall bildepunkter returnert fra ogc: ' + imagePoints.length);
       if (imagePoints && imagePoints.length > 0) {
         setLoadedImagePoints({
@@ -31,11 +25,13 @@ const useFetchImagePointsFromOGC = () => {
           bbox: expandedBbox,
           year: year,
         });
+        setIsFetching(false);
         return imagePoints;
       }
     }
   }
-  return (latlng: ILatlng, year: number) => fetchImagePointsByYearAndLatLng(latlng, year);
+  return (latlng: ILatlng, year: number, bbox: IBbox) =>
+    fetchImagePointsByYearAndLatLng(latlng, year, bbox);
 };
 
 export default useFetchImagePointsFromOGC;
