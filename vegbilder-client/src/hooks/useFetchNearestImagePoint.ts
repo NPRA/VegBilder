@@ -1,6 +1,5 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 
-import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { ILatlng, IImagePoint } from 'types';
@@ -13,6 +12,7 @@ import {
 } from 'recoil/selectors';
 import { useRecoilState } from 'recoil';
 import { find } from 'lodash';
+import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 
 type action = 'default' | 'findByImageId';
 
@@ -21,57 +21,45 @@ const useFetchNearestImagePoint = (
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
   action: action = 'default'
 ) => {
-  const [isFetching, setIsFetching] = useState(false);
-  const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
+  const { loadedImagePoints } = useLoadedImagePoints();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
   const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
 
+  const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
+
   async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
-    if (isFetching) return;
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
       loadedImagePoints.year !== year ||
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox);
     if (shouldFetchNewImagePointsFromOGC) {
-      setIsFetching(true);
-      const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
-      const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
-        targetBbox,
-        year
-      );
-      console.info('Antall bildepunkter returnert fra ogc: ' + imagePoints.length);
-      if (imagePoints && imagePoints.length > 0) {
-        setLoadedImagePoints({
-          imagePoints: imagePoints,
-          bbox: expandedBbox,
-          year: year,
-        });
-        let nearestImagePoint;
-        if (action === 'findByImageId') {
-          nearestImagePoint = findImagePointByQueryId(imagePoints);
-        } else if (currentImagePoint && action === 'default') {
-          console.log('here');
-          nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
-        } else {
-          nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
+      console.log('hook');
+      fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints) => {
+        if (imagePoints && imagePoints.length > 0) {
+          let nearestImagePoint;
+          if (action === 'findByImageId') {
+            nearestImagePoint = findImagePointByQueryId(imagePoints);
+          } else if (currentImagePoint && action === 'default') {
+            nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
+          } else {
+            nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
+          }
+          if (nearestImagePoint) {
+            handleFoundNearestImagePoint(nearestImagePoint, latlng);
+          } else {
+            console.log('here');
+            showMessage(errorMessage);
+            setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
+          }
         }
-        setIsFetching(false);
-        if (nearestImagePoint) {
-          handleFoundNearestImagePoint(nearestImagePoint, latlng);
-        } else {
-          console.log('here');
-          showMessage(errorMessage);
-          setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
-        }
-      }
+      });
     } else {
       const nearestImagePoint = selectNearestImagePointToCoordinates(
         loadedImagePoints.imagePoints,
         latlng
       );
-      setIsFetching(false);
       if (nearestImagePoint) {
         handleFoundNearestImagePoint(nearestImagePoint, latlng);
       }

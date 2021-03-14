@@ -107,20 +107,18 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   }, [filteredImagePoints, currentImagePoint, setCurrentImagePoint]);
 
   /* Fetch image points in new target area whenever the map bounds exceed the currently fetched area
-   * or user has selected a new year.
    */
   useEffect(() => {
     const bboxVisibleMapArea = createBboxForVisibleMapArea();
     if (
-      (!currentImagePoint && currentZoom > 14) ||
-      //currentImagePoint.properties.AAR !== currentYear ||
+      //(!currentImagePoint && currentZoom > 14) ||
+      loadedImagePoints.bbox &&
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
-      const [lat, lng] = mapCenter;
-      const latlng = { lat: lat, lng: lng };
-      fetchImagePointsByYearAndLatLng(latlng, currentYear, bboxVisibleMapArea);
+      console.log(isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox));
+      fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea);
     }
-  }, [mapCenter, currentZoom]);
+  }, [currentZoom, createBboxForVisibleMapArea]);
 
   // Apply command if present
   useEffect(() => {
