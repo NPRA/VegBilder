@@ -27,7 +27,7 @@ const informationText = {
 const helpText = {
   header1: 'Bruk av vegbilder',
   header2: 'Tilbakemelding',
-  versionNumber: 'v1.2.0',
+  versionNumber: 'v1.2.1',
   text1:
     'For å finne bilder der du ønsker kan du enten zoome inn på kartet eller søke etter stedsnavn eller vegsystemreferanse. Når du har zoomet inn på en veg vil du få opp markører du kan klikke på for å se bildet. ',
   text2:
