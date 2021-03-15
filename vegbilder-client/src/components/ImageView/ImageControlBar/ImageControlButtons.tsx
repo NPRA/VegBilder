@@ -10,6 +10,7 @@ import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import proj4 from 'proj4';
 
 import clsx from 'clsx';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
@@ -31,12 +32,18 @@ import {
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import { isHistoryModeState, playVideoState, currentHistoryImageState } from 'recoil/atoms';
+import {
+  isHistoryModeState,
+  playVideoState,
+  currentHistoryImageState,
+  currentLatLngState,
+} from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
-import { ListSubheader } from '@material-ui/core';
+import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS } from 'constants/defaultParamters';
 import { imagePointQueryParameterState } from 'recoil/selectors';
+import { VEGKART } from 'constants/urls';
 
 const useStyles = makeStyles(() => ({
   button: {
@@ -99,6 +106,7 @@ const ImageControlButtons = ({
   const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
+  const currentCoordinates = useRecoilValue(currentLatLngState);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
@@ -125,6 +133,16 @@ const ImageControlButtons = ({
     } else {
       setHistoryMode(true);
     }
+  };
+
+  const getLinkToVegkartClick = () => {
+    const utm33Projection = '+proj=utm +zone=33 +ellps=GRS80 +units=m +no_defs';
+    const utm33coordinates = proj4(utm33Projection, [
+      currentCoordinates.lng,
+      currentCoordinates.lat,
+    ]);
+
+    return `${VEGKART}@${Math.round(utm33coordinates[0])},${Math.round(utm33coordinates[1])},15`;
   };
 
   useEffect(() => {
@@ -430,6 +448,15 @@ const ImageControlButtons = ({
               <ShareIcon />
             </ListItemIcon>
             <ListItemText primary="Del" />
+          </MenuItem>
+
+          <MenuItem>
+            <ListItemIcon>
+              <MapIcon />
+            </ListItemIcon>
+            <Link target="_blank" rel="noopener noreferer" href={getLinkToVegkartClick()}>
+              Gå til Vegkart
+            </Link>
           </MenuItem>
         </Menu>
       ) : null}

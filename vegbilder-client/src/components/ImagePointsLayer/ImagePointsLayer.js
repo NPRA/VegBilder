@@ -104,12 +104,13 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   useEffect(() => {
     const bboxVisibleMapArea = createBboxForVisibleMapArea();
     if (
+      loadedImagePoints &&
       loadedImagePoints.bbox &&
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
       fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea);
     }
-  }, [createBboxForVisibleMapArea, loadedImagePoints.bbox]);
+  }, [createBboxForVisibleMapArea]);
 
   // Apply command if present
   useEffect(() => {

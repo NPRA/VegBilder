@@ -3,9 +3,4 @@ const settings = {
   debugMode: false,
 };
 
-const defaultCoordinates = {
-  lat: '65',
-  lng: '15',
-};
-
-export { settings, defaultCoordinates };
+export { settings };

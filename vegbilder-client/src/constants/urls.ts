@@ -8,4 +8,6 @@ export const VEGBILDER_OGC_UTV = 'https://www.utv.vegvesen.no/kart/ogc/vegbilder
 
 export const VEGBILDER_OGC = 'https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows';
 
+export const VEGKART = 'https://vegkart.atlas.vegvesen.no/#kartlag:geodata/';
+
 export const config = process.env.NODE_ENV === 'development' ? VEGBILDER_OGC : VEGBILDER_OGC_UTV;
