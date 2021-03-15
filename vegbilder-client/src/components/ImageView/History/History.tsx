@@ -7,7 +7,6 @@ import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
 import { Dictionary } from 'lodash';
 
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
   getBearingBetweenImagePoints,
   getDateString,
@@ -18,11 +17,14 @@ import {
 } from 'utilities/imagePointUtilities';
 import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
-import { availableYearsQuery } from 'recoil/selectors';
+import {
+  availableYearsQuery,
+  imagePointQueryParameterState,
+  latLngQueryParameterState,
+  yearQueryParameterState,
+} from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { currentHistoryImageState, currentYearState, isHistoryModeState } from 'recoil/atoms';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
-import useQueryParamState from 'hooks/useQueryParamState';
+import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 
@@ -106,25 +108,21 @@ const History = () => {
   const classes = useStyles();
 
   const availableYears = useRecoilValue(availableYearsQuery);
-  const [currentYear, setCurrentYear] = useRecoilState(currentYearState);
   const [currentHistoryImage, setCurrentHistoryImage] = useRecoilState(currentHistoryImageState);
   const [, setHistoryMode] = useRecoilState(isHistoryModeState);
 
-  const { setCurrentCoordinates } = useCurrentCoordinates();
-  const [, setQueryParamYear] = useQueryParamState('year');
-  const [, setQueryParamImageId] = useQueryParamState('imageId');
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { filteredImagePoints } = useFilteredImagePoints();
-
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
+  const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
   const handleImageClick = (imagePoint: IImagePoint) => {
     setCurrentHistoryImage(imagePoint);
-    setCurrentCoordinates({ latlng: getImagePointLatLng(imagePoint) });
-    setQueryParamImageId(imagePoint.id);
+    const latlng = getImagePointLatLng(imagePoint);
+    if (latlng) setCurrentCoordinates(latlng);
     if (imagePoint.properties.AAR !== currentYear) {
       setCurrentYear(imagePoint.properties.AAR);
-      setQueryParamYear(imagePoint.properties.AAR.toString());
     }
   };
 

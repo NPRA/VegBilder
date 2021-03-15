@@ -14,14 +14,15 @@ const useStyles = makeStyles({
 
 interface IMapViewProps {
   setView: () => void;
+  showMessage: (message: string) => void;
 }
 
-const MapView = ({ setView }: IMapViewProps) => {
+const MapView = ({ setView, showMessage }: IMapViewProps) => {
   const classes = useStyles();
 
   return (
     <Grid item className={classes.content}>
-      <MapContainer />
+      <MapContainer showMessage={showMessage} />
       <ImagePreview openImageView={setView} />
     </Grid>
   );

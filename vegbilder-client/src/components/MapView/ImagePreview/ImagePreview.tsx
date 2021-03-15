@@ -2,13 +2,17 @@ import React from 'react';
 import { Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import { EnlargeIcon } from 'components/Icons/Icons';
 import CloseButton from 'components/CloseButton/CloseButton';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
+import { useRecoilState } from 'recoil';
+import {
+  imagePointQueryParameterState,
+  latLngQueryParameterState,
+  zoomQueryParameterState,
+} from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -34,14 +38,16 @@ interface IImagePreviewProps {
 
 const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
   const classes = useStyles();
-  const { currentImagePoint, unsetCurrentImagePoint } = useCurrentImagePoint();
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
 
   if (currentImagePoint) {
     const latlng = getImagePointLatLng(currentImagePoint);
 
     const openImage = () => {
-      setCurrentCoordinates({ latlng: latlng, zoom: 16 });
+      if (latlng) setCurrentCoordinates(latlng);
+      setCurrentZoom(16);
       openImageView();
     };
 
@@ -64,7 +70,7 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
             className={classes.image}
             alt="Bilde tatt langs veg"
           />
-          <CloseButton onClick={unsetCurrentImagePoint} />
+          <CloseButton onClick={() => setCurrentImagePoint(null)} />
         </>
         <Box
           padding="0.25rem 0.75rem 0.75rem 0.75rem"

@@ -13,7 +13,6 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 
 import clsx from 'clsx';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import {
   ArrowDownIcon,
   ArrowTurnIcon,
@@ -37,6 +36,7 @@ import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 import { ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS } from 'constants/defaultParamters';
+import { imagePointQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles(() => ({
   button: {
@@ -89,7 +89,8 @@ const ImageControlButtons = ({
 }: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+
   const { copyToClipboard } = useCopyToClipboard();
 
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState<Element | null>(null);
@@ -339,7 +340,9 @@ const ImageControlButtons = ({
         {playIconButton('Spill av bildeserie')}
         {stopAnimationButton()}
         {changeSpeedButtonMenu()}
-        <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
+        {currentImagePoint ? (
+          <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
+        ) : null}
         {moreFunctionsButton()}
       </>
     );
@@ -380,7 +383,9 @@ const ImageControlButtons = ({
             {playIconButton('Start animasjonsmodus')}
             {hideShowBasisLineButton()}
             {historyButton()}
-            <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
+            {currentImagePoint ? (
+              <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
+            ) : null}
             {moreFunctionsButton()}
           </>
         ) : null}

@@ -1,19 +1,17 @@
-import React, { useState } from "react";
-import { useEffect } from "react";
+import React, { useState } from 'react';
+import { useEffect } from 'react';
 
-import { useCurrentImagePoint } from "./CurrentImagePointContext";
-import { useLoadedImagePoints } from "./LoadedImagePointsContext";
-import {
-  getRoadReference,
-  getDateString,
-} from "../utilities/imagePointUtilities";
+import { useLoadedImagePoints } from './LoadedImagePointsContext';
+import { getRoadReference, getDateString } from '../utilities/imagePointUtilities';
+import { useRecoilValue } from 'recoil';
+import { currentImagePointState } from 'recoil/atoms';
 
 const ImageSeriesContext = React.createContext();
 
 function useImageSeries() {
   const context = React.useContext(ImageSeriesContext);
   if (!context) {
-    throw new Error("useImageSeries must be used within a ImageSeriesProvider");
+    throw new Error('useImageSeries must be used within a ImageSeriesProvider');
   }
   return context;
 }
@@ -22,7 +20,7 @@ function ImageSeriesProvider(props) {
   const [availableImageSeries, setAvailableImageSeries] = useState([]);
   const [currentImageSeries, setCurrentImageSeries] = useState(null);
   const { loadedImagePoints } = useLoadedImagePoints();
-  const { currentImagePoint } = useCurrentImagePoint();
+  const currentImagePoint = useRecoilValue(currentImagePointState);
 
   /* Set the current image series and available image series (which may be selected on
    * this road reference) based on the loaded image points and the currently selected
@@ -39,9 +37,7 @@ function ImageSeriesProvider(props) {
           loadedImagePoints.imagePointsGroupedBySeries[roadReference];
         let availableDates = [];
         if (imagePointsForRoadReferenceGroupedByDate) {
-          availableDates = Object.getOwnPropertyNames(
-            imagePointsForRoadReferenceGroupedByDate
-          );
+          availableDates = Object.getOwnPropertyNames(imagePointsForRoadReferenceGroupedByDate);
         }
         setAvailableImageSeries(availableDates);
         setCurrentImageSeries({ roadReference, date: currentImageDate });

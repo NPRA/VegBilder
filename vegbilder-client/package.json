@@ -1,6 +1,6 @@
 {
   "name": "vegbilder-client",
-  "version": "0.1.20",
+  "version": "1.0.4",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.11.2",

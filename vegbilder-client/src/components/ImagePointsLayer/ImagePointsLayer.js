@@ -1,20 +1,13 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Icon } from 'leaflet';
-import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
+import { useLeafletBounds } from 'use-leaflet';
 import { Rectangle, Marker } from 'react-leaflet';
 // eslint-disable-next-line
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
-import { useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
-import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import {
-  createSquareBboxAroundPoint,
-  isWithinBbox,
-  isBboxWithinContainingBbox,
-} from 'utilities/latlngUtilities';
+import { isWithinBbox, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
   getImagePointLatLng,
@@ -27,24 +20,22 @@ import {
   playVideoState,
   currentHistoryImageState,
   isHistoryModeState,
+  currentLatLngState,
+  currentZoomState,
 } from 'recoil/atoms';
-import { availableYearsQuery } from 'recoil/selectors';
-
-const settings = {
-  targetBboxSize: 2000, // Will be used as the size of the bbox for fetching image points if the map bounds are not used (decided by shouldUseMapBoundsAsTargetBbox prop)
-  debugMode: false,
-};
+import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
+import { settings } from 'constants/constants';
+import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
-  const mapCenter = useLeafletCenter();
-  const [fetchedBboxes, setFetchedBboxes] = useState([]);
-  const [targetBbox, setTargetBbox] = useState(null);
-  const [isFetching, setIsFetching] = useState(false);
+  const [fetchedBboxes] = useState([]);
+  const [targetBbox] = useState(null);
   const { filteredImagePoints } = useFilteredImagePoints();
-  const { currentImagePoint, setCurrentImagePoint } = useCurrentImagePoint();
-  const { currentCoordinates } = useCurrentCoordinates();
-  const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
+  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const currentCoordinates = useRecoilValue(currentLatLngState);
+  const currentZoom = useRecoilValue(currentZoomState);
+  const { loadedImagePoints } = useLoadedImagePoints();
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
@@ -52,6 +43,8 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const isHistoryMode = useRecoilValue(isHistoryModeState);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
+
+  const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();
 
   const createBboxForVisibleMapArea = useCallback(() => {
     // Add some padding to the bbox because the meridians do not perfectly align with the vertical edge of the screen (projection issues)
@@ -62,7 +55,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       paddingX = (west - east) * 0.2;
       paddingY = (south - north) * 0.2;
     }
-
     return {
       south: south - paddingY,
       west: west - paddingX,
@@ -73,7 +65,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
 
   const selectNearestImagePointToCurrentCoordinates = useCallback(() => {
     if (!filteredImagePoints || !currentCoordinates) return false;
-    const nearestImagePoint = findNearestImagePoint(filteredImagePoints, currentCoordinates.latlng);
+    const nearestImagePoint = findNearestImagePoint(filteredImagePoints, currentCoordinates);
     if (nearestImagePoint) {
       setCurrentImagePoint(nearestImagePoint);
     }
@@ -108,49 +100,16 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   }, [filteredImagePoints, currentImagePoint, setCurrentImagePoint]);
 
   /* Fetch image points in new target area whenever the map bounds exceed the currently fetched area
-   * or user has selected a new year.
    */
   useEffect(() => {
-    (async () => {
-      const bboxVisibleMapArea = createBboxForVisibleMapArea();
-      if (isFetching) return;
-      if (
-        !loadedImagePoints ||
-        loadedImagePoints.year !== currentYear ||
-        !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
-      ) {
-        setIsFetching(true);
-        const [lat, lng] = mapCenter;
-        let targetBbox;
-        if (shouldUseMapBoundsAsTargetBbox) {
-          targetBbox = bboxVisibleMapArea;
-        } else {
-          targetBbox = createSquareBboxAroundPoint({ lat, lng }, settings.targetBboxSize);
-        }
-        const {
-          imagePoints,
-          expandedBbox,
-          fetchedBboxes,
-        } = await getImagePointsInTilesOverlappingBbox(targetBbox, currentYear);
-        setLoadedImagePoints({
-          imagePoints: imagePoints,
-          bbox: expandedBbox,
-          year: currentYear,
-        });
-        setFetchedBboxes(fetchedBboxes);
-        setTargetBbox(targetBbox);
-        setIsFetching(false);
-      }
-    })();
-  }, [
-    mapCenter,
-    loadedImagePoints,
-    currentYear,
-    isFetching,
-    createBboxForVisibleMapArea,
-    shouldUseMapBoundsAsTargetBbox,
-    setLoadedImagePoints,
-  ]);
+    const bboxVisibleMapArea = createBboxForVisibleMapArea();
+    if (
+      loadedImagePoints.bbox &&
+      !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
+    ) {
+      fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea);
+    }
+  }, [createBboxForVisibleMapArea, loadedImagePoints.bbox]);
 
   // Apply command if present
   useEffect(() => {
@@ -206,7 +165,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       iconSizeX = isSelected ? 14 : 10;
       iconSizeY = iconSizeX;
     }
-    if (currentCoordinates.zoom < 16) {
+    if (currentZoom < 16) {
       iconSizeX *= 0.8;
       iconSizeY *= 0.8;
     }

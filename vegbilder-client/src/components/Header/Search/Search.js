@@ -5,16 +5,17 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ClickAwayListener, ListSubheader } from '@material-ui/core';
 import { debounce } from 'lodash';
+import { useRecoilState } from 'recoil';
 
-import { useCurrentCoordinates } from 'contexts/CurrentCoordinatesContext';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { useCurrentImagePoint } from 'contexts/CurrentImagePointContext';
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
 import { MagnifyingGlassIcon } from '../../Icons/Icons';
+import { imagePointQueryParameterState, latLngQueryParameterState } from 'recoil/selectors';
+import { currentZoomState } from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,10 +79,11 @@ const Search = ({ showMessage }) => {
   const [findClosestImagePoint, setFindClosestImagePoint] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const { setCurrentCoordinates } = useCurrentCoordinates();
+  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [, setCurrentZoom] = useRecoilState(currentZoomState);
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
-  const { unsetCurrentImagePoint } = useCurrentImagePoint();
+  const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { setCommand } = useCommand();
 
   const delayedStedsnavnQuery = useCallback(
@@ -116,14 +118,14 @@ const Search = ({ showMessage }) => {
 
   useEffect(() => {
     if (resetImagePoint) {
-      unsetCurrentImagePoint();
+      setCurrentImagePoint(null);
       resetLoadedImagePoints();
       resetFilteredImagePoints();
     }
     return () => {
       setResetImagePoint(false);
     };
-  }, [resetImagePoint, resetFilteredImagePoints, resetLoadedImagePoints, unsetCurrentImagePoint]);
+  }, [resetImagePoint, resetFilteredImagePoints, resetLoadedImagePoints, setCurrentImagePoint]);
 
   useEffect(() => {
     if (findClosestImagePoint) {
@@ -143,7 +145,8 @@ const Search = ({ showMessage }) => {
     setOpenMenu(false);
     setSelectedIndex(0);
     if (latlng && latlng.lat && latlng.lng) {
-      setCurrentCoordinates({ latlng: latlng, zoom: zoom });
+      setCurrentCoordinates(latlng);
+      setCurrentZoom(zoom);
       setResetImagePoint(true);
       if (zoom === 16) {
         setFindClosestImagePoint(true);
