@@ -1,17 +1,12 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Icon } from 'leaflet';
-import { useLeafletBounds, useLeafletCenter } from 'use-leaflet';
+import { useLeafletBounds } from 'use-leaflet';
 import { Rectangle, Marker } from 'react-leaflet';
 // eslint-disable-next-line
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import {
-  createSquareBboxAroundPoint,
-  isWithinBbox,
-  isBboxWithinContainingBbox,
-} from 'utilities/latlngUtilities';
+import { isWithinBbox, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
@@ -34,15 +29,13 @@ import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
-  const mapCenter = useLeafletCenter();
-  const [fetchedBboxes, setFetchedBboxes] = useState([]);
-  const [targetBbox, setTargetBbox] = useState(null);
-  const [isFetching, setIsFetching] = useState(false);
+  const [fetchedBboxes] = useState([]);
+  const [targetBbox] = useState(null);
   const { filteredImagePoints } = useFilteredImagePoints();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const currentCoordinates = useRecoilValue(currentLatLngState);
   const currentZoom = useRecoilValue(currentZoomState);
-  const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
+  const { loadedImagePoints } = useLoadedImagePoints();
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
@@ -111,14 +104,12 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   useEffect(() => {
     const bboxVisibleMapArea = createBboxForVisibleMapArea();
     if (
-      //(!currentImagePoint && currentZoom > 14) ||
       loadedImagePoints.bbox &&
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
-      console.log(isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox));
       fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea);
     }
-  }, [currentZoom, createBboxForVisibleMapArea]);
+  }, [createBboxForVisibleMapArea, loadedImagePoints.bbox]);
 
   // Apply command if present
   useEffect(() => {

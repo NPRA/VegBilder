@@ -29,13 +29,12 @@ const useFetchNearestImagePoint = (
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
   async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
-    const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
+    const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
       loadedImagePoints.year !== year ||
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox);
     if (shouldFetchNewImagePointsFromOGC) {
-      console.log('hook');
       fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints) => {
         if (imagePoints && imagePoints.length > 0) {
           let nearestImagePoint;

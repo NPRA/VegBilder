@@ -2,20 +2,14 @@ import { useState } from 'react';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { IBbox, ILatlng } from 'types';
-import { isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
+import { IBbox } from 'types';
 
 const useFetchImagePointsFromOGC = () => {
   const [isFetching, setIsFetching] = useState(false);
-  const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
+  const { setLoadedImagePoints } = useLoadedImagePoints();
 
   async function fetchImagePointsByYearAndLatLng(year: number, bbox: IBbox) {
     if (isFetching) return;
-    // const shouldFetchNewImagePointsFromOGC =
-    //   !loadedImagePoints ||
-    //   loadedImagePoints.year !== year ||
-    //   !isBboxWithinContainingBbox(bbox, loadedImagePoints.bbox);
-    // if (shouldFetchNewImagePointsFromOGC) {
     setIsFetching(true);
     const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(bbox, year);
     console.info('Antall bildepunkter returnert fra ogc: ' + imagePoints.length);
@@ -28,7 +22,6 @@ const useFetchImagePointsFromOGC = () => {
       setIsFetching(false);
       return imagePoints;
     }
-    // }
   }
 
   return (year: number, bbox: IBbox) => fetchImagePointsByYearAndLatLng(year, bbox);
