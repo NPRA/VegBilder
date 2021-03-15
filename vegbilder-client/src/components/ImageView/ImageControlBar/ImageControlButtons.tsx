@@ -137,13 +137,18 @@ const ImageControlButtons = ({
   };
 
   const getLinkToVegkartClick = () => {
-    const utm33Projection = '+proj=utm +zone=33 +ellps=GRS80 +units=m +no_defs';
-    const utm33coordinates = proj4(utm33Projection, [
-      currentCoordinates.lng,
-      currentCoordinates.lat,
-    ]);
-
-    return `${VEGKART}@${Math.round(utm33coordinates[0])},${Math.round(utm33coordinates[1])},15`;
+    if (
+      currentImagePoint &&
+      Number.isFinite(currentCoordinates.lat) &&
+      Number.isFinite(currentCoordinates.lng)
+    ) {
+      const utm33Projection = '+proj=utm +zone=33 +ellps=GRS80 +units=m +no_defs';
+      const utm33coordinates = proj4(utm33Projection, [
+        currentCoordinates.lng,
+        currentCoordinates.lat,
+      ]);
+      return `${VEGKART}@${Math.round(utm33coordinates[0])},${Math.round(utm33coordinates[1])},15`;
+    } else return VEGKART;
   };
 
   useEffect(() => {
