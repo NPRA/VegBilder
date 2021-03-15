@@ -8,6 +8,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
+import ExploreOutlinedIcon from '@material-ui/icons/ExploreOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import proj4 from 'proj4';
@@ -452,7 +453,7 @@ const ImageControlButtons = ({
 
           <MenuItem>
             <ListItemIcon>
-              <MapIcon />
+              <ExploreOutlinedIcon />
             </ListItemIcon>
             <Link target="_blank" rel="noopener noreferer" href={getLinkToVegkartClick()}>
               Gå til Vegkart
