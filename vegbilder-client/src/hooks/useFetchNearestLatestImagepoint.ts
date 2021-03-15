@@ -1,8 +1,9 @@
+import { useState, useCallback } from 'react';
+import { useRecoilState, useRecoilValue } from 'recoil';
+
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { settings } from 'constants/constants';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
-import { useState, useCallback } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
@@ -30,7 +31,7 @@ const useFetchNearestLatestImagePoint = (
     if (isFetching) return;
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       setIsFetching(true);
-      const targetBbox = createSquareBboxAroundPoint(latlng, settings.nyesteTargetBboxSize);
+      const targetBbox = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
       let foundImage = false;
       for (const year of availableYears) {
         const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(

@@ -1,4 +1,6 @@
 import { useCallback } from 'react';
+import { useRecoilState } from 'recoil';
+import { find } from 'lodash';
 
 import { settings } from 'constants/constants';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
@@ -10,8 +12,6 @@ import {
   latLngQueryParameterState,
   zoomQueryParameterState,
 } from 'recoil/selectors';
-import { useRecoilState } from 'recoil';
-import { find } from 'lodash';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 
 type action = 'default' | 'findByImageId';
@@ -48,7 +48,6 @@ const useFetchNearestImagePoint = (
           if (nearestImagePoint) {
             handleFoundNearestImagePoint(nearestImagePoint, latlng);
           } else {
-            console.log('here');
             showMessage(errorMessage);
             setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
           }

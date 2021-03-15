@@ -8,7 +8,6 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
-import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
