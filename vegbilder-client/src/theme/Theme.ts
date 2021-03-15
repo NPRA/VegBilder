@@ -228,5 +228,15 @@ export default createMuiTheme({
         marginBottom: '1rem',
       },
     },
+    MuiLink: {
+      root: {
+        fontFamily: '"LFT-Etica"',
+        color: grayMenuItems,
+        '&:hover': {
+          color: orangeDark,
+          backgroundColor: grayDarker,
+        },
+      },
+    },
   },
 });

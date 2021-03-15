@@ -21,7 +21,6 @@ import {
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
-import { defaultCoordinates } from 'constants/constants';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -87,7 +86,7 @@ const App = () => {
     return (
       lat === null ||
       lng === null ||
-      (lat === defaultCoordinates.lat && lng === defaultCoordinates.lng)
+      (lat === DEFAULT_COORDINATES.lat.toString() && lng === DEFAULT_COORDINATES.lng.toString())
     );
   };
 

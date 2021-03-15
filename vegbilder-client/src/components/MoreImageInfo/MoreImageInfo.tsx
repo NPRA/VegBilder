@@ -48,8 +48,8 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
       .withoutFelt.replace(/\s/g, '')
       .toLocaleLowerCase();
     await getFartsgrenseByVegsystemreferanse(vegsystemreferanse).then((res) => {
-      if (res) {
-        const egenskaper = res.objekter[0].egenskaper;
+      if (res && res.objekter.length) {
+        const egenskaper = res.objekter[0].egenskaper ?? res.objekter.egenskaper;
         const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
         setFartsgrense(fartsgrense.verdi);
       }
