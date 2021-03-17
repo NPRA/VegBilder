@@ -14,7 +14,7 @@ import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
 import { MagnifyingGlassIcon } from '../../Icons/Icons';
-import { imagePointQueryParameterState, latLngQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -78,7 +78,7 @@ const Search = ({ showMessage }) => {
   const [findClosestImagePoint, setFindClosestImagePoint] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);

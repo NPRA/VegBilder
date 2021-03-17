@@ -14,7 +14,7 @@ import MapView from './MapView/MapView';
 import Onboarding from './Onboarding/Onboarding';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import {
-  latLngQueryParameterState,
+  latLngZoomQueryParameterState,
   viewQueryParamterState,
   yearQueryParameterState,
 } from 'recoil/selectors';
@@ -58,7 +58,7 @@ const App = () => {
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const { setCommand } = useCommand();
-  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
 
@@ -97,7 +97,7 @@ const App = () => {
 
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
-      //setCurrentZoom(15);
+      setCurrentCoordinates({ ...currentCoordinates, zoom: 15 });
       if (yearQuery === 'Nyeste' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {

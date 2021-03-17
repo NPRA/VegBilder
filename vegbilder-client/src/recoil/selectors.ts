@@ -46,7 +46,8 @@ export const imagePointQueryParameterState = selector({
   },
 });
 
-export const latLngQueryParameterState = selector({
+// LatLng and zoom must be the same state in order to render leaflet map properly on state change.
+export const latLngZoomQueryParameterState = selector({
   key: 'latLngQueryParamterState',
   get: ({ get }) => {
     return get(currentLatLngZoomState);

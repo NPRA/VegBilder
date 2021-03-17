@@ -10,14 +10,14 @@ import MapControls from './MapControls/MapControls';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
-import { latLngQueryParameterState } from 'recoil/selectors';
+import { latLngZoomQueryParameterState } from 'recoil/selectors';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
 }
 
 const MapContainer = ({ showMessage }: IMapContainerProps) => {
-  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [cursor, setCursor] = useState('pointer');
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);

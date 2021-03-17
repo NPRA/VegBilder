@@ -11,7 +11,7 @@ import {
   getImagePointLatLng,
 } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
-import { imagePointQueryParameterState, latLngQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 
 type action = 'default' | 'findByImageId';
@@ -23,11 +23,12 @@ const useFetchNearestImagePoint = (
 ) => {
   const { loadedImagePoints } = useLoadedImagePoints();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
   async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
+    console.log(year);
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
@@ -38,6 +39,7 @@ const useFetchNearestImagePoint = (
         if (imagePoints && imagePoints.length > 0) {
           let nearestImagePoint;
           if (action === 'findByImageId') {
+            console.log('here');
             nearestImagePoint = findImagePointByQueryId(imagePoints);
           } else if (currentImagePoint && action === 'default') {
             nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
@@ -46,11 +48,11 @@ const useFetchNearestImagePoint = (
           }
           if (nearestImagePoint) {
             handleFoundNearestImagePoint(nearestImagePoint, latlng);
+            return nearestImagePoint;
           } else {
             showMessage(errorMessage);
             setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
           }
-          return imagePoints;
         }
       });
     } else {
@@ -60,6 +62,7 @@ const useFetchNearestImagePoint = (
       );
       if (nearestImagePoint) {
         handleFoundNearestImagePoint(nearestImagePoint, latlng);
+        return nearestImagePoint;
       }
     }
   }

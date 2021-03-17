@@ -9,7 +9,7 @@ import 'components/MapContainer/MapContainer.css';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { EnlargeIcon } from 'components/Icons/Icons';
 import { useRecoilState } from 'recoil';
-import { latLngQueryParameterState } from 'recoil/selectors';
+import { latLngZoomQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   minimap: {
@@ -38,7 +38,7 @@ interface ISmallMapContainerProps {
 }
 
 const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
-  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const classes = useStyles();
   const minZoom = 15;
   const maxZoom = 16;

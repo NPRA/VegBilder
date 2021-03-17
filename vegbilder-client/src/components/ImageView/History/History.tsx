@@ -20,7 +20,7 @@ import { SelectIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
-  latLngQueryParameterState,
+  latLngZoomQueryParameterState,
   yearQueryParameterState,
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
@@ -111,7 +111,7 @@ const History = () => {
   const [currentHistoryImage, setCurrentHistoryImage] = useRecoilState(currentHistoryImageState);
   const [, setHistoryMode] = useRecoilState(isHistoryModeState);
 
-  const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
+  const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const { filteredImagePoints } = useFilteredImagePoints();
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
