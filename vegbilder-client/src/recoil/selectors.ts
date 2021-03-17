@@ -3,10 +3,9 @@ import { DefaultValue, selector } from 'recoil';
 import { IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import {
   currentImagePointState,
-  currentLatLngState,
+  currentLatLngZoomState,
   currentViewState,
   currentYearState,
-  currentZoomState,
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -50,27 +49,15 @@ export const imagePointQueryParameterState = selector({
 export const latLngQueryParameterState = selector({
   key: 'latLngQueryParamterState',
   get: ({ get }) => {
-    return get(currentLatLngState);
+    return get(currentLatLngZoomState);
   },
-  set: ({ set }, newCoordinates: ILatlng | DefaultValue) => {
+  set: ({ set }, newCoordinates: (ILatlng & { zoom?: number }) | DefaultValue) => {
     if (!(newCoordinates instanceof DefaultValue)) {
       setNewQueryParamter('lat', newCoordinates.lat.toString());
       setNewQueryParamter('lng', newCoordinates.lng.toString());
+      if (newCoordinates.zoom) setNewQueryParamter('zoom', newCoordinates.zoom.toString());
     }
-    set(currentLatLngState, newCoordinates);
-  },
-});
-
-export const zoomQueryParameterState = selector({
-  key: 'zoomQueryParamterState',
-  get: ({ get }) => {
-    return get(currentZoomState);
-  },
-  set: ({ set }, zoom: number | DefaultValue) => {
-    if (!(zoom instanceof DefaultValue)) {
-      setNewQueryParamter('zoom', zoom.toString());
-    }
-    set(currentZoomState, zoom);
+    set(currentLatLngZoomState, newCoordinates);
   },
 });
 

@@ -29,17 +29,13 @@ export const currentImagePointState = atom<IImagePoint | null>({
   default: null,
 });
 
-export const currentLatLngState = atom<ILatlng>({
-  key: 'currentLatLng',
+export const currentLatLngZoomState = atom<ILatlng & { zoom?: number }>({
+  key: 'currentLatLngZoom',
   default: {
     lat: parseFloat(searchParams.get('lat')!) || DEFAULT_COORDINATES.lat,
     lng: parseFloat(searchParams.get('lng')!) || DEFAULT_COORDINATES.lng,
+    zoom: 4,
   },
-});
-
-export const currentZoomState = atom<number>({
-  key: 'currentZoom',
-  default: parseInt(searchParams.get('zoom')!) || 4,
 });
 
 export const currentViewState = atom<viewTypes>({

@@ -11,11 +11,7 @@ import { CircledHelpIcon } from 'components/Icons/Icons';
 import PageInformation from './PageInformation/PageInformation';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import Settings from './Settings/Settings';
-import {
-  imagePointQueryParameterState,
-  latLngQueryParameterState,
-  zoomQueryParameterState,
-} from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles({
   headerToolBar: {
@@ -55,12 +51,10 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
   const classes = useStyles();
   const [showInformation, setShowInformation] = useState(false);
   const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
-  const [, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const resetToDefaultStates = () => {
-    setCurrentCoordinates(DEFAULT_COORDINATES);
-    setCurrentZoom(DEFAULT_ZOOM);
+    setCurrentCoordinates({ ...DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
     setCurrentImagePoint(null);
     setMapView();
   };

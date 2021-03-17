@@ -37,7 +37,7 @@ import {
   isHistoryModeState,
   playVideoState,
   currentHistoryImageState,
-  currentLatLngState,
+  currentLatLngZoomState,
 } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
@@ -107,7 +107,7 @@ const ImageControlButtons = ({
   const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
   const currentHistoryImage = useRecoilValue(currentHistoryImageState);
-  const currentCoordinates = useRecoilValue(currentLatLngState);
+  const currentCoordinates = useRecoilValue(currentLatLngZoomState);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);

@@ -10,7 +10,7 @@ import MapControls from './MapControls/MapControls';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
-import { latLngQueryParameterState, zoomQueryParameterState } from 'recoil/selectors';
+import { latLngQueryParameterState } from 'recoil/selectors';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -18,7 +18,6 @@ interface IMapContainerProps {
 
 const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
-  const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
   const [cursor, setCursor] = useState('pointer');
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
@@ -81,7 +80,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
     <Map
       center={currentCoordinates}
       style={clickableMap ? { cursor: cursor } : {}}
-      zoom={currentZoom}
+      zoom={currentCoordinates.zoom}
       crs={crsUtm33N}
       minZoom={4}
       maxZoom={16}
@@ -93,8 +92,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         if (center && zoom) {
           // Center and zoom is not defined immediately after rendering, for some reason, so the above if check is necessary. (Or the app would crash if you start dragging the map immediately after rendering.)
           const latlng = { lat: center[0], lng: center[1] };
-          setCurrentCoordinates(latlng);
-          setCurrentZoom(zoom);
+          setCurrentCoordinates({ ...latlng, zoom: zoom });
         }
       }}
     >

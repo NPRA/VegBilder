@@ -17,7 +17,6 @@ import {
   latLngQueryParameterState,
   viewQueryParamterState,
   yearQueryParameterState,
-  zoomQueryParameterState,
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
@@ -61,7 +60,6 @@ const App = () => {
   const { setCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
-  const [, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
 
   const searchParams = new URLSearchParams(window.location.search);
@@ -91,7 +89,6 @@ const App = () => {
   };
 
   useEffect(() => {
-    const zoomQuery = searchParams.get('zoom');
     const imageIdQuery = searchParams.get('imageId');
     const latQuery = searchParams.get('lat');
     const lngQuery = searchParams.get('lng');
@@ -100,7 +97,7 @@ const App = () => {
 
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
-      setCurrentZoom(15);
+      //setCurrentZoom(15);
       if (yearQuery === 'Nyeste' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
@@ -120,11 +117,8 @@ const App = () => {
       if (!yearQuery) {
         setCurrentYear('Nyeste');
       }
-      if (!latQuery || lngQuery) {
-        setCurrentCoordinates(DEFAULT_COORDINATES);
-      }
-      if (!zoomQuery) {
-        setCurrentZoom(DEFAULT_ZOOM);
+      if (!latQuery || !lngQuery) {
+        setCurrentCoordinates({ ...DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
       }
       if (!viewQuery) {
         setCurrentView(DEFAULT_VIEW);

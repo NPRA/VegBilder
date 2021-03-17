@@ -15,7 +15,6 @@ import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtili
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
 import { MagnifyingGlassIcon } from '../../Icons/Icons';
 import { imagePointQueryParameterState, latLngQueryParameterState } from 'recoil/selectors';
-import { currentZoomState } from 'recoil/atoms';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,7 +79,6 @@ const Search = ({ showMessage }) => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
-  const [, setCurrentZoom] = useRecoilState(currentZoomState);
   const { resetLoadedImagePoints } = useLoadedImagePoints();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
@@ -145,8 +143,7 @@ const Search = ({ showMessage }) => {
     setOpenMenu(false);
     setSelectedIndex(0);
     if (latlng && latlng.lat && latlng.lng) {
-      setCurrentCoordinates(latlng);
-      setCurrentZoom(zoom);
+      setCurrentCoordinates({ ...latlng, zoom: zoom });
       setResetImagePoint(true);
       if (zoom === 16) {
         setFindClosestImagePoint(true);

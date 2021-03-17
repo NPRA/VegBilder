@@ -20,8 +20,7 @@ import {
   playVideoState,
   currentHistoryImageState,
   isHistoryModeState,
-  currentLatLngState,
-  currentZoomState,
+  currentLatLngZoomState,
 } from 'recoil/atoms';
 import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/constants';
@@ -33,8 +32,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [targetBbox] = useState(null);
   const { filteredImagePoints } = useFilteredImagePoints();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  const currentCoordinates = useRecoilValue(currentLatLngState);
-  const currentZoom = useRecoilValue(currentZoomState);
+  const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const { loadedImagePoints } = useLoadedImagePoints();
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
@@ -166,7 +164,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
       iconSizeX = isSelected ? 14 : 10;
       iconSizeY = iconSizeX;
     }
-    if (currentZoom < 16) {
+    if (currentCoordinates.zoom < 16) {
       iconSizeX *= 0.8;
       iconSizeY *= 0.8;
     }

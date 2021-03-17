@@ -9,23 +9,23 @@ import {
   imagePointQueryParameterState,
   latLngQueryParameterState,
   yearQueryParameterState,
-  zoomQueryParameterState,
 } from 'recoil/selectors';
 import { ILatlng, IImagePoint } from 'types';
-import { findNearestImagePoint } from 'utilities/imagePointUtilities';
+import { findNearestImagePoint, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint } from 'utilities/latlngUtilities';
+import useFetchNearestImagePoint from './useFetchNearestImagePoint';
 
 const useFetchNearestLatestImagePoint = (
   showMessage: (message: string) => void,
   notFoundMessage: string
 ) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
-  const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
   const [isFetching, setIsFetching] = useState(false);
   const { loadedImagePoints, setLoadedImagePoints } = useLoadedImagePoints();
   const availableYears = useRecoilValue(availableYearsQuery);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
+  const fetchImagePointsByLatLongAndYear = useFetchNearestImagePoint(showMessage);
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
     if (isFetching) return;
@@ -34,6 +34,10 @@ const useFetchNearestLatestImagePoint = (
       const targetBbox = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
       let foundImage = false;
       for (const year of availableYears) {
+        const imagePoints_ = await fetchImagePointsByLatLongAndYear(latlng, year);
+        if (imagePoints_) {
+          break;
+        }
         const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
           targetBbox,
           year
@@ -50,9 +54,10 @@ const useFetchNearestLatestImagePoint = (
             const year = nearestImagePoint.properties.AAR;
             setCurrentImagePoint(nearestImagePoint);
             setCurrentYear(year);
-            if (!currentZoom || currentZoom < 15) {
-              setCurrentZoom(15);
-              setCurrentCoordinates(latlng);
+            const imagePointCoordinates = getImagePointLatLng(nearestImagePoint);
+            if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
+              if (imagePointCoordinates)
+                setCurrentCoordinates({ ...imagePointCoordinates, zoom: 15 });
             }
             showMessage(
               `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
@@ -72,7 +77,7 @@ const useFetchNearestLatestImagePoint = (
   const selectNearestImagePointToCoordinates = useCallback(
     (imagePoints: IImagePoint[], latlng) => {
       if (!imagePoints || !imagePoints.length || !currentCoordinates) return;
-      const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 300);
+      const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 1000);
       if (nearestImagePoint) {
         return nearestImagePoint;
       }

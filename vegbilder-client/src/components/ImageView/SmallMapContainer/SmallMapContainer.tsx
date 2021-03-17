@@ -9,7 +9,7 @@ import 'components/MapContainer/MapContainer.css';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { EnlargeIcon } from 'components/Icons/Icons';
 import { useRecoilState } from 'recoil';
-import { latLngQueryParameterState, zoomQueryParameterState } from 'recoil/selectors';
+import { latLngQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   minimap: {
@@ -39,7 +39,6 @@ interface ISmallMapContainerProps {
 
 const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
-  const [currentZoom, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
   const classes = useStyles();
   const minZoom = 15;
   const maxZoom = 16;
@@ -48,7 +47,7 @@ const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
     <div className={classes.minimap}>
       <Map
         center={currentCoordinates}
-        zoom={Math.max(currentZoom, minZoom)}
+        zoom={Math.max(currentCoordinates.zoom || 4, minZoom)}
         crs={crsUtm33N}
         minZoom={minZoom}
         maxZoom={maxZoom}
@@ -56,8 +55,7 @@ const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
         onViewportChanged={({ center, zoom }) => {
           if (center && zoom) {
             const latlng = { lat: center[0], lng: center[1] };
-            setCurrentCoordinates(latlng);
-            setCurrentZoom(zoom);
+            setCurrentCoordinates({ ...latlng, zoom: zoom });
           }
         }}
         attributionControl={false}

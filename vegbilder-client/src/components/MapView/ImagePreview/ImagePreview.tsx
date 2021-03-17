@@ -8,11 +8,7 @@ import { EnlargeIcon } from 'components/Icons/Icons';
 import CloseButton from 'components/CloseButton/CloseButton';
 import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 import { useRecoilState } from 'recoil';
-import {
-  imagePointQueryParameterState,
-  latLngQueryParameterState,
-  zoomQueryParameterState,
-} from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -40,14 +36,12 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [, setCurrentCoordinates] = useRecoilState(latLngQueryParameterState);
-  const [, setCurrentZoom] = useRecoilState(zoomQueryParameterState);
 
   if (currentImagePoint) {
     const latlng = getImagePointLatLng(currentImagePoint);
 
     const openImage = () => {
-      if (latlng) setCurrentCoordinates(latlng);
-      setCurrentZoom(16);
+      if (latlng) setCurrentCoordinates({ ...latlng, zoom: 16 });
       openImageView();
     };
 
