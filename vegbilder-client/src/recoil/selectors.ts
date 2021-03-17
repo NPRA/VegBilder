@@ -1,6 +1,7 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { DefaultValue, selector } from 'recoil';
 import { IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { getDateString, getRoadReference } from 'utilities/imagePointUtilities';
 import {
   currentImagePointState,
   currentLatLngZoomState,
@@ -75,8 +76,22 @@ export const viewQueryParamterState = selector({
   },
 });
 
+// utilities
+
 const setNewQueryParamter = (name: queryParamterNames, value: string) => {
   const newSearchParams = new URLSearchParams(window.location.search);
   newSearchParams.set(name, value);
   window.history.replaceState(null, '', '?' + newSearchParams.toString());
 };
+
+// const setStuff = (currentImagePoint: IImagePoint) => {
+//   const roadReference = getRoadReference(currentImagePoint).withoutMeter;
+//   const currentImageDate = getDateString(currentImagePoint);
+//   const imagePointsForRoadReferenceGroupedByDate =
+//     loadedImagePoints.imagePointsGroupedBySeries[roadReference];
+//   let availableDates: string[] = [];
+//   if (imagePointsForRoadReferenceGroupedByDate) {
+//     availableDates = Object.getOwnPropertyNames(imagePointsForRoadReferenceGroupedByDate);
+//   }
+//   return availableDates;
+// };

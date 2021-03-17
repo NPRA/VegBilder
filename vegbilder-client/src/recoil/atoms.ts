@@ -43,3 +43,13 @@ export const currentViewState = atom<viewTypes>({
   key: 'currentView',
   default: searchParams.get('view') === 'image' ? 'image' : 'map',
 });
+
+export const availableDatesForImageSeries = atom<string[]>({
+  key: 'availableDatesForImageSeries',
+  default: [],
+});
+
+export const loadedImagePoints = atom<IImagePoint[] | null>({
+  key: 'loadedImagePoints',
+  default: null,
+});

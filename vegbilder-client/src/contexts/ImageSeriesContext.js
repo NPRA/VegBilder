@@ -31,6 +31,7 @@ function ImageSeriesProvider(props) {
   useEffect(() => {
     if (loadedImagePoints && currentImagePoint) {
       if (currentImagePoint) {
+        console.log(loadedImagePoints);
         const roadReference = getRoadReference(currentImagePoint).withoutMeter;
         const currentImageDate = getDateString(currentImagePoint);
         const imagePointsForRoadReferenceGroupedByDate =
