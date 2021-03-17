@@ -22,6 +22,7 @@ const useFetchImagePointsFromOGC = () => {
       setIsFetching(false);
       return imagePoints;
     }
+    setIsFetching(false);
   }
 
   return (year: number, bbox: IBbox) => fetchImagePointsByYearAndLatLng(year, bbox);
