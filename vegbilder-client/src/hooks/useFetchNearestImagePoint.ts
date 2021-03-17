@@ -28,7 +28,6 @@ const useFetchNearestImagePoint = (
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
   async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
-    console.log(year);
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
