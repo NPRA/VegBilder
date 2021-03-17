@@ -23,7 +23,7 @@ import {
   currentLatLngZoomState,
 } from 'recoil/atoms';
 import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
-import { settings } from 'constants/constants';
+import { settings } from 'constants/settings';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {

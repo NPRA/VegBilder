@@ -2,7 +2,7 @@ import { useCallback, useEffect } from 'react';
 import { useRecoilState } from 'recoil';
 import { find } from 'lodash';
 
-import { settings } from 'constants/constants';
+import { settings } from 'constants/settings';
 import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { ILatlng, IImagePoint } from 'types';
 import {
