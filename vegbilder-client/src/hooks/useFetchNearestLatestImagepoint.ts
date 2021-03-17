@@ -14,7 +14,7 @@ const useFetchNearestLatestImagePoint = (
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const fetchImagePointsByLatLongAndYear = useFetchNearestImagePoint(
     showMessage,
-    'Fant inge bilder ved dette området. Prøv å klikke et annet sted.'
+    'Fant ingen bilder ved dette området. Prøv å klikke et annet sted.'
   );
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
@@ -22,16 +22,17 @@ const useFetchNearestLatestImagePoint = (
       let foundImage = false;
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
-        const imagePoint = await fetchImagePointsByLatLongAndYear(latlng, year);
-        if (imagePoint) {
-          const year = imagePoint.properties.AAR;
-          setCurrentYear(year);
-          showMessage(
-            `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
-          );
-          foundImage = true;
-          break;
-        }
+        await fetchImagePointsByLatLongAndYear(latlng, year).then((imagePoint) => {
+          if (imagePoint) {
+            const year = imagePoint.properties.AAR;
+            setCurrentYear(year);
+            showMessage(
+              `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
+            );
+            foundImage = true;
+          }
+        });
+        if (foundImage) break;
       }
       if (!foundImage) {
         showMessage(notFoundMessage);

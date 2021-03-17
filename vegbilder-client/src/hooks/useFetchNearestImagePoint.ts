@@ -39,7 +39,6 @@ const useFetchNearestImagePoint = (
         if (imagePoints && imagePoints.length > 0) {
           let nearestImagePoint;
           if (action === 'findByImageId') {
-            console.log('here');
             nearestImagePoint = findImagePointByQueryId(imagePoints);
           } else if (currentImagePoint && action === 'default') {
             nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
@@ -49,10 +48,10 @@ const useFetchNearestImagePoint = (
           if (nearestImagePoint) {
             handleFoundNearestImagePoint(nearestImagePoint, latlng);
             return nearestImagePoint;
-          } else {
-            showMessage(errorMessage);
-            setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
           }
+        } else {
+          showMessage(errorMessage);
+          setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
         }
       });
     } else {
