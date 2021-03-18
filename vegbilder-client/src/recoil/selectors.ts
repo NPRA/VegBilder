@@ -7,6 +7,7 @@ import {
   currentLatLngZoomState,
   currentViewState,
   currentYearState,
+  loadedImagePoints,
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -73,6 +74,13 @@ export const viewQueryParamterState = selector({
       setNewQueryParamter('view', view);
     }
     set(currentViewState, view);
+  },
+});
+
+export const loadedImagePointsState = selector({
+  key: 'loadedImagePointsState',
+  get: ({ get }) => {
+    return get(loadedImagePoints);
   },
 });
 

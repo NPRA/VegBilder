@@ -41,6 +41,13 @@ export interface IBbox {
   south: number;
 }
 
+export interface ILoadedImagePoints {
+  imagePoints: IImagePoint[];
+  bbox: IBbox;
+  year: number;
+  imagePointsGroupedBySeries?: any;
+}
+
 export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
 
 export type viewTypes = 'map' | 'image';
