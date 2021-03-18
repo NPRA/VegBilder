@@ -14,7 +14,7 @@ import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utiliti
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 
-type action = 'default' | 'findByImageId';
+type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
@@ -39,7 +39,7 @@ const useFetchNearestImagePoint = (
           let nearestImagePoint;
           if (action === 'findByImageId') {
             nearestImagePoint = findImagePointByQueryId(imagePoints);
-          } else if (currentImagePoint && action === 'default') {
+          } else if (currentImagePoint && action === 'findImageNearbyCurrentImagePoint') {
             nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
           } else {
             nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
