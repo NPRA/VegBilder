@@ -1,13 +1,14 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
+import { groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
-import { getDateString, getRoadReference } from 'utilities/imagePointUtilities';
+import { IImagePoint, ILatlng, ILoadedImagePoints, queryParamterNames, viewTypes } from 'types';
+import { getDateString, getRoadReference, groupBySeries } from 'utilities/imagePointUtilities';
 import {
   currentImagePointState,
   currentLatLngZoomState,
   currentViewState,
   currentYearState,
-  loadedImagePoints,
+  loadedImagePointsState,
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -77,10 +78,20 @@ export const viewQueryParamterState = selector({
   },
 });
 
-export const loadedImagePointsState = selector({
-  key: 'loadedImagePointsState',
+export const loadedImagePointsFilterState = selector({
+  key: 'loadedImagePointsFilterState',
   get: ({ get }) => {
-    return get(loadedImagePoints);
+    return get(loadedImagePointsState);
+  },
+  set: ({ get, set }, newLoadedImagePoints: ILoadedImagePoints | DefaultValue | null) => {
+    const currentImagePoint = get(currentImagePointState);
+    const loadedImagePoints = newLoadedImagePoints;
+    if (currentImagePoint && !(loadedImagePoints instanceof DefaultValue) && loadedImagePoints) {
+      loadedImagePoints.imagePointsGroupedBySeries = groupBySeries(loadedImagePoints.imagePoints);
+      const availableDates = getAvailableDates(loadedImagePoints);
+      loadedImagePoints.availableDates = availableDates;
+    }
+    set(loadedImagePointsState, loadedImagePoints);
   },
 });
 
@@ -92,14 +103,9 @@ const setNewQueryParamter = (name: queryParamterNames, value: string) => {
   window.history.replaceState(null, '', '?' + newSearchParams.toString());
 };
 
-// const setStuff = (currentImagePoint: IImagePoint) => {
-//   const roadReference = getRoadReference(currentImagePoint).withoutMeter;
-//   const currentImageDate = getDateString(currentImagePoint);
-//   const imagePointsForRoadReferenceGroupedByDate =
-//     loadedImagePoints.imagePointsGroupedBySeries[roadReference];
-//   let availableDates: string[] = [];
-//   if (imagePointsForRoadReferenceGroupedByDate) {
-//     availableDates = Object.getOwnPropertyNames(imagePointsForRoadReferenceGroupedByDate);
-//   }
-//   return availableDates;
-// };
+const getAvailableDates = (loadedImagePoints: ILoadedImagePoints) => {
+  const imagePointsGroupedByDate = groupBy(loadedImagePoints.imagePoints, (imagePoint) =>
+    getDateString(imagePoint)
+  );
+  return Object.getOwnPropertyNames(imagePointsGroupedByDate);
+};

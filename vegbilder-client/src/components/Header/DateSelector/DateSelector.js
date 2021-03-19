@@ -6,12 +6,13 @@ import { InputBase, ListSubheader } from '@material-ui/core';
 import { fade, makeStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import { useImageSeries } from 'contexts/ImageSeriesContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import Theme from 'theme/Theme';
 import { CheckmarkIcon } from 'components/Icons/Icons';
 import { getFormattedDateString } from 'utilities/imagePointUtilities';
+import { useRecoilValue } from 'recoil';
+import { loadedImagePointsState } from 'recoil/atoms';
 
 const CustomInput = withStyles((theme) => ({
   input: {
@@ -63,31 +64,33 @@ const CustomExpandMoreIcon = withStyles(iconStyles)(({ className, classes, ...re
 
 const DateSelector = () => {
   const classes = useStyles();
-  const { availableImageSeries, currentImageSeries, setCurrentImageSeries } = useImageSeries();
+  //const { availableImageSeries, currentImageSeries, setCurrentImageSeries } = useImageSeries();
   const { setCommand } = useCommand();
   const { resetFilteredImagePoints } = useFilteredImagePoints();
+  const loadedImagePoints = useRecoilValue(loadedImagePointsState);
+  //const currentImageSeries
 
-  return availableImageSeries.length <= 1 ? null : (
+  return (
     <FormControl>
       <Select
         id="imageseries-select"
-        value={currentImageSeries.date}
-        onChange={(event) => {
-          const selectedSeries = {
-            roadReference: currentImageSeries.roadReference, // All the image series which can be selected have the same road reference. Only the date differs.
-            date: event.target.value,
-          };
-          setCurrentImageSeries(selectedSeries);
-          resetFilteredImagePoints();
-          setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
-        }}
+        //value={currentImageSeries.date}
+        // onChange={(event) => {
+        //   const selectedSeries = {
+        //     roadReference: currentImageSeries.roadReference, // All the image series which can be selected have the same road reference. Only the date differs.
+        //     date: event.target.value,
+        //   };
+        //   setCurrentImageSeries(selectedSeries);
+        //   resetFilteredImagePoints();
+        //   setCommand(commandTypes.selectNearestImagePointToCurrentImagePoint);
+        // }}
         className={classes.imageSeriesSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
         MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
         <ListSubheader>Dato</ListSubheader>
-        {availableImageSeries.map((series) => (
+        {/* {availableImageSeries.map((series) => (
           <MenuItem
             key={series}
             value={series}
@@ -101,7 +104,7 @@ const DateSelector = () => {
             )}
             {getFormattedDateString(series)}
           </MenuItem>
-        ))}
+        ))} */}
       </Select>
     </FormControl>
   );

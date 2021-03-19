@@ -6,7 +6,6 @@ import { useRecoilState } from 'recoil';
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
-import { ImageSeriesProvider } from 'contexts/ImageSeriesContext';
 import { FilteredImagePointsProvider } from 'contexts/FilteredImagePointsContext';
 import Header from './Header/Header';
 import ImageView from './ImageView/ImageView';
@@ -149,28 +148,26 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <ImageSeriesProvider>
-        <FilteredImagePointsProvider>
-          <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
-            <Grid item className={classes.header}>
-              <Header showMessage={showSnackbarMessage} setMapView={() => setView('map')} />
-            </Grid>
-            {renderContent()}
+      <FilteredImagePointsProvider>
+        <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
+          <Grid item className={classes.header}>
+            <Header showMessage={showSnackbarMessage} setMapView={() => setView('map')} />
           </Grid>
-          <Snackbar
-            key={snackbarMessage}
-            open={snackbarVisible}
-            autoHideDuration={5000}
-            onClose={(reason) => handleSnackbarClose(reason)}
-            className={classes.snackbar}
-          >
-            <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
-              {snackbarMessage}
-            </Alert>
-          </Snackbar>
-          <Onboarding />
-        </FilteredImagePointsProvider>
-      </ImageSeriesProvider>
+          {renderContent()}
+        </Grid>
+        <Snackbar
+          key={snackbarMessage}
+          open={snackbarVisible}
+          autoHideDuration={5000}
+          onClose={(reason) => handleSnackbarClose(reason)}
+          className={classes.snackbar}
+        >
+          <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
+            {snackbarMessage}
+          </Alert>
+        </Snackbar>
+        <Onboarding />
+      </FilteredImagePointsProvider>
     </ThemeProvider>
   );
 };

@@ -7,7 +7,6 @@ import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { isWithinBbox, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
   getImagePointLatLng,
@@ -21,6 +20,7 @@ import {
   currentHistoryImageState,
   isHistoryModeState,
   currentLatLngZoomState,
+  loadedImagePointsState,
 } from 'recoil/atoms';
 import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/settings';
@@ -33,7 +33,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { filteredImagePoints } = useFilteredImagePoints();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
-  const { loadedImagePoints } = useLoadedImagePoints();
+  const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
@@ -179,17 +179,18 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   };
 
   useEffect(() => {
-    if (filteredImagePoints) {
+    if (loadedImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
-      const imagePoints = filteredImagePoints.filter((imagePoint) =>
+      const imagePoints = loadedImagePoints.imagePoints.filter((imagePoint) =>
         imagePointIsWithinBbox(imagePoint, mapBbox)
       );
       setImagePointsToRender(imagePoints);
     }
-  }, [filteredImagePoints, createBboxForVisibleMapArea]);
+  }, [loadedImagePoints, createBboxForVisibleMapArea]);
 
   const renderImagePoints = () => {
     if (imagePointsToRender) {
+      console.log(imagePointsToRender);
       return (
         <>
           {imagePointsToRender.map((imagePoint) => {

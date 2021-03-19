@@ -1,9 +1,8 @@
 import { useCallback, useEffect } from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { find } from 'lodash';
 
 import { settings } from 'constants/settings';
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { ILatlng, IImagePoint } from 'types';
 import {
   findNearestImagePoint,
@@ -13,6 +12,7 @@ import {
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
+import { loadedImagePointsState } from 'recoil/atoms';
 
 type action = 'default' | 'findByImageId';
 
@@ -21,7 +21,7 @@ const useFetchNearestImagePoint = (
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
   action: action = 'default'
 ) => {
-  const { loadedImagePoints } = useLoadedImagePoints();
+  const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
 
@@ -54,13 +54,15 @@ const useFetchNearestImagePoint = (
         }
       });
     } else {
-      const nearestImagePoint = selectNearestImagePointToCoordinates(
-        loadedImagePoints.imagePoints,
-        latlng
-      );
-      if (nearestImagePoint) {
-        handleFoundNearestImagePoint(nearestImagePoint, latlng);
-        return nearestImagePoint;
+      if (loadedImagePoints) {
+        const nearestImagePoint = selectNearestImagePointToCoordinates(
+          loadedImagePoints.imagePoints,
+          latlng
+        );
+        if (nearestImagePoint) {
+          handleFoundNearestImagePoint(nearestImagePoint, latlng);
+          return nearestImagePoint;
+        }
       }
     }
   }

@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { loadedImagePointsState } from 'recoil/atoms';
 
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';
@@ -9,7 +9,7 @@ const useFetchNearestLatestImagePoint = (
   showMessage: (message: string) => void,
   notFoundMessage: string
 ) => {
-  const { loadedImagePoints } = useLoadedImagePoints();
+  const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const availableYears = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const fetchImagePointsByLatLongAndYear = useFetchNearestImagePoint(
