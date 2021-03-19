@@ -1,8 +1,8 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IImagePoint, ILatlng, ILoadedImagePoints, queryParamterNames, viewTypes } from 'types';
-import { getDateString, getRoadReference, groupBySeries } from 'utilities/imagePointUtilities';
+import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { getDateString, groupBySeries } from 'utilities/imagePointUtilities';
 import {
   currentImagePointState,
   currentLatLngZoomState,
@@ -83,15 +83,27 @@ export const loadedImagePointsFilterState = selector({
   get: ({ get }) => {
     return get(loadedImagePointsState);
   },
-  set: ({ get, set }, newLoadedImagePoints: ILoadedImagePoints | DefaultValue | null) => {
-    const currentImagePoint = get(currentImagePointState);
-    const loadedImagePoints = newLoadedImagePoints;
-    if (currentImagePoint && !(loadedImagePoints instanceof DefaultValue) && loadedImagePoints) {
-      loadedImagePoints.imagePointsGroupedBySeries = groupBySeries(loadedImagePoints.imagePoints);
-      const availableDates = getAvailableDates(loadedImagePoints);
-      loadedImagePoints.availableDates = availableDates;
+  set: (
+    { get, set },
+    newLoadedImagePoints:
+      | ({ imagePoints: IImagePoint[] } & { year: number } & { bbox: IBbox })
+      | DefaultValue
+      | null
+  ) => {
+    if (!(newLoadedImagePoints instanceof DefaultValue) && newLoadedImagePoints) {
+      const imagePointsGroupedBySeries = groupBySeries(newLoadedImagePoints.imagePoints);
+      const availableDates = getAvailableDates(newLoadedImagePoints.imagePoints);
+      const newLoaded = {
+        imagePoints: newLoadedImagePoints.imagePoints,
+        year: newLoadedImagePoints.year,
+        bbox: newLoadedImagePoints.bbox,
+        imagePointsGroupedBySeries: imagePointsGroupedBySeries,
+        availableDates: availableDates,
+      };
+      set(loadedImagePointsState, newLoaded);
+    } else {
+      set(loadedImagePointsState, null);
     }
-    set(loadedImagePointsState, loadedImagePoints);
   },
 });
 
@@ -103,9 +115,7 @@ const setNewQueryParamter = (name: queryParamterNames, value: string) => {
   window.history.replaceState(null, '', '?' + newSearchParams.toString());
 };
 
-const getAvailableDates = (loadedImagePoints: ILoadedImagePoints) => {
-  const imagePointsGroupedByDate = groupBy(loadedImagePoints.imagePoints, (imagePoint) =>
-    getDateString(imagePoint)
-  );
+const getAvailableDates = (imagePoints: IImagePoint[]) => {
+  const imagePointsGroupedByDate = groupBy(imagePoints, (imagePoint) => getDateString(imagePoint));
   return Object.getOwnPropertyNames(imagePointsGroupedByDate);
 };
