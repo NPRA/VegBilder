@@ -84,7 +84,7 @@ export const loadedImagePointsFilterState = selector({
     return get(loadedImagePointsState);
   },
   set: (
-    { get, set },
+    { set },
     newLoadedImagePoints:
       | ({ imagePoints: IImagePoint[] } & { year: number } & { bbox: IBbox })
       | DefaultValue

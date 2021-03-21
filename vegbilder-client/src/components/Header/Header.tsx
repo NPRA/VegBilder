@@ -6,12 +6,12 @@ import { useRecoilState } from 'recoil';
 
 import Search from './Search/Search';
 import YearSelector from './YearSelector/YearSelector';
-import DateSelector from './DateSelector/DateSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import PageInformation from './PageInformation/PageInformation';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import Settings from './Settings/Settings';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
+import DateFilter from './Filter/DateFilter';
 
 const useStyles = makeStyles({
   headerToolBar: {
@@ -77,7 +77,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
           <Grid item className={classes.dateAndYearSelectorContainer}>
             <YearSelector showMessage={showMessage} />
             <Box width={'1.125rem'} />
-            <DateSelector />
+            <DateFilter />
           </Grid>
           <Settings />
           <Tooltip title="Informasjon om Vegbilder">
