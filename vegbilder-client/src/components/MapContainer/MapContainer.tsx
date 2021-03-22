@@ -105,7 +105,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         subdomains="123456789"
       />
       <ImagePointLayersWrapper />
-      <MapControls />
+      <MapControls showMessage={showMessage} />
     </Map>
   );
 };

@@ -21,6 +21,7 @@ import { ReactComponent as InformIcon } from './Inform.svg';
 import { ReactComponent as DotsHorizontalSmallIcon } from './Dots-Horizontal-small.svg';
 import { ReactComponent as ZoomInIcon } from './zoom-in.svg';
 import { ReactComponent as ZoomOutIcon } from './zoom-out.svg';
+import { ReactComponent as MyLocationIcon } from './myLocationIcon.svg';
 import { ReactComponent as HistorySmallIcon } from './HistorySmall.svg';
 import { ReactComponent as ThirthySignIcon } from './speedSigns/sign_30.svg';
 import { ReactComponent as FourtySignIcon } from './speedSigns/sign_40.svg';
@@ -66,4 +67,5 @@ export {
   HundredTenSignIcon,
   ZoomInIcon,
   ZoomOutIcon,
+  MyLocationIcon,
 };
