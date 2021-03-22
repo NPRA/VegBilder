@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSetRecoilState } from 'recoil';
-import { IconButton, makeStyles } from '@material-ui/core';
+import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
 
 import { MyLocationIcon } from 'components/Icons/Icons';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
@@ -42,9 +42,11 @@ const MyLocationControl = ({ showMessage }: IMyLocationControlProps) => {
 
   return (
     <div className={classes.zoomControl}>
-      <IconButton onClick={getLocation}>
-        <MyLocationIcon />
-      </IconButton>
+      <Tooltip title="Finn min posisjon">
+        <IconButton onClick={getLocation}>
+          <MyLocationIcon id="my-location" />
+        </IconButton>
+      </Tooltip>
     </div>
   );
 };

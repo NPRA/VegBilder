@@ -60,13 +60,17 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const onMouseUp = (event: LeafletMouseEvent) => {
     setScrolling(false);
     setCursor('pointer');
-    let clickedZoomButton = false;
+    let clickedControlButtons = false;
     if (event.originalEvent.target) {
-      clickedZoomButton =
+      clickedControlButtons =
         // @ts-ignore: Unreachable code error
-        event.originalEvent.target.id === 'zoom-out' || event.originalEvent.target.id === 'zoom-in';
+        event.originalEvent.target.id === 'zoom-out' ||
+        // @ts-ignore: Unreachable code error
+        event.originalEvent.target.id === 'zoom-in' ||
+        // @ts-ignore: Unreachable code error
+        event.originalEvent.target.id === 'my-location';
     }
-    if (!mouseMoved && !clickedZoomButton) {
+    if (!mouseMoved && !clickedControlButtons) {
       handleClick(event);
     }
   };
