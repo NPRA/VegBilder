@@ -29,17 +29,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function ZoomControl() {
+const ZoomControl = () => {
   const classes = useStyles();
   const { map } = useLeaflet();
 
-  function zoomIn() {
-    map.zoomIn();
-  }
+  const zoomIn = () => {
+    if (map) map.zoomIn();
+  };
 
-  function zoomOut() {
-    map.zoomOut();
-  }
+  const zoomOut = () => {
+    if (map) map.zoomOut();
+  };
 
   return (
     <div className={classes.zoomControl}>
@@ -52,4 +52,6 @@ export default function ZoomControl() {
       </IconButton>
     </div>
   );
-}
+};
+
+export default ZoomControl;
