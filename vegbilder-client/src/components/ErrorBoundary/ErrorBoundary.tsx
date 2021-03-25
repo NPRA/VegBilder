@@ -1,5 +1,6 @@
 import { Typography } from '@material-ui/core';
 import React, { Component, ErrorInfo, ReactNode } from 'react';
+import Theme from 'theme/Theme';
 
 interface IErrorBoundaryProps {
   children: ReactNode;
@@ -29,10 +30,29 @@ class ErrorBoundary extends Component<IErrorBoundaryProps, State> {
   public render() {
     if (this.state.hasError) {
       return (
-        <>
-          <Typography variant="h1"> Noe gikk galt </Typography>
-          <Typography variant="body1">{this.state.errorMessage}</Typography>
-        </>
+        <div
+          style={{
+            padding: '2rem',
+            backgroundColor: Theme.palette.common.grayMenuItems,
+            height: '100%',
+          }}
+        >
+          <Typography variant="h3"> Oisann! Noe gikk galt </Typography>
+          <Typography variant="body1" style={{ marginTop: '3rem' }}>
+            {this.state.errorMessage}
+          </Typography>
+          <a
+            href="/"
+            style={{
+              textDecoration: 'none',
+              color: Theme.palette.common.grayDarker,
+              borderBottom: `0.5px solid ${Theme.palette.common.grayDarker}`,
+              marginTop: '3rem',
+            }}
+          >
+            Tilbake til vegbilder
+          </a>
+        </div>
       );
     }
 
