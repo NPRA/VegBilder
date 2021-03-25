@@ -20,7 +20,7 @@ export const GetKommuneAndFylkeByLatLng = async (latlng: ILatlng) => {
         return 'Error ' + error;
       } else if (error.request) {
         // client never received a response, or request never left
-        console.warn('Didnt receive a response from nvdb ' + error.message);
+        console.warn('Didnt receive a response from wsgeonorge ' + error.message);
         return 'Error ' + error;
       } else {
         // anything else
