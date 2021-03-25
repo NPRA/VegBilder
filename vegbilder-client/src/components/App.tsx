@@ -20,6 +20,7 @@ import {
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 
 const useStyles = makeStyles({
   gridRoot: {

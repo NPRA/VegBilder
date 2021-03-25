@@ -1,6 +1,6 @@
 import nvdbApi from './nvdbApi';
 
-const getFartsgrenseByVegsystemreferanse = async (vegsystemreferanse: string) => {
+const GetFartsgrenseByVegsystemreferanse = async (vegsystemreferanse: string) => {
   return await nvdbApi
     .get('/vegobjekter/105', {
       params: {
@@ -14,9 +14,17 @@ const getFartsgrenseByVegsystemreferanse = async (vegsystemreferanse: string) =>
       return response.data;
     })
     .catch((error) => {
-      console.warn(error);
-      return null;
+      if (error.response) {
+        // client received an error response (5xx, 4xx)
+        console.warn('bad response from nvdb api. ' + error.message);
+      } else if (error.request) {
+        // client never received a response, or request never left
+        console.warn('Didnt receive a response from nvdb ' + error.message);
+      } else {
+        // anything else
+        console.warn('An unknown error occured ' + error.message);
+      }
     });
 };
 
-export default getFartsgrenseByVegsystemreferanse;
+export default GetFartsgrenseByVegsystemreferanse;

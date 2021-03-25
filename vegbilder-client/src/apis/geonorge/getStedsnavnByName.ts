@@ -11,12 +11,9 @@ export const getStedsnavnByName = async (name: string) => {
       },
     })
     .then((response) => {
-      const data = response.data;
-      if (data.sokStatus.ok) {
-        return data;
-      }
+      return response;
     })
     .catch((error) => {
-      throw error;
+      return error;
     });
 };

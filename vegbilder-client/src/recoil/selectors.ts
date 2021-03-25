@@ -12,7 +12,27 @@ export const availableYearsQuery = selector({
   key: 'availableYears',
   get: async () => {
     const response = await getAvailableYearsFromOGC();
-    return response.slice().sort((a, b) => b - a);
+    if (response.status === 200) {
+      const regexp = RegExp(/20\d{2}/);
+
+      let availableYears: number[] = [];
+      const parser = new DOMParser();
+      const xmlDoc = parser.parseFromString(response.data, 'text/xml');
+
+      const titles = xmlDoc.getElementsByTagName('Title');
+
+      for (const item of titles) {
+        const yearMatches = item.innerHTML.match(regexp);
+        if (yearMatches) {
+          const year = parseInt(yearMatches[0]);
+          if (!availableYears.includes(year)) {
+            availableYears.push(year);
+          }
+        }
+      }
+      return availableYears.slice().sort((a: number, b: number) => b - a);
+    }
+    throw response;
   },
 });
 

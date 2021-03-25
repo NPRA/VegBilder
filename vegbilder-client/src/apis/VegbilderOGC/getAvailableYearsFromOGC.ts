@@ -11,26 +11,9 @@ export const getAvailableYearsFromOGC = async () => {
       },
     })
     .then((ogcCapabilities) => {
-      const regexp = RegExp(/20\d{2}/);
-
-      let availableYears: number[] = [];
-      const parser = new DOMParser();
-      const xmlDoc = parser.parseFromString(ogcCapabilities.data, 'text/xml');
-
-      const titles = xmlDoc.getElementsByTagName('Title');
-
-      for (const item of titles) {
-        const yearMatches = item.innerHTML.match(regexp);
-        if (yearMatches) {
-          const year = parseInt(yearMatches[0]);
-          if (!availableYears.includes(year)) {
-            availableYears.push(year);
-          }
-        }
-      }
-      return availableYears;
+      return ogcCapabilities;
     })
     .catch((error) => {
-      throw error;
+      return error;
     });
 };
