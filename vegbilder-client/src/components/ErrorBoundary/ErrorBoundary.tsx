@@ -25,6 +25,7 @@ class ErrorBoundary extends Component<IErrorBoundaryProps, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
+    this.setState({ hasError: true, errorMessage: errorInfo.componentStack });
   }
 
   public render() {
@@ -38,20 +39,22 @@ class ErrorBoundary extends Component<IErrorBoundaryProps, State> {
           }}
         >
           <Typography variant="h3"> Oisann! Noe gikk galt </Typography>
-          <Typography variant="body1" style={{ marginTop: '3rem' }}>
-            {this.state.errorMessage}
-          </Typography>
           <a
             href="/"
+            onClick={() => this.setState({ hasError: false })}
             style={{
               textDecoration: 'none',
               color: Theme.palette.common.grayDarker,
               borderBottom: `0.5px solid ${Theme.palette.common.grayDarker}`,
               marginTop: '3rem',
+              marginBottom: '3rem',
             }}
           >
             Tilbake til vegbilder
           </a>
+          <Typography variant="body1" style={{ marginTop: '3rem' }}>
+            {this.state.errorMessage}
+          </Typography>
         </div>
       );
     }

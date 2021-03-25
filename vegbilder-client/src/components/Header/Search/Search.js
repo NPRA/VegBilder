@@ -90,7 +90,8 @@ const Search = ({ showMessage }) => {
     debounce(async (trimmedSearch) => {
       const response = await getStedsnavnByName(trimmedSearch);
       if (response.status !== 200) {
-        throwError();
+        throwError(response);
+        return;
       }
       const stedsnavn = response.data;
       if (stedsnavn && stedsnavn.totaltAntallTreff !== '0') {
@@ -111,6 +112,7 @@ const Search = ({ showMessage }) => {
       if (vegResponse) {
         if (vegResponse.status !== 200) {
           throwError(vegResponse);
+          return;
         }
         const vegsystemData = vegResponse.data;
         const newReferanceState = [vegsystemData, ...vegSystemReferanser];
