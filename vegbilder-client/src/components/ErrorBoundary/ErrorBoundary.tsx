@@ -7,6 +7,7 @@ interface IErrorBoundaryProps {
 
 interface State {
   hasError: boolean;
+  errorMessage: string;
 }
 
 // this component is written in this syntax in order to use componentDidCatch
@@ -14,10 +15,11 @@ interface State {
 class ErrorBoundary extends Component<IErrorBoundaryProps, State> {
   public state: State = {
     hasError: false,
+    errorMessage: '',
   };
 
   public static getDerivedStateFromError(_: Error): State {
-    return { hasError: true };
+    return { hasError: true, errorMessage: _.message };
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -26,7 +28,12 @@ class ErrorBoundary extends Component<IErrorBoundaryProps, State> {
 
   public render() {
     if (this.state.hasError) {
-      return <Typography variant="h1"> Noe gikk galt </Typography>;
+      return (
+        <>
+          <Typography variant="h1"> Noe gikk galt </Typography>
+          <Typography variant="body1">{this.state.errorMessage}</Typography>
+        </>
+      );
     }
 
     return this.props.children;
