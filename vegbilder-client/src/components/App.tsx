@@ -20,7 +20,8 @@ import {
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
-import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import s3HealtCheck from 'apis/s3vegbilder/s3HealthCheck';
+import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -78,6 +79,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
+  const throwError = useAsyncError();
 
   const searchParams = new URLSearchParams(window.location.search);
 
@@ -141,6 +143,14 @@ const App = () => {
         setCurrentView(DEFAULT_VIEW);
       }
     }
+  }, []);
+
+  useEffect(() => {
+    s3HealtCheck().then((response) => {
+      if (response.status !== 200) {
+        throwError('Tjenesten som leverer bildene er nede.');
+      }
+    });
   }, []);
 
   const handleSnackbarClose = (reason: any) => {

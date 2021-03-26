@@ -32,7 +32,7 @@ export const availableYearsQuery = selector({
       }
       return availableYears.slice().sort((a: number, b: number) => b - a);
     }
-    throw response;
+    throw new Error('Karttjenesten er for øyeblikket utilgjengelig. Prøv igjen senere.');
   },
 });
 
