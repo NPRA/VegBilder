@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -11,6 +11,8 @@ import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
+import { getBaatTicket } from 'apis/vegkart/getBaatTicket';
+import useAsyncError from 'hooks/useAsyncError';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -19,12 +21,15 @@ interface IMapContainerProps {
 const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [cursor, setCursor] = useState('pointer');
+  const [baatTicket, setBaatTicket] = useState('');
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
 
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const [mapLayer, setMapLayer] = useState('vegkart');
+
+  const throwError = useAsyncError();
 
   /* We use "prikkekartet" when no image point is selected or when we are in nyeste mode. Then, the user can click on the map to select an image. */
   const clickableMap =
@@ -69,7 +74,11 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         // @ts-ignore: Unreachable code error
         event.originalEvent.target.id === 'zoom-in' ||
         // @ts-ignore: Unreachable code error
-        event.originalEvent.target.id === 'my-location';
+        event.originalEvent.target.id === 'my-location' ||
+        // @ts-ignore: Unreachable code error
+        event.originalEvent.target.id === 'Map-layer-options' ||
+        // @ts-ignore: Unreachable code error
+        event.originalEvent.target.id === 'layers-control';
     }
     if (!mouseMoved && !clickedControlButtons) {
       handleClick(event);
@@ -83,6 +92,16 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       setCursor('grabbing');
     }
   };
+
+  useEffect(() => {
+    getBaatTicket().then((response) => {
+      if (response.status === 200) {
+        setBaatTicket(response.data.key);
+      } else {
+        throwError('Something went wrong with map layers');
+      }
+    });
+  }, []);
 
   return (
     <Map
@@ -113,14 +132,14 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       ) : null}
       {mapLayer === 'flyfoto' ? (
         <TileLayer
-          url="https://gatekeeper2.geonorge.no/BaatGatekeeper/gk/gk.nib_utm33_wmts_v2?layer=Nibcache_UTM33_EUREF89_v2&style=default&tilematrixset=default028mm&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}&gkt=34D723D3AEDF983FCA46EDFAFEB03C1571401E61B1BC8AEA36689FB24D2171AA66C9287D387617CFD6C6AD4751C0D0DFF5F6FFAE6CDC54A021AF2907FC8E07B4"
+          url={`https://gatekeeper2.geonorge.no/BaatGatekeeper/gk/gk.nib_utm33_wmts_v2?layer=Nibcache_UTM33_EUREF89_v2&style=default&tilematrixset=default028mm&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`}
           attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
           subdomains="123456789"
         />
       ) : null}
       {mapLayer === 'gratone' ? (
         <TileLayer
-          url="https://gatekeeper3.geonorge.no/BaatGatekeeper/gk/gk.cache_wmts?layer=topo4graatone&style=default&tilematrixset=EPSG:25833&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=EPSG:25833:{z}&TileCol={x}&TileRow={y}&gkt=34D723D3AEDF983FCA46EDFAFEB03C1571401E61B1BC8AEA36689FB24D2171AA66C9287D387617CFD6C6AD4751C0D0DFF5F6FFAE6CDC54A021AF2907FC8E07B4"
+          url={`https://gatekeeper3.geonorge.no/BaatGatekeeper/gk/gk.cache_wmts?layer=topo4graatone&style=default&tilematrixset=EPSG:25833&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=EPSG:25833:{z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`}
           attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
           subdomains="123456789"
         />
