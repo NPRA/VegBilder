@@ -24,6 +24,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
 
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
+  const [mapLayer, setMapLayer] = useState('vegkart');
 
   /* We use "prikkekartet" when no image point is selected or when we are in nyeste mode. Then, the user can click on the map to select an image. */
   const clickableMap =
@@ -103,13 +104,29 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         }
       }}
     >
-      <TileLayer
-        url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
-        attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
-        subdomains="123456789"
-      />
+      {mapLayer === 'vegkart' ? (
+        <TileLayer
+          url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
+          attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
+          subdomains="123456789"
+        />
+      ) : null}
+      {mapLayer === 'flyfoto' ? (
+        <TileLayer
+          url="https://gatekeeper2.geonorge.no/BaatGatekeeper/gk/gk.nib_utm33_wmts_v2?layer=Nibcache_UTM33_EUREF89_v2&style=default&tilematrixset=default028mm&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}&gkt=34D723D3AEDF983FCA46EDFAFEB03C1571401E61B1BC8AEA36689FB24D2171AA66C9287D387617CFD6C6AD4751C0D0DFF5F6FFAE6CDC54A021AF2907FC8E07B4"
+          attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
+          subdomains="123456789"
+        />
+      ) : null}
+      {mapLayer === 'gratone' ? (
+        <TileLayer
+          url="https://gatekeeper3.geonorge.no/BaatGatekeeper/gk/gk.cache_wmts?layer=topo4graatone&style=default&tilematrixset=EPSG:25833&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=EPSG:25833:{z}&TileCol={x}&TileRow={y}&gkt=34D723D3AEDF983FCA46EDFAFEB03C1571401E61B1BC8AEA36689FB24D2171AA66C9287D387617CFD6C6AD4751C0D0DFF5F6FFAE6CDC54A021AF2907FC8E07B4"
+          attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
+          subdomains="123456789"
+        />
+      ) : null}
       <ImagePointLayersWrapper />
-      <MapControls showMessage={showMessage} />
+      <MapControls showMessage={showMessage} setMapLayer={setMapLayer} />
     </Map>
   );
 };

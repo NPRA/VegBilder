@@ -3,12 +3,14 @@ import { Box } from '@material-ui/core';
 
 import ZoomControl from './ZoomControl';
 import MyLocationControl from './MyLocationControl';
+import LayersControl from './LayersControl';
 
 interface IMapControlsProps {
   showMessage: (message: string) => void;
+  setMapLayer: (newLayer: string) => void;
 }
 
-const MapControls = ({ showMessage }: IMapControlsProps) => {
+const MapControls = ({ showMessage, setMapLayer }: IMapControlsProps) => {
   return (
     <Box
       display={'flex'}
@@ -20,6 +22,7 @@ const MapControls = ({ showMessage }: IMapControlsProps) => {
       zIndex={10000}
     >
       <MyLocationControl showMessage={showMessage} />
+      <LayersControl setMapLayer={setMapLayer} />
       <ZoomControl />
     </Box>
   );
