@@ -1,9 +1,9 @@
 import { IconButton, makeStyles, Popover, Tooltip, Typography } from '@material-ui/core';
-import SettingsIcon from '@material-ui/icons/Settings';
 import React, { useEffect, useState } from 'react';
 
 import CheckBox from 'components/CheckBox/CheckBox';
 import { settingsText } from 'constants/text';
+import { SettingsIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   popover: {

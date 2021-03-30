@@ -24,7 +24,7 @@ import {
   yearQueryParameterState,
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
+import { currentHistoryImageState, isHistoryModeState, loadedImagePointsState } from 'recoil/atoms';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 
@@ -113,7 +113,8 @@ const History = () => {
 
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  const { filteredImagePoints } = useFilteredImagePoints();
+  //const { filteredImagePoints } = useFilteredImagePoints();
+  const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
@@ -158,7 +159,7 @@ const History = () => {
   // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
   // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
-    if (currentImagePoint && filteredImagePoints) {
+    if (currentImagePoint && loadedImagePoints) {
       setCurrentHistoryImage(currentImagePoint);
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
 
@@ -171,7 +172,7 @@ const History = () => {
 
       const currentImagePointTime = getDateObj(currentImagePoint).getTime();
       const currentImagePointBearing = getCurrentImagePointBearing(
-        filteredImagePoints,
+        loadedImagePoints.imagePoints,
         currentImagePoint
       );
       const currentImagePointDirection = currentImagePoint.properties.RETNING;

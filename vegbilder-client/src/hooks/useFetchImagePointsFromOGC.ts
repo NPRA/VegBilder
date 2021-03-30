@@ -1,12 +1,13 @@
 import { useState } from 'react';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { useLoadedImagePoints } from 'contexts/LoadedImagePointsContext';
 import { IBbox } from 'types';
+import { useSetRecoilState } from 'recoil';
+import { loadedImagePointsFilterState } from 'recoil/selectors';
 
 const useFetchImagePointsFromOGC = () => {
   const [isFetching, setIsFetching] = useState(false);
-  const { setLoadedImagePoints } = useLoadedImagePoints();
+  const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
 
   async function fetchImagePointsByYearAndLatLng(year: number, bbox: IBbox) {
     if (isFetching) return;
