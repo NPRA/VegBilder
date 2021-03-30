@@ -6,7 +6,7 @@ import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
-import getFartsgrenseByVegsystemreferanse from 'apis/NVDB/getFartsgrenseByVegsystemreferanse';
+import GetFartsgrenseByVegsystemreferanse from 'apis/NVDB/getFartsgrenseByVegsystemreferanse';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -47,7 +47,7 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
     const vegsystemreferanse = getRoadReference(imagePoint)
       .withoutFelt.replace(/\s/g, '')
       .toLocaleLowerCase();
-    await getFartsgrenseByVegsystemreferanse(vegsystemreferanse).then((res) => {
+    await GetFartsgrenseByVegsystemreferanse(vegsystemreferanse).then((res) => {
       if (res && res.objekter.length) {
         const egenskaper = res.objekter[0].egenskaper ?? res.objekter.egenskaper;
         const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');

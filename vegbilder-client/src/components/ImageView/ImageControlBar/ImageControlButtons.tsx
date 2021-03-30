@@ -30,6 +30,8 @@ import {
   TimerIcon,
   CheckmarkIcon,
   PauseIcon,
+  ZoomOutIcon,
+  ZoomInIcon,
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -81,7 +83,8 @@ interface IImageControlButtonsProps {
   setMiniMapVisible: (visible: boolean) => void;
   meterLineVisible: boolean;
   setMeterLineVisible: (visible: boolean) => void;
-  isEnlargedImage: boolean;
+  isZoomedInImage: boolean;
+  setIsZoomedInImage: (isZoomedIn: boolean) => void;
 }
 
 const ImageControlButtons = ({
@@ -93,7 +96,8 @@ const ImageControlButtons = ({
   meterLineVisible,
   setMiniMapVisible,
   setMeterLineVisible,
-  isEnlargedImage,
+  isZoomedInImage,
+  setIsZoomedInImage,
 }: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
@@ -136,7 +140,7 @@ const ImageControlButtons = ({
     }
   };
 
-  const getLinkToVegkartClick = () => {
+  const getLinkToVegkart = () => {
     if (
       currentImagePoint &&
       Number.isFinite(currentCoordinates.lat) &&
@@ -222,13 +226,29 @@ const ImageControlButtons = ({
     );
   };
 
+  const zoomInOutButton = () => {
+    return (
+      <Tooltip title={isZoomedInImage ? 'Vis skalert bilde' : 'Vis bilde i 1:1 størrelse'}>
+        <IconButton
+          aria-label="Zoom inn/ut"
+          className={classes.button}
+          onClick={() => {
+            setIsZoomedInImage(!isZoomedInImage);
+          }}
+        >
+          {isZoomedInImage ? <ZoomOutIcon /> : <ZoomInIcon />}
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
   const hideShowMiniMapButton = () => {
     return (
       <Tooltip title={miniMapVisible ? 'Skjul kart' : 'Vis kart'}>
         <IconButton
-          disabled={isEnlargedImage}
+          disabled={isZoomedInImage}
           aria-label="Vis/skjul kart"
-          className={isEnlargedImage ? classes.buttonDisabled : classes.button}
+          className={isZoomedInImage ? classes.buttonDisabled : classes.button}
           onClick={() => setMiniMapVisible(!miniMapVisible)}
         >
           {miniMapVisible ? <MapIcon /> : <MapDisabledIcon />}
@@ -269,9 +289,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={meterLineVisible ? 'Deaktiver basislinje' : 'Aktiver basislinje'}>
         <IconButton
-          disabled={isEnlargedImage}
+          disabled={isZoomedInImage}
           aria-label="Deaktiver/Aktiver basislinje"
-          className={isEnlargedImage ? classes.buttonDisabled : classes.button}
+          className={isZoomedInImage ? classes.buttonDisabled : classes.button}
           onClick={() => setMeterLineVisible(!meterLineVisible)}
         >
           {meterLineVisible ? <MeasureIcon /> : <MeasureDisabledIcon />}
@@ -335,7 +355,6 @@ const ImageControlButtons = ({
     return (
       <>
         {stopAnimationButton()}
-
         {/* pause button  */}
         <Tooltip title="Pause avspilling">
           <IconButton
@@ -358,6 +377,7 @@ const ImageControlButtons = ({
     return (
       <>
         {hideShowMiniMapButton()}
+        {zoomInOutButton()}
         {changeDirectionButton()}
         {hideShowBasisLineButton()}
         {historyButton()}
@@ -379,8 +399,9 @@ const ImageControlButtons = ({
         {playMode && !playVideo ? renderPlayModeMenu() : null}
         {!playMode && !playVideo ? (
           <>
+            {/*  Render normal menu */}
             {hideShowMiniMapButton()}
-
+            {zoomInOutButton()}
             {/* move backwards arrow button  */}
             <Tooltip title="Gå bakover">
               <IconButton
@@ -460,7 +481,7 @@ const ImageControlButtons = ({
             <ListItemIcon>
               <ExploreOutlinedIcon />
             </ListItemIcon>
-            <Link target="_blank" rel="noopener noreferer" href={getLinkToVegkartClick()}>
+            <Link target="_blank" rel="noopener noreferer" href={getLinkToVegkart()}>
               Gå til Vegkart
             </Link>
           </MenuItem>

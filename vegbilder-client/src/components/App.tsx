@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Grid, makeStyles, Snackbar, ThemeProvider } from '@material-ui/core';
+import { Grid, makeStyles, Snackbar, ThemeProvider, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { useRecoilState } from 'recoil';
@@ -19,6 +19,8 @@ import {
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
+import s3HealtCheck from 'apis/s3vegbilder/s3HealthCheck';
+import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -32,15 +34,31 @@ const useStyles = makeStyles({
   snackbar: {
     opacity: '85%',
     bottom: '5.75rem',
+    color: theme.palette.common.grayDark,
     '& div': {
       '& button': {
         backgroundColor: 'transparent',
-        color: 'white',
+        color: theme.palette.common.grayDark,
         '&:hover': {
           backgroundColor: 'transparent',
         },
+        '& span': {
+          '& svg': {
+            '& path': {
+              fill: theme.palette.common.grayDarker,
+            },
+          },
+        },
       },
     },
+  },
+  alertMessage: {
+    backgroundColor: '#FFF',
+    color: theme.palette.common.grayDarker,
+    fontWeight: 500,
+  },
+  alertIcon: {
+    alignSelf: 'center',
   },
 });
 
@@ -60,6 +78,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
+  const throwError = useAsyncError();
 
   const searchParams = new URLSearchParams(window.location.search);
 
@@ -125,6 +144,16 @@ const App = () => {
     }
   }, []);
 
+  useEffect(() => {
+    if (process.env.NODE_ENV !== 'development') {
+      s3HealtCheck().then((response) => {
+        if (response.status !== 200) {
+          throwError('Tjenesten som leverer bildene er nede.');
+        }
+      });
+    }
+  }, []);
+
   const handleSnackbarClose = (reason: any) => {
     if (reason && reason._reactName !== 'onClick') {
       return;
@@ -158,12 +187,16 @@ const App = () => {
         <Snackbar
           key={snackbarMessage}
           open={snackbarVisible}
-          autoHideDuration={5000}
+          autoHideDuration={4000}
           onClose={(reason) => handleSnackbarClose(reason)}
           className={classes.snackbar}
         >
-          <Alert onClose={(reason) => handleSnackbarClose(reason)} severity="info">
-            {snackbarMessage}
+          <Alert
+            onClose={(reason) => handleSnackbarClose(reason)}
+            severity="info"
+            classes={{ root: classes.alertMessage, icon: classes.alertIcon }}
+          >
+            <Typography variant="subtitle1">{snackbarMessage}</Typography>
           </Alert>
         </Snackbar>
         <Onboarding />

@@ -18,6 +18,7 @@ import {
   latLngZoomQueryParameterState,
   loadedImagePointsFilterState,
 } from 'recoil/selectors';
+import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -80,6 +81,7 @@ const Search = ({ showMessage }) => {
   const [resetImagePoint, setResetImagePoint] = useState(false);
   const [findClosestImagePoint, setFindClosestImagePoint] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const throwError = useAsyncError();
 
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
@@ -89,7 +91,12 @@ const Search = ({ showMessage }) => {
 
   const delayedStedsnavnQuery = useCallback(
     debounce(async (trimmedSearch) => {
-      const stedsnavn = await getStedsnavnByName(trimmedSearch);
+      const response = await getStedsnavnByName(trimmedSearch);
+      if (response.status !== 200) {
+        throwError(response);
+        return;
+      }
+      const stedsnavn = response.data;
       if (stedsnavn && stedsnavn.totaltAntallTreff !== '0') {
         const newOptions = stedsnavn.stedsnavn[0]
           ? [...stedsnavn.stedsnavn]
@@ -106,6 +113,10 @@ const Search = ({ showMessage }) => {
     debounce(async (vegsystemreferanse) => {
       const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
       if (vegResponse) {
+        if (vegResponse.status !== 200) {
+          throwError(vegResponse);
+          return;
+        }
         const vegsystemData = vegResponse.data;
         const newReferanceState = [vegsystemData, ...vegSystemReferanser];
         setVegSystemReferanser(newReferanceState);

@@ -26,7 +26,10 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const [scrolling, setScrolling] = useState(false);
 
   /* We use "prikkekartet" when no image point is selected or when we are in nyeste mode. Then, the user can click on the map to select an image. */
-  const clickableMap = currentYear === 'Nyeste' || !currentImagePoint;
+  const clickableMap =
+    currentYear === 'Nyeste' ||
+    !currentImagePoint ||
+    (currentCoordinates.zoom && currentCoordinates.zoom < 15);
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
@@ -42,7 +45,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
     if (currentYear === 'Nyeste') {
       fetchNearestLatestImagePoint(userClickedLatLng);
     } else {
-      if (!currentImagePoint) {
+      if (!currentImagePoint || (currentCoordinates.zoom && currentCoordinates.zoom < 15)) {
         fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number);
       }
     }
@@ -57,13 +60,17 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const onMouseUp = (event: LeafletMouseEvent) => {
     setScrolling(false);
     setCursor('pointer');
-    let clickedZoomButton = false;
+    let clickedControlButtons = false;
     if (event.originalEvent.target) {
-      clickedZoomButton =
+      clickedControlButtons =
         // @ts-ignore: Unreachable code error
-        event.originalEvent.target.id === 'zoom-out' || event.originalEvent.target.id === 'zoom-in';
+        event.originalEvent.target.id === 'zoom-out' ||
+        // @ts-ignore: Unreachable code error
+        event.originalEvent.target.id === 'zoom-in' ||
+        // @ts-ignore: Unreachable code error
+        event.originalEvent.target.id === 'my-location';
     }
-    if (!mouseMoved && !clickedZoomButton) {
+    if (!mouseMoved && !clickedControlButtons) {
       handleClick(event);
     }
   };
@@ -102,7 +109,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         subdomains="123456789"
       />
       <ImagePointLayersWrapper />
-      <MapControls />
+      <MapControls showMessage={showMessage} />
     </Map>
   );
 };

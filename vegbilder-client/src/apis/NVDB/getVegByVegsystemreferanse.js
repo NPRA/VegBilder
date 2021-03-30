@@ -1,3 +1,4 @@
+import { errorSelector } from 'recoil';
 import nvdbApi from './nvdbApi';
 
 const getVegByVegsystemreferanse = async (vegsystemreferanse) => {
@@ -17,9 +18,9 @@ const getVegByVegsystemreferanse = async (vegsystemreferanse) => {
     })
     .catch((error) => {
       if (error.message === 'Request failed with status code 404') {
-        console.warn(error);
+        console.warn(error); // if it doesn't find the road-reference
       } else {
-        throw error;
+        return error;
       }
     });
 };
