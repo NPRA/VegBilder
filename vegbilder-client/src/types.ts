@@ -1,3 +1,5 @@
+import { Dictionary } from 'lodash';
+
 export interface IImagePoint {
   type: string;
   id: string;
@@ -39,6 +41,14 @@ export interface IBbox {
   west: number;
   north: number;
   south: number;
+}
+
+export interface ILoadedImagePoints {
+  imagePoints: IImagePoint[];
+  bbox: IBbox;
+  year: number;
+  imagePointsGroupedBySeries?: Dictionary<Dictionary<IImagePoint[]>>;
+  availableDates?: string[];
 }
 
 export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';

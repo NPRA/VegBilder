@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-
-import { useLoadedImagePoints } from './LoadedImagePointsContext';
-import { useImageSeries } from './ImageSeriesContext';
+import { useRecoilValue } from 'recoil';
+import { currentImagePointState, loadedImagePointsState } from 'recoil/atoms';
+import { getRoadReference, getDateString } from 'utilities/imagePointUtilities';
 
 const FilteredImagePointsContext = React.createContext();
 
@@ -16,8 +16,8 @@ function useFilteredImagePoints() {
 
 function FilteredImagePointsProvider(props) {
   const [filteredImagePoints, setFilteredImagePoints] = useState(null);
-  const { loadedImagePoints } = useLoadedImagePoints();
-  const { currentImageSeries } = useImageSeries();
+  const loadedImagePoints = useRecoilValue(loadedImagePointsState);
+  const currentImagePoint = useRecoilValue(currentImagePointState);
 
   function resetFilteredImagePoints() {
     setFilteredImagePoints(null);
@@ -40,7 +40,11 @@ function FilteredImagePointsProvider(props) {
    * so we include the image points from that series instead of the newest one.
    */
   useEffect(() => {
-    if (loadedImagePoints?.imagePointsGroupedBySeries) {
+    if (loadedImagePoints?.imagePointsGroupedBySeries && currentImagePoint) {
+      const currentImageSeries = {
+        roadReference: getRoadReference(currentImagePoint).withoutMeter,
+        date: getDateString(currentImagePoint),
+      };
       let filteredImagePoints = [];
       for (const [roadReference, availableImageSeriesForRoadReference] of Object.entries(
         loadedImagePoints.imagePointsGroupedBySeries
@@ -55,7 +59,7 @@ function FilteredImagePointsProvider(props) {
       }
       setFilteredImagePoints(filteredImagePoints);
     }
-  }, [currentImageSeries, loadedImagePoints]);
+  }, [loadedImagePoints]);
 
   return (
     <FilteredImagePointsContext.Provider

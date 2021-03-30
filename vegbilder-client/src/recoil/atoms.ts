@@ -1,6 +1,6 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
 import { atom } from 'recoil';
-import { IImagePoint, ILatlng, viewTypes } from 'types';
+import { IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -42,4 +42,14 @@ export const currentLatLngZoomState = atom<ILatlng & { zoom?: number }>({
 export const currentViewState = atom<viewTypes>({
   key: 'currentView',
   default: searchParams.get('view') === 'image' ? 'image' : 'map',
+});
+
+export const availableDatesForImageSeries = atom<string[]>({
+  key: 'availableDatesForImageSeries',
+  default: [],
+});
+
+export const loadedImagePointsState = atom<ILoadedImagePoints | null>({
+  key: 'loadedImagePoints',
+  default: null,
 });

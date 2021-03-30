@@ -1,11 +1,14 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
+import { groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { getDateString, groupBySeries } from 'utilities/imagePointUtilities';
 import {
   currentImagePointState,
   currentLatLngZoomState,
   currentViewState,
   currentYearState,
+  loadedImagePointsState,
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -95,8 +98,44 @@ export const viewQueryParamterState = selector({
   },
 });
 
+export const loadedImagePointsFilterState = selector({
+  key: 'loadedImagePointsFilterState',
+  get: ({ get }) => {
+    return get(loadedImagePointsState);
+  },
+  set: (
+    { set },
+    newLoadedImagePoints:
+      | ({ imagePoints: IImagePoint[] } & { year: number } & { bbox: IBbox })
+      | DefaultValue
+      | null
+  ) => {
+    if (!(newLoadedImagePoints instanceof DefaultValue) && newLoadedImagePoints) {
+      const imagePointsGroupedBySeries = groupBySeries(newLoadedImagePoints.imagePoints);
+      const availableDates = getAvailableDates(newLoadedImagePoints.imagePoints);
+      const newLoaded = {
+        imagePoints: newLoadedImagePoints.imagePoints,
+        year: newLoadedImagePoints.year,
+        bbox: newLoadedImagePoints.bbox,
+        imagePointsGroupedBySeries: imagePointsGroupedBySeries,
+        availableDates: availableDates,
+      };
+      set(loadedImagePointsState, newLoaded);
+    } else {
+      set(loadedImagePointsState, null);
+    }
+  },
+});
+
+// utilities
+
 const setNewQueryParamter = (name: queryParamterNames, value: string) => {
   const newSearchParams = new URLSearchParams(window.location.search);
   newSearchParams.set(name, value);
   window.history.replaceState(null, '', '?' + newSearchParams.toString());
+};
+
+const getAvailableDates = (imagePoints: IImagePoint[]) => {
+  const imagePointsGroupedByDate = groupBy(imagePoints, (imagePoint) => getDateString(imagePoint));
+  return Object.getOwnPropertyNames(imagePointsGroupedByDate);
 };
