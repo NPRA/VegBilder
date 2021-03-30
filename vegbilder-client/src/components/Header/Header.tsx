@@ -77,7 +77,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
           <Grid item className={classes.dateAndYearSelectorContainer}>
             <YearSelector showMessage={showMessage} />
             <Box width={'1.125rem'} />
-            <DateFilter />
+            {/* <DateFilter /> */}
           </Grid>
           <Settings />
           <Tooltip title="Informasjon om Vegbilder">
