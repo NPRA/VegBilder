@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import {
   IconButton,
+  ListItemIcon,
   ListItemText,
   makeStyles,
-  Menu,
   MenuItem,
   Paper,
-  Typography,
 } from '@material-ui/core';
 import LayersRoundedIcon from '@material-ui/icons/LayersRounded';
-import { MAP_LAYERS } from 'constants/defaultParamters';
-import { getBaatTicket } from 'apis/vegkart/getBaatTicket';
-import useAsyncError from 'hooks/useAsyncError';
+import { Map, Satellite, Terrain } from '@material-ui/icons';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
   layersControl: {
@@ -21,14 +19,16 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     right: '3rem',
     top: '3.2rem',
+    backgroundColor: Theme.palette.common.grayDarker,
   },
 }));
 
 interface ILayersControlProps {
   setMapLayer: (newLayer: string) => void;
+  mapLayer: string;
 }
 
-const LayersControl = ({ setMapLayer }: ILayersControlProps) => {
+const LayersControl = ({ setMapLayer, mapLayer }: ILayersControlProps) => {
   const classes = useStyles();
   const [showMapLayerOptions, setShowMapLayerOptions] = useState(false);
 
@@ -50,14 +50,35 @@ const LayersControl = ({ setMapLayer }: ILayersControlProps) => {
       </IconButton>
       {showMapLayerOptions ? (
         <Paper className={classes.layerOptions}>
-          <MenuItem id="layers-control" onClick={() => handleChosenMapLayer('gratone')}>
-            Gråtonekart
+          <MenuItem
+            id="layers-control"
+            onClick={() => handleChosenMapLayer('gratone')}
+            selected={mapLayer === 'gratone'}
+          >
+            <ListItemIcon>
+              <Terrain />
+            </ListItemIcon>
+            <ListItemText primary="Gråtonekart" />
           </MenuItem>
-          <MenuItem id="layers-control" onClick={() => handleChosenMapLayer('vegkart')}>
-            Vegkart
+          <MenuItem
+            id="layers-control"
+            onClick={() => handleChosenMapLayer('vegkart')}
+            selected={mapLayer === 'vegkart'}
+          >
+            <ListItemIcon>
+              <Map />
+            </ListItemIcon>
+            <ListItemText primary="Vegkart" />
           </MenuItem>
-          <MenuItem id="layers-control" onClick={() => handleChosenMapLayer('flyfoto')}>
-            Flyfoto
+          <MenuItem
+            id="layers-control"
+            onClick={() => handleChosenMapLayer('flyfoto')}
+            selected={mapLayer === 'flyfoto'}
+          >
+            <ListItemIcon>
+              <Satellite />
+            </ListItemIcon>
+            <ListItemText primary="Flyfoto" />
           </MenuItem>
         </Paper>
       ) : null}

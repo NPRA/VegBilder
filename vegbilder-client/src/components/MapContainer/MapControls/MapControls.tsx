@@ -8,9 +8,10 @@ import LayersControl from './LayersControl';
 interface IMapControlsProps {
   showMessage: (message: string) => void;
   setMapLayer: (newLayer: string) => void;
+  mapLayer: string;
 }
 
-const MapControls = ({ showMessage, setMapLayer }: IMapControlsProps) => {
+const MapControls = ({ showMessage, setMapLayer, mapLayer }: IMapControlsProps) => {
   return (
     <Box
       display={'flex'}
@@ -22,7 +23,7 @@ const MapControls = ({ showMessage, setMapLayer }: IMapControlsProps) => {
       zIndex={10000}
     >
       <MyLocationControl showMessage={showMessage} />
-      <LayersControl setMapLayer={setMapLayer} />
+      <LayersControl setMapLayer={setMapLayer} mapLayer={mapLayer} />
       <ZoomControl />
     </Box>
   );
