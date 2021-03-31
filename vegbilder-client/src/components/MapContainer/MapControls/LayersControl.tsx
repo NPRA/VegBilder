@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, ListItemText, makeStyles, Menu, MenuItem } from '@material-ui/core';
+import {
+  IconButton,
+  ListItemText,
+  makeStyles,
+  Menu,
+  MenuItem,
+  Paper,
+  Typography,
+} from '@material-ui/core';
 import LayersRoundedIcon from '@material-ui/icons/LayersRounded';
 import { MAP_LAYERS } from 'constants/defaultParamters';
 import { getBaatTicket } from 'apis/vegkart/getBaatTicket';
@@ -9,6 +17,11 @@ const useStyles = makeStyles(() => ({
   layersControl: {
     marginBottom: '1rem',
   },
+  layerOptions: {
+    position: 'absolute',
+    right: '3rem',
+    top: '3.2rem',
+  },
 }));
 
 interface ILayersControlProps {
@@ -17,51 +30,37 @@ interface ILayersControlProps {
 
 const LayersControl = ({ setMapLayer }: ILayersControlProps) => {
   const classes = useStyles();
-  const [mapLayerOptionsAnchorEl, setMapLayerOptionsAnchorEl] = useState<Element | null>(null);
+  const [showMapLayerOptions, setShowMapLayerOptions] = useState(false);
 
-  const handleMapLayerOptionsClose = () => setMapLayerOptionsAnchorEl(null);
+  const handleChosenMapLayer = (layer: string) => {
+    setMapLayer(layer);
+    setShowMapLayerOptions(false);
+  };
 
-  const handleMoreLayersClick = (event: any) => setMapLayerOptionsAnchorEl(event.currentTarget);
+  const handleMoreLayersClick = () => setShowMapLayerOptions(!showMapLayerOptions);
 
   return (
     <>
-      <IconButton className={classes.layersControl} onClick={handleMoreLayersClick}>
+      <IconButton
+        id="layers-control"
+        className={classes.layersControl}
+        onClick={handleMoreLayersClick}
+      >
         <LayersRoundedIcon id="layers-control" />
       </IconButton>
-      <Menu
-        id="Map-layer-options"
-        anchorEl={mapLayerOptionsAnchorEl}
-        keepMounted
-        open={Boolean(mapLayerOptionsAnchorEl)}
-        onClose={handleMapLayerOptionsClose}
-        anchorOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
-        }}
-        transformOrigin={{
-          vertical: 'center',
-          horizontal: 'center',
-        }}
-      >
-        {MAP_LAYERS.map((layer) => (
-          <MenuItem
-            key={layer}
-            onClick={() => {
-              setMapLayer(layer);
-              handleMapLayerOptionsClose();
-            }}
-            //className={classes.speedMenuItem}
-          >
-            {/* {option === timeBetweenImages && <CheckmarkIcon className={classes.iconStyle} />} */}
-            <ListItemText
-              primary={layer}
-              // style={{
-              //   color: option === timeBetweenImages ? Theme.palette.common.orangeDark : '',
-              // }}
-            />
+      {showMapLayerOptions ? (
+        <Paper className={classes.layerOptions}>
+          <MenuItem id="layers-control" onClick={() => handleChosenMapLayer('gratone')}>
+            Gråtonekart
           </MenuItem>
-        ))}
-      </Menu>
+          <MenuItem id="layers-control" onClick={() => handleChosenMapLayer('vegkart')}>
+            Vegkart
+          </MenuItem>
+          <MenuItem id="layers-control" onClick={() => handleChosenMapLayer('flyfoto')}>
+            Flyfoto
+          </MenuItem>
+        </Paper>
+      ) : null}
     </>
   );
 };

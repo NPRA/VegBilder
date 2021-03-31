@@ -68,6 +68,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
     setCursor('pointer');
     let clickedControlButtons = false;
     if (event.originalEvent.target) {
+      // @ts-ignore: Unreachable code error
       clickedControlButtons =
         // @ts-ignore: Unreachable code error
         event.originalEvent.target.id === 'zoom-out' ||
@@ -76,11 +77,12 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         // @ts-ignore: Unreachable code error
         event.originalEvent.target.id === 'my-location' ||
         // @ts-ignore: Unreachable code error
-        event.originalEvent.target.id === 'Map-layer-options' ||
+        event.originalEvent.originalTarget.nodeName === 'path' ||
         // @ts-ignore: Unreachable code error
         event.originalEvent.target.id === 'layers-control';
     }
-    if (!mouseMoved && !clickedControlButtons) {
+    // @ts-ignore: Unreachable code error
+    if (!mouseMoved && !clickedControlButtons && event.originalEvent.target.id === '') {
       handleClick(event);
     }
   };
@@ -103,6 +105,14 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
     });
   }, []);
 
+  const getMapUrl = () => {
+    if (mapLayer === 'vegkart')
+      return 'https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}';
+    else if (mapLayer === 'flyfoto')
+      return `https://gatekeeper2.geonorge.no/BaatGatekeeper/gk/gk.nib_utm33_wmts_v2?layer=Nibcache_UTM33_EUREF89_v2&style=default&tilematrixset=default028mm&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`;
+    return `https://gatekeeper3.geonorge.no/BaatGatekeeper/gk/gk.cache_wmts?layer=topo4graatone&style=default&tilematrixset=EPSG:25833&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/png&TileMatrix=EPSG:25833:{z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`;
+  };
+
   return (
     <Map
       center={currentCoordinates}
@@ -123,27 +133,11 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         }
       }}
     >
-      {mapLayer === 'vegkart' ? (
-        <TileLayer
-          url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
-          attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
-          subdomains="123456789"
-        />
-      ) : null}
-      {mapLayer === 'flyfoto' ? (
-        <TileLayer
-          url={`https://gatekeeper2.geonorge.no/BaatGatekeeper/gk/gk.nib_utm33_wmts_v2?layer=Nibcache_UTM33_EUREF89_v2&style=default&tilematrixset=default028mm&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`}
-          attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
-          subdomains="123456789"
-        />
-      ) : null}
-      {mapLayer === 'gratone' ? (
-        <TileLayer
-          url={`https://gatekeeper3.geonorge.no/BaatGatekeeper/gk/gk.cache_wmts?layer=topo4graatone&style=default&tilematrixset=EPSG:25833&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=EPSG:25833:{z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`}
-          attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
-          subdomains="123456789"
-        />
-      ) : null}
+      <TileLayer
+        url={getMapUrl()}
+        attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
+        subdomains="123456789"
+      />
       <ImagePointLayersWrapper />
       <MapControls showMessage={showMessage} setMapLayer={setMapLayer} />
     </Map>
