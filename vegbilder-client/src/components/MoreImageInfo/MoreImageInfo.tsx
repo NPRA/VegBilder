@@ -6,7 +6,7 @@ import { IImagePoint, ILatlng } from 'types';
 import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
-import GetFartsgrenseByVegsystemreferanse from 'apis/NVDB/getFartsgrenseByVegsystemreferanse';
+import GetVegObjektByVegsystemreferanseAndVegobjektid from 'apis/NVDB/getVegObjektByVegsystemreferanseAndVegobjektid';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -43,17 +43,25 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
   const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
   const [fartsgrense, setFartsgrense] = useState(0);
 
+  const fartsgrenseId = 105;
+  const broId = 60;
+  const tunnelId = 67;
+  const trafikkmengdeId = 540;
+  const kontraktsområdeId = 580;
+
   const getFartsgrense = async (imagePoint: IImagePoint) => {
     const vegsystemreferanse = getRoadReference(imagePoint)
       .withoutFelt.replace(/\s/g, '')
       .toLocaleLowerCase();
-    await GetFartsgrenseByVegsystemreferanse(vegsystemreferanse).then((res) => {
-      if (res && res.objekter.length) {
-        const egenskaper = res.objekter[0].egenskaper ?? res.objekter.egenskaper;
-        const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
-        setFartsgrense(fartsgrense.verdi);
+    await GetVegObjektByVegsystemreferanseAndVegobjektid(vegsystemreferanse, fartsgrenseId).then(
+      (res) => {
+        if (res && res.objekter.length) {
+          const egenskaper = res.objekter[0].egenskaper ?? res.objekter.egenskaper;
+          const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
+          setFartsgrense(fartsgrense.verdi);
+        }
       }
-    });
+    );
   };
 
   const handleMoreInfoButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
