@@ -5,6 +5,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
 
 import { crsUtm33N } from './crs';
+import { crsUtm33N2 } from './crs2';
 import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
 import MapControls from './MapControls/MapControls';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
@@ -110,7 +111,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       return 'https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}';
     else if (mapLayer === 'flyfoto')
       return `https://gatekeeper2.geonorge.no/BaatGatekeeper/gk/gk.nib_utm33_wmts_v2?layer=Nibcache_UTM33_EUREF89_v2&style=default&tilematrixset=default028mm&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix={z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`;
-    return `https://gatekeeper3.geonorge.no/BaatGatekeeper/gk/gk.cache_wmts?layer=topo4graatone&style=default&tilematrixset=EPSG:25833&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/png&TileMatrix=EPSG:25833:{z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`;
+    return `https://gatekeeper3.geonorge.no/BaatGatekeeper/gk/gk.cache_wmts?layer=topo4graatone&style=default&tilematrixset=EPSG:25833&Service=WMTS&Request=GetTile&Version=1.0.0&Format=image/jpeg&TileMatrix=EPSG:25833:{z}&TileCol={x}&TileRow={y}&gkt=${baatTicket}`;
   };
 
   return (
@@ -121,6 +122,8 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       crs={crsUtm33N}
       minZoom={4}
       maxZoom={16}
+      // @ts-ignore: Unreachable code error
+      zoomOffset={2}
       zoomControl={false}
       onmousedown={onMouseDown}
       onmousemove={onMouseMove}
@@ -137,6 +140,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         url={getMapUrl()}
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
         subdomains="123456789"
+        zoomOffset={mapLayer === 'vegkart' ? 0 : 3}
       />
       <ImagePointLayersWrapper />
       <MapControls showMessage={showMessage} setMapLayer={setMapLayer} mapLayer={mapLayer} />
