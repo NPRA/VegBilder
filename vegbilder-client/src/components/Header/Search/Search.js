@@ -261,7 +261,7 @@ const Search = ({ showMessage }) => {
           <MagnifyingGlassIcon />
         </div>
         <InputBase
-          placeholder="Søk etter sted eller vegsystemreferanse (ERF-veger)"
+          placeholder="Søk"
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,
