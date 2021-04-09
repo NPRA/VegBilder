@@ -29,7 +29,8 @@ const useStyles = makeStyles((theme) => ({
     left: '0.5rem',
     backgroundColor: theme.palette.common.grayDarker,
     zIndex: 1000,
-    width: '18vw',
+    //width: '18vw',
+    padding: '0 1rem',
     minHeight: '2rem',
     color: theme.palette.common.grayMenuItems,
     textAlign: 'center',
@@ -60,7 +61,7 @@ const useStyles = makeStyles((theme) => ({
     right: 2,
   },
   arrowBack: {
-    margin: '0 0.375rem 0 1rem',
+    margin: '0 0.375rem 0 0',
     alignSelf: 'center',
   },
   backToText: {
@@ -85,7 +86,7 @@ const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
         <ArrowBack className={classes.arrowBack} />
         <Typography variant="body1" className={classes.backToText}>
           {' '}
-          Tilbake til kart{' '}
+          Tilbake{' '}
         </Typography>{' '}
       </div>
       <div className={classes.minimap}>
