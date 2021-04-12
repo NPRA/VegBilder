@@ -263,7 +263,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           <ArrowBack className={classes.arrowBack} />
           <Typography variant="body1" className={classes.backToText}>
             {' '}
-            Tilbake{' '}
+            Tilbake til stort kart{' '}
           </Typography>{' '}
         </button>
         {showMiniMap ? <SmallMapContainer /> : null}
