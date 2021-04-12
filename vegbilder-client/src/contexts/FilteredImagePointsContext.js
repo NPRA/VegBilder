@@ -59,7 +59,7 @@ function FilteredImagePointsProvider(props) {
       }
       setFilteredImagePoints(filteredImagePoints);
     }
-  }, [loadedImagePoints]);
+  }, [loadedImagePoints, currentImagePoint]);
 
   return (
     <FilteredImagePointsContext.Provider
