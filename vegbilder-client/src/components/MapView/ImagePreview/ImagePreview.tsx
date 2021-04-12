@@ -12,8 +12,8 @@ import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 're
 
 const useStyles = makeStyles((theme) => ({
   image: {
-    width: '30rem',
     margin: '2px 2px 0 2px',
+    cursor: 'pointer',
   },
   enlargeButton: {
     '& span': {
@@ -57,12 +57,14 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
         display="flex"
         flexDirection="column"
         boxShadow="1px 2px 2px 2px rgba(0, 0, 0, 0.4)"
+        width="50vh"
       >
         <>
           <img
             src={getImageUrl(currentImagePoint)}
             className={classes.image}
             alt="Bilde tatt langs veg"
+            onClick={openImage}
           />
           <CloseButton onClick={() => setCurrentImagePoint(null)} />
         </>
@@ -73,14 +75,14 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
           justifyContent="space-between"
         >
           <ImageMetadata />
-          <div>
+          {/* <div>
             <MoreImageInfo imagePoint={currentImagePoint} className={classes.infoButton} />
             <Tooltip title="Åpne bilde">
               <IconButton className={classes.enlargeButton} onClick={openImage}>
                 <EnlargeIcon />
               </IconButton>
             </Tooltip>
-          </div>
+          </div> */}
         </Box>
       </Box>
     );

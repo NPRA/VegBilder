@@ -6,20 +6,18 @@ import { makeStyles } from '@material-ui/core/styles';
 import { crsUtm33N } from '../../MapContainer/crs';
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 import 'components/MapContainer/MapContainer.css';
-import { IconButton, Tooltip } from '@material-ui/core';
-import { EnlargeIcon } from 'components/Icons/Icons';
 import { useRecoilState } from 'recoil';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   minimap: {
     position: 'absolute',
     width: '18vw',
     height: '18vw',
-    left: '1.25rem',
-    top: '1.25rem',
-    border: `1px ${theme.palette.primary.main} solid`,
-    boxShadow: '1px 2px 2px 2px rgba(0, 0, 0, 0.4)',
+    left: '0.5rem',
+    top: '3.4rem',
+    boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
+    borderRadius: '10px',
     zIndex: 5,
   },
   minimapHidden: {
@@ -33,11 +31,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface ISmallMapContainerProps {
-  exitImageView: () => void;
-}
-
-const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
+const SmallMapContainer = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const classes = useStyles();
   const minZoom = 15;
@@ -60,11 +54,6 @@ const SmallMapContainer = ({ exitImageView }: ISmallMapContainerProps) => {
         }}
         attributionControl={false}
       >
-        <Tooltip title="Åpne kart">
-          <IconButton className={classes.enlargeButton} onClick={exitImageView}>
-            <EnlargeIcon />
-          </IconButton>
-        </Tooltip>
         <TileLayer
           url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
           attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"

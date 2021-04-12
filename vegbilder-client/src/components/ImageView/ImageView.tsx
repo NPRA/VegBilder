@@ -2,6 +2,8 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
+import { Typography } from '@material-ui/core';
+import { ArrowBack } from '@material-ui/icons';
 
 import ImageControlBar from './ImageControlBar/ImageControlBar';
 import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
@@ -11,6 +13,7 @@ import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
 import CloseButton from 'components/CloseButton/CloseButton';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -32,6 +35,41 @@ const useStyles = makeStyles(() => ({
     position: 'relative',
     height: '100%',
     overflow: 'hidden',
+  },
+  backToMapButton: {
+    border: 'none',
+    position: 'absolute',
+    top: '1rem',
+    left: '0.5rem',
+    backgroundColor: Theme.palette.common.grayDarker,
+    zIndex: 1000,
+    padding: '0 1rem',
+    minHeight: '2rem',
+    color: Theme.palette.common.grayMenuItems,
+    textAlign: 'center',
+    borderRadius: '10px',
+    display: 'flex',
+    cursor: 'pointer',
+    opacity: 0.9,
+    '&:hover': {
+      color: Theme.palette.common.orangeDark,
+      backgroundColor: Theme.palette.common.grayDark,
+      opacity: 'revert',
+      '& span': {
+        '& svg': {
+          '& path': {
+            fill: Theme.palette.common.orangeDark,
+          },
+        },
+      },
+    },
+  },
+  arrowBack: {
+    margin: '0 0.375rem 0 0',
+    alignSelf: 'center',
+  },
+  backToText: {
+    alignSelf: 'center',
   },
 }));
 
@@ -220,7 +258,15 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             />
           </div>
         )}
-        {showMiniMap ? <SmallMapContainer exitImageView={setView} /> : null}
+        <button className={classes.backToMapButton} onClick={setView}>
+          {' '}
+          <ArrowBack className={classes.arrowBack} />
+          <Typography variant="body1" className={classes.backToText}>
+            {' '}
+            Tilbake{' '}
+          </Typography>{' '}
+        </button>
+        {showMiniMap ? <SmallMapContainer /> : null}
       </Grid>
       <Grid item className={classes.footer}>
         <ImageControlBar
