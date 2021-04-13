@@ -6,13 +6,13 @@ import { useRecoilValue } from 'recoil';
 import ImageControlBar from './ImageControlBar/ImageControlBar';
 import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import ImageViewer from './ImageViewer/ImageViewer';
-import { isHistoryModeState } from 'recoil/atoms';
+import { currentImagePointState, isHistoryModeState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
 import CloseButton from 'components/CloseButton/CloseButton';
-import Theme from 'theme/Theme';
-import BackToBigMapButton from './SideControlButtons/BackToBigMapButton';
+import BackToBigMapButton from './SideControlBar/SideControlButtons/BackToBigMapButton';
+import SideControlBar from './SideControlBar/SideControlBar';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -55,6 +55,7 @@ type ScrollAction =
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const isHistoryMode = useRecoilValue(isHistoryModeState);
+  const currentImagePoint = useRecoilValue(currentImagePointState);
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
   const imageContainerRef = useRef<HTMLImageElement>(null);
@@ -222,8 +223,13 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             />
           </div>
         )}
-        <BackToBigMapButton setView={setView} />
-        {showMiniMap ? <SmallMapContainer /> : null}
+        <SideControlBar
+          setView={setView}
+          miniMapVisible={miniMapVisible}
+          setMiniMapVisible={setMiniMapVisible}
+          isZoomedInImage={isZoomedInImage}
+          imagePoint={currentImagePoint}
+        />
       </Grid>
       <Grid item className={classes.footer}>
         <ImageControlBar

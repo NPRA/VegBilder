@@ -7,6 +7,7 @@ import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
 import GetVegObjektByVegsystemreferanseAndVegobjektid from 'apis/NVDB/getVegObjektByVegsystemreferanseAndVegobjektid';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles((theme) => ({
   popover: {
@@ -19,18 +20,23 @@ const useStyles = makeStyles((theme) => ({
     padding: '0.3rem',
   },
   button: {
-    margin: '1.25rem',
-    backgroundColor: 'transparent',
+    marginTop: '0.25rem',
+    backgroundColor: Theme.palette.common.grayDark,
+    opacity: 0.9,
+  },
+  buttonDisabled: {
+    marginTop: '0.25rem',
+    backgroundColor: Theme.palette.common.grayDark,
+    opacity: 0.7,
   },
 }));
 
 interface IMoreImageInfoProps {
   imagePoint: IImagePoint;
-  className?: string;
-  disabled?: boolean;
+  disabled: boolean;
 }
 
-const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps) => {
+const MoreImageInfoButton = ({ imagePoint, disabled }: IMoreImageInfoProps) => {
   const classes = useStyles();
   // const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
   // const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
@@ -127,7 +133,7 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
         <IconButton
           disabled={disabled}
           aria-label="Mer info om bildet"
-          className={className}
+          className={disabled ? classes.buttonDisabled : classes.button}
           onClick={(event) => {
             if (imagePoint) handleMoreInfoButtonClick(event);
           }}
@@ -208,4 +214,4 @@ const MoreImageInfo = ({ imagePoint, className, disabled }: IMoreImageInfoProps)
   );
 };
 
-export default MoreImageInfo;
+export default MoreImageInfoButton;

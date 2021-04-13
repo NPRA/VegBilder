@@ -7,11 +7,9 @@ import Theme from 'theme/Theme';
 const useStyles = makeStyles(() => ({
   backToMapButton: {
     border: 'none',
-    position: 'absolute',
-    top: '1rem',
-    left: '0.5rem',
     backgroundColor: Theme.palette.common.grayDarker,
     zIndex: 1000,
+    width: '11.5rem',
     padding: '0 1rem',
     minHeight: '2rem',
     color: Theme.palette.common.grayMenuItems,

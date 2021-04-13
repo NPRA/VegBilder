@@ -7,6 +7,7 @@ declare module '@material-ui/core/styles/createPalette' {
   interface CommonColors {
     grayDark: string;
     grayDarker: string;
+    grayRegular: string;
     grayIcons: string;
     grayMenuItems: string;
     charcoalLighter: string;
@@ -92,6 +93,7 @@ export default createMuiTheme({
     common: {
       grayDark: grayDark,
       grayDarker: grayDarker,
+      grayRegular: grayRegular,
       grayIcons: grayIcons,
       grayMenuItems: grayMenuItems,
       charcoalLighter: charcoalLighter,

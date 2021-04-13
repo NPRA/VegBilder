@@ -11,11 +11,9 @@ import { latLngZoomQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles(() => ({
   minimap: {
-    position: 'absolute',
+    //position: 'absolute',
     width: '18vw',
     height: '18vw',
-    left: '0.5rem',
-    top: '3.4rem',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
     borderRadius: '10px',
     zIndex: 5,

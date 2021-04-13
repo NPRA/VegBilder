@@ -2,16 +2,26 @@ import React from 'react';
 import { Tooltip, IconButton, makeStyles } from '@material-ui/core';
 
 import { MapIcon, MapDisabledIcon } from 'components/Icons/Icons';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
   button: {
-    margin: '1.25rem',
-    backgroundColor: 'transparent',
+    marginTop: '0.25rem',
+    backgroundColor: Theme.palette.common.grayDark,
+    opacity: 0.9,
+    color: Theme.palette.common.grayRegular,
+    '& .MuiIconButton-label': {
+      '& svg': {
+        '& path': {
+          fill: Theme.palette.common.grayRegular,
+        },
+      },
+    },
   },
   buttonDisabled: {
-    margin: '1.25rem',
-    backgroundColor: 'transparent',
-    opacity: '30%',
+    marginTop: '0.25rem',
+    backgroundColor: Theme.palette.common.grayDark,
+    opacity: 0.7,
   },
 }));
 
