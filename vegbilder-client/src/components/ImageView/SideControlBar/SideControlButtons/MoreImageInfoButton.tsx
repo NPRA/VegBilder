@@ -6,9 +6,15 @@ import Theme from 'theme/Theme';
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    marginTop: '0.25rem',
-    backgroundColor: Theme.palette.common.grayDark,
+    backgroundColor: Theme.palette.common.grayDarker,
     opacity: 0.9,
+    '& .MuiIconButton-label': {
+      '& svg': {
+        '& path': {
+          fill: Theme.palette.common.grayRegular,
+        },
+      },
+    },
   },
   buttonDisabled: {
     marginTop: '0.25rem',
@@ -19,10 +25,15 @@ const useStyles = makeStyles((theme) => ({
 
 interface IMoreImageInfoButtonProps {
   setShowInformation: (value: boolean) => void;
+  showInformation: boolean;
   disabled: boolean;
 }
 
-const MoreImageInfoButton = ({ setShowInformation, disabled }: IMoreImageInfoButtonProps) => {
+const MoreImageInfoButton = ({
+  showInformation,
+  setShowInformation,
+  disabled,
+}: IMoreImageInfoButtonProps) => {
   const classes = useStyles();
 
   return (
@@ -31,7 +42,7 @@ const MoreImageInfoButton = ({ setShowInformation, disabled }: IMoreImageInfoBut
         disabled={disabled}
         aria-label="Mer info om bildet"
         className={disabled ? classes.buttonDisabled : classes.button}
-        onClick={() => setShowInformation(true)}
+        onClick={() => setShowInformation(!showInformation)}
       >
         <InformIcon />
       </IconButton>

@@ -6,6 +6,7 @@ import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import BackToBigMapButton from './SideControlButtons/BackToBigMapButton';
 import HideShowMiniMapButton from './SideControlButtons/HideShowMiniMapButton';
 import MoreImageInfoButton from './SideControlButtons/MoreImageInfoButton';
+import MoreImageInfo from './MoreImageInfo/MoreImageInfo';
 
 interface ISideControlBarProps {
   setView: (view: string) => void;
@@ -24,7 +25,8 @@ const useStyles = makeStyles(() => ({
   },
   miniMapHeader: {
     display: 'flex',
-    marginTop: '0.25rem',
+    marginTop: '0.35rem',
+    backgroundColor: Theme.palette.common.grayDarker,
     opacity: 0.8,
     borderRadius: '10px 10px 0 0',
   },
@@ -74,7 +76,21 @@ const SideControlBar = ({
           isZoomedInImage={isZoomedInImage}
         />
       )}
-      <MoreImageInfoButton setShowInformation={setShowInformation} disabled={isZoomedInImage} />
+
+      {showInformation ? (
+        <MoreImageInfo
+          showInformation={showInformation}
+          setShowInformation={setShowInformation}
+          disabled={isZoomedInImage}
+          imagePoint={imagePoint}
+        />
+      ) : (
+        <MoreImageInfoButton
+          showInformation={showInformation}
+          setShowInformation={setShowInformation}
+          disabled={isZoomedInImage}
+        />
+      )}
     </div>
   );
 };

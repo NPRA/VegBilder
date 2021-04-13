@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { IconButton, makeStyles, Paper, Popover, Tooltip, Typography } from '@material-ui/core';
+import {
+  IconButton,
+  makeStyles,
+  Paper,
+  Popover,
+  SvgIconTypeMap,
+  Tooltip,
+  Typography,
+} from '@material-ui/core';
 
 import { getImagePointLatLng, getRoadReference } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
@@ -8,29 +16,69 @@ import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLa
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
 import GetVegObjektByVegsystemreferanseAndVegobjektid from 'apis/NVDB/getVegObjektByVegsystemreferanseAndVegobjektid';
 import Theme from 'theme/Theme';
+import MoreImageInfoButton from '../SideControlButtons/MoreImageInfoButton';
+import { RoomOutlined, SpeedOutlined } from '@material-ui/icons';
+import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 
 const useStyles = makeStyles((theme) => ({
+  infoContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: '0.35rem',
+    opacity: 0.8,
+    borderRadius: '10px',
+    maxHeight: '30vh',
+    width: '18vw',
+    backgroundColor: theme.palette.common.grayDarker,
+    paddingBottom: '0.5rem',
+  },
+  infoHeaderContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  infoHeader: {
+    alignSelf: 'center',
+    justifySelf: 'center',
+    textTransform: 'uppercase',
+    opacity: 1,
+    color: theme.palette.common.grayRegular,
+  },
+  itemGroupContainer: {
+    backgroundColor: theme.palette.common.grayMedium,
+    opacity: 0.9,
+    width: '17vw',
+    margin: '0.5rem auto 0 auto',
+    borderRadius: '5px',
+    padding: '0.3rem',
+  },
+  itemGroupHeader: {
+    alignSelf: 'center',
+    textTransform: 'uppercase',
+    color: theme.palette.common.grayRegular,
+    paddingLeft: '0.5rem',
+  },
   lines: {
     padding: '0.3rem',
   },
-  button: {
-    marginTop: '0.25rem',
-    backgroundColor: Theme.palette.common.grayDark,
-    opacity: 0.9,
-  },
-  buttonDisabled: {
-    marginTop: '0.25rem',
-    backgroundColor: Theme.palette.common.grayDark,
-    opacity: 0.7,
+  icon: {
+    color: theme.palette.common.grayRegular,
+    marigin: '0.5rem',
   },
 }));
 
 interface IMoreImageInfoProps {
-  imagePoint: IImagePoint;
+  showInformation: boolean;
+  setShowInformation: (value: boolean) => void;
+  imagePoint: IImagePoint | null;
   disabled: boolean;
 }
 
-const MoreImageInfo = ({ imagePoint, disabled }: IMoreImageInfoProps) => {
+const MoreImageInfo = ({
+  imagePoint,
+  disabled,
+  showInformation,
+  setShowInformation,
+}: IMoreImageInfoProps) => {
   const classes = useStyles();
   // const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
   // const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
@@ -42,7 +90,6 @@ const MoreImageInfo = ({ imagePoint, disabled }: IMoreImageInfoProps) => {
   const [distanceToNordkapp, setDistanceToNordkapp] = useState<string>();
   const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
   const [fartsgrense, setFartsgrense] = useState(0);
-  const [showInformation, setShowInformation] = useState(false);
 
   const fartsgrenseId = 105;
   const broId = 60;
@@ -114,47 +161,60 @@ const MoreImageInfo = ({ imagePoint, disabled }: IMoreImageInfoProps) => {
     }
   }, [imagePoint]);
 
+  interface IItemGroupContainerProps {
+    Icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>;
+    children: JSX.Element | JSX.Element[];
+    headline?: string;
+  }
+
+  const ItemGroupContainer = ({ children, Icon, headline }: IItemGroupContainerProps) => {
+    return (
+      <Paper className={classes.itemGroupContainer}>
+        <div className={classes.infoHeaderContainer}>
+          <Icon className={classes.icon} />
+          <Typography variant="subtitle2" className={classes.itemGroupHeader}>
+            {' '}
+            {headline}{' '}
+          </Typography>
+        </div>
+        {children}
+      </Paper>
+    );
+  };
+
   return (
-    <Paper>
-      <Tooltip title="Mer info om bildet">
-        <IconButton
+    <Paper className={classes.infoContainer}>
+      <div className={classes.infoHeaderContainer}>
+        <MoreImageInfoButton
+          showInformation={showInformation}
+          setShowInformation={setShowInformation}
           disabled={disabled}
-          aria-label="Mer info om bildet"
-          className={disabled ? classes.buttonDisabled : classes.button}
-          onClick={() => {
-            //if (imagePoint) handleMoreInfoButtonClick(event);
-          }}
-        >
-          <InformIcon />
-        </IconButton>
-      </Tooltip>
+        />
+        <Typography variant="subtitle1" className={classes.infoHeader}>
+          {' '}
+          Info{' '}
+        </Typography>
+      </div>
       {imagePoint ? (
         <>
-          {/* <Typography variant="body1" className={classes.lines}>
-            {`Strekningsnavn: ${strekningsnavn}`}
-          </Typography> */}
           {fylkesNavn.length && imagePoint.properties.FYLKENUMMER ? (
-            <Typography variant="body1" className={classes.lines}>
-              {' '}
-              {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER}), ${kommuneNavn}`}
-            </Typography>
+            <ItemGroupContainer headline="Plassering" Icon={RoomOutlined}>
+              <Typography variant="body1" className={classes.lines}>
+                {' '}
+                {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER}), ${kommuneNavn}`}
+              </Typography>
+            </ItemGroupContainer>
           ) : null}
           {fartsgrense > 0 ? (
-            <Typography
-              variant="body1"
-              className={classes.lines}
-            >{`Fartsgrense: ${fartsgrense}km/h`}</Typography>
+            <ItemGroupContainer headline="Fartsgrense" Icon={SpeedOutlined}>
+              <Typography
+                variant="body1"
+                className={classes.lines}
+              >{`Fartsgrense: ${fartsgrense}km/h`}</Typography>
+            </ItemGroupContainer>
           ) : null}
           {position ? (
-            <>
-              <Typography variant="body1" className={classes.lines}>
-                {' '}
-                {`Breddegrad: ${position?.lat}`}
-              </Typography>
-              <Typography variant="body1" className={classes.lines}>
-                {' '}
-                {`Lengdegrad: ${position?.lng}`}
-              </Typography>
+            <ItemGroupContainer Icon={SpeedOutlined}>
               <Typography variant="body1" className={classes.lines}>
                 {' '}
                 {`Distanse til Nordkapp: ${distanceToNordkapp} km`}
@@ -163,7 +223,7 @@ const MoreImageInfo = ({ imagePoint, disabled }: IMoreImageInfoProps) => {
                 {' '}
                 {`Distanse til Lindesnes: ${distanceToLindesnes} km`}
               </Typography>
-            </>
+            </ItemGroupContainer>
           ) : null}
 
           {/*

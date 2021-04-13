@@ -6,10 +6,8 @@ import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
   button: {
-    marginTop: '0.25rem',
-    backgroundColor: Theme.palette.common.grayDark,
+    backgroundColor: Theme.palette.common.grayDarker,
     opacity: 0.9,
-    color: Theme.palette.common.grayRegular,
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {
