@@ -1,18 +1,17 @@
 import { makeStyles, Paper, Typography } from '@material-ui/core';
-import React from 'react';
+import React, { useState } from 'react';
 import Theme from 'theme/Theme';
 import { IImagePoint } from 'types';
-import SmallMapContainer from '../SmallMapContainer/SmallMapContainer';
+import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import BackToBigMapButton from './SideControlButtons/BackToBigMapButton';
 import HideShowMiniMapButton from './SideControlButtons/HideShowMiniMapButton';
 import MoreImageInfoButton from './SideControlButtons/MoreImageInfoButton';
 
 interface ISideControlBarProps {
   setView: (view: string) => void;
-  miniMapVisible: boolean;
-  setMiniMapVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
   imagePoint: IImagePoint | null;
+  isHistoryMode: boolean;
 }
 
 const useStyles = makeStyles(() => ({
@@ -27,7 +26,6 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     marginTop: '0.25rem',
     opacity: 0.8,
-    borderStartStartRadius: '10px',
     borderRadius: '10px 10px 0 0',
   },
   miniMapHeaderText: {
@@ -40,16 +38,21 @@ const useStyles = makeStyles(() => ({
 
 const SideControlBar = ({
   setView,
-  miniMapVisible,
-  setMiniMapVisible,
   isZoomedInImage,
   imagePoint,
+  isHistoryMode,
 }: ISideControlBarProps) => {
   const classes = useStyles();
+
+  const [showInformation, setShowInformation] = useState(false);
+  const [miniMapVisible, setMiniMapVisible] = useState(true);
+
+  const showMiniMap = (miniMapVisible && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
+
   return (
     <div className={classes.sideControlBar}>
       <BackToBigMapButton setView={setView} />
-      {miniMapVisible && !isZoomedInImage ? (
+      {showMiniMap ? (
         <>
           <Paper className={classes.miniMapHeader}>
             <HideShowMiniMapButton
@@ -71,9 +74,7 @@ const SideControlBar = ({
           isZoomedInImage={isZoomedInImage}
         />
       )}
-      {imagePoint ? (
-        <MoreImageInfoButton imagePoint={imagePoint} disabled={isZoomedInImage} />
-      ) : null}
+      <MoreImageInfoButton setShowInformation={setShowInformation} disabled={isZoomedInImage} />
     </div>
   );
 };

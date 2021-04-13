@@ -33,8 +33,6 @@ interface IImageControlBarProps {
   setShowReportErrorsScheme: (value: boolean) => void;
   timeBetweenImages: number;
   setTimeBetweenImages: (newTime: number) => void;
-  miniMapVisible: boolean;
-  setMiniMapVisible: (visible: boolean) => void;
   meterLineVisible: boolean;
   setMeterLineVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;

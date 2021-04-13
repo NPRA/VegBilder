@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Map, TileLayer } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
 
@@ -11,6 +10,7 @@ import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
+import './MapContainer.css';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;

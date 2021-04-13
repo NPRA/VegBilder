@@ -4,14 +4,12 @@ import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
 
 import ImageControlBar from './ImageControlBar/ImageControlBar';
-import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import ImageViewer from './ImageViewer/ImageViewer';
 import { currentImagePointState, isHistoryModeState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
 import CloseButton from 'components/CloseButton/CloseButton';
-import BackToBigMapButton from './SideControlBar/SideControlButtons/BackToBigMapButton';
 import SideControlBar from './SideControlBar/SideControlBar';
 
 const useStyles = makeStyles(() => ({
@@ -61,10 +59,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const imageContainerRef = useRef<HTMLImageElement>(null);
   const [cursor, setCursor] = useState('zoom-in');
   const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
-  const [miniMapVisible, setMiniMapVisible] = useState(true);
-  const [meterLineVisible, setMeterLineVisible] = useState(false);
 
-  const showMiniMap = (miniMapVisible && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
+  const [meterLineVisible, setMeterLineVisible] = useState(false);
 
   const maxScrollHeight = Math.max(
     document.body.scrollHeight,
@@ -225,18 +221,15 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         )}
         <SideControlBar
           setView={setView}
-          miniMapVisible={miniMapVisible}
-          setMiniMapVisible={setMiniMapVisible}
           isZoomedInImage={isZoomedInImage}
           imagePoint={currentImagePoint}
+          isHistoryMode={isHistoryMode}
         />
       </Grid>
       <Grid item className={classes.footer}>
         <ImageControlBar
-          miniMapVisible={miniMapVisible}
           meterLineVisible={meterLineVisible}
           setMeterLineVisible={setMeterLineVisible}
-          setMiniMapVisible={setMiniMapVisible}
           showMessage={showSnackbarMessage}
           setShowReportErrorsScheme={setShowReportErrorsScheme}
           timeBetweenImages={timeBetweenImages}
