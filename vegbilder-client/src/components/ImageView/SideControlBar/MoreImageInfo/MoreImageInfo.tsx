@@ -18,10 +18,12 @@ const useStyles = makeStyles((theme) => ({
     marginTop: '0.35rem',
     opacity: 0.8,
     borderRadius: '10px',
-    maxHeight: '30vh',
-    width: '18vw',
     backgroundColor: theme.palette.common.grayDarker,
     paddingBottom: '0.5rem',
+  },
+  scrollContainer: {
+    maxHeight: '30vh',
+    overflowY: 'scroll',
   },
   infoHeaderContainer: {
     display: 'flex',
@@ -192,7 +194,7 @@ const MoreImageInfo = ({
         </Typography>
       </div>
       {imagePoint ? (
-        <>
+        <div className={classes.scrollContainer}>
           {fylkesNavn.length && imagePoint.properties.FYLKENUMMER ? (
             <ItemGroupContainer headline="Plassering" Icon={RoomOutlined}>
               <Typography variant="body1" className={classes.lines}>
@@ -245,7 +247,7 @@ const MoreImageInfo = ({
               Ingen
             </Typography>
           )} */}
-        </>
+        </div>
       ) : null}
     </Paper>
   );
