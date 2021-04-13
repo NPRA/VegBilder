@@ -21,8 +21,6 @@ import {
   ArrowUpIcon,
   DotsHorizontalIcon,
   HistoryIcon,
-  MapIcon,
-  MapDisabledIcon,
   MeasureIcon,
   MeasureDisabledIcon,
   PlayIcon,
@@ -42,7 +40,7 @@ import {
   currentLatLngZoomState,
 } from 'recoil/atoms';
 import Theme from 'theme/Theme';
-import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
+import MoreImageInfo from 'components/ImageView/MoreImageInfo/MoreImageInfo';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS } from 'constants/defaultParamters';
 import { imagePointQueryParameterState } from 'recoil/selectors';
@@ -79,8 +77,6 @@ interface IImageControlButtonsProps {
   setShowReportErrorsScheme: (value: boolean) => void;
   timeBetweenImages: number;
   setTimeBetweenImages: (newTime: number) => void;
-  miniMapVisible: boolean;
-  setMiniMapVisible: (visible: boolean) => void;
   meterLineVisible: boolean;
   setMeterLineVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
@@ -92,9 +88,7 @@ const ImageControlButtons = ({
   setShowReportErrorsScheme,
   timeBetweenImages,
   setTimeBetweenImages,
-  miniMapVisible,
   meterLineVisible,
-  setMiniMapVisible,
   setMeterLineVisible,
   isZoomedInImage,
   setIsZoomedInImage,
@@ -242,21 +236,6 @@ const ImageControlButtons = ({
     );
   };
 
-  const hideShowMiniMapButton = () => {
-    return (
-      <Tooltip title={miniMapVisible ? 'Skjul kart' : 'Vis kart'}>
-        <IconButton
-          disabled={isZoomedInImage}
-          aria-label="Vis/skjul kart"
-          className={isZoomedInImage ? classes.buttonDisabled : classes.button}
-          onClick={() => setMiniMapVisible(!miniMapVisible)}
-        >
-          {miniMapVisible ? <MapIcon /> : <MapDisabledIcon />}
-        </IconButton>
-      </Tooltip>
-    );
-  };
-
   const changeDirectionButton = () => {
     return (
       <Tooltip title="Bytt kjøreretning">
@@ -376,7 +355,6 @@ const ImageControlButtons = ({
   const renderPlayModeMenu = () => {
     return (
       <>
-        {hideShowMiniMapButton()}
         {zoomInOutButton()}
         {changeDirectionButton()}
         {hideShowBasisLineButton()}
@@ -400,7 +378,6 @@ const ImageControlButtons = ({
         {!playMode && !playVideo ? (
           <>
             {/*  Render normal menu */}
-            {hideShowMiniMapButton()}
             {zoomInOutButton()}
             {/* move backwards arrow button  */}
             <Tooltip title="Gå bakover">
