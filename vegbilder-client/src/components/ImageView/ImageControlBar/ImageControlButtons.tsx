@@ -40,7 +40,6 @@ import {
   currentLatLngZoomState,
 } from 'recoil/atoms';
 import Theme from 'theme/Theme';
-import MoreImageInfo from 'components/ImageView/MoreImageInfo/MoreImageInfo';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS } from 'constants/defaultParamters';
 import { imagePointQueryParameterState } from 'recoil/selectors';
@@ -362,9 +361,6 @@ const ImageControlButtons = ({
         {playIconButton('Spill av bildeserie')}
         {stopAnimationButton()}
         {changeSpeedButtonMenu()}
-        {currentImagePoint ? (
-          <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
-        ) : null}
         {moreFunctionsButton()}
       </>
     );
@@ -405,9 +401,6 @@ const ImageControlButtons = ({
             {playIconButton('Start animasjonsmodus')}
             {hideShowBasisLineButton()}
             {historyButton()}
-            {currentImagePoint ? (
-              <MoreImageInfo imagePoint={currentImagePoint} className={classes.button} />
-            ) : null}
             {moreFunctionsButton()}
           </>
         ) : null}
