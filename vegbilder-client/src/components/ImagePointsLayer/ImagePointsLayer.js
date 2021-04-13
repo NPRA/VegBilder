@@ -190,7 +190,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
 
   const renderImagePoints = () => {
     if (imagePointsToRender) {
-      console.log(imagePointsToRender);
       return (
         <>
           {imagePointsToRender.map((imagePoint) => {
