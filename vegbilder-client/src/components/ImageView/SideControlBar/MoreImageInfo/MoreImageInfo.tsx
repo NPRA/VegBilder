@@ -1,24 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import {
-  IconButton,
-  makeStyles,
-  Paper,
-  Popover,
-  SvgIconTypeMap,
-  Tooltip,
-  Typography,
-} from '@material-ui/core';
+import React, { FunctionComponent, SVGProps, useEffect, useState } from 'react';
+import { makeStyles, Paper, SvgIconTypeMap, Typography } from '@material-ui/core';
 
 import { getImagePointLatLng, getRoadReference } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
-import { InformIcon } from 'components/Icons/Icons';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
 import GetVegObjektByVegsystemreferanseAndVegobjektid from 'apis/NVDB/getVegObjektByVegsystemreferanseAndVegobjektid';
-import Theme from 'theme/Theme';
 import MoreImageInfoButton from '../SideControlButtons/MoreImageInfoButton';
-import { RoomOutlined, SpeedOutlined } from '@material-ui/icons';
+import { CommuteOutlined, RoomOutlined, SpeedOutlined } from '@material-ui/icons';
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
+import { ContractIcon, DistanceToIcon, SladdetIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   infoContainer: {
@@ -63,6 +54,9 @@ const useStyles = makeStyles((theme) => ({
   icon: {
     color: theme.palette.common.grayRegular,
     marigin: '0.5rem',
+  },
+  informationLines: {
+    marginLeft: '1.8rem',
   },
 }));
 
@@ -162,7 +156,9 @@ const MoreImageInfo = ({
   }, [imagePoint]);
 
   interface IItemGroupContainerProps {
-    Icon: OverridableComponent<SvgIconTypeMap<{}, 'svg'>>;
+    Icon:
+      | OverridableComponent<SvgIconTypeMap<{}, 'svg'>>
+      | FunctionComponent<SVGProps<SVGSVGElement>>;
     children: JSX.Element | JSX.Element[];
     headline?: string;
   }
@@ -177,7 +173,7 @@ const MoreImageInfo = ({
             {headline}{' '}
           </Typography>
         </div>
-        {children}
+        <div className={classes.informationLines}>{children}</div>
       </Paper>
     );
   };
@@ -210,18 +206,26 @@ const MoreImageInfo = ({
               <Typography
                 variant="body1"
                 className={classes.lines}
-              >{`Fartsgrense: ${fartsgrense}km/h`}</Typography>
+              >{`${fartsgrense}km/h`}</Typography>
             </ItemGroupContainer>
           ) : null}
+          <ItemGroupContainer headline="Trafikkmengde" Icon={CommuteOutlined}>
+            <Typography variant="body1" className={classes.lines}>{`ÅDT: 200`}</Typography>
+          </ItemGroupContainer>
+          <ItemGroupContainer headline="Sladdet objekter" Icon={SladdetIcon}>
+            <Typography variant="body1" className={classes.lines}>{`ÅDT: 200`}</Typography>
+          </ItemGroupContainer>
+          <ItemGroupContainer headline="Kontraktsområder" Icon={ContractIcon}>
+            <Typography
+              variant="body1"
+              className={classes.lines}
+            >{`9305 Sunnfjord 2021-2026`}</Typography>
+          </ItemGroupContainer>
           {position ? (
-            <ItemGroupContainer Icon={SpeedOutlined}>
+            <ItemGroupContainer Icon={DistanceToIcon} headline="nordkapp, lindesnes">
               <Typography variant="body1" className={classes.lines}>
                 {' '}
-                {`Distanse til Nordkapp: ${distanceToNordkapp} km`}
-              </Typography>
-              <Typography variant="body1" className={classes.lines}>
-                {' '}
-                {`Distanse til Lindesnes: ${distanceToLindesnes} km`}
+                {`${distanceToNordkapp} km,  ${distanceToLindesnes} km`}
               </Typography>
             </ItemGroupContainer>
           ) : null}
