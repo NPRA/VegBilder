@@ -51,14 +51,14 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: '0.5rem',
   },
   lines: {
-    padding: '0.3rem',
+    color: theme.palette.common.grayRegular,
   },
   icon: {
     color: theme.palette.common.grayRegular,
     marigin: '0.5rem',
   },
   informationLines: {
-    marginLeft: '1.8rem',
+    marginLeft: '2rem',
   },
 }));
 
@@ -79,13 +79,13 @@ const MoreImageInfo = ({
   // const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
   // const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
   // const [strekningsnavn, setStrekningsnavn] = useState('');
-  const [moreInfoAnchorEl, setMoreInfoAnchorEl] = useState<HTMLButtonElement | null>(null);
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
   const [position, setPosition] = useState<ILatlng>();
   const [distanceToNordkapp, setDistanceToNordkapp] = useState<string>();
   const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
   const [fartsgrense, setFartsgrense] = useState(0);
+  const [trafikkMengde, setTrafikkMengde] = useState<string[]>([]);
 
   const fartsgrenseId = 105;
   const broId = 60;
@@ -93,19 +93,43 @@ const MoreImageInfo = ({
   const trafikkmengdeId = 540;
   const kontraktsområdeId = 580;
 
+  const trimmedVegsystemreferanse = (imagePoint: IImagePoint) => {
+    return getRoadReference(imagePoint).withoutFelt.replace(/\s/g, '').toLocaleLowerCase();
+  };
+
   const getFartsgrense = async (imagePoint: IImagePoint) => {
-    const vegsystemreferanse = getRoadReference(imagePoint)
-      .withoutFelt.replace(/\s/g, '')
-      .toLocaleLowerCase();
-    await GetVegObjektByVegsystemreferanseAndVegobjektid(vegsystemreferanse, fartsgrenseId).then(
-      (res) => {
-        if (res && res.objekter.length) {
-          const egenskaper = res.objekter[0].egenskaper ?? res.objekter.egenskaper;
-          const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
-          setFartsgrense(fartsgrense.verdi);
-        }
+    await GetVegObjektByVegsystemreferanseAndVegobjektid(
+      trimmedVegsystemreferanse(imagePoint),
+      fartsgrenseId
+    ).then((res) => {
+      if (res && res.objekter.length) {
+        const egenskaper = res.objekter[0].egenskaper ?? res.objekter.egenskaper;
+        const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
+        setFartsgrense(fartsgrense.verdi);
       }
-    );
+    });
+  };
+
+  const getTrafikk = async (imagePoint: IImagePoint) => {
+    await GetVegObjektByVegsystemreferanseAndVegobjektid(
+      trimmedVegsystemreferanse(imagePoint),
+      trafikkmengdeId
+    ).then((res) => {
+      if (res && res.objekter.length) {
+        const trafikk: string[] = [];
+        res.objekter.forEach((obj: any) => {
+          const egenskaper = obj.egenskaper;
+          const trafikkMengdeÅr = egenskaper.find(
+            (egenskap: any) => egenskap.navn === 'År, gjelder for'
+          );
+          const totalTrafikkmengde = egenskaper.find(
+            (egenskap: any) => egenskap.navn === 'ÅDT, total'
+          );
+          trafikk.push(`ÅDT total, ${trafikkMengdeÅr.verdi}: ${totalTrafikkmengde.verdi}`);
+        });
+        setTrafikkMengde(trafikk);
+      }
+    });
   };
 
   // UTKOMMENTERT TIL DEN FLYTTER API
@@ -131,7 +155,7 @@ const MoreImageInfo = ({
   const getKommuneAndFylke = async (latlng: ILatlng) => {
     const response = await GetKommuneAndFylkeByLatLng(latlng);
     setFylkesNavn(response.fylkesnavn);
-    setKommuneNavn(response.kommunenavn);
+    setKommuneNavn(`${response.kommunenavn} (${response.kommunenummer})  `);
   };
 
   useEffect(() => {
@@ -142,6 +166,7 @@ const MoreImageInfo = ({
 
       if (imagePoint.properties.AAR >= 2020) {
         getFartsgrense(imagePoint);
+        getTrafikk(imagePoint);
       } else setFartsgrense(0);
 
       if (imagePointLatlng) {
@@ -161,7 +186,7 @@ const MoreImageInfo = ({
     Icon:
       | OverridableComponent<SvgIconTypeMap<{}, 'svg'>>
       | FunctionComponent<SVGProps<SVGSVGElement>>;
-    children: JSX.Element | JSX.Element[];
+    children: JSX.Element | JSX.Element[] | void[] | any;
     headline?: string;
   }
 
@@ -199,7 +224,11 @@ const MoreImageInfo = ({
             <ItemGroupContainer headline="Plassering" Icon={RoomOutlined}>
               <Typography variant="body1" className={classes.lines}>
                 {' '}
-                {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER}), ${kommuneNavn}`}
+                {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER})`}
+              </Typography>
+              <Typography variant="body1" className={classes.lines}>
+                {' '}
+                {`${kommuneNavn}`}
               </Typography>
             </ItemGroupContainer>
           ) : null}
@@ -212,7 +241,11 @@ const MoreImageInfo = ({
             </ItemGroupContainer>
           ) : null}
           <ItemGroupContainer headline="Trafikkmengde" Icon={CommuteOutlined}>
-            <Typography variant="body1" className={classes.lines}>{`ÅDT: 200`}</Typography>
+            {trafikkMengde.map((trafikkMengdeItem) => (
+              <Typography variant="body1" className={classes.lines}>
+                {trafikkMengdeItem}
+              </Typography>
+            ))}
           </ItemGroupContainer>
           <ItemGroupContainer headline="Sladdet objekter" Icon={SladdetIcon}>
             <Typography variant="body1" className={classes.lines}>{`ÅDT: 200`}</Typography>
@@ -231,7 +264,6 @@ const MoreImageInfo = ({
               </Typography>
             </ItemGroupContainer>
           ) : null}
-
           {/*
           <Typography variant="subtitle1" className={classes.lines}>
             Detekterte objekter
