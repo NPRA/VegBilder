@@ -10,6 +10,7 @@ import MoreImageInfoButton from '../SideControlButtons/MoreImageInfoButton';
 import { CommuteOutlined, RoomOutlined, SpeedOutlined } from '@material-ui/icons';
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 import { ContractIcon, DistanceToIcon, SladdetIcon } from 'components/Icons/Icons';
+import GetVeglenkesekvenserByVegsystemreferanse from 'apis/NVDB/getVeglenkesekvenserByVegsystemreferanse';
 
 const useStyles = makeStyles((theme) => ({
   infoContainer: {
@@ -86,7 +87,8 @@ const MoreImageInfo = ({
   const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
   const [fartsgrense, setFartsgrense] = useState<(string | number)[]>([]);
   const [trafikkMengde, setTrafikkMengde] = useState<string[]>([]);
-  const [kontraktsområder, setKontraktsområder] = useState<(string | number)[]>([]);
+  const [kontraktsområder, setKontraktsområder] = useState<string[]>([]);
+  const [gatenavn, setGatenavn] = useState<string>();
   const [broNavn, setBroNavn] = useState<(string | number)[]>([]);
   const [tunnelNavn, setTunnelNavn] = useState<(string | number)[]>([]);
 
@@ -97,23 +99,6 @@ const MoreImageInfo = ({
 
   const trimmedVegsystemreferanse = (imagePoint: IImagePoint) => {
     return getRoadReference(imagePoint).withoutFelt.replace(/\s/g, '').toLocaleLowerCase();
-  };
-
-  const getFartsgrense = async (imagePoint: IImagePoint) => {
-    await GetVegObjektByVegsystemreferanseAndVegobjektid(
-      trimmedVegsystemreferanse(imagePoint),
-      fartsgrenseId
-    ).then((res) => {
-      if (res && res.objekter.length) {
-        const fartsgrenser: number[] = [];
-        res.objekter.forEach((obj: any) => {
-          const egenskaper = obj.egenskaper;
-          const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
-          fartsgrenser.push(fartsgrense.verdi);
-        });
-        setFartsgrense(fartsgrenser);
-      }
-    });
   };
 
   const setResourceStateByEgenskapAndResourceId = async (
@@ -134,11 +119,13 @@ const MoreImageInfo = ({
           resource.push(egenskap.verdi);
         });
         setState(resource);
+      } else {
+        setState([]);
       }
     });
   };
 
-  const getTrafikk = async (imagePoint: IImagePoint) => {
+  const getTrafikkMengde = async (imagePoint: IImagePoint) => {
     await GetVegObjektByVegsystemreferanseAndVegobjektid(
       trimmedVegsystemreferanse(imagePoint),
       trafikkmengdeId
@@ -156,8 +143,31 @@ const MoreImageInfo = ({
           trafikk.push(`ÅDT total, ${trafikkMengdeÅr.verdi}: ${totalTrafikkmengde.verdi}`);
         });
         setTrafikkMengde(trafikk);
+      } else {
+        setTrafikkMengde([]);
       }
     });
+  };
+
+  const getGateNavnAndKontraktsområder = async (imagePoint: IImagePoint) => {
+    await GetVeglenkesekvenserByVegsystemreferanse(trimmedVegsystemreferanse(imagePoint)).then(
+      (res) => {
+        if (res && res.objekter.length) {
+          const kontraktsområder_: string[] = [];
+          res.objekter.forEach((obj: any) => {
+            const kontraktsområder = obj.kontraktsområder;
+            kontraktsområder.forEach((kontraktsområde: any) => {
+              kontraktsområder_.push(kontraktsområde.navn);
+            });
+            const gate = obj.gate;
+            if (gate) {
+              setGatenavn(gate.navn);
+            }
+          });
+          setKontraktsområder(kontraktsområder_);
+        }
+      }
+    );
   };
 
   // UTKOMMENTERT TIL DEN FLYTTER API
@@ -201,7 +211,15 @@ const MoreImageInfo = ({
         );
         setResourceStateByEgenskapAndResourceId(imagePoint, broId, 'Navn', setBroNavn);
         setResourceStateByEgenskapAndResourceId(imagePoint, tunnelId, 'Navn', setTunnelNavn);
-        getTrafikk(imagePoint);
+        getTrafikkMengde(imagePoint);
+        getGateNavnAndKontraktsområder(imagePoint);
+      } else {
+        setBroNavn([]);
+        setFartsgrense([]);
+        setGatenavn(undefined);
+        setTunnelNavn([]);
+        setTrafikkMengde([]);
+        setKontraktsområder([]);
       }
 
       if (imagePointLatlng) {
@@ -257,24 +275,25 @@ const MoreImageInfo = ({
         <div className={classes.scrollContainer}>
           {fylkesNavn.length && imagePoint.properties.FYLKENUMMER ? (
             <ItemGroupContainer headline="Plassering" Icon={RoomOutlined}>
+              {gatenavn ? (
+                <Typography variant="body1" className={classes.lines}>
+                  {gatenavn}
+                </Typography>
+              ) : null}
               {broNavn.length ? (
                 <Typography variant="body1" className={classes.lines}>
-                  {' '}
                   {`Bronavn: ${broNavn}`}
                 </Typography>
               ) : null}
               {tunnelNavn.length ? (
                 <Typography variant="body1" className={classes.lines}>
-                  {' '}
                   {`${tunnelNavn[0]}`}
                 </Typography>
               ) : null}
               <Typography variant="body1" className={classes.lines}>
-                {' '}
                 {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER})`}
               </Typography>
               <Typography variant="body1" className={classes.lines}>
-                {' '}
                 {`${kommuneNavn}`}
               </Typography>
             </ItemGroupContainer>
@@ -286,24 +305,28 @@ const MoreImageInfo = ({
               ))}
             </ItemGroupContainer>
           ) : null}
-          <ItemGroupContainer headline="Trafikkmengde" Icon={CommuteOutlined}>
-            {trafikkMengde.map((trafikkMengdeItem) => (
-              <Typography variant="body1" className={classes.lines}>
-                {trafikkMengdeItem}
-              </Typography>
-            ))}
-          </ItemGroupContainer>
+          {trafikkMengde.length ? (
+            <ItemGroupContainer headline="Trafikkmengde" Icon={CommuteOutlined}>
+              {trafikkMengde.map((trafikkMengdeItem) => (
+                <Typography variant="body1" className={classes.lines}>
+                  {trafikkMengdeItem}
+                </Typography>
+              ))}
+            </ItemGroupContainer>
+          ) : null}
           <ItemGroupContainer headline="Sladdet objekter" Icon={SladdetIcon}>
             <Typography variant="body1" className={classes.lines}>{`ÅDT: 200`}</Typography>
           </ItemGroupContainer>
-          <ItemGroupContainer headline="Kontraktsområder" Icon={ContractIcon}>
-            {kontraktsområder.map((kontraktsområde) => (
-              <Typography
-                variant="body1"
-                className={classes.lines}
-              >{`${kontraktsområde}`}</Typography>
-            ))}
-          </ItemGroupContainer>
+          {kontraktsområder.length ? (
+            <ItemGroupContainer headline="Kontraktsområder" Icon={ContractIcon}>
+              {kontraktsområder.map((kontraktsområde) => (
+                <Typography
+                  variant="body1"
+                  className={classes.lines}
+                >{`${kontraktsområde}`}</Typography>
+              ))}
+            </ItemGroupContainer>
+          ) : null}
           {position ? (
             <ItemGroupContainer Icon={DistanceToIcon} headline="nordkapp, lindesnes">
               <Typography variant="body1" className={classes.lines}>
