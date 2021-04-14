@@ -50,6 +50,8 @@ const SideControlBar = ({
   const [miniMapVisible, setMiniMapVisible] = useState(true);
 
   const showMiniMap = (miniMapVisible && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
+  const showInformationBox =
+    (showInformation && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
 
   return (
     <div className={classes.sideControlBar}>
@@ -77,7 +79,7 @@ const SideControlBar = ({
         />
       )}
 
-      {showInformation && !isZoomedInImage ? (
+      {showInformationBox ? (
         <MoreImageInfo
           showInformation={showInformation}
           setShowInformation={setShowInformation}

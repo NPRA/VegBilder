@@ -62,6 +62,15 @@ const useStyles = makeStyles((theme) => ({
   informationLines: {
     marginLeft: '2rem',
   },
+  detectedObjects: {
+    display: 'flex',
+  },
+  detectedObjectFrame: {
+    border: `1px solid ${theme.palette.common.grayRegular}`,
+    borderRadius: '5px',
+    padding: '0 0.2rem',
+    margin: '0.1rem 0.2rem 0.1rem 0',
+  },
 }));
 
 interface IMoreImageInfoProps {
@@ -78,8 +87,6 @@ const MoreImageInfo = ({
   setShowInformation,
 }: IMoreImageInfoProps) => {
   const classes = useStyles();
-  // const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
-  // const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
   const [position, setPosition] = useState<ILatlng>();
@@ -170,30 +177,26 @@ const MoreImageInfo = ({
     );
   };
 
-  // UTKOMMENTERT TIL DEN FLYTTER API
-  // const getMoreInfoProps = async (jsonUrl: string) => {
-  //   await getImageJsonFile(jsonUrl).then((res) => {
-  //     if (res) {
-  //       setStrekningsnavn(res.exif_strekningsnavn);
-  //       const detekterteObjekter = res.detekterte_objekter;
-  //       const keys = Object.keys(detekterteObjekter);
-  //       setDetectedObjectsKeys(keys);
-  //       setDetectedObjects(detekterteObjekter);
-  //     }
-  //   });
-  // };
-
-  // useEffect(() => {
-  //   if (imagePoint) {
-  //     const jsonUrl = getImageUrl(imagePoint).replace('jpg', 'json');
-  //     getMoreInfoProps(jsonUrl);
-  //   }
-  // }, [imagePoint]);
-
   const getKommuneAndFylke = async (latlng: ILatlng) => {
     const response = await GetKommuneAndFylkeByLatLng(latlng);
     setFylkesNavn(response.fylkesnavn);
     setKommuneNavn(`${response.kommunenavn} (${response.kommunenummer})  `);
+  };
+
+  const getDetectedObjectsJson = (imagePoint: IImagePoint) => {
+    if (imagePoint.properties.DETEKTERTEOBJEKTER) {
+      const detectedObjectsJson = JSON.parse(imagePoint.properties.DETEKTERTEOBJEKTER);
+      return detectedObjectsJson;
+    }
+  };
+
+  const getNumberOfDetectedObjects = (imagePoint: IImagePoint) => {
+    const detectedObjJson = getDetectedObjectsJson(imagePoint);
+    let n = 0;
+    for (let prop in detectedObjJson) {
+      n += parseInt(detectedObjJson[prop]);
+    }
+    return n;
   };
 
   useEffect(() => {
@@ -314,9 +317,23 @@ const MoreImageInfo = ({
               ))}
             </ItemGroupContainer>
           ) : null}
-          <ItemGroupContainer headline="Sladdet objekter" Icon={SladdetIcon}>
-            <Typography variant="body1" className={classes.lines}>{`ÅDT: 200`}</Typography>
-          </ItemGroupContainer>
+          {imagePoint.properties.DETEKTERTEOBJEKTER ? (
+            <ItemGroupContainer
+              headline={`Sladdet objekter (${getNumberOfDetectedObjects(imagePoint)})`}
+              Icon={SladdetIcon}
+            >
+              <div className={classes.detectedObjects}>
+                {Object.keys(getDetectedObjectsJson(imagePoint)).map((item) => (
+                  <div className={classes.detectedObjectFrame}>
+                    {' '}
+                    <Typography variant="body1" className={classes.lines}>
+                      {item}
+                    </Typography>{' '}
+                  </div>
+                ))}
+              </div>
+            </ItemGroupContainer>
+          ) : null}
           {kontraktsområder.length ? (
             <ItemGroupContainer headline="Kontraktsområder" Icon={ContractIcon}>
               {kontraktsområder.map((kontraktsområde) => (
@@ -335,21 +352,6 @@ const MoreImageInfo = ({
               </Typography>
             </ItemGroupContainer>
           ) : null}
-          {/*
-          <Typography variant="subtitle1" className={classes.lines}>
-            Detekterte objekter
-          </Typography>
-           {detectedObjectsKeys.length ? (
-            detectedObjectsKeys.map((key) => (
-              <Typography variant="body1" className={classes.lines} key={key}>
-                {`${key}: ${detectedObjects[key]} `}
-              </Typography>
-            ))
-          ) : (
-            <Typography variant="body1" className={classes.lines}>
-              Ingen
-            </Typography>
-          )} */}
         </div>
       ) : null}
     </Paper>
