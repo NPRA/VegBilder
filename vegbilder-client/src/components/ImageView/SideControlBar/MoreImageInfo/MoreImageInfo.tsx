@@ -1,4 +1,4 @@
-import React, { FunctionComponent, SVGProps, useEffect, useState } from 'react';
+import React, { FunctionComponent, SetStateAction, SVGProps, useEffect, useState } from 'react';
 import { makeStyles, Paper, SvgIconTypeMap, Typography } from '@material-ui/core';
 
 import { getImagePointLatLng, getRoadReference } from 'utilities/imagePointUtilities';
@@ -84,7 +84,7 @@ const MoreImageInfo = ({
   const [position, setPosition] = useState<ILatlng>();
   const [distanceToNordkapp, setDistanceToNordkapp] = useState<string>();
   const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
-  const [fartsgrense, setFartsgrense] = useState(0);
+  const [fartsgrense, setFartsgrense] = useState<(string | number)[]>([]);
   const [trafikkMengde, setTrafikkMengde] = useState<string[]>([]);
 
   const fartsgrenseId = 105;
@@ -103,9 +103,35 @@ const MoreImageInfo = ({
       fartsgrenseId
     ).then((res) => {
       if (res && res.objekter.length) {
-        const egenskaper = res.objekter[0].egenskaper ?? res.objekter.egenskaper;
-        const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
-        setFartsgrense(fartsgrense.verdi);
+        const fartsgrenser: number[] = [];
+        res.objekter.forEach((obj: any) => {
+          const egenskaper = obj.egenskaper;
+          const fartsgrense = egenskaper.find((egenskap: any) => egenskap.navn === 'Fartsgrense');
+          fartsgrenser.push(fartsgrense.verdi);
+        });
+        setFartsgrense(fartsgrenser);
+      }
+    });
+  };
+
+  const setResourceStateByEgenskapAndResourceId = async (
+    imagePoint: IImagePoint,
+    resourceId: number,
+    egenskap_: string,
+    setState: (state: (number | string)[]) => void
+  ) => {
+    await GetVegObjektByVegsystemreferanseAndVegobjektid(
+      trimmedVegsystemreferanse(imagePoint),
+      resourceId
+    ).then((res) => {
+      if (res && res.objekter.length) {
+        const resource: (string | number)[] = [];
+        res.objekter.forEach((obj: any) => {
+          const egenskaper = obj.egenskaper;
+          const egenskap = egenskaper.find((egenskap: any) => egenskap.navn === egenskap_);
+          resource.push(egenskap.verdi);
+        });
+        setState(resource);
       }
     });
   };
@@ -165,9 +191,15 @@ const MoreImageInfo = ({
       const imagePointLatlng = getImagePointLatLng(imagePoint);
 
       if (imagePoint.properties.AAR >= 2020) {
-        getFartsgrense(imagePoint);
+        setResourceStateByEgenskapAndResourceId(
+          imagePoint,
+          fartsgrenseId,
+          'Fartsgrense',
+          setFartsgrense
+        );
+        //getFartsgrense(imagePoint);
         getTrafikk(imagePoint);
-      } else setFartsgrense(0);
+      }
 
       if (imagePointLatlng) {
         getKommuneAndFylke(imagePointLatlng);
@@ -232,12 +264,11 @@ const MoreImageInfo = ({
               </Typography>
             </ItemGroupContainer>
           ) : null}
-          {fartsgrense > 0 ? (
+          {fartsgrense.length ? (
             <ItemGroupContainer headline="Fartsgrense" Icon={SpeedOutlined}>
-              <Typography
-                variant="body1"
-                className={classes.lines}
-              >{`${fartsgrense}km/h`}</Typography>
+              {fartsgrense.map((fart) => (
+                <Typography variant="body1" className={classes.lines}>{`${fart}km/h`}</Typography>
+              ))}
             </ItemGroupContainer>
           ) : null}
           <ItemGroupContainer headline="Trafikkmengde" Icon={CommuteOutlined}>
