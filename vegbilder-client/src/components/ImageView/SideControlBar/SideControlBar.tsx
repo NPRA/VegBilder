@@ -77,7 +77,7 @@ const SideControlBar = ({
         />
       )}
 
-      {showInformation ? (
+      {showInformation && !isZoomedInImage ? (
         <MoreImageInfo
           showInformation={showInformation}
           setShowInformation={setShowInformation}
