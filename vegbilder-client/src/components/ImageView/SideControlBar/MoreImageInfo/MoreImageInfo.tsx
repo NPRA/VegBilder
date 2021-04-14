@@ -71,6 +71,23 @@ const useStyles = makeStyles((theme) => ({
     padding: '0 0.2rem',
     margin: '0.1rem 0.2rem 0.1rem 0',
   },
+  NordkappLindesnesHeader: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginRight: '0.1rem',
+  },
+  NordkappLindesnesHeaderWord: {
+    width: '4.5rem',
+    alignSelf: 'center',
+    textTransform: 'uppercase',
+    color: theme.palette.common.grayRegular,
+  },
+  NordkappLindesnesWord: {
+    width: '4.5rem',
+    alignSelf: 'center',
+    color: theme.palette.common.grayRegular,
+  },
 }));
 
 interface IMoreImageInfoProps {
@@ -345,12 +362,31 @@ const MoreImageInfo = ({
             </ItemGroupContainer>
           ) : null}
           {position ? (
-            <ItemGroupContainer Icon={DistanceToIcon} headline="nordkapp, lindesnes">
-              <Typography variant="body1" className={classes.lines}>
-                {' '}
-                {`${distanceToNordkapp} km,  ${distanceToLindesnes} km`}
-              </Typography>
-            </ItemGroupContainer>
+            <Paper className={classes.itemGroupContainer}>
+              <div className={classes.NordkappLindesnesHeader}>
+                <DistanceToIcon className={classes.icon} />
+                <Typography variant="subtitle2" className={classes.NordkappLindesnesHeaderWord}>
+                  Nordkapp
+                </Typography>
+                <Typography variant="subtitle2" className={classes.NordkappLindesnesHeaderWord}>
+                  Lindesnes
+                </Typography>
+              </div>
+              <div className={classes.NordkappLindesnesHeader}>
+                <Typography
+                  variant="body1"
+                  className={classes.NordkappLindesnesWord}
+                  style={{ marginLeft: '2rem' }}
+                >
+                  {' '}
+                  {`${distanceToNordkapp}km`}
+                </Typography>
+                <Typography variant="body1" className={classes.NordkappLindesnesWord}>
+                  {' '}
+                  {`${distanceToLindesnes}km`}
+                </Typography>
+              </div>
+            </Paper>
           ) : null}
         </div>
       ) : null}
