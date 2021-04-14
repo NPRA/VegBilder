@@ -24,7 +24,8 @@ const useStyles = makeStyles((theme) => ({
   },
   scrollContainer: {
     maxHeight: '30vh',
-    overflowY: 'scroll',
+    overflowY: 'auto',
+    overflowX: 'hidden',
   },
   infoHeaderContainer: {
     display: 'flex',
@@ -79,7 +80,6 @@ const MoreImageInfo = ({
   const classes = useStyles();
   // const [detectedObjects, setDetectedObjects] = useState<{ [key: string]: string }>({});
   // const [detectedObjectsKeys, setDetectedObjectsKeys] = useState<string[]>([]);
-  // const [strekningsnavn, setStrekningsnavn] = useState('');
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
   const [position, setPosition] = useState<ILatlng>();
