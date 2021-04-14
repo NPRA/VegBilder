@@ -86,12 +86,14 @@ const MoreImageInfo = ({
   const [distanceToLindesnes, setDistanceToLindesnes] = useState<string>();
   const [fartsgrense, setFartsgrense] = useState<(string | number)[]>([]);
   const [trafikkMengde, setTrafikkMengde] = useState<string[]>([]);
+  const [kontraktsområder, setKontraktsområder] = useState<(string | number)[]>([]);
+  const [broNavn, setBroNavn] = useState<(string | number)[]>([]);
+  const [tunnelNavn, setTunnelNavn] = useState<(string | number)[]>([]);
 
   const fartsgrenseId = 105;
   const broId = 60;
   const tunnelId = 67;
   const trafikkmengdeId = 540;
-  const kontraktsområdeId = 580;
 
   const trimmedVegsystemreferanse = (imagePoint: IImagePoint) => {
     return getRoadReference(imagePoint).withoutFelt.replace(/\s/g, '').toLocaleLowerCase();
@@ -197,7 +199,8 @@ const MoreImageInfo = ({
           'Fartsgrense',
           setFartsgrense
         );
-        //getFartsgrense(imagePoint);
+        setResourceStateByEgenskapAndResourceId(imagePoint, broId, 'Navn', setBroNavn);
+        setResourceStateByEgenskapAndResourceId(imagePoint, tunnelId, 'Navn', setTunnelNavn);
         getTrafikk(imagePoint);
       }
 
@@ -254,6 +257,18 @@ const MoreImageInfo = ({
         <div className={classes.scrollContainer}>
           {fylkesNavn.length && imagePoint.properties.FYLKENUMMER ? (
             <ItemGroupContainer headline="Plassering" Icon={RoomOutlined}>
+              {broNavn.length ? (
+                <Typography variant="body1" className={classes.lines}>
+                  {' '}
+                  {`Bronavn: ${broNavn}`}
+                </Typography>
+              ) : null}
+              {tunnelNavn.length ? (
+                <Typography variant="body1" className={classes.lines}>
+                  {' '}
+                  {`${tunnelNavn[0]}`}
+                </Typography>
+              ) : null}
               <Typography variant="body1" className={classes.lines}>
                 {' '}
                 {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER})`}
@@ -282,10 +297,12 @@ const MoreImageInfo = ({
             <Typography variant="body1" className={classes.lines}>{`ÅDT: 200`}</Typography>
           </ItemGroupContainer>
           <ItemGroupContainer headline="Kontraktsområder" Icon={ContractIcon}>
-            <Typography
-              variant="body1"
-              className={classes.lines}
-            >{`9305 Sunnfjord 2021-2026`}</Typography>
+            {kontraktsområder.map((kontraktsområde) => (
+              <Typography
+                variant="body1"
+                className={classes.lines}
+              >{`${kontraktsområde}`}</Typography>
+            ))}
           </ItemGroupContainer>
           {position ? (
             <ItemGroupContainer Icon={DistanceToIcon} headline="nordkapp, lindesnes">
