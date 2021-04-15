@@ -261,7 +261,7 @@ const MoreImageInfo = ({
     Icon:
       | OverridableComponent<SvgIconTypeMap<{}, 'svg'>>
       | FunctionComponent<SVGProps<SVGSVGElement>>;
-    children: JSX.Element | JSX.Element[] | void[] | any;
+    children: React.ReactNode;
     headline?: string;
   }
 
