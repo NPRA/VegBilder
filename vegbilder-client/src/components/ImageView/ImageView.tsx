@@ -2,18 +2,15 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
-import { Typography } from '@material-ui/core';
-import { ArrowBack } from '@material-ui/icons';
 
 import ImageControlBar from './ImageControlBar/ImageControlBar';
-import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import ImageViewer from './ImageViewer/ImageViewer';
-import { isHistoryModeState } from 'recoil/atoms';
+import { currentImagePointState, isHistoryModeState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
 import CloseButton from 'components/CloseButton/CloseButton';
-import Theme from 'theme/Theme';
+import SideControlBar from './SideControlBar/SideControlBar';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -36,41 +33,6 @@ const useStyles = makeStyles(() => ({
     height: '100%',
     overflow: 'hidden',
   },
-  backToMapButton: {
-    border: 'none',
-    position: 'absolute',
-    top: '1rem',
-    left: '0.5rem',
-    backgroundColor: Theme.palette.common.grayDarker,
-    zIndex: 1000,
-    padding: '0 1rem',
-    minHeight: '2rem',
-    color: Theme.palette.common.grayMenuItems,
-    textAlign: 'center',
-    borderRadius: '10px',
-    display: 'flex',
-    cursor: 'pointer',
-    opacity: 0.9,
-    '&:hover': {
-      color: Theme.palette.common.orangeDark,
-      backgroundColor: Theme.palette.common.grayDark,
-      opacity: 'revert',
-      '& span': {
-        '& svg': {
-          '& path': {
-            fill: Theme.palette.common.orangeDark,
-          },
-        },
-      },
-    },
-  },
-  arrowBack: {
-    margin: '0 0.375rem 0 0',
-    alignSelf: 'center',
-  },
-  backToText: {
-    alignSelf: 'center',
-  },
 }));
 
 interface IImageViewProps {
@@ -91,15 +53,14 @@ type ScrollAction =
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const isHistoryMode = useRecoilValue(isHistoryModeState);
+  const currentImagePoint = useRecoilValue(currentImagePointState);
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
   const imageContainerRef = useRef<HTMLImageElement>(null);
   const [cursor, setCursor] = useState('zoom-in');
   const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
-  const [miniMapVisible, setMiniMapVisible] = useState(true);
-  const [meterLineVisible, setMeterLineVisible] = useState(false);
 
-  const showMiniMap = (miniMapVisible && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
+  const [meterLineVisible, setMeterLineVisible] = useState(false);
 
   const maxScrollHeight = Math.max(
     document.body.scrollHeight,
@@ -258,22 +219,17 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             />
           </div>
         )}
-        <button className={classes.backToMapButton} onClick={setView}>
-          {' '}
-          <ArrowBack className={classes.arrowBack} />
-          <Typography variant="body1" className={classes.backToText}>
-            {' '}
-            Tilbake til stort kart{' '}
-          </Typography>{' '}
-        </button>
-        {showMiniMap ? <SmallMapContainer /> : null}
+        <SideControlBar
+          setView={setView}
+          isZoomedInImage={isZoomedInImage}
+          imagePoint={currentImagePoint}
+          isHistoryMode={isHistoryMode}
+        />
       </Grid>
       <Grid item className={classes.footer}>
         <ImageControlBar
-          miniMapVisible={miniMapVisible}
           meterLineVisible={meterLineVisible}
           setMeterLineVisible={setMeterLineVisible}
-          setMiniMapVisible={setMiniMapVisible}
           showMessage={showSnackbarMessage}
           setShowReportErrorsScheme={setShowReportErrorsScheme}
           timeBetweenImages={timeBetweenImages}

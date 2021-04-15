@@ -22,17 +22,11 @@ import { ReactComponent as DotsHorizontalSmallIcon } from './Dots-Horizontal-sma
 import { ReactComponent as ZoomInIcon } from './zoom-in.svg';
 import { ReactComponent as ZoomOutIcon } from './zoom-out.svg';
 import { ReactComponent as SettingsIcon } from './settings.svg';
+import { ReactComponent as DistanceToIcon } from './DistanceTo.svg';
 import { ReactComponent as MyLocationIcon } from './myLocationIcon.svg';
 import { ReactComponent as HistorySmallIcon } from './HistorySmall.svg';
-import { ReactComponent as ThirthySignIcon } from './speedSigns/sign_30.svg';
-import { ReactComponent as FourtySignIcon } from './speedSigns/sign_40.svg';
-import { ReactComponent as FiftySignIcon } from './speedSigns/sign_50.svg';
-import { ReactComponent as SixtySignIcon } from './speedSigns/sign_60.svg';
-import { ReactComponent as SeventySignIcon } from './speedSigns/sign_70.svg';
-import { ReactComponent as EightySignIcon } from './speedSigns/sign_80.svg';
-import { ReactComponent as NighntySignIcon } from './speedSigns/sign_90.svg';
-import { ReactComponent as HundredSignIcon } from './speedSigns/sign_100.svg';
-import { ReactComponent as HundredTenSignIcon } from './speedSigns/sign_110.svg';
+import { ReactComponent as SladdetIcon } from './sladdet.svg';
+import { ReactComponent as ContractIcon } from './contract.svg';
 
 export {
   ArrowDownIcon,
@@ -57,17 +51,11 @@ export {
   InformIcon,
   DotsHorizontalSmallIcon,
   HistorySmallIcon,
-  ThirthySignIcon,
-  FourtySignIcon,
-  FiftySignIcon,
-  SixtySignIcon,
-  SeventySignIcon,
-  EightySignIcon,
-  NighntySignIcon,
-  HundredSignIcon,
-  HundredTenSignIcon,
   ZoomInIcon,
   ZoomOutIcon,
   MyLocationIcon,
   SettingsIcon,
+  DistanceToIcon,
+  SladdetIcon,
+  ContractIcon,
 };

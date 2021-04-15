@@ -28,6 +28,7 @@ export interface IImagePoint {
     RETNING: number;
     URL: string;
     BASELINEINFO: string;
+    DETEKTERTEOBJEKTER: string | null;
   };
 }
 

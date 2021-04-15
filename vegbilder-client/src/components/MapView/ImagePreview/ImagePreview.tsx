@@ -1,12 +1,10 @@
 import React from 'react';
-import { Box, IconButton, Tooltip } from '@material-ui/core';
+import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
-import { EnlargeIcon } from 'components/Icons/Icons';
 import CloseButton from 'components/CloseButton/CloseButton';
-import MoreImageInfo from 'components/MoreImageInfo/MoreImageInfo';
 import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 
@@ -75,14 +73,6 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
           justifyContent="space-between"
         >
           <ImageMetadata />
-          {/* <div>
-            <MoreImageInfo imagePoint={currentImagePoint} className={classes.infoButton} />
-            <Tooltip title="Åpne bilde">
-              <IconButton className={classes.enlargeButton} onClick={openImage}>
-                <EnlargeIcon />
-              </IconButton>
-            </Tooltip>
-          </div> */}
         </Box>
       </Box>
     );

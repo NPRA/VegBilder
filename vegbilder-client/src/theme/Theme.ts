@@ -7,6 +7,8 @@ declare module '@material-ui/core/styles/createPalette' {
   interface CommonColors {
     grayDark: string;
     grayDarker: string;
+    grayRegular: string;
+    grayMedium: string;
     grayIcons: string;
     grayMenuItems: string;
     charcoalLighter: string;
@@ -22,6 +24,7 @@ const grayDarker = '#2E3539';
 const orangeDark = '#F67F00';
 const blueRegular = '#077197';
 const grayMenuItems = '#c4c4c4';
+const grayMedium = '#45515A';
 
 const LFTEticaThin = {
   fontFamily: '"LFT-Etica thin"',
@@ -83,6 +86,10 @@ export default createMuiTheme({
       fontFamily: '"LFT-Etica semi-bold"',
       fontSize: '0.875rem',
     },
+    subtitle2: {
+      fontFamily: '"LFT-Etica semi-bold"',
+      fontSize: '0.625rem',
+    },
     body1: {
       fontFamily: '"LFT-Etica"',
       fontSize: '0.875rem',
@@ -92,10 +99,12 @@ export default createMuiTheme({
     common: {
       grayDark: grayDark,
       grayDarker: grayDarker,
+      grayRegular: grayRegular,
       grayIcons: grayIcons,
       grayMenuItems: grayMenuItems,
       charcoalLighter: charcoalLighter,
       orangeDark: orangeDark,
+      grayMedium: grayMedium,
     },
     primary: {
       main: grayDarker,

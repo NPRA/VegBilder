@@ -1,8 +1,11 @@
 import nvdbApi from './nvdbApi';
 
-const GetFartsgrenseByVegsystemreferanse = async (vegsystemreferanse: string) => {
+const GetVegObjektByVegsystemreferanseAndVegobjektid = async (
+  vegsystemreferanse: string,
+  vegobjektid: number
+) => {
   return await nvdbApi
-    .get('/vegobjekter/105', {
+    .get(`/vegobjekter/${vegobjektid}`, {
       params: {
         vegsystemreferanse: vegsystemreferanse,
         srid: '4326',
@@ -27,4 +30,4 @@ const GetFartsgrenseByVegsystemreferanse = async (vegsystemreferanse: string) =>
     });
 };
 
-export default GetFartsgrenseByVegsystemreferanse;
+export default GetVegObjektByVegsystemreferanseAndVegobjektid;

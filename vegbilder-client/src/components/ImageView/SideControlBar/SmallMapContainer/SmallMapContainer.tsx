@@ -3,7 +3,7 @@ import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { crsUtm33N } from '../../MapContainer/crs';
+import { crsUtm33N } from '../../../MapContainer/crs';
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 import 'components/MapContainer/MapContainer.css';
 import { useRecoilState } from 'recoil';
@@ -11,11 +11,8 @@ import { latLngZoomQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles(() => ({
   minimap: {
-    position: 'absolute',
-    width: '18vw',
-    height: '18vw',
-    left: '0.5rem',
-    top: '3.4rem',
+    height: '17vw',
+    maxHeight: '300px',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
     borderRadius: '10px',
     zIndex: 5,
