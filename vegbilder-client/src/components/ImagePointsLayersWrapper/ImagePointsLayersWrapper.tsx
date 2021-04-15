@@ -19,15 +19,6 @@ const ImagePointLayersWrapper = () => {
     ? `Vegbilder_oversikt_${2020}`
     : `Vegbilder_oversikt_${currentYear}`;
 
-  const prikkeKart = showNyesteKartlag ? `Vegbilder_${2020}` : `Vegbilder_${currentYear}`;
-
-  const getLayers = () => {
-    if (zoom > 9) {
-      return prikkeKart;
-    }
-    return oversiktsKartlag;
-  };
-
   const renderImagePointsLayer = () => {
     if (showImagePointsMarkers) {
       return <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={true} />;
@@ -36,7 +27,7 @@ const ImagePointLayersWrapper = () => {
         <WMSTileLayer
           url={config}
           attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
-          layers={getLayers()}
+          layers={oversiktsKartlag}
           format="image/png"
           transparent={true}
           opacity={0.6}
