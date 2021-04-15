@@ -4,7 +4,7 @@ import { getBearingBetween, getDistanceInMetersBetween } from './latlngUtilities
 import { splitDateTimeString } from './dateTimeUtilities';
 import { IImagePoint, ILatlng } from 'types';
 import { Dictionary } from 'lodash';
-import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
+//import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
 const getImagePointLatLng = (imagePoint: IImagePoint) => {
   if (imagePoint) {
@@ -14,8 +14,7 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
   }
 };
 
-const getImageUrl = (imagepoint: IImagePoint) =>
-  rewriteUrlDomainToLocalhost(imagepoint.properties.URL);
+const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
 
 const findNearestImagePoint = (
   imagePoints: IImagePoint[],
