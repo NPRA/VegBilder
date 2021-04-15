@@ -2,30 +2,29 @@ import { makeStyles, Typography } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 import React from 'react';
 
-import Theme from 'theme/Theme';
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   backToMapButton: {
     border: 'none',
-    backgroundColor: Theme.palette.common.grayDarker,
+    backgroundColor: theme.palette.common.grayDarker,
     zIndex: 1000,
     width: '11.5rem',
-    padding: '0 1rem',
+    padding: '0 0.5rem',
     minHeight: '2rem',
-    color: Theme.palette.common.grayMenuItems,
+    color: theme.palette.common.grayRegular,
     textAlign: 'center',
+    textTransform: 'uppercase',
     borderRadius: '10px',
     display: 'flex',
     cursor: 'pointer',
-    opacity: 0.9,
+    opacity: 0.7,
     '&:hover': {
-      color: Theme.palette.common.orangeDark,
-      backgroundColor: Theme.palette.common.grayDark,
+      color: theme.palette.common.orangeDark,
+      backgroundColor: theme.palette.common.grayDark,
       opacity: 'revert',
       '& span': {
         '& svg': {
           '& path': {
-            fill: Theme.palette.common.orangeDark,
+            fill: theme.palette.common.orangeDark,
           },
         },
       },
@@ -50,9 +49,9 @@ const BackToBigMapButton = ({ setView }: IBackToBigMapButton) => {
     <button className={classes.backToMapButton} onClick={() => setView('map')}>
       {' '}
       <ArrowBack className={classes.arrowBack} />
-      <Typography variant="body1" className={classes.backToText}>
+      <Typography variant="subtitle1" className={classes.backToText}>
         {' '}
-        Tilbake til stort kart{' '}
+        Tilbake til kart{' '}
       </Typography>{' '}
     </button>
   );

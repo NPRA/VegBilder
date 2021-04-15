@@ -22,12 +22,13 @@ const useStyles = makeStyles(() => ({
     left: '0.5rem',
     display: 'flex',
     flexDirection: 'column',
+    width: '18vw',
   },
   miniMapHeader: {
     display: 'flex',
     marginTop: '0.35rem',
     backgroundColor: Theme.palette.common.grayDarker,
-    opacity: 0.8,
+    opacity: 0.7,
     borderRadius: '10px 10px 0 0',
   },
   miniMapHeaderText: {
@@ -65,18 +66,20 @@ const SideControlBar = ({
               isZoomedInImage={isZoomedInImage}
             />
             <Typography variant="subtitle1" className={classes.miniMapHeaderText}>
-              {' '}
-              Kart{' '}
+              Kart
             </Typography>
           </Paper>
           <SmallMapContainer />
         </>
       ) : (
-        <HideShowMiniMapButton
-          miniMapVisible={miniMapVisible}
-          setMiniMapVisible={setMiniMapVisible}
-          isZoomedInImage={isZoomedInImage}
-        />
+        <>
+          <br style={{ marginTop: '0.35rem' }} />
+          <HideShowMiniMapButton
+            miniMapVisible={miniMapVisible}
+            setMiniMapVisible={setMiniMapVisible}
+            isZoomedInImage={isZoomedInImage}
+          />
+        </>
       )}
 
       {showInformationBox ? (
@@ -87,11 +90,14 @@ const SideControlBar = ({
           imagePoint={imagePoint}
         />
       ) : (
-        <MoreImageInfoButton
-          showInformation={showInformation}
-          setShowInformation={setShowInformation}
-          disabled={isZoomedInImage}
-        />
+        <>
+          <br style={{ marginTop: '0.35rem' }} />
+          <MoreImageInfoButton
+            showInformation={showInformation}
+            setShowInformation={setShowInformation}
+            disabled={isZoomedInImage}
+          />
+        </>
       )}
     </div>
   );

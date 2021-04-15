@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     marginTop: '0.35rem',
-    opacity: 0.8,
+    opacity: 0.7,
     borderRadius: '10px',
     backgroundColor: theme.palette.common.grayDarker,
     paddingBottom: '0.5rem',
@@ -26,6 +26,7 @@ const useStyles = makeStyles((theme) => ({
     maxHeight: '30vh',
     overflowY: 'auto',
     overflowX: 'hidden',
+    padding: '0 0.5rem',
   },
   infoHeaderContainer: {
     display: 'flex',
@@ -41,7 +42,7 @@ const useStyles = makeStyles((theme) => ({
   itemGroupContainer: {
     backgroundColor: theme.palette.common.grayMedium,
     opacity: 0.9,
-    width: '17vw',
+    width: '95%',
     margin: '0.5rem auto 0 auto',
     borderRadius: '5px',
     padding: '0.3rem',
@@ -74,18 +75,19 @@ const useStyles = makeStyles((theme) => ({
   NordkappLindesnesHeader: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginRight: '0.1rem',
+    marginRight: '0.5rem',
   },
   NordkappLindesnesHeaderWord: {
     width: '4.5rem',
     alignSelf: 'center',
     textTransform: 'uppercase',
+    margin: '0 1.5rem 0 0.5rem',
     color: theme.palette.common.grayRegular,
   },
   NordkappLindesnesWord: {
     width: '4.5rem',
     alignSelf: 'center',
+    margin: '0 1.5rem 0 0.5rem',
     color: theme.palette.common.grayRegular,
   },
 }));

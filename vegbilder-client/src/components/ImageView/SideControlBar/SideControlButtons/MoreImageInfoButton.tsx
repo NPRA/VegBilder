@@ -2,23 +2,23 @@ import React from 'react';
 import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
 
 import { InformIcon } from 'components/Icons/Icons';
-import Theme from 'theme/Theme';
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    backgroundColor: Theme.palette.common.grayDarker,
-    opacity: 0.9,
+    backgroundColor: theme.palette.common.grayDarker,
+    marginLeft: '0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {
-          fill: Theme.palette.common.grayRegular,
+          fill: theme.palette.common.grayRegular,
         },
       },
     },
   },
   buttonDisabled: {
+    marginLeft: '0.2rem',
     marginTop: '0.25rem',
-    backgroundColor: Theme.palette.common.grayDark,
+    backgroundColor: theme.palette.common.grayDark,
     opacity: 0.7,
   },
 }));
