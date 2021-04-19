@@ -7,7 +7,6 @@ const useStyles = makeStyles((theme) => ({
   button: {
     backgroundColor: theme.palette.common.grayDarker,
     opacity: 0.7,
-    marginLeft: '0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {
@@ -17,7 +16,6 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   buttonDisabled: {
-    marginLeft: '0.2rem',
     marginTop: '0.25rem',
     backgroundColor: theme.palette.common.grayDark,
     opacity: 0.7,

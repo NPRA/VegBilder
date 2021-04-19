@@ -2,25 +2,22 @@ import React from 'react';
 import { Tooltip, IconButton, makeStyles } from '@material-ui/core';
 
 import { MapIcon, MapDisabledIcon } from 'components/Icons/Icons';
-import Theme from 'theme/Theme';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   button: {
-    backgroundColor: Theme.palette.common.grayDarker,
+    backgroundColor: theme.palette.common.grayDarker,
     opacity: 0.7,
-    marginLeft: '0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {
-          fill: Theme.palette.common.grayRegular,
+          fill: theme.palette.common.grayRegular,
         },
       },
     },
   },
   buttonDisabled: {
     marginTop: '0.25rem',
-    marginLeft: '0.2rem',
-    backgroundColor: Theme.palette.common.grayDark,
+    backgroundColor: theme.palette.common.grayDark,
     opacity: 0.7,
   },
 }));
@@ -44,6 +41,7 @@ const HideShowMiniMapButton = ({
         disabled={isZoomedInImage}
         aria-label="Vis/skjul kart"
         className={isZoomedInImage ? classes.buttonDisabled : classes.button}
+        style={miniMapVisible ? { position: 'absolute', zIndex: 1000 } : {}}
         onClick={() => setMiniMapVisible(!miniMapVisible)}
       >
         {miniMapVisible ? <MapIcon /> : <MapDisabledIcon />}

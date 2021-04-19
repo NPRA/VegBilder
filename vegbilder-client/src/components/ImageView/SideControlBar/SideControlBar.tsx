@@ -24,19 +24,6 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     width: '18vw',
   },
-  miniMapHeader: {
-    display: 'flex',
-    marginTop: '0.35rem',
-    backgroundColor: Theme.palette.common.grayDarker,
-    opacity: 0.7,
-    borderRadius: '10px 10px 0 0',
-  },
-  miniMapHeaderText: {
-    alignSelf: 'center',
-    textTransform: 'uppercase',
-    opacity: 1,
-    color: Theme.palette.common.grayRegular,
-  },
 }));
 
 const SideControlBar = ({
@@ -59,12 +46,19 @@ const SideControlBar = ({
       <BackToBigMapButton setView={setView} />
       <>
         <br style={{ marginTop: '0.35rem' }} />
-        <HideShowMiniMapButton
-          miniMapVisible={miniMapVisible}
-          setMiniMapVisible={setMiniMapVisible}
-          isZoomedInImage={isZoomedInImage}
-        />
-        {showMiniMap ? <SmallMapContainer /> : null}
+        {showMiniMap ? (
+          <SmallMapContainer
+            miniMapVisible={miniMapVisible}
+            setMiniMapVisible={setMiniMapVisible}
+            isZoomedInImage={isZoomedInImage}
+          />
+        ) : (
+          <HideShowMiniMapButton
+            miniMapVisible={miniMapVisible}
+            setMiniMapVisible={setMiniMapVisible}
+            isZoomedInImage={isZoomedInImage}
+          />
+        )}
       </>
       {showInformationBox ? (
         <MoreImageInfo

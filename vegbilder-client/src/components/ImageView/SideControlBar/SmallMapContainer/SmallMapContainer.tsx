@@ -5,9 +5,10 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { crsUtm33N } from '../../../MapContainer/crs';
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
-import 'components/MapContainer/MapContainer.css';
+import './SmallMapContainer.css';
 import { useRecoilState } from 'recoil';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
+import HideShowMiniMapButton from '../SideControlButtons/HideShowMiniMapButton';
 
 const useStyles = makeStyles(() => ({
   minimap: {
@@ -28,7 +29,17 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-const SmallMapContainer = () => {
+interface ISmallMapContainerProps {
+  miniMapVisible: boolean;
+  setMiniMapVisible: (visible: boolean) => void;
+  isZoomedInImage: boolean;
+}
+
+const SmallMapContainer = ({
+  miniMapVisible,
+  setMiniMapVisible,
+  isZoomedInImage,
+}: ISmallMapContainerProps) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const classes = useStyles();
   const minZoom = 15;
@@ -57,6 +68,11 @@ const SmallMapContainer = () => {
           subdomains="123456789"
         />
         <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={false} />
+        <HideShowMiniMapButton
+          miniMapVisible={miniMapVisible}
+          isZoomedInImage={isZoomedInImage}
+          setMiniMapVisible={setMiniMapVisible}
+        />
       </Map>
     </div>
   );
