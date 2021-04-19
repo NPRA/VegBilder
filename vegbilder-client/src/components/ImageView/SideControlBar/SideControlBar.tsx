@@ -23,6 +23,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     width: '18vw',
+    maxHeight: '90%',
   },
 }));
 
