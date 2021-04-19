@@ -11,6 +11,7 @@ import { CommuteOutlined, RoomOutlined, SpeedOutlined } from '@material-ui/icons
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 import { ContractIcon, DistanceToIcon, SladdetIcon } from 'components/Icons/Icons';
 import GetVeglenkesekvenserByVegsystemreferanse from 'apis/NVDB/getVeglenkesekvenserByVegsystemreferanse';
+import GetPositionDataByLatLng from 'apis/NVDB/getPositionDataByLatLng';
 
 const useStyles = makeStyles((theme) => ({
   infoContainer: {
@@ -123,18 +124,18 @@ const MoreImageInfo = ({
   const tunnelId = 67;
   const trafikkmengdeId = 540;
 
-  const trimmedVegsystemreferanse = (imagePoint: IImagePoint) => {
+  const getTrimmedVegsystemreferanse = (imagePoint: IImagePoint) => {
     return getRoadReference(imagePoint).withoutFelt.replace(/\s/g, '').toLocaleLowerCase();
   };
 
   const setResourceStateByEgenskapAndResourceId = async (
-    imagePoint: IImagePoint,
+    trimmedVegsystemreferanse: string,
     resourceId: number,
     egenskap_: string,
     setState: (state: (number | string)[]) => void
   ) => {
     await GetVegObjektByVegsystemreferanseAndVegobjektid(
-      trimmedVegsystemreferanse(imagePoint),
+      trimmedVegsystemreferanse,
       resourceId
     ).then((res) => {
       if (res && res.objekter.length) {
@@ -151,9 +152,9 @@ const MoreImageInfo = ({
     });
   };
 
-  const getTrafikkMengde = async (imagePoint: IImagePoint) => {
+  const getTrafikkMengde = async (trimmedVegsystemreferanse: string) => {
     await GetVegObjektByVegsystemreferanseAndVegobjektid(
-      trimmedVegsystemreferanse(imagePoint),
+      trimmedVegsystemreferanse,
       trafikkmengdeId
     ).then((res) => {
       if (res && res.objekter.length) {
@@ -175,31 +176,54 @@ const MoreImageInfo = ({
     });
   };
 
-  const getGateNavnAndKontraktsområder = async (imagePoint: IImagePoint) => {
-    await GetVeglenkesekvenserByVegsystemreferanse(trimmedVegsystemreferanse(imagePoint)).then(
-      (res) => {
-        if (res && res.objekter.length) {
-          const kontraktsområder_: string[] = [];
-          res.objekter.forEach((obj: any) => {
-            const kontraktsområder = obj.kontraktsområder;
-            kontraktsområder.forEach((kontraktsområde: any) => {
-              kontraktsområder_.push(kontraktsområde.navn);
-            });
-            const gate = obj.gate;
-            if (gate) {
-              setGatenavn(gate.navn);
-            }
+  const getGateNavnAndKontraktsområder = async (trimmedVegsystemreferanse: string) => {
+    await GetVeglenkesekvenserByVegsystemreferanse(trimmedVegsystemreferanse).then((res) => {
+      if (res && res.objekter.length) {
+        const kontraktsområder_: string[] = [];
+        res.objekter.forEach((obj: any) => {
+          const kontraktsområder = obj.kontraktsområder;
+          kontraktsområder.forEach((kontraktsområde: any) => {
+            kontraktsområder_.push(kontraktsområde.navn);
           });
-          setKontraktsområder(kontraktsområder_);
-        }
+          const gate = obj.gate;
+          if (gate) {
+            setGatenavn(gate.navn);
+          }
+        });
+        setKontraktsområder(kontraktsområder_);
       }
-    );
+    });
   };
 
   const getKommuneAndFylke = async (latlng: ILatlng) => {
     const response = await GetKommuneAndFylkeByLatLng(latlng);
     setFylkesNavn(response.fylkesnavn);
     setKommuneNavn(`${response.kommunenavn} (${response.kommunenummer})  `);
+  };
+
+  const getAndSetPropertiesFromNvdb = (trimmedVegsystemreferanse: string) => {
+    setResourceStateByEgenskapAndResourceId(
+      trimmedVegsystemreferanse,
+      fartsgrenseId,
+      'Fartsgrense',
+      setFartsgrense
+    );
+    setResourceStateByEgenskapAndResourceId(trimmedVegsystemreferanse, broId, 'Navn', setBroNavn);
+    setResourceStateByEgenskapAndResourceId(
+      trimmedVegsystemreferanse,
+      tunnelId,
+      'Navn',
+      setTunnelNavn
+    );
+    getTrafikkMengde(trimmedVegsystemreferanse);
+    getGateNavnAndKontraktsområder(trimmedVegsystemreferanse);
+  };
+
+  const getVegsystemReferanseAndSetNvdPropsForOldYears = async (latlng: ILatlng) => {
+    await GetPositionDataByLatLng(latlng).then((res) => {
+      const trimmedVegsystemreferanse = res[0].vegsystemreferanse.kortform.replace(/\s/g, '');
+      getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
+    });
   };
 
   const getDetectedObjectsJson = (imagePoint: IImagePoint) => {
@@ -224,24 +248,14 @@ const MoreImageInfo = ({
       const LindesnesLatLng = { lat: 57.9825904, lng: 7.0483913 };
       const imagePointLatlng = getImagePointLatLng(imagePoint);
 
+      if (imagePoint.properties.AAR < 2020) {
+      }
+
       if (imagePoint.properties.AAR >= 2020) {
-        setResourceStateByEgenskapAndResourceId(
-          imagePoint,
-          fartsgrenseId,
-          'Fartsgrense',
-          setFartsgrense
-        );
-        setResourceStateByEgenskapAndResourceId(imagePoint, broId, 'Navn', setBroNavn);
-        setResourceStateByEgenskapAndResourceId(imagePoint, tunnelId, 'Navn', setTunnelNavn);
-        getTrafikkMengde(imagePoint);
-        getGateNavnAndKontraktsområder(imagePoint);
+        const trimmedVegsystemreferanse = getTrimmedVegsystemreferanse(imagePoint);
+        getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
       } else {
-        setBroNavn([]);
-        setFartsgrense([]);
-        setGatenavn(undefined);
-        setTunnelNavn([]);
-        setTrafikkMengde([]);
-        setKontraktsområder([]);
+        if (imagePointLatlng) getVegsystemReferanseAndSetNvdPropsForOldYears(imagePointLatlng);
       }
 
       if (imagePointLatlng) {
