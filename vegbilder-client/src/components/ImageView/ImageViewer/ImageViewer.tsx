@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
   imageArea: {
     height: '100%',
     minWidth: '70%',
-    //backgroundColor: theme.palette.primary.main,
+    backgroundColor: theme.palette.primary.main,
     display: 'flex',
     maxHeight: 'calc(100vh - 10rem)', // Total view height minus the height of the header and footer combined
     maxWidth: '100%',
