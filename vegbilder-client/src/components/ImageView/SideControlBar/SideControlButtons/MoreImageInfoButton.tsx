@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
 
-import { InformIcon } from 'components/Icons/Icons';
+import { InformIcon, InformOffIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -36,14 +36,14 @@ const MoreImageInfoButton = ({
   const classes = useStyles();
 
   return (
-    <Tooltip title="Mer info om bildet">
+    <Tooltip title={showInformation ? 'Skjul info' : 'Mer info om bildet'}>
       <IconButton
         disabled={disabled}
         aria-label="Mer info om bildet"
         className={disabled ? classes.buttonDisabled : classes.button}
         onClick={() => setShowInformation(!showInformation)}
       >
-        <InformIcon />
+        {showInformation ? <InformIcon /> : <InformOffIcon />}
       </IconButton>
     </Tooltip>
   );

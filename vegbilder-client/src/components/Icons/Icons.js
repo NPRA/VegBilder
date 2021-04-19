@@ -27,6 +27,7 @@ import { ReactComponent as MyLocationIcon } from './myLocationIcon.svg';
 import { ReactComponent as HistorySmallIcon } from './HistorySmall.svg';
 import { ReactComponent as SladdetIcon } from './sladdet.svg';
 import { ReactComponent as ContractIcon } from './contract.svg';
+import { ReactComponent as InformOffIcon } from './InformOff.svg';
 
 export {
   ArrowDownIcon,
@@ -58,4 +59,5 @@ export {
   DistanceToIcon,
   SladdetIcon,
   ContractIcon,
+  InformOffIcon,
 };
