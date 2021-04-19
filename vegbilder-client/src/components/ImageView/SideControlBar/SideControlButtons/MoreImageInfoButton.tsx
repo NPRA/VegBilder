@@ -6,6 +6,7 @@ import { InformIcon } from 'components/Icons/Icons';
 const useStyles = makeStyles((theme) => ({
   button: {
     backgroundColor: theme.palette.common.grayDarker,
+    opacity: 0.7,
     marginLeft: '0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
