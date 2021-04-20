@@ -117,7 +117,7 @@ const MoreImageInfo = ({
   const [gatenavn, setGatenavn] = useState<string>();
   const [broNavn, setBroNavn] = useState<(string | number)[]>([]);
   const [tunnelNavn, setTunnelNavn] = useState<(string | number)[]>([]);
-  const [vegsystemreferanseFraNvdb, setVegsystemReferanseFraNvdb] = useState('');
+  const [vegsystemreferanse, setVegsystemReferanse] = useState('');
 
   const fartsgrenseId = 105;
   const broId = 60;
@@ -222,7 +222,7 @@ const MoreImageInfo = ({
   const getVegsystemReferanseAndSetNvdPropsForOldYears = async (latlng: ILatlng) => {
     await GetPositionDataByLatLng(latlng).then((res) => {
       const trimmedVegsystemreferanse = res[0].vegsystemreferanse.kortform.replace(/\s/g, '');
-      setVegsystemReferanseFraNvdb(res[0].vegsystemreferanse.kortform);
+      setVegsystemReferanse(res[0].vegsystemreferanse.kortform);
       getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
     });
   };
@@ -250,6 +250,7 @@ const MoreImageInfo = ({
       const imagePointLatlng = getImagePointLatLng(imagePoint);
 
       if (imagePoint.properties.AAR >= 2020) {
+        setVegsystemReferanse(getRoadReference(imagePoint).withoutFelt);
         const trimmedVegsystemreferanse = getTrimmedVegsystemreferanse(imagePoint);
         getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
       } else {
@@ -300,7 +301,7 @@ const MoreImageInfo = ({
           disabled={disabled}
         />
         <Typography variant="subtitle1" className={classes.infoHeader}>
-          {vegsystemreferanseFraNvdb.length ? vegsystemreferanseFraNvdb : ''}
+          {vegsystemreferanse.length ? vegsystemreferanse : ''}
         </Typography>
       </div>
       {imagePoint ? (
