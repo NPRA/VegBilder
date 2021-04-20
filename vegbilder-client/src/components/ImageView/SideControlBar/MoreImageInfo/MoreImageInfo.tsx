@@ -18,13 +18,13 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     marginTop: '0.35rem',
-    opacity: 0.7,
+    opacity: 0.8,
     borderRadius: '10px',
     backgroundColor: theme.palette.common.grayDarker,
     paddingBottom: '0.5rem',
   },
   scrollContainer: {
-    maxHeight: '30vh',
+    maxHeight: '40vh',
     overflowY: 'auto',
     overflowX: 'hidden',
     padding: '0 0.5rem',
@@ -42,7 +42,6 @@ const useStyles = makeStyles((theme) => ({
   },
   itemGroupContainer: {
     backgroundColor: theme.palette.common.grayMedium,
-    opacity: 0.9,
     width: '95%',
     margin: '0.5rem auto 0 auto',
     borderRadius: '5px',
@@ -118,6 +117,7 @@ const MoreImageInfo = ({
   const [gatenavn, setGatenavn] = useState<string>();
   const [broNavn, setBroNavn] = useState<(string | number)[]>([]);
   const [tunnelNavn, setTunnelNavn] = useState<(string | number)[]>([]);
+  const [vegsystemreferanseFraNvdb, setVegsystemReferanseFraNvdb] = useState('');
 
   const fartsgrenseId = 105;
   const broId = 60;
@@ -143,7 +143,7 @@ const MoreImageInfo = ({
         res.objekter.forEach((obj: any) => {
           const egenskaper = obj.egenskaper;
           const egenskap = egenskaper.find((egenskap: any) => egenskap.navn === egenskap_);
-          resource.push(egenskap.verdi);
+          resource.push(`${egenskap.verdi}/`);
         });
         setState(resource);
       } else {
@@ -222,6 +222,7 @@ const MoreImageInfo = ({
   const getVegsystemReferanseAndSetNvdPropsForOldYears = async (latlng: ILatlng) => {
     await GetPositionDataByLatLng(latlng).then((res) => {
       const trimmedVegsystemreferanse = res[0].vegsystemreferanse.kortform.replace(/\s/g, '');
+      setVegsystemReferanseFraNvdb(res[0].vegsystemreferanse.kortform);
       getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
     });
   };
@@ -247,9 +248,6 @@ const MoreImageInfo = ({
       const NordkappLatLng = { lat: 71.1652089, lng: 25.7909877 };
       const LindesnesLatLng = { lat: 57.9825904, lng: 7.0483913 };
       const imagePointLatlng = getImagePointLatLng(imagePoint);
-
-      if (imagePoint.properties.AAR < 2020) {
-      }
 
       if (imagePoint.properties.AAR >= 2020) {
         const trimmedVegsystemreferanse = getTrimmedVegsystemreferanse(imagePoint);
@@ -285,8 +283,7 @@ const MoreImageInfo = ({
         <div className={classes.infoHeaderContainer}>
           <Icon className={classes.icon} />
           <Typography variant="subtitle2" className={classes.itemGroupHeader}>
-            {' '}
-            {headline}{' '}
+            {headline}
           </Typography>
         </div>
         <div className={classes.informationLines}>{children}</div>
@@ -303,8 +300,7 @@ const MoreImageInfo = ({
           disabled={disabled}
         />
         <Typography variant="subtitle1" className={classes.infoHeader}>
-          {' '}
-          Info{' '}
+          {vegsystemreferanseFraNvdb.length ? vegsystemreferanseFraNvdb : ''}
         </Typography>
       </div>
       {imagePoint ? (
@@ -318,7 +314,7 @@ const MoreImageInfo = ({
               ) : null}
               {broNavn.length ? (
                 <Typography variant="body1" className={classes.lines}>
-                  {`Bronavn: ${broNavn}`}
+                  {`${broNavn} (bru)`}
                 </Typography>
               ) : null}
               {tunnelNavn.length ? (

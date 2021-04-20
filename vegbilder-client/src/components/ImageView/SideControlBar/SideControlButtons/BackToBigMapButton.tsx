@@ -5,11 +5,11 @@ import React from 'react';
 const useStyles = makeStyles((theme) => ({
   backToMapButton: {
     border: 'none',
-    backgroundColor: theme.palette.common.grayDarker,
+    backgroundColor: theme.palette.common.grayDark,
     zIndex: 1000,
     color: theme.palette.common.grayRegular,
     paddingLeft: '0.2rem',
-    opacity: 0.7,
+    margin: '0.2rem',
   },
   arrowBack: {
     margin: '0 0.375rem 0 0',

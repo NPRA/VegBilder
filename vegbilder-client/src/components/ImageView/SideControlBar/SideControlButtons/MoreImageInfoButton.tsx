@@ -5,8 +5,8 @@ import { InformIcon, InformOffIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    backgroundColor: theme.palette.common.grayDarker,
-    opacity: 0.7,
+    backgroundColor: theme.palette.common.grayDark,
+    margin: '0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   buttonDisabled: {
-    marginTop: '0.25rem',
+    margin: '0.2rem',
     backgroundColor: theme.palette.common.grayDark,
     opacity: 0.7,
   },
@@ -36,11 +36,12 @@ const MoreImageInfoButton = ({
   const classes = useStyles();
 
   return (
-    <Tooltip title={showInformation ? 'Skjul info' : 'Mer info om bildet'}>
+    <Tooltip title={showInformation ? 'Skjul informasjon' : 'Mer informasjon'}>
       <IconButton
         disabled={disabled}
-        aria-label="Mer info om bildet"
+        aria-label="Mer informasjon"
         className={disabled ? classes.buttonDisabled : classes.button}
+        style={showInformation ? { background: 'none' } : {}}
         onClick={() => setShowInformation(!showInformation)}
       >
         {showInformation ? <InformIcon /> : <InformOffIcon />}

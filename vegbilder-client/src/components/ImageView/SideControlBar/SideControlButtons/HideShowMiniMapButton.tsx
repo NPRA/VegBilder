@@ -5,8 +5,8 @@ import { MapIcon, MapDisabledIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   button: {
-    backgroundColor: theme.palette.common.grayDarker,
-    opacity: 0.7,
+    backgroundColor: theme.palette.common.grayDark,
+    margin: '0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {
@@ -16,7 +16,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   buttonDisabled: {
-    marginTop: '0.25rem',
+    margin: '0.2rem',
     backgroundColor: theme.palette.common.grayDark,
     opacity: 0.7,
   },

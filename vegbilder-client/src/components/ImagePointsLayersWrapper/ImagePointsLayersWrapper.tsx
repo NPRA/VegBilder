@@ -16,7 +16,7 @@ const ImagePointLayersWrapper = () => {
   const showNyesteKartlag = currentYear === 'Nyeste';
 
   const oversiktsKartlag = showNyesteKartlag
-    ? `Vegbilder_oversikt_${2020}`
+    ? `Vegbilder_dekning`
     : `Vegbilder_oversikt_${currentYear}`;
 
   const renderImagePointsLayer = () => {
