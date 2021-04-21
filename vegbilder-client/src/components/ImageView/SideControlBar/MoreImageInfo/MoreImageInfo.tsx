@@ -143,7 +143,7 @@ const MoreImageInfo = ({
         res.objekter.forEach((obj: any) => {
           const egenskaper = obj.egenskaper;
           const egenskap = egenskaper.find((egenskap: any) => egenskap.navn === egenskap_);
-          resource.push(`${egenskap.verdi}/`);
+          resource.push(`${egenskap.verdi}`);
         });
         setState(resource);
       } else {
@@ -314,9 +314,13 @@ const MoreImageInfo = ({
                 </Typography>
               ) : null}
               {broNavn.length ? (
-                <Typography variant="body1" className={classes.lines}>
-                  {`${broNavn} (bru)`}
-                </Typography>
+                <>
+                  {broNavn.map((broNavn) => (
+                    <Typography variant="body1" className={classes.lines}>
+                      {`${broNavn} (bru)`}
+                    </Typography>
+                  ))}
+                </>
               ) : null}
               {tunnelNavn.length ? (
                 <Typography variant="body1" className={classes.lines}>
