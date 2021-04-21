@@ -12,8 +12,8 @@ import HideShowMiniMapButton from '../SideControlButtons/HideShowMiniMapButton';
 
 const useStyles = makeStyles(() => ({
   minimap: {
-    height: '17vw',
-    maxHeight: '300px',
+    height: '18vw',
+    width: '18vw',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
     borderRadius: '10px',
     zIndex: 5,

@@ -22,12 +22,28 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '10px',
     backgroundColor: theme.palette.common.grayDarker,
     paddingBottom: '0.5rem',
+    minHeight: '10%',
+    boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
   },
   scrollContainer: {
-    maxHeight: '40vh',
     overflowY: 'auto',
     overflowX: 'hidden',
     padding: '0 0.5rem',
+    '&::-webkit-scrollbar': {
+      backgroundColor: theme.palette.common.grayDarker,
+      width: '1rem',
+    },
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: theme.palette.common.grayDarker,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.common.grayRegular,
+      borderRadius: '1rem',
+      border: `4px solid ${theme.palette.common.grayDarker}`,
+    },
+    '&::-webkit-scrollbar-button': {
+      display: 'none',
+    },
   },
   infoHeaderContainer: {
     display: 'flex',
