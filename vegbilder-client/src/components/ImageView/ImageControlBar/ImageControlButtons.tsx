@@ -144,7 +144,9 @@ const ImageControlButtons = ({
         currentCoordinates.lng,
         currentCoordinates.lat,
       ]);
-      return `${VEGKART}@${Math.round(utm33coordinates[0])},${Math.round(utm33coordinates[1])},15`;
+      return `${VEGKART}@${Math.round(Math.round(utm33coordinates[0]))},${Math.round(
+        utm33coordinates[1]
+      )},17/vegsystemreferanse:${utm33coordinates[0]}:${utm33coordinates[1]}`;
     } else return VEGKART;
   };
 
