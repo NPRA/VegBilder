@@ -72,7 +72,7 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
             />
           </Grid>
           <Grid item className={classes.searchContainer}>
-            <Search showMessage={showMessage} />
+            <Search showMessage={showMessage} setMapView={setMapView} />
           </Grid>
           <Grid item className={classes.dateAndYearSelectorContainer}>
             <YearSelector showMessage={showMessage} />

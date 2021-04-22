@@ -14,7 +14,7 @@ import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 're
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 import { loadedImagePointsState } from 'recoil/atoms';
 
-type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint';
+type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
@@ -46,7 +46,7 @@ const useFetchNearestImagePoint = (
             nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
           }
           if (nearestImagePoint) {
-            handleFoundNearestImagePoint(nearestImagePoint, latlng);
+            handleFoundNearestImagePoint(nearestImagePoint);
             return nearestImagePoint;
           }
         } else {
@@ -61,14 +61,14 @@ const useFetchNearestImagePoint = (
           latlng
         );
         if (nearestImagePoint) {
-          handleFoundNearestImagePoint(nearestImagePoint, latlng);
+          handleFoundNearestImagePoint(nearestImagePoint);
           return nearestImagePoint;
         }
       }
     }
   }
 
-  const handleFoundNearestImagePoint = (nearestImagePoint: IImagePoint, latlng: ILatlng) => {
+  const handleFoundNearestImagePoint = (nearestImagePoint: IImagePoint) => {
     setCurrentImagePoint(nearestImagePoint);
     const imagePointCoordinates = getImagePointLatLng(nearestImagePoint);
     if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {

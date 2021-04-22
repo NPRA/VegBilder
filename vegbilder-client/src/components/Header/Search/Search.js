@@ -5,9 +5,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ClickAwayListener, ListSubheader } from '@material-ui/core';
 import { debounce } from 'lodash';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 
-import { useCommand, commandTypes } from 'contexts/CommandContext';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
@@ -19,6 +18,9 @@ import {
   loadedImagePointsFilterState,
 } from 'recoil/selectors';
 import useAsyncError from 'hooks/useAsyncError';
+import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
+import { currentYearState } from 'recoil/atoms';
+import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -72,22 +74,26 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Search = ({ showMessage }) => {
+const Search = ({ showMessage, setMapView }) => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState('');
   const [stedsnavnOptions, setStedsnavnOptions] = useState([]);
   const [vegSystemReferanser, setVegSystemReferanser] = useState([]);
   const [openMenu, setOpenMenu] = useState(false);
   const [resetImagePoint, setResetImagePoint] = useState(false);
-  const [findClosestImagePoint, setFindClosestImagePoint] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const throwError = useAsyncError();
 
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
+  const currentYear = useRecoilValue(currentYearState);
   const { resetFilteredImagePoints } = useFilteredImagePoints();
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  const { setCommand } = useCommand();
+
+  const throwError = useAsyncError();
+  const fetchNearestImagePoint = useFetchNearestImagePoint(
+    showMessage,
+    'Fant ingen bilder i nærheten av stedet du søkte på.'
+  );
 
   const delayedStedsnavnQuery = useCallback(
     debounce(async (trimmedSearch) => {
@@ -139,29 +145,24 @@ const Search = ({ showMessage }) => {
     };
   }, [resetImagePoint, resetFilteredImagePoints, setCurrentImagePoint]);
 
-  useEffect(() => {
-    if (findClosestImagePoint) {
-      setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
-    }
-    return () => {
-      setFindClosestImagePoint(false);
-    };
-  }, [findClosestImagePoint, setCommand]);
-
   const handleSelectedOption = (latlng, zoom) => {
-    /* Since a search usually entails a big jump in location, the currently loaded image points
-     * will most likely no longer be useful. We need to clear them in order for the
-     * selectNearestImagePointToCurrentCoordinates command to work. (Otherwise it will select
-     * the nearest of the image points in the previous location.)
+    /* Select nearest image point close to coordinates of the place. If no image is found,
+     * The user is brought back to the map.
      */
     setOpenMenu(false);
     setSelectedIndex(0);
     if (latlng && latlng.lat && latlng.lng) {
-      setCurrentCoordinates({ ...latlng, zoom: zoom });
+      const latlng_ = { lat: parseFloat(latlng.lat), lng: parseFloat(latlng.lng) };
+      setCurrentCoordinates({ ...latlng_, zoom: zoom });
       setResetImagePoint(true);
-      if (zoom === 16) {
-        setFindClosestImagePoint(true);
-      }
+      fetchNearestImagePoint(latlng_, currentYear).then((imagePoint) => {
+        if (imagePoint) {
+          const imagePointLatLng = getImagePointLatLng(imagePoint);
+          if (imagePointLatLng) setCurrentCoordinates({ ...imagePointLatLng, zoom: zoom });
+        } else {
+          setMapView();
+        }
+      });
       setSearchString('');
     }
   };

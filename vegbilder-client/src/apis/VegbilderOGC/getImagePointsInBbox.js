@@ -18,7 +18,6 @@ const getImagePointsInBbox = async (bbox, year) => {
   };
 
   const response = await vegbilderOGC.get('', { params: params });
-
   return response;
 };
 
