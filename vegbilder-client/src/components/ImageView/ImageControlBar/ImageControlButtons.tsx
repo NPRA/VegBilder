@@ -45,7 +45,7 @@ import { TIMER_OPTIONS } from 'constants/defaultParamters';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { VEGKART } from 'constants/urls';
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme) => ({
   button: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
@@ -54,6 +54,17 @@ const useStyles = makeStyles(() => ({
     margin: '1.25rem',
     backgroundColor: 'transparent',
     opacity: '30%',
+  },
+  activeButton: {
+    backgroundColor: 'transparent',
+    margin: '1.25rem',
+    '& .MuiIconButton-label': {
+      '& svg': {
+        '& path': {
+          fill: theme.palette.common.orangeDark,
+        },
+      },
+    },
   },
   arrowTurnButton: {
     '& .MuiIconButton-label': {
@@ -176,7 +187,7 @@ const ImageControlButtons = ({
           <IconButton
             aria-label="Bytt hastighet på avspilling"
             onClick={handleTimerOptionsClick}
-            className={classes.button}
+            className={timerOptionsAnchorEl ? classes.activeButton : classes.button}
           >
             <TimerIcon />
           </IconButton>
@@ -229,6 +240,7 @@ const ImageControlButtons = ({
           className={classes.button}
           onClick={() => {
             setIsZoomedInImage(!isZoomedInImage);
+            if (isZoomedInImage) setMeterLineVisible(false);
           }}
         >
           {isZoomedInImage ? <ZoomOutIcon /> : <ZoomInIcon />}
@@ -256,7 +268,7 @@ const ImageControlButtons = ({
       <Tooltip title="Bilder fra andre datoer">
         <IconButton
           aria-label="Bilder fra andre datoer"
-          className={classes.button}
+          className={isHistoryMode ? classes.activeButton : classes.button}
           onClick={handleHistoryButtonClick}
         >
           <HistoryIcon />
@@ -287,7 +299,7 @@ const ImageControlButtons = ({
           disabled={playVideo}
           aria-label="Flere funksjoner"
           onClick={handleMoreControlsClick}
-          className={classes.button}
+          className={moreControlsAnchorEl ? classes.activeButton : classes.button}
         >
           <DotsHorizontalIcon />
         </IconButton>
@@ -300,7 +312,13 @@ const ImageControlButtons = ({
       <Tooltip title={tooltip}>
         <IconButton
           aria-label="Start animasjonsmodus"
-          className={isHistoryMode ? classes.buttonDisabled : classes.button}
+          className={
+            isHistoryMode
+              ? classes.buttonDisabled
+              : playVideo
+              ? classes.activeButton
+              : classes.button
+          }
           disabled={isHistoryMode}
           onClick={() => {
             setPlayVideo(true);
