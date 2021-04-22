@@ -336,15 +336,15 @@ const ImageControlButtons = ({
       <>
         {stopAnimationButton()}
         {/* pause button  */}
-        <Tooltip title="Pause avspilling">
+        <Tooltip title={playVideo ? 'Pause avspilling' : 'Spill av animasjon'}>
           <IconButton
-            aria-label="Pause avspilling"
+            aria-label={playVideo ? 'Pause avspilling' : 'Spill av'}
             className={classes.button}
             onClick={() => {
-              setPlayVideo(false);
+              setPlayVideo(!playVideo);
             }}
           >
-            <PauseIcon />
+            {playVideo ? <PauseIcon /> : <PlayIcon />}
           </IconButton>
         </Tooltip>
 
@@ -353,26 +353,10 @@ const ImageControlButtons = ({
     );
   };
 
-  const renderPlayModeMenu = () => {
-    return (
-      <>
-        {zoomInOutButton()}
-        {changeDirectionButton()}
-        {hideShowBasisLineButton()}
-        {historyButton()}
-        {playIconButton('Spill av bildeserie')}
-        {stopAnimationButton()}
-        {changeSpeedButtonMenu()}
-        {moreFunctionsButton()}
-      </>
-    );
-  };
-
   return (
     <>
       <Toolbar>
-        {playVideo ? renderPlayVideoMenu() : null}
-        {playMode && !playVideo ? renderPlayModeMenu() : null}
+        {playMode ? renderPlayVideoMenu() : null}
         {!playMode && !playVideo ? (
           <>
             {/*  Render normal menu */}
