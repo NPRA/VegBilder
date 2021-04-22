@@ -1,4 +1,4 @@
-import { Tooltip, makeStyles, IconButton } from '@material-ui/core';
+import { Tooltip, makeStyles, IconButton, Typography } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 import React from 'react';
 
@@ -20,9 +20,6 @@ const useStyles = makeStyles((theme) => ({
   },
   arrowBack: {
     margin: '0 0.375rem 0 0',
-    alignSelf: 'center',
-  },
-  backToText: {
     alignSelf: 'center',
   },
 }));

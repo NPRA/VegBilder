@@ -12,8 +12,8 @@ import ExploreOutlinedIcon from '@material-ui/icons/ExploreOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import proj4 from 'proj4';
-
 import clsx from 'clsx';
+
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
   ArrowDownIcon,
