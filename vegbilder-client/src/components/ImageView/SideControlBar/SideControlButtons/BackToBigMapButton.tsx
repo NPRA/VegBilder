@@ -10,6 +10,13 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.grayRegular,
     paddingLeft: '0.2rem',
     margin: '0.2rem',
+    '& .MuiIconButton-label': {
+      '& svg': {
+        '& path': {
+          fill: theme.palette.common.grayRegular,
+        },
+      },
+    },
   },
   arrowBack: {
     margin: '0 0.375rem 0 0',

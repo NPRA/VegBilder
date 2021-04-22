@@ -5,7 +5,6 @@ import { ReactComponent as DotsHorizontalIcon } from './Dots-horizontal.svg';
 import { ReactComponent as HistoryIcon } from './History.svg';
 import { ReactComponent as MagnifyingGlassIcon } from './Magnifying-glass.svg';
 import { ReactComponent as MapIcon } from './Map.svg';
-import { ReactComponent as MapDisabledIcon } from './Map-disabled.svg';
 import { ReactComponent as MeasureIcon } from './Measure.svg';
 import { ReactComponent as MeasureDisabledIcon } from './Measure-disabled.svg';
 import { ReactComponent as PlayIcon } from './Play.svg';
@@ -27,7 +26,6 @@ import { ReactComponent as MyLocationIcon } from './myLocationIcon.svg';
 import { ReactComponent as HistorySmallIcon } from './HistorySmall.svg';
 import { ReactComponent as SladdetIcon } from './sladdet.svg';
 import { ReactComponent as ContractIcon } from './contract.svg';
-import { ReactComponent as InformOffIcon } from './InformOff.svg';
 
 export {
   ArrowDownIcon,
@@ -39,7 +37,6 @@ export {
   HistoryIcon,
   MagnifyingGlassIcon,
   MapIcon,
-  MapDisabledIcon,
   MeasureIcon,
   MeasureDisabledIcon,
   PlayIcon,
@@ -59,5 +56,4 @@ export {
   DistanceToIcon,
   SladdetIcon,
   ContractIcon,
-  InformOffIcon,
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
 
-import { InformIcon, InformOffIcon } from 'components/Icons/Icons';
+import { InformIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -11,6 +11,17 @@ const useStyles = makeStyles((theme) => ({
       '& svg': {
         '& path': {
           fill: theme.palette.common.grayRegular,
+        },
+      },
+    },
+  },
+  active: {
+    backgroundColor: theme.palette.common.grayDark,
+    margin: '0.2rem',
+    '& .MuiIconButton-label': {
+      '& svg': {
+        '& path': {
+          fill: theme.palette.common.orangeDark,
         },
       },
     },
@@ -40,11 +51,13 @@ const MoreImageInfoButton = ({
       <IconButton
         disabled={disabled}
         aria-label="Mer informasjon"
-        className={disabled ? classes.buttonDisabled : classes.button}
+        className={
+          disabled ? classes.buttonDisabled : showInformation ? classes.active : classes.button
+        }
         style={showInformation ? { background: 'none' } : {}}
         onClick={() => setShowInformation(!showInformation)}
       >
-        {showInformation ? <InformIcon /> : <InformOffIcon />}
+        <InformIcon />
       </IconButton>
     </Tooltip>
   );

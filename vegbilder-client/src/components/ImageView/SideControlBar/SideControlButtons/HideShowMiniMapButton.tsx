@@ -1,7 +1,7 @@
 import React from 'react';
 import { Tooltip, IconButton, makeStyles } from '@material-ui/core';
 
-import { MapIcon, MapDisabledIcon } from 'components/Icons/Icons';
+import { MapIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -11,6 +11,17 @@ const useStyles = makeStyles((theme) => ({
       '& svg': {
         '& path': {
           fill: theme.palette.common.grayRegular,
+        },
+      },
+    },
+  },
+  active: {
+    backgroundColor: theme.palette.common.grayDark,
+    margin: '0.2rem',
+    '& .MuiIconButton-label': {
+      '& svg': {
+        '& path': {
+          fill: theme.palette.common.orangeDark,
         },
       },
     },
@@ -40,11 +51,17 @@ const HideShowMiniMapButton = ({
       <IconButton
         disabled={isZoomedInImage}
         aria-label="Vis/skjul kart"
-        className={isZoomedInImage ? classes.buttonDisabled : classes.button}
+        className={
+          isZoomedInImage
+            ? classes.buttonDisabled
+            : miniMapVisible
+            ? classes.active
+            : classes.button
+        }
         style={miniMapVisible ? { position: 'absolute', zIndex: 1000 } : {}}
         onClick={() => setMiniMapVisible(!miniMapVisible)}
       >
-        {miniMapVisible ? <MapIcon /> : <MapDisabledIcon />}
+        <MapIcon />
       </IconButton>
     </Tooltip>
   );
