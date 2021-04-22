@@ -18,15 +18,6 @@ const useStyles = makeStyles(() => ({
     borderRadius: '10px',
     zIndex: 5,
   },
-  minimapHidden: {
-    display: 'none',
-  },
-  enlargeButton: {
-    position: 'absolute',
-    zIndex: 1000,
-    bottom: 2,
-    right: 2,
-  },
 }));
 
 interface ISmallMapContainerProps {

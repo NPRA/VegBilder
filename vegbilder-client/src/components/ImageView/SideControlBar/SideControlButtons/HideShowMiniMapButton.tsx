@@ -58,7 +58,7 @@ const HideShowMiniMapButton = ({
             ? classes.active
             : classes.button
         }
-        style={miniMapVisible ? { position: 'absolute', zIndex: 1000 } : {}}
+        style={miniMapVisible && !isZoomedInImage ? { position: 'absolute', zIndex: 1000 } : {}}
         onClick={() => setMiniMapVisible(!miniMapVisible)}
       >
         <MapIcon />

@@ -1,6 +1,5 @@
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
-import Theme from 'theme/Theme';
 import { IImagePoint } from 'types';
 import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import BackToBigMapButton from './SideControlButtons/BackToBigMapButton';
