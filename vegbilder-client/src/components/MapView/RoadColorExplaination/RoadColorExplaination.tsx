@@ -8,7 +8,7 @@ import { availableYearsQuery } from 'recoil/selectors';
 const useStyles = makeStyles(() => ({
   paperContainer: {
     position: 'absolute',
-    left: '2rem',
+    right: '2rem',
     bottom: '4rem',
     padding: '0.5rem',
     minWidth: '15rem',

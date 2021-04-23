@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
@@ -7,11 +7,14 @@ import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
+import Theme from 'theme/Theme';
+import MoreImageInfo from 'components/ImageView/SideControlBar/MoreImageInfo/MoreImageInfo';
+import MoreImageInfoButton from 'components/ImageView/SideControlBar/SideControlButtons/MoreImageInfoButton';
 
 const useStyles = makeStyles((theme) => ({
   image: {
-    margin: '2px 2px 0 2px',
     cursor: 'pointer',
+    borderRadius: '0px 0px 10px 10px',
   },
   enlargeButton: {
     '& span': {
@@ -24,6 +27,30 @@ const useStyles = makeStyles((theme) => ({
   infoButton: {
     margin: '0.4rem',
   },
+  imagePreview: {
+    color: Theme.palette.common.grayRegular,
+    display: 'flex',
+    flexDirection: 'column',
+    boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
+    width: '50vh',
+    borderRadius: '10px',
+  },
+  imageMetadata: {
+    backgroundColor: Theme.palette.common.grayDarker,
+    borderRadius: '10px 10px 0 0',
+    padding: '0.25rem 0.75rem 0.75rem 0.75rem',
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    opacity: 0.8,
+  },
+  imageInfoPreview: {
+    position: 'absolute',
+    left: '1.1875rem',
+    top: '1.1875rem',
+    zIndex: 1,
+    height: '95%',
+  },
 }));
 
 interface IImagePreviewProps {
@@ -34,6 +61,7 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const [showInformation, setShowInformation] = useState(false);
 
   if (currentImagePoint) {
     const latlng = getImagePointLatLng(currentImagePoint);
@@ -44,37 +72,36 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
     };
 
     return (
-      <Box
-        position="absolute"
-        right="1.1875rem"
-        bottom="1.1875rem"
-        zIndex="1"
-        borderRadius="3px"
-        bgcolor="primary.main"
-        color="primary.contrastText"
-        display="flex"
-        flexDirection="column"
-        boxShadow="1px 2px 2px 2px rgba(0, 0, 0, 0.4)"
-        width="50vh"
-      >
-        <>
-          <img
-            src={getImageUrl(currentImagePoint)}
-            className={classes.image}
-            alt="Bilde tatt langs veg"
-            onClick={openImage}
+      <div className={classes.imageInfoPreview}>
+        <div className={classes.imagePreview}>
+          <div className={classes.imageMetadata}>
+            <ImageMetadata />
+          </div>
+          <>
+            <img
+              src={getImageUrl(currentImagePoint)}
+              className={classes.image}
+              alt="Bilde tatt langs veg"
+              onClick={openImage}
+            />
+            <CloseButton onClick={() => setCurrentImagePoint(null)} />
+          </>
+        </div>
+        {showInformation ? (
+          <MoreImageInfo
+            showInformation={showInformation}
+            setShowInformation={setShowInformation}
+            disabled={false}
+            imagePoint={currentImagePoint}
           />
-          <CloseButton onClick={() => setCurrentImagePoint(null)} />
-        </>
-        <Box
-          padding="0.25rem 0.75rem 0.75rem 0.75rem"
-          display="flex"
-          flexDirection="row"
-          justifyContent="space-between"
-        >
-          <ImageMetadata />
-        </Box>
-      </Box>
+        ) : (
+          <MoreImageInfoButton
+            showInformation={showInformation}
+            setShowInformation={setShowInformation}
+            disabled={false}
+          />
+        )}
+      </div>
     );
   } else return null;
 };

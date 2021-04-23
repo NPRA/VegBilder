@@ -22,7 +22,8 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '10px',
     backgroundColor: theme.palette.common.grayDarker,
     paddingBottom: '0.5rem',
-    minHeight: '10%',
+    minHeight: '5%',
+    maxHeight: '60%',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
   },
   scrollContainer: {
