@@ -33,17 +33,17 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IMoreImageInfoButtonProps {
+interface IImageInfoButtonProps {
   setShowInformation: (value: boolean) => void;
   showInformation: boolean;
   disabled: boolean;
 }
 
-const MoreImageInfoButton = ({
+const ImageInfoButton = ({
   showInformation,
   setShowInformation,
   disabled,
-}: IMoreImageInfoButtonProps) => {
+}: IImageInfoButtonProps) => {
   const classes = useStyles();
 
   return (
@@ -63,4 +63,4 @@ const MoreImageInfoButton = ({
   );
 };
 
-export default MoreImageInfoButton;
+export default ImageInfoButton;

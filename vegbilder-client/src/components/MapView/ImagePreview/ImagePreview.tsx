@@ -8,8 +8,8 @@ import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import Theme from 'theme/Theme';
-import MoreImageInfo from 'components/ImageView/SideControlBar/MoreImageInfo/MoreImageInfo';
-import MoreImageInfoButton from 'components/ImageView/SideControlBar/SideControlButtons/MoreImageInfoButton';
+import ImageInfo from 'components/ImageView/ImageInfo/ImageInfo';
+import ImageInfoButton from 'components/ImageView/ImageInfo/ImageInfoButton';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -88,14 +88,14 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
           </>
         </div>
         {showInformation ? (
-          <MoreImageInfo
+          <ImageInfo
             showInformation={showInformation}
             setShowInformation={setShowInformation}
             disabled={false}
             imagePoint={currentImagePoint}
           />
         ) : (
-          <MoreImageInfoButton
+          <ImageInfoButton
             showInformation={showInformation}
             setShowInformation={setShowInformation}
             disabled={false}

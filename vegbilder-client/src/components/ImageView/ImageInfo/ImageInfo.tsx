@@ -1,4 +1,4 @@
-import React, { FunctionComponent, SetStateAction, SVGProps, useEffect, useState } from 'react';
+import React, { FunctionComponent, SVGProps, useEffect, useState } from 'react';
 import { makeStyles, Paper, SvgIconTypeMap, Typography } from '@material-ui/core';
 
 import { getImagePointLatLng, getRoadReference } from 'utilities/imagePointUtilities';
@@ -6,7 +6,7 @@ import { IImagePoint, ILatlng } from 'types';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
 import GetVegObjektByVegsystemreferanseAndVegobjektid from 'apis/NVDB/getVegObjektByVegsystemreferanseAndVegobjektid';
-import MoreImageInfoButton from '../SideControlButtons/MoreImageInfoButton';
+import ImageInfoButton from './ImageInfoButton';
 import { CommuteOutlined, RoomOutlined, SpeedOutlined } from '@material-ui/icons';
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 import { ContractIcon, DistanceToIcon, SladdetIcon } from 'components/Icons/Icons';
@@ -109,19 +109,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IMoreImageInfoProps {
+interface IImageInfoProps {
   showInformation: boolean;
   setShowInformation: (value: boolean) => void;
   imagePoint: IImagePoint | null;
   disabled: boolean;
 }
 
-const MoreImageInfo = ({
+const ImageInfo = ({
   imagePoint,
   disabled,
   showInformation,
   setShowInformation,
-}: IMoreImageInfoProps) => {
+}: IImageInfoProps) => {
   const classes = useStyles();
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
@@ -312,7 +312,7 @@ const MoreImageInfo = ({
   return (
     <Paper className={classes.infoContainer}>
       <div className={classes.infoHeaderContainer}>
-        <MoreImageInfoButton
+        <ImageInfoButton
           showInformation={showInformation}
           setShowInformation={setShowInformation}
           disabled={disabled}
@@ -428,4 +428,4 @@ const MoreImageInfo = ({
   );
 };
 
-export default MoreImageInfo;
+export default ImageInfo;

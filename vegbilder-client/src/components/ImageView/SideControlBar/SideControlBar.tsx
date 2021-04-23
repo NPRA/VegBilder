@@ -1,11 +1,11 @@
-import { makeStyles, Paper, Typography } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import { IImagePoint } from 'types';
 import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import BackToBigMapButton from './SideControlButtons/BackToBigMapButton';
 import HideShowMiniMapButton from './SideControlButtons/HideShowMiniMapButton';
-import MoreImageInfoButton from './SideControlButtons/MoreImageInfoButton';
-import MoreImageInfo from './MoreImageInfo/MoreImageInfo';
+import ImageInfoButton from '../ImageInfo/ImageInfoButton';
+import ImageInfo from '../ImageInfo/ImageInfo';
 
 interface ISideControlBarProps {
   setView: (view: string) => void;
@@ -61,7 +61,7 @@ const SideControlBar = ({
         )}
       </>
       {showInformationBox ? (
-        <MoreImageInfo
+        <ImageInfo
           showInformation={showInformation}
           setShowInformation={setShowInformation}
           disabled={isZoomedInImage}
@@ -70,7 +70,7 @@ const SideControlBar = ({
       ) : (
         <>
           <br style={{ marginTop: '0.35rem' }} />
-          <MoreImageInfoButton
+          <ImageInfoButton
             showInformation={showInformation}
             setShowInformation={setShowInformation}
             disabled={isZoomedInImage}
