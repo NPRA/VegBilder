@@ -33,14 +33,14 @@ const SmallMapContainer = ({
 }: ISmallMapContainerProps) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const classes = useStyles();
-  const minZoom = 15;
+  const minZoom = 13;
   const maxZoom = 16;
 
   return (
     <div className={classes.minimap}>
       <Map
         center={currentCoordinates}
-        zoom={Math.max(currentCoordinates.zoom || 4, minZoom)}
+        zoom={currentCoordinates.zoom}
         crs={crsUtm33N}
         minZoom={minZoom}
         maxZoom={maxZoom}
