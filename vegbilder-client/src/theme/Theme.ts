@@ -135,7 +135,8 @@ export default createMuiTheme({
         fontFamily: '"LFT-Etica"',
         backgroundColor: grayDarker,
         color: grayMenuItems,
-        border: `1px solid ${grayDark}`,
+        boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
+        borderRadius: '10px',
       },
     },
     MuiIconButton: {

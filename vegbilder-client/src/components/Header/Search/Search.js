@@ -67,7 +67,7 @@ const useStyles = makeStyles((theme) => ({
     left: 0,
     color: theme.palette.common.grayRegular,
     backgroundColor: theme.palette.common.grayDarker,
-    borderRadius: '0.5rem',
+    borderRadius: '10px',
     width: '25rem',
     maxHeight: '40rem',
     overflowY: 'auto',
