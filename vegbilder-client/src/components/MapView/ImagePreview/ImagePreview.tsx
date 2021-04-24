@@ -8,8 +8,8 @@ import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import Theme from 'theme/Theme';
-import ImageInfo from 'components/ImageView/ImageInfo/ImageInfo';
-import ImageInfoButton from 'components/ImageView/ImageInfo/ImageInfoButton';
+import ImageInfo from 'components/ImageInfo/ImageInfo';
+import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
 import { EnlargeIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
@@ -31,13 +31,12 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '10px',
   },
   imageMetadata: {
-    backgroundColor: Theme.palette.common.grayDarker,
     borderRadius: '10px 10px 0 0',
     padding: '0.25rem 0.75rem 0.75rem 0.75rem',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    opacity: 0.8,
+    background: 'rgba(46, 53, 57, 0.80)',
   },
   imagePreviewAndInfo: {
     width: '50vh',

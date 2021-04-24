@@ -4,8 +4,8 @@ import { IImagePoint } from 'types';
 import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import BackToBigMapButton from './SideControlButtons/BackToBigMapButton';
 import HideShowMiniMapButton from './SideControlButtons/HideShowMiniMapButton';
-import ImageInfoButton from '../ImageInfo/ImageInfoButton';
-import ImageInfo from '../ImageInfo/ImageInfo';
+import ImageInfoButton from '../../ImageInfo/ImageInfoButton';
+import ImageInfo from '../../ImageInfo/ImageInfo';
 
 interface ISideControlBarProps {
   setView: (view: string) => void;
