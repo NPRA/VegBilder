@@ -23,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.common.grayDarker,
     paddingBottom: '0.5rem',
     minHeight: '5%',
-    maxHeight: '60%',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
   },
   scrollContainer: {
@@ -113,7 +112,8 @@ interface IImageInfoProps {
   showInformation: boolean;
   setShowInformation: (value: boolean) => void;
   imagePoint: IImagePoint | null;
-  disabled: boolean;
+  disabled?: boolean;
+  maxHeight: string;
 }
 
 const ImageInfo = ({
@@ -121,6 +121,7 @@ const ImageInfo = ({
   disabled,
   showInformation,
   setShowInformation,
+  maxHeight,
 }: IImageInfoProps) => {
   const classes = useStyles();
   const [fylkesNavn, setFylkesNavn] = useState('');
@@ -310,12 +311,12 @@ const ImageInfo = ({
   };
 
   return (
-    <Paper className={classes.infoContainer}>
+    <Paper className={classes.infoContainer} style={{ maxHeight: maxHeight }}>
       <div className={classes.infoHeaderContainer}>
         <ImageInfoButton
           showInformation={showInformation}
           setShowInformation={setShowInformation}
-          disabled={disabled}
+          disabled={disabled ?? false}
         />
         <Typography variant="subtitle1" className={classes.infoHeader}>
           {vegsystemreferanse.length ? vegsystemreferanse : ''}

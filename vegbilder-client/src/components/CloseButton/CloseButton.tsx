@@ -8,9 +8,6 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     top: '0.3125rem',
     right: '0.3125rem',
-    width: '1.875rem',
-    height: '1.875rem',
-    opacity: '80%',
   },
 }));
 
@@ -18,14 +15,31 @@ interface ICloseButtonProps {
   onClick: () => void;
   transparent?: boolean;
   positionToTop?: string;
+  position?:
+    | 'inherit'
+    | '-moz-initial'
+    | 'initial'
+    | 'revert'
+    | 'unset'
+    | 'fixed'
+    | '-webkit-sticky'
+    | 'absolute'
+    | 'relative'
+    | 'static'
+    | 'sticky'
+    | undefined;
 }
 
-const CloseButton = ({ onClick, transparent, positionToTop }: ICloseButtonProps) => {
+const CloseButton = ({ onClick, transparent, positionToTop, position }: ICloseButtonProps) => {
   const classes = useStyles();
   return (
     <IconButton
       className={classes.closeButton}
-      style={{ background: transparent ? 'transparent' : '', top: positionToTop ?? '0.3125rem' }}
+      style={{
+        background: transparent ? 'transparent' : '',
+        top: positionToTop ?? '0.3125rem',
+        position: position ? position : 'absolute',
+      }}
       onClick={onClick}
     >
       <CloseIcon />

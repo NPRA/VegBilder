@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Box } from '@material-ui/core';
+import { Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
 import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
@@ -10,6 +10,7 @@ import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 're
 import Theme from 'theme/Theme';
 import ImageInfo from 'components/ImageView/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageView/ImageInfo/ImageInfoButton';
+import { EnlargeIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   image: {
@@ -17,12 +18,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '0px 0px 10px 10px',
   },
   enlargeButton: {
-    '& span': {
-      '& svg': {
-        width: '21px',
-        height: '21px',
-      },
-    },
+    marginRight: '0.3rem',
   },
   infoButton: {
     margin: '0.4rem',
@@ -32,7 +28,6 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
-    width: '50vh',
     borderRadius: '10px',
   },
   imageMetadata: {
@@ -44,7 +39,8 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: 'space-between',
     opacity: 0.8,
   },
-  imageInfoPreview: {
+  imagePreviewAndInfo: {
+    width: '50vh',
     position: 'absolute',
     left: '1.1875rem',
     top: '1.1875rem',
@@ -72,10 +68,18 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
     };
 
     return (
-      <div className={classes.imageInfoPreview}>
+      <div className={classes.imagePreviewAndInfo}>
         <div className={classes.imagePreview}>
           <div className={classes.imageMetadata}>
             <ImageMetadata />
+            <div>
+              <Tooltip title="Åpne bilde">
+                <IconButton className={classes.enlargeButton} onClick={openImage}>
+                  <EnlargeIcon />
+                </IconButton>
+              </Tooltip>
+              <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
+            </div>
           </div>
           <>
             <img
@@ -84,15 +88,14 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
               alt="Bilde tatt langs veg"
               onClick={openImage}
             />
-            <CloseButton onClick={() => setCurrentImagePoint(null)} />
           </>
         </div>
         {showInformation ? (
           <ImageInfo
             showInformation={showInformation}
             setShowInformation={setShowInformation}
-            disabled={false}
             imagePoint={currentImagePoint}
+            maxHeight={'50%'}
           />
         ) : (
           <ImageInfoButton

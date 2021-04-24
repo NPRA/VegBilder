@@ -66,6 +66,7 @@ const SideControlBar = ({
           setShowInformation={setShowInformation}
           disabled={isZoomedInImage}
           imagePoint={imagePoint}
+          maxHeight={miniMapVisible ? '60%' : '80%'}
         />
       ) : (
         <>
