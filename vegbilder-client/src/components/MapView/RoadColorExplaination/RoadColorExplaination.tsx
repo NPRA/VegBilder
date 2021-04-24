@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import { useRecoilValue } from 'recoil';
 
@@ -10,9 +10,9 @@ const useStyles = makeStyles(() => ({
     position: 'absolute',
     right: '2rem',
     bottom: '4rem',
-    padding: '0.5rem',
+    padding: '0.5rem 1rem',
     minWidth: '15rem',
-    background: 'rgba(46, 53, 57, 0.85)',
+    background: 'rgba(46, 53, 57, 0.80)',
     zIndex: 1,
     display: 'flex',
   },
@@ -20,12 +20,9 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     paddingRight: '1rem',
   },
-  circle: {
-    borderRadius: '50%',
-    width: '1rem',
-    height: '1rem',
-    margin: '0 0.5rem',
-    alignSelf: 'center',
+  markers: {
+    margin: '0 0.4rem 0 0',
+    transform: 'rotate(40deg)',
   },
 }));
 
@@ -35,16 +32,12 @@ const RoadColorExplaination = () => {
   const availableYears = useRecoilValue(availableYearsQuery);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const zoomLevel = useRecoilValue(currentLatLngZoomState).zoom;
-  const [colors, setColors] = useState({ fylkesveg: '#49A4A8', riksveg: '#C12D9E' });
 
-  useEffect(() => {
-    if (currentYear === availableYears[0]) {
-      // nyeste året
-      setColors({ fylkesveg: '#49A4A8', riksveg: '#C12D9E' });
-    } else {
-      setColors({ fylkesveg: '#74D0D4', riksveg: '#DB87CD' }); // eldre
-    }
-  }, [currentYear]);
+  const getMarkerIcon = (vegkategori: string) => {
+    return `images/markers/marker-${vegkategori === 'E' || vegkategori === 'R' ? 'ER' : 'FK'}-${
+      currentYear === availableYears[0] ? 'newest' : 'older'
+    }-directional.svg`;
+  };
 
   const shouldShowRoadColorExplaination = currentImagePoint && zoomLevel && zoomLevel > 14;
 
@@ -53,11 +46,11 @@ const RoadColorExplaination = () => {
       {shouldShowRoadColorExplaination ? (
         <Paper className={classes.paperContainer}>
           <div className={classes.colorRoadRow}>
-            <div className={classes.circle} style={{ backgroundColor: colors.fylkesveg }} />
+            <img src={getMarkerIcon('F')} className={classes.markers} />
             <Typography variant="body1">Fylkesveger</Typography>
           </div>
           <div className={classes.colorRoadRow}>
-            <div className={classes.circle} style={{ backgroundColor: colors.riksveg }} />
+            <img src={getMarkerIcon('E')} className={classes.markers} />
             <Typography variant="body1">Riksveger</Typography>
           </div>
         </Paper>
