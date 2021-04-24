@@ -74,6 +74,9 @@ export default createMuiTheme({
     h1: {
       fontFamily: '"LFT-Etica thin"',
     },
+    h2: {
+      fontFamily: '"LFT-Etica thin"',
+    },
     h3: {
       fontFamily: '"LFT-Etica semi-bold"',
       fontSize: '1.125rem',
@@ -139,6 +142,18 @@ export default createMuiTheme({
         borderRadius: '10px',
       },
     },
+    MuiButton: {
+      root: {
+        fontFamily: '"LFT-Etica semi-bold"',
+        borderStyle: 'none',
+        color: grayRegular,
+        fontSize: '0.725rem',
+        padding: 0,
+        '&:hover': {
+          color: orangeDark,
+        },
+      },
+    },
     MuiIconButton: {
       root: {
         fontFamily: '"LFT-Etica"',
@@ -146,7 +161,6 @@ export default createMuiTheme({
         borderStyle: 'none',
         backgroundColor: grayDark,
         color: grayIcons,
-        fontSize: '1.8rem',
         width: '2.3125rem',
         height: '2.1875rem',
         padding: '0',
