@@ -71,6 +71,8 @@ const useStyles = makeStyles((theme) => ({
     width: '25rem',
     maxHeight: '40rem',
     overflowY: 'auto',
+    width: '100%',
+    boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
     '&::-webkit-scrollbar': {
       backgroundColor: theme.palette.common.grayDarker,
       width: '1rem',

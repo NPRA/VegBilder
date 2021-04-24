@@ -28,6 +28,8 @@ const useStyles = makeStyles({
   },
   searchContainer: {
     margin: '0 1.125rem',
+    width: '45%',
+    maxWidth: '30rem',
   },
   logo: {
     width: '7.5rem',
