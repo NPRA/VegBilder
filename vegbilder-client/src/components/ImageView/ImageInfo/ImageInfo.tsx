@@ -319,40 +319,45 @@ const ImageInfo = ({
           disabled={disabled ?? false}
         />
         <Typography variant="subtitle1" className={classes.infoHeader}>
-          {vegsystemreferanse.length ? vegsystemreferanse : ''}
+          Dagsaktuell informasjon
         </Typography>
       </div>
       {imagePoint ? (
         <div className={classes.scrollContainer}>
-          {fylkesNavn.length && imagePoint.properties.FYLKENUMMER ? (
-            <ItemGroupContainer headline="Plassering" Icon={RoomOutlined}>
-              {gatenavn ? (
-                <Typography variant="body1" className={classes.lines}>
-                  {gatenavn}
-                </Typography>
-              ) : null}
-              {broNavn.length ? (
-                <>
-                  {broNavn.map((broNavn) => (
-                    <Typography variant="body1" className={classes.lines}>
-                      {`${broNavn} (bru)`}
-                    </Typography>
-                  ))}
-                </>
-              ) : null}
-              {tunnelNavn.length ? (
-                <Typography variant="body1" className={classes.lines}>
-                  {`${tunnelNavn[0]}`}
-                </Typography>
-              ) : null}
+          <ItemGroupContainer headline="Plassering" Icon={RoomOutlined}>
+            <Typography variant="body1" className={classes.lines}>
+              {vegsystemreferanse.length ? vegsystemreferanse : ''}
+            </Typography>
+            {gatenavn ? (
               <Typography variant="body1" className={classes.lines}>
-                {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER})`}
+                {gatenavn}
               </Typography>
+            ) : null}
+            {broNavn.length ? (
+              <>
+                {broNavn.map((broNavn) => (
+                  <Typography variant="body1" className={classes.lines}>
+                    {`${broNavn} (bru)`}
+                  </Typography>
+                ))}
+              </>
+            ) : null}
+            {tunnelNavn.length ? (
+              <Typography variant="body1" className={classes.lines}>
+                {`${tunnelNavn[0]}`}
+              </Typography>
+            ) : null}
+            {kommuneNavn ? (
               <Typography variant="body1" className={classes.lines}>
                 {`${kommuneNavn}`}
               </Typography>
-            </ItemGroupContainer>
-          ) : null}
+            ) : null}
+            {fylkesNavn.length && imagePoint.properties.FYLKENUMMER ? (
+              <Typography variant="body1" className={classes.lines}>
+                {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER})`}
+              </Typography>
+            ) : null}
+          </ItemGroupContainer>
           {fartsgrense.length ? (
             <ItemGroupContainer headline="Fartsgrense" Icon={SpeedOutlined}>
               {fartsgrense.map((fart) => (

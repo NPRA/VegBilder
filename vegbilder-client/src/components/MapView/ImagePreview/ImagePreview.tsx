@@ -47,6 +47,9 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1,
     height: '95%',
   },
+  buttons: {
+    marginTop: '0.5rem',
+  },
 }));
 
 interface IImagePreviewProps {
@@ -72,7 +75,7 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
         <div className={classes.imagePreview}>
           <div className={classes.imageMetadata}>
             <ImageMetadata />
-            <div>
+            <div className={classes.buttons}>
               <Tooltip title="Åpne bilde">
                 <IconButton className={classes.enlargeButton} onClick={openImage}>
                   <EnlargeIcon />
@@ -81,14 +84,12 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-          <>
-            <img
-              src={getImageUrl(currentImagePoint)}
-              className={classes.image}
-              alt="Bilde tatt langs veg"
-              onClick={openImage}
-            />
-          </>
+          <img
+            src={getImageUrl(currentImagePoint)}
+            className={classes.image}
+            alt="Bilde tatt langs veg"
+            onClick={openImage}
+          />
         </div>
         {showInformation ? (
           <ImageInfo
@@ -98,11 +99,14 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
             maxHeight={'50%'}
           />
         ) : (
-          <ImageInfoButton
-            showInformation={showInformation}
-            setShowInformation={setShowInformation}
-            disabled={false}
-          />
+          <>
+            <div style={{ marginTop: '0.2rem' }} />
+            <ImageInfoButton
+              showInformation={showInformation}
+              setShowInformation={setShowInformation}
+              disabled={false}
+            />
+          </>
         )}
       </div>
     );
