@@ -71,6 +71,21 @@ const useStyles = makeStyles((theme) => ({
     width: '25rem',
     maxHeight: '40rem',
     overflowY: 'auto',
+    '&::-webkit-scrollbar': {
+      backgroundColor: theme.palette.common.grayDarker,
+      width: '1rem',
+    },
+    '&::-webkit-scrollbar-track': {
+      backgroundColor: theme.palette.common.grayDarker,
+    },
+    '&::-webkit-scrollbar-thumb': {
+      backgroundColor: theme.palette.common.grayRegular,
+      borderRadius: '1rem',
+      border: `4px solid ${theme.palette.common.grayDarker}`,
+    },
+    '&::-webkit-scrollbar-button': {
+      display: 'none',
+    },
   },
 }));
 
