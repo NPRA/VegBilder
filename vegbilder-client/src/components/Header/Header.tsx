@@ -34,7 +34,7 @@ const useStyles = makeStyles({
   logo: {
     width: '7.5rem',
     cursor: 'pointer',
-    margin: '0.5rem',
+    margin: '0.75rem',
   },
   rightItem: {
     width: '7.5rem',
