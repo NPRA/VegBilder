@@ -4,7 +4,7 @@ import { Button, Divider, makeStyles, Typography } from '@material-ui/core';
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
 import { helpText } from 'constants/text';
-import { DotsHorizontalSmallIcon, HistorySmallIcon } from 'components/Icons/Icons';
+import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
 import { FEEDBACK_SCHEME_URL } from 'constants/urls';
 import PageInformationTextAndImage from 'components/Onboarding/PageInformationTextAndImage/PageInformationTextAndImage';
 import UseOfVebilder from './tabs/UseOfVegbilder';
@@ -23,16 +23,16 @@ const useStyles = makeStyles((theme) => ({
     border: 'none',
     background: 'inherit',
     color: 'inherit',
-    borderBottom: `1px solid ${theme.palette.common.charcoalLighter}`,
+    borderBottom: `0.5px solid ${theme.palette.common.grayRegular}`,
     fontFamily: 'inherit',
     fontSize: 'inherit',
     cursor: 'pointer',
     padding: 0,
     marginBottom: '1rem',
-  },
-  rigthLeftText: {
-    display: 'flex',
-    justifyContent: 'space-between',
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+      borderBottom: `1px solid ${theme.palette.common.orangeDark}`,
+    },
   },
   icon: {
     width: '0.8rem',
@@ -62,7 +62,28 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
     } else if (tab === 'Versjonslogg') {
       return <VersionLog />;
     }
-    return <PageInformationTextAndImage />;
+    return (
+      <>
+        {!openForm ? (
+          <>
+            <Typography variant="h2"> Om Vegbilder</Typography>
+            <PageInformationTextAndImage />{' '}
+            <Typography variant="h3" className={classes.paragraphs}>
+              {' '}
+              {helpText.header2}
+            </Typography>
+            <Typography className={classes.paragraphs} variant="body1">
+              {helpText.text5} <DotsHorizontalSmallIcon />
+              {' .'}
+            </Typography>{' '}
+          </>
+        ) : null}
+        <button className={classes.openFeedbackScheme} onClick={() => setOpenForm(!openForm)}>
+          {openForm ? 'Lukk tilbakemeldingskjema' : 'Gi tilbakemelding'}
+        </button>
+        {openForm ? <FeedbackFormFrame formLink={FEEDBACK_SCHEME_URL} /> : null}
+      </>
+    );
   };
 
   return (

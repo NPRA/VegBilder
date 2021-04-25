@@ -33,13 +33,13 @@ const helpText = {
   text2:
     'Dersom en vegstrekning er kjørt flere ganger i løpet av et år vil det dukke opp en datovelger ved årsvelgeren.',
   text3:
-    'Ønsker du å dele et bilde kan du gjøre det på to måter. Enten kan du kopiere nettsideadressen (url) eller så kan du klikke på "',
-  text3Cont: '" og trykke "Del".',
+    'Ønsker du å dele et bilde kan du gjøre det på to måter. Enten kan du kopiere nettsideadressen (url) eller så kan du klikke på ',
+  text3Cont: ' og trykke Del.',
   text4: 'Med   ',
   text4Cont:
     '  (historieikonet) kan du finne bilder med samme lokasjon og kjøreretning på forskjellige datoer.',
   text5:
-    'Feil eller forslag til løsningen formidles med egne skjema (lenke under). Feil for hvert enkelt bilde meldes under ikonet "',
+    'Feil eller forslag til løsningen formidles med egne skjema (lenke under). Feil for hvert enkelt bilde meldes under ikonet ',
 };
 
 const settingsText = {

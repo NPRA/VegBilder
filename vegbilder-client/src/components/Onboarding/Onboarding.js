@@ -37,6 +37,7 @@ const Onboarding = () => {
   return (
     <PopUpWrapper setVisible={closeOnboarding}>
       <div className={classes.contentPadding}>
+        <Typography variant="h2"> Velkommen til Vegbilder</Typography>
         <PageInformationTextAndImage />
         <div className={classes.paragraphs}>
           <Typography variant="body1">

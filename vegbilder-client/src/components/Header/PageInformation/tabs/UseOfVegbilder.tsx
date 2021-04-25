@@ -42,53 +42,28 @@ const UseOfVebilder = () => {
   const [openForm, setOpenForm] = useState(false);
 
   return (
-    <>
-      <div className={classes.content}>
-        {!openForm ? (
-          <>
-            <Typography variant="h3" className={classes.paragraphs}>
-              {' '}
-              {helpText.header1}
-            </Typography>
-            <Divider />
-            <Typography variant="body1" className={classes.paragraphs}>
-              {' '}
-              {helpText.text1}{' '}
-            </Typography>
-            <Typography variant="body1" className={classes.paragraphs}>
-              {' '}
-              {helpText.text2}{' '}
-            </Typography>
-            <Typography variant="body1" className={classes.paragraphs}>
-              {' '}
-              {helpText.text3} <DotsHorizontalSmallIcon /> {helpText.text3Cont}
-            </Typography>
-            <Typography variant="body1" className={classes.paragraphs}>
-              {' '}
-              {helpText.text4} <HistorySmallIcon className={classes.icon} /> {helpText.text4Cont}
-            </Typography>
-            <Divider />
-            <Typography variant="h3" className={classes.paragraphs}>
-              {' '}
-              {helpText.header2}
-            </Typography>
-            <Typography className={classes.paragraphs} variant="body1">
-              {helpText.text5} <DotsHorizontalSmallIcon />
-              {' ".'}
-            </Typography>{' '}
-          </>
-        ) : null}
-        <div className={classes.rigthLeftText}>
-          <button className={classes.openFeedbackScheme} onClick={() => setOpenForm(!openForm)}>
-            {openForm ? 'Lukk tilbakemeldingskjema' : 'Gi tilbakemelding'}
-          </button>
-          <Typography variant="body1" className={classes.paragraphs}>
-            {openForm ? '' : helpText.versionNumber}
-          </Typography>
-        </div>
-        {openForm ? <FeedbackFormFrame formLink={FEEDBACK_SCHEME_URL} /> : null}
-      </div>
-    </>
+    <div className={classes.content}>
+      <Typography variant="h2" className={classes.paragraphs}>
+        {' '}
+        {helpText.header1}
+      </Typography>
+      <Typography variant="body1" className={classes.paragraphs}>
+        {' '}
+        {helpText.text1}{' '}
+      </Typography>
+      <Typography variant="body1" className={classes.paragraphs}>
+        {' '}
+        {helpText.text2}{' '}
+      </Typography>
+      <Typography variant="body1" className={classes.paragraphs}>
+        {' '}
+        {helpText.text3} <DotsHorizontalSmallIcon /> {helpText.text3Cont}
+      </Typography>
+      <Typography variant="body1" className={classes.paragraphs}>
+        {' '}
+        {helpText.text4} <HistorySmallIcon className={classes.icon} /> {helpText.text4Cont}
+      </Typography>
+    </div>
   );
 };
 

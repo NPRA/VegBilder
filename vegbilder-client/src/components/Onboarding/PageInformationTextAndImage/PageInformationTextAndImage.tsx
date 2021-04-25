@@ -29,10 +29,6 @@ const PageInformationTextAndImage = () => {
 
   return (
     <>
-      <Typography variant="h2" className={classes.headline}>
-        {' '}
-        {informationText.header}{' '}
-      </Typography>
       <img
         src={`${process.env.PUBLIC_URL}/images/E6-Dovrefjell-Snohetta-lower.jpg`}
         alt="Bilde av E6 ved Dovrefjell Snøhetta"
