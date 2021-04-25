@@ -3,7 +3,7 @@ import { Button, Divider, makeStyles, Typography } from '@material-ui/core';
 
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
-import { helpText } from 'constants/text';
+import { helpText, informationText } from 'constants/text';
 import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
 import { FEEDBACK_SCHEME_URL } from 'constants/urls';
 import PageInformationTextAndImage from 'components/Onboarding/PageInformationTextAndImage/PageInformationTextAndImage';
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '1rem',
     '&:hover': {
       color: theme.palette.common.orangeDark,
-      borderBottom: `1px solid ${theme.palette.common.orangeDark}`,
+      borderBottom: `0.5px solid ${theme.palette.common.orangeDark}`,
     },
   },
   icon: {
@@ -68,12 +68,12 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
           <>
             <Typography variant="h2"> Om Vegbilder</Typography>
             <PageInformationTextAndImage />{' '}
-            <Typography variant="h3" className={classes.paragraphs}>
+            {/* <Typography variant="h3" className={classes.paragraphs}>
               {' '}
               {helpText.header2}
-            </Typography>
+            </Typography> */}
             <Typography className={classes.paragraphs} variant="body1">
-              {helpText.text5} <DotsHorizontalSmallIcon />
+              {informationText.text4} <DotsHorizontalSmallIcon />
               {' .'}
             </Typography>{' '}
           </>
