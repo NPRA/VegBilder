@@ -14,7 +14,6 @@ const informationText = {
 
 const helpText = {
   header1: 'Bruk av vegbilder',
-  versionNumber: 'v1.2.14',
   text1:
     'For å finne bilder der du ønsker kan du zomme deg inn eller klikke på kartet. Hvis du har valgt nyeste-modus, vil applikasjonen finne de nyeste bildene der du klikker på kartet. Når den har funnet bilder vil den automatisk sette året til det året med de nyeste bildene. Du kan også søke etter stedsnavn eller vegsystemreferanse. Når du har zoomet inn på en veg vil du få opp markører du kan klikke på for å se bildet. ',
   text3:

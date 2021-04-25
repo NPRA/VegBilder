@@ -6,6 +6,7 @@ import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
 import { helpText } from 'constants/text';
 import { DotsHorizontalSmallIcon, HistorySmallIcon } from 'components/Icons/Icons';
 import { FEEDBACK_SCHEME_URL } from 'constants/urls';
+import { currentVersion, versionLog } from 'constants/versions';
 
 const useStyles = makeStyles((theme) => ({
   content: {
@@ -35,6 +36,9 @@ const useStyles = makeStyles((theme) => ({
     height: '0.8rem',
     margin: '0 0.1rem',
   },
+  bullets: {
+    color: theme.palette.common.grayRegular,
+  },
 }));
 
 const VersionLog = () => {
@@ -43,11 +47,16 @@ const VersionLog = () => {
   return (
     <>
       <Typography variant="h2"> Versjonslogg </Typography>
-      <Typography variant="subtitle1"> {helpText.versionNumber} </Typography>
-      <Typography variant="body1">
-        <ul>Stylingendringer</ul>
-      </Typography>
-      <Divider />
+      {Object.entries(versionLog).map(([versionNumber, changes]) => (
+        <>
+          <Typography variant="subtitle1"> {versionNumber} </Typography>
+          <ul className={classes.bullets}>
+            {changes.map((change) => (
+              <li>{change}</li>
+            ))}
+          </ul>
+        </>
+      ))}
     </>
   );
 };
