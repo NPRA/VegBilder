@@ -3,7 +3,7 @@ import { Button, Divider, makeStyles, Typography } from '@material-ui/core';
 
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
-import { helpText, informationText } from 'constants/text';
+import { informationText } from 'constants/text';
 import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
 import { FEEDBACK_SCHEME_URL } from 'constants/urls';
 import PageInformationTextAndImage from 'components/Onboarding/PageInformationTextAndImage/PageInformationTextAndImage';
@@ -61,6 +61,15 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
       return <UseOfVebilder />;
     } else if (tab === 'Versjonslogg') {
       return <VersionLog />;
+    } else if (tab === 'Anonymisering') {
+      return (
+        <>
+          <Typography variant="h2"> Anonymisering</Typography>
+          <Typography variant="body1" className={classes.paragraphs}>
+            Ikke implementert enda.
+          </Typography>
+        </>
+      );
     }
     return (
       <>
@@ -68,10 +77,6 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
           <>
             <Typography variant="h2"> Om Vegbilder</Typography>
             <PageInformationTextAndImage />{' '}
-            {/* <Typography variant="h3" className={classes.paragraphs}>
-              {' '}
-              {helpText.header2}
-            </Typography> */}
             <Typography className={classes.paragraphs} variant="body1">
               {informationText.text4} <DotsHorizontalSmallIcon />
               {' .'}
