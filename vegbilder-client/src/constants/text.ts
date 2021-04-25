@@ -16,15 +16,13 @@ const helpText = {
   header1: 'Bruk av vegbilder',
   versionNumber: 'v1.2.14',
   text1:
-    'For å finne bilder der du ønsker kan du enten zoome inn på kartet eller søke etter stedsnavn eller vegsystemreferanse. Når du har zoomet inn på en veg vil du få opp markører du kan klikke på for å se bildet. ',
-  text2:
-    'Dersom en vegstrekning er kjørt flere ganger i løpet av et år vil det dukke opp en datovelger ved årsvelgeren.',
+    'For å finne bilder der du ønsker kan du zomme deg inn eller klikke på kartet. Hvis du har valgt nyeste-modus, vil applikasjonen finne de nyeste bildene der du klikker på kartet. Når den har funnet bilder vil den automatisk sette året til det året med de nyeste bildene. Du kan også søke etter stedsnavn eller vegsystemreferanse. Når du har zoomet inn på en veg vil du få opp markører du kan klikke på for å se bildet. ',
   text3:
     'Ønsker du å dele et bilde kan du gjøre det på to måter. Enten kan du kopiere nettsideadressen (url) eller så kan du klikke på ',
-  text3Cont: ' og trykke Del.',
-  text4: 'Med   ',
+  text3Cont: '   i bildemodus og trykke Del.',
+  text4: 'Med historieikonet  ',
   text4Cont:
-    '  (historieikonet) kan du finne bilder med samme lokasjon og kjøreretning på forskjellige datoer.',
+    '  kan du finne bilder med samme lokasjon og kjøreretning på forskjellige datoer. Dersom en vegstreking er kjørt flere ganger på et år vil du kunne se dette her.',
 };
 
 const settingsText = {

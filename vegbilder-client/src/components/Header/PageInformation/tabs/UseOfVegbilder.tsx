@@ -53,10 +53,6 @@ const UseOfVebilder = () => {
       </Typography>
       <Typography variant="body1" className={classes.paragraphs}>
         {' '}
-        {helpText.text2}{' '}
-      </Typography>
-      <Typography variant="body1" className={classes.paragraphs}>
-        {' '}
         {helpText.text3} <DotsHorizontalSmallIcon /> {helpText.text3Cont}
       </Typography>
       <Typography variant="body1" className={classes.paragraphs}>
