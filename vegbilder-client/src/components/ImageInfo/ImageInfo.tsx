@@ -18,9 +18,7 @@ const useStyles = makeStyles((theme) => ({
     display: 'flex',
     flexDirection: 'column',
     marginTop: '0.35rem',
-    //opacity: 0.8,
     borderRadius: '10px',
-    //backgroundColor: theme.palette.common.grayDarker,
     background: 'rgba(46, 53, 57, 0.80)',
     paddingBottom: '0.5rem',
     minHeight: '5%',
@@ -238,11 +236,23 @@ const ImageInfo = ({
     getGateNavnAndKontraktsområder(trimmedVegsystemreferanse);
   };
 
-  const getVegsystemReferanseAndSetNvdPropsForOldYears = async (latlng: ILatlng) => {
+  const getVegsystemReferanseAndSetNvdPropsForOldYears = async (
+    latlng: ILatlng,
+    imagePoint: IImagePoint
+  ) => {
     await GetPositionDataByLatLng(latlng).then((res) => {
-      const trimmedVegsystemreferanse = res[0].vegsystemreferanse.kortform.replace(/\s/g, '');
-      setVegsystemReferanse(res[0].vegsystemreferanse.kortform);
-      getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
+      const vegsytemreferanseWithSameVegkategori = res.find(
+        (res: any) =>
+          res.vegsystemreferanse.vegsystem.vegkategori === imagePoint.properties.VEGKATEGORI
+      );
+      if (vegsytemreferanseWithSameVegkategori) {
+        const trimmedVegsystemreferanse = vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform.replace(
+          /\s/g,
+          ''
+        );
+        setVegsystemReferanse(vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform);
+        getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
+      }
     });
   };
 
@@ -273,7 +283,8 @@ const ImageInfo = ({
         const trimmedVegsystemreferanse = getTrimmedVegsystemreferanse(imagePoint);
         getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
       } else {
-        if (imagePointLatlng) getVegsystemReferanseAndSetNvdPropsForOldYears(imagePointLatlng);
+        if (imagePointLatlng)
+          getVegsystemReferanseAndSetNvdPropsForOldYears(imagePointLatlng, imagePoint);
       }
 
       if (imagePointLatlng) {

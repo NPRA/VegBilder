@@ -7,7 +7,7 @@ const GetPositionDataByLatLng = async (latlng: ILatlng) => {
       params: {
         lat: latlng.lat,
         lon: latlng.lng,
-        maks_antall: 1,
+        maks_antall: 3,
         maks_avstand: 20,
         srid: '4326',
         detaljerte_lenker: 'false',
