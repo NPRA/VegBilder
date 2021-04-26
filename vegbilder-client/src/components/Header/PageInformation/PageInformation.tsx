@@ -13,7 +13,7 @@ import Theme from 'theme/Theme';
 
 const useStyles = makeStyles((theme) => ({
   content: {
-    margin: '2rem 2rem 1rem 2rem',
+    padding: '2rem 2rem 1rem 2rem',
   },
   paragraphs: {
     paddingBottom: '1rem',

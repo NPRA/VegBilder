@@ -47,11 +47,12 @@ const useStyles = makeStyles({
 interface IHeaderProps {
   showMessage: (message: string) => void;
   setMapView: () => void;
+  setShowInformation: (val: boolean) => void;
+  showInformation: boolean;
 }
 
-const Header = ({ showMessage, setMapView }: IHeaderProps) => {
+const Header = ({ showMessage, setMapView, showInformation, setShowInformation }: IHeaderProps) => {
   const classes = useStyles();
-  const [showInformation, setShowInformation] = useState(false);
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
@@ -93,9 +94,6 @@ const Header = ({ showMessage, setMapView }: IHeaderProps) => {
           </Tooltip>
         </Grid>
       </Toolbar>
-      {showInformation ? (
-        <PageInformation setVisible={() => setShowInformation(!showInformation)} />
-      ) : null}
     </AppBar>
   );
 };

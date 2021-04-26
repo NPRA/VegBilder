@@ -21,6 +21,7 @@ import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import s3HealtCheck from 'apis/s3vegbilder/s3HealthCheck';
 import useAsyncError from 'hooks/useAsyncError';
+import PageInformation from './Header/PageInformation/PageInformation';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -74,6 +75,7 @@ const App = () => {
   const [view, setView] = useRecoilState(viewQueryParamterState);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [showPageInformation, setShowPageInformation] = useState(false);
   const { setCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
@@ -180,7 +182,12 @@ const App = () => {
       <FilteredImagePointsProvider>
         <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
           <Grid item className={classes.header}>
-            <Header showMessage={showSnackbarMessage} setMapView={() => setView('map')} />
+            <Header
+              showMessage={showSnackbarMessage}
+              setMapView={() => setView('map')}
+              showInformation={showPageInformation}
+              setShowInformation={setShowPageInformation}
+            />
           </Grid>
           {renderContent()}
         </Grid>
@@ -200,6 +207,9 @@ const App = () => {
           </Alert>
         </Snackbar>
         <Onboarding />
+        {showPageInformation ? (
+          <PageInformation setVisible={() => setShowPageInformation(false)} />
+        ) : null}
       </FilteredImagePointsProvider>
     </ThemeProvider>
   );
