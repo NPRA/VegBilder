@@ -2,42 +2,17 @@ import React, { useState } from 'react';
 import { Button, Divider, makeStyles, Typography } from '@material-ui/core';
 
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
-import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
-import { informationText } from 'constants/text';
-import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
-import { FEEDBACK_SCHEME_URL } from 'constants/urls';
-import PageInformationTextAndImage from 'components/Onboarding/PageInformationTextAndImage/PageInformationTextAndImage';
 import UseOfVebilder from './tabs/UseOfVegbilder';
 import VersionLog from './tabs/VersionLog';
 import Theme from 'theme/Theme';
+import About from './tabs/About';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   content: {
     padding: '2rem 2rem 1rem 2rem',
   },
   paragraphs: {
     paddingBottom: '1rem',
-  },
-  openFeedbackScheme: {
-    position: 'sticky',
-    border: 'none',
-    background: 'inherit',
-    color: 'inherit',
-    borderBottom: `0.5px solid ${theme.palette.common.grayRegular}`,
-    fontFamily: 'inherit',
-    fontSize: 'inherit',
-    cursor: 'pointer',
-    padding: 0,
-    marginBottom: '1rem',
-    '&:hover': {
-      color: theme.palette.common.orangeDark,
-      borderBottom: `0.5px solid ${theme.palette.common.orangeDark}`,
-    },
-  },
-  icon: {
-    width: '0.8rem',
-    height: '0.8rem',
-    margin: '0 0.1rem',
   },
   tabs: {
     display: 'flex',
@@ -47,11 +22,11 @@ const useStyles = makeStyles((theme) => ({
 
 interface IInformationProps {
   setVisible: () => void;
+  isOnboarding?: boolean;
 }
 
-const PageInformation = ({ setVisible }: IInformationProps) => {
+const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
   const classes = useStyles();
-  const [openForm, setOpenForm] = useState(false);
   const [selectedTab, setSelectedTab] = useState('Om Vegbilder');
 
   const tabs = ['Om Vegbilder', 'Bruk av vegbilder', 'Versjonslogg', 'Anonymisering'];
@@ -71,24 +46,7 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
         </>
       );
     }
-    return (
-      <>
-        {!openForm ? (
-          <>
-            <Typography variant="h2"> Om Vegbilder</Typography>
-            <PageInformationTextAndImage />{' '}
-            <Typography className={classes.paragraphs} variant="body1">
-              {informationText.text4} <DotsHorizontalSmallIcon />
-              {' .'}
-            </Typography>{' '}
-          </>
-        ) : null}
-        <button className={classes.openFeedbackScheme} onClick={() => setOpenForm(!openForm)}>
-          {openForm ? 'Lukk tilbakemeldingskjema' : 'Gi tilbakemelding'}
-        </button>
-        {openForm ? <FeedbackFormFrame formLink={FEEDBACK_SCHEME_URL} /> : null}
-      </>
-    );
+    return <About isOnboarding={isOnboarding} />;
   };
 
   return (

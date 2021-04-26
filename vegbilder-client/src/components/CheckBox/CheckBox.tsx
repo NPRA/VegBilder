@@ -4,6 +4,7 @@ import React from 'react';
 const useStyles = makeStyles((theme) => ({
   formControl: {
     marginTop: 0,
+    marginBottom: '1rem',
   },
   checkbox: {
     margin: 0,

@@ -10,7 +10,6 @@ import { FilteredImagePointsProvider } from 'contexts/FilteredImagePointsContext
 import Header from './Header/Header';
 import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
-import Onboarding from './Onboarding/Onboarding';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import {
   latLngZoomQueryParameterState,
@@ -21,7 +20,7 @@ import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import s3HealtCheck from 'apis/s3vegbilder/s3HealthCheck';
 import useAsyncError from 'hooks/useAsyncError';
-import PageInformation from './Header/PageInformation/PageInformation';
+import PageInformation from './PageInformation/PageInformation';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -75,7 +74,7 @@ const App = () => {
   const [view, setView] = useRecoilState(viewQueryParamterState);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
-  const [showPageInformation, setShowPageInformation] = useState(false);
+
   const { setCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
@@ -83,6 +82,9 @@ const App = () => {
   const throwError = useAsyncError();
 
   const searchParams = new URLSearchParams(window.location.search);
+
+  const shouldShowOnboarding = localStorage.getItem('HideSplashOnStartup') === 'false';
+  const [showPageInformation, setShowPageInformation] = useState(shouldShowOnboarding);
 
   const showSnackbarMessage = (message: string) => {
     setSnackbarMessage(message);
@@ -206,7 +208,6 @@ const App = () => {
             <Typography variant="subtitle1">{snackbarMessage}</Typography>
           </Alert>
         </Snackbar>
-        <Onboarding />
         {showPageInformation ? (
           <PageInformation setVisible={() => setShowPageInformation(false)} />
         ) : null}
