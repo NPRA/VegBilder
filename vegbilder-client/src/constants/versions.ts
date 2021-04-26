@@ -14,6 +14,7 @@ const versionLog = {
     'Ikoner i fargeforklareren og ikke sirkler',
     'Søkefelt like stort som forslag under',
     'Versjonslogg (redesign av velkomstvindu/info)',
+    'Filtrere på vegkategori ved spørring om vegsystemreferanse fra nvdb (2019 og eldre)',
   ],
 };
 
