@@ -1,5 +1,9 @@
 const versionLog = {
-  'v1.2.16': ['Velkomstemlding og sideinformasjon er nå samme komponent', 'Teksten er oppdatert.'],
+  'v1.2.16': [
+    'Velkomstemlding og sideinformasjon er nå samme komponent',
+    'Teksten er oppdatert',
+    'Zoom inn brukeren noen hakk dersom appen ikke finner bilder der den klikker (gjelder kun zoom-nivåer mindre enn 8).',
+  ],
   'v1.2.15': [
     'Flyttet minibildet til øvre venstre hjørnet, endret styling og la til informasjonsknapp',
     'Tok tilbake knapp/ikon for bildemodus fra hovedkartet',
