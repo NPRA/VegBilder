@@ -45,13 +45,14 @@ const SideControlBar = ({
     <div className={classes.sideControlBar}>
       <BackToBigMapButton setView={setView} />
       <>
-        <br style={{ marginTop: '0.35rem' }} />
         {showMiniMap ? (
-          <SmallMapContainer
-            miniMapVisible={miniMapVisible}
-            setMiniMapVisible={setMiniMapVisible}
-            isZoomedInImage={isZoomedInImage}
-          />
+          <>
+            <SmallMapContainer
+              miniMapVisible={miniMapVisible}
+              setMiniMapVisible={setMiniMapVisible}
+              isZoomedInImage={isZoomedInImage}
+            />
+          </>
         ) : (
           <HideShowMiniMapButton
             miniMapVisible={miniMapVisible}
@@ -70,7 +71,6 @@ const SideControlBar = ({
         />
       ) : (
         <>
-          <br style={{ marginTop: '0.35rem' }} />
           <ImageInfoButton
             showInformation={showInformation}
             setShowInformation={setShowInformation}

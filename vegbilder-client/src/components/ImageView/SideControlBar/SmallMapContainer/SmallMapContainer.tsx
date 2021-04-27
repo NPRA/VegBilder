@@ -17,6 +17,7 @@ const useStyles = makeStyles(() => ({
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
     borderRadius: '10px',
     zIndex: 5,
+    marginBottom: '0.35rem',
   },
 }));
 

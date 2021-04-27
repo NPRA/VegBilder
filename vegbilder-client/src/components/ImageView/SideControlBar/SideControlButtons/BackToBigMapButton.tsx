@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     zIndex: 1000,
     color: theme.palette.common.grayRegular,
     paddingLeft: '0.2rem',
-    margin: '0.2rem',
+    margin: '0.2rem 0.2rem 0.35rem 0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {

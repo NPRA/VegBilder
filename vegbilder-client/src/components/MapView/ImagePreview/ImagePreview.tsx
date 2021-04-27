@@ -29,6 +29,7 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: 'column',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
     borderRadius: '10px',
+    marginBottom: '0.35rem',
   },
   imageMetadata: {
     borderRadius: '10px 10px 0 0',

@@ -6,7 +6,7 @@ import { MapIcon } from 'components/Icons/Icons';
 const useStyles = makeStyles((theme) => ({
   button: {
     backgroundColor: theme.palette.common.grayDark,
-    margin: '0.2rem',
+    margin: '0.2rem 0.2rem 0.35rem 0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {
@@ -17,7 +17,7 @@ const useStyles = makeStyles((theme) => ({
   },
   active: {
     backgroundColor: theme.palette.common.grayDark,
-    margin: '0.2rem',
+    margin: '0.2rem 0.2rem 0.35rem 0.2rem',
     '& .MuiIconButton-label': {
       '& svg': {
         '& path': {
@@ -27,7 +27,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   buttonDisabled: {
-    margin: '0.2rem',
+    margin: '0.2rem 0.2rem 0.35rem 0.2rem',
     backgroundColor: theme.palette.common.grayDark,
     opacity: 0.7,
   },
