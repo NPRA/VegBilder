@@ -89,14 +89,6 @@ const About = ({ isOnboarding }: IAboutProps) => {
             {' '}
             {informationText.text1}{' '}
           </Typography>
-          <Typography variant="body1" className={classes.paragraphs}>
-            {' '}
-            {informationText.text2}{' '}
-          </Typography>
-          <Typography className={classes.paragraphs} variant="body1">
-            {informationText.text4} <DotsHorizontalSmallIcon />
-            {' .'}
-          </Typography>{' '}
         </>
       ) : null}
       <button className={classes.openFeedbackScheme} onClick={() => setOpenForm(!openForm)}>

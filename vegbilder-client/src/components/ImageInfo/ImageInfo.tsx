@@ -31,13 +31,14 @@ const useStyles = makeStyles((theme) => ({
     '&::-webkit-scrollbar': {
       backgroundColor: theme.palette.common.grayDarker,
       width: '1rem',
+      borderRadius: '10px',
     },
     '&::-webkit-scrollbar-track': {
       backgroundColor: theme.palette.common.grayDarker,
     },
     '&::-webkit-scrollbar-thumb': {
       backgroundColor: theme.palette.common.grayRegular,
-      borderRadius: '1rem',
+      borderRadius: '10px',
       border: `4px solid ${theme.palette.common.grayDarker}`,
     },
     '&::-webkit-scrollbar-button': {
