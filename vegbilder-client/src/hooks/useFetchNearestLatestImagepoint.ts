@@ -37,6 +37,7 @@ const useFetchNearestLatestImagePoint = (
       if (!foundImage) {
         showMessage(notFoundMessage);
       }
+      return foundImage;
     }
   }
 

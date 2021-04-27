@@ -43,10 +43,20 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
   const handleClick = (event: LeafletMouseEvent) => {
     const userClickedLatLng = event.latlng;
     if (currentYear === 'Nyeste') {
-      fetchNearestLatestImagePoint(userClickedLatLng);
+      fetchNearestLatestImagePoint(userClickedLatLng).then((foundImage) => {
+        if (!foundImage && currentCoordinates.zoom && currentCoordinates.zoom < 8) {
+          setCurrentCoordinates({ ...userClickedLatLng, zoom: 8 }); // zoom the user more in if it didnt find images
+        }
+      });
     } else {
       if (!currentImagePoint || (currentCoordinates.zoom && currentCoordinates.zoom < 15)) {
-        fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number);
+        fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number).then(
+          (imagePoint) => {
+            if (!imagePoint && currentCoordinates.zoom && currentCoordinates.zoom < 8) {
+              setCurrentCoordinates({ ...userClickedLatLng, zoom: 8 }); // zoom the user more in if it didnt find images)
+            }
+          }
+        );
       }
     }
   };
