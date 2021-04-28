@@ -1,13 +1,15 @@
 const informationText = {
-  header: 'Om Vegbilder',
+  header: 'Om VEGBILDER',
   photoDescription: 'E6 ved Hjerkinn med Snøhetta i bakgrunnen.',
   photoBy: 'Foto: Knut Opeide, Statens Vegvesen',
   text1:
-    'VEGBILDER er en webbasert applikasjon for visning av vegbilder. Applikasjonen, som er utviklet av Statens Vegvesen i samarbeid med Bekk, gir tilgang til vegbilder som tas årlig på deler av det norske vegnettet.',
+    'VEGBILDER er et webbasert fagsystem for visning av vegbilder, utviklet av Statens Vegvesen. Systemet gir tilgang til vegbilder som tas årlig på store deler av det norske vegnettet.',
+  text2:
+    'Statens vegvesen tar forbehold om at tilgang og innhold kan bli endret ved behov. Det kan forekomme feil i datagrunnlaget og brukeren er selv ansvarlig for bruk av systemet og den informasjonen den måtte gi. ',
 };
 
 const helpText = {
-  header1: 'Bruk av vegbilder',
+  header1: 'Bruk av VEGBILDER',
   text1:
     'Kartet viser alle bildepunkt som representerer et bilde. Ved klikk på et bildepunkt, åpnes en forhåndsvisning av det aktuelle bildet. Dersom det ikke finnes bilder i nærheten av valgt punkt, zoomes kartet inn for en lettere valgmulighet. ',
   text2:

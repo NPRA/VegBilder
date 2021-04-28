@@ -81,6 +81,10 @@ export default createMuiTheme({
       fontFamily: '"LFT-Etica semi-bold"',
       fontSize: '1.125rem',
     },
+    h4: {
+      fontFamily: '"LFT-Etica"',
+      fontSize: '1.725rem',
+    },
     h5: {
       fontFamily: '"LFT-Etica semi-bold"',
       fontSize: '0.9375rem',

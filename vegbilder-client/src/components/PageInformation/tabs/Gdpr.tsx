@@ -30,7 +30,7 @@ const Gdpr = () => {
     <div className={classes.content}>
       {openForm ? null : (
         <>
-          <Typography variant="h2" className={classes.paragraphs}>
+          <Typography variant="h4" className={classes.paragraphs}>
             {' '}
             {gdprText.header}
           </Typography>

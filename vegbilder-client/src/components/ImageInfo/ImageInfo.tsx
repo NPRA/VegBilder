@@ -220,7 +220,7 @@ const ImageInfo = ({
     setKommuneNavn(`${response.kommunenavn} (${response.kommunenummer})  `);
   };
 
-  const getAndSetPropertiesFromNvdb = (trimmedVegsystemreferanse: string) => {
+  const getPropertiesFromNvdbAndSetResourceState = (trimmedVegsystemreferanse: string) => {
     setResourceStateByEgenskapAndResourceId(
       trimmedVegsystemreferanse,
       fartsgrenseId,
@@ -238,7 +238,7 @@ const ImageInfo = ({
     getGateNavnAndKontraktsområder(trimmedVegsystemreferanse);
   };
 
-  const getVegsystemReferanseAndSetNvdPropsForOldYears = async (
+  const getNvdbVegsystemreferanseAndGetNvdbProperties = async (
     latlng: ILatlng,
     imagePoint: IImagePoint
   ) => {
@@ -253,7 +253,7 @@ const ImageInfo = ({
           ''
         );
         setVegsystemReferanse(vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform);
-        getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
+        getPropertiesFromNvdbAndSetResourceState(trimmedVegsystemreferanse);
       }
     });
   };
@@ -280,16 +280,8 @@ const ImageInfo = ({
       const LindesnesLatLng = { lat: 57.9825904, lng: 7.0483913 };
       const imagePointLatlng = getImagePointLatLng(imagePoint);
 
-      if (imagePoint.properties.AAR >= 2020) {
-        setVegsystemReferanse(getRoadReference(imagePoint).withoutFelt);
-        const trimmedVegsystemreferanse = getTrimmedVegsystemreferanse(imagePoint);
-        getAndSetPropertiesFromNvdb(trimmedVegsystemreferanse);
-      } else {
-        if (imagePointLatlng)
-          getVegsystemReferanseAndSetNvdPropsForOldYears(imagePointLatlng, imagePoint);
-      }
-
       if (imagePointLatlng) {
+        getNvdbVegsystemreferanseAndGetNvdbProperties(imagePointLatlng, imagePoint);
         getKommuneAndFylke(imagePointLatlng);
         setPosition(imagePointLatlng);
         const kmToLindesnes = getDistanceFromLatLonInKm(imagePointLatlng, LindesnesLatLng).toFixed(

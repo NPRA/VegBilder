@@ -34,7 +34,7 @@ const VersionLog = () => {
 
   return (
     <>
-      <Typography variant="h2"> Versjonslogg </Typography>
+      <Typography variant="h4"> Versjonslogg </Typography>
       <div className={classes.scrollContainer}>
         {Object.entries(versionLog).map(([versionNumber, changes]) => (
           <>

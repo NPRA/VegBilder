@@ -30,10 +30,10 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('Om Vegbilder');
 
-  const tabs = ['Om Vegbilder', 'Bruk av vegbilder', 'Versjonslogg', 'GDPR'];
+  const tabs = ['Om', 'Bruk', 'GDPR', 'Tilbakemelding', 'Versjonslogg'];
 
   const getComponentByTab = (tab: string) => {
-    if (tab === 'Bruk av vegbilder') {
+    if (tab === 'Bruk') {
       return <UseOfVebilder />;
     } else if (tab === 'Versjonslogg') {
       return <VersionLog />;

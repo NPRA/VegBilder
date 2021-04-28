@@ -63,7 +63,7 @@ const About = () => {
     <>
       {!openForm ? (
         <>
-          <Typography variant="h2"> Om Vegbilder</Typography>
+          <Typography variant="h4"> {informationText.header}</Typography>
           <img
             src={`${process.env.PUBLIC_URL}/images/E6-Dovrefjell-Snohetta-lower.jpg`}
             alt="Bilde av E6 ved Dovrefjell Snøhetta"
@@ -83,6 +83,10 @@ const About = () => {
           <Typography variant="body1" className={classes.paragraphs}>
             {' '}
             {informationText.text1}{' '}
+          </Typography>
+          <Typography variant="body1" className={classes.paragraphs}>
+            {' '}
+            {informationText.text2}{' '}
           </Typography>
         </>
       ) : null}
