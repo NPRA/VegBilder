@@ -7,6 +7,8 @@ import VersionLog from './tabs/VersionLog';
 import Theme from 'theme/Theme';
 import About from './tabs/About';
 import Gdpr from './tabs/Gdpr';
+import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
+import { FEEDBACK_SCHEME_URL } from 'constants/urls';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -39,6 +41,8 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
       return <VersionLog />;
     } else if (tab === 'GDPR') {
       return <Gdpr />;
+    } else if (tab === 'Tilbakemelding') {
+      return <FeedbackFormFrame formLink={FEEDBACK_SCHEME_URL} />;
     }
     return <About />;
   };

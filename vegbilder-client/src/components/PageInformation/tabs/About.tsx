@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 
-import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
 import { informationText } from 'constants/text';
-import { FEEDBACK_SCHEME_URL } from 'constants/urls';
 import CheckBox from 'components/CheckBox/CheckBox';
 
 const useStyles = makeStyles((theme) => ({
@@ -45,7 +43,6 @@ const useStyles = makeStyles((theme) => ({
 
 const About = () => {
   const classes = useStyles();
-  const [openForm, setOpenForm] = useState(false);
 
   const HIDE_SPLASH_ON_STARTUP = 'HideSplashOnStartup';
 
@@ -61,45 +58,35 @@ const About = () => {
 
   return (
     <>
-      {!openForm ? (
-        <>
-          <Typography variant="h4"> {informationText.header}</Typography>
-          <img
-            src={`${process.env.PUBLIC_URL}/images/E6-Dovrefjell-Snohetta-lower.jpg`}
-            alt="Bilde av E6 ved Dovrefjell Snøhetta"
-            width="100%"
-            className={classes.image}
-          />
-          <div className={classes.rightLeftText}>
-            <Typography variant="body1" className={classes.paragraphs}>
-              {' '}
-              {informationText.photoDescription}{' '}
-            </Typography>
-            <Typography variant="body1" className={classes.paragraphs}>
-              {' '}
-              {informationText.photoBy}{' '}
-            </Typography>
-          </div>
-          <Typography variant="body1" className={classes.paragraphs}>
-            {' '}
-            {informationText.text1}{' '}
-          </Typography>
-          <Typography variant="body1" className={classes.paragraphs}>
-            {' '}
-            {informationText.text2}{' '}
-          </Typography>
-        </>
-      ) : null}
-      <button className={classes.openFeedbackScheme} onClick={() => setOpenForm(!openForm)}>
-        {openForm ? 'Lukk tilbakemeldingskjema' : 'Gi tilbakemelding'}
-      </button>
-      <div>
-        {!openForm ? (
-          <CheckBox handleChange={handleStartupChange} label={'Ikke vis ved oppstart'} />
-        ) : null}
+      <Typography variant="h4"> {informationText.header}</Typography>
+      <img
+        src={`${process.env.PUBLIC_URL}/images/E6-Dovrefjell-Snohetta-lower.jpg`}
+        alt="Bilde av E6 ved Dovrefjell Snøhetta"
+        width="100%"
+        className={classes.image}
+      />
+      <div className={classes.rightLeftText}>
+        <Typography variant="body1" className={classes.paragraphs}>
+          {' '}
+          {informationText.photoDescription}{' '}
+        </Typography>
+        <Typography variant="body1" className={classes.paragraphs}>
+          {' '}
+          {informationText.photoBy}{' '}
+        </Typography>
       </div>
+      <Typography variant="body1" className={classes.paragraphs}>
+        {' '}
+        {informationText.text1}{' '}
+      </Typography>
+      <Typography variant="body1" className={classes.paragraphs}>
+        {' '}
+        {informationText.text2}{' '}
+      </Typography>
 
-      {openForm ? <FeedbackFormFrame formLink={FEEDBACK_SCHEME_URL} /> : null}
+      <div>
+        <CheckBox handleChange={handleStartupChange} label={'Ikke vis ved oppstart'} />
+      </div>
     </>
   );
 };
