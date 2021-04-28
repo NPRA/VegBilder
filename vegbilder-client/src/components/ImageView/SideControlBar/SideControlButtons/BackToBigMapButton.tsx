@@ -1,4 +1,4 @@
-import { Tooltip, makeStyles, IconButton, Typography } from '@material-ui/core';
+import { Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 import React from 'react';
 

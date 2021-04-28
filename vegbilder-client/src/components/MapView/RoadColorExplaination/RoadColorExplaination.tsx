@@ -46,11 +46,15 @@ const RoadColorExplaination = () => {
       {shouldShowRoadColorExplaination ? (
         <Paper className={classes.paperContainer}>
           <div className={classes.colorRoadRow}>
-            <img src={getMarkerIcon('F')} className={classes.markers} />
+            <img
+              src={getMarkerIcon('F')}
+              alt="Markør for fylkesveger"
+              className={classes.markers}
+            />
             <Typography variant="body1">Fylkesveger</Typography>
           </div>
           <div className={classes.colorRoadRow}>
-            <img src={getMarkerIcon('E')} className={classes.markers} />
+            <img src={getMarkerIcon('E')} alt="Markør for riksveger" className={classes.markers} />
             <Typography variant="body1">Riksveger</Typography>
           </div>
         </Paper>

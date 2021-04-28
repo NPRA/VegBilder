@@ -1,4 +1,3 @@
-import { errorSelector } from 'recoil';
 import nvdbApi from './nvdbApi';
 
 const getVegByVegsystemreferanse = async (vegsystemreferanse) => {

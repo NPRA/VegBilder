@@ -1,11 +1,7 @@
 import React, { useState } from 'react';
-import { Divider, makeStyles, Typography } from '@material-ui/core';
+import { makeStyles, Typography } from '@material-ui/core';
 
-import PopUpWrapper from 'components/wrappers/PopUpWrapper';
-import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
 import { helpText } from 'constants/text';
-import { DotsHorizontalSmallIcon, HistorySmallIcon } from 'components/Icons/Icons';
-import { FEEDBACK_SCHEME_URL, REPORT_ERROR_SCHEME_URL } from 'constants/urls';
 import OpenErrorSchemeTextButton from '../common/OpenErrorSchemeTextButton';
 
 const useStyles = makeStyles(() => ({

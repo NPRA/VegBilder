@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 const useAsyncError = () => {
-  const [_, setError] = useState();
+  const [, setError] = useState();
   return useCallback(
     (e) => {
       setError(() => {

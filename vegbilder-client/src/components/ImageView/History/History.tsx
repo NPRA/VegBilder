@@ -25,7 +25,6 @@ import {
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { currentHistoryImageState, isHistoryModeState, loadedImagePointsState } from 'recoil/atoms';
-import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 
 const useStyles = makeStyles((theme) => ({

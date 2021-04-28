@@ -18,8 +18,6 @@ import {
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
-import s3HealtCheck from 'apis/s3vegbilder/s3HealthCheck';
-import useAsyncError from 'hooks/useAsyncError';
 import PageInformation from './PageInformation/PageInformation';
 
 const useStyles = makeStyles({
@@ -79,7 +77,6 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
-  const throwError = useAsyncError();
 
   const searchParams = new URLSearchParams(window.location.search);
 
