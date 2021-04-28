@@ -4,6 +4,7 @@ const versionLog = {
     'Teksten er oppdatert',
     'Zoom inn brukeren noen hakk dersom appen ikke finner bilder der den klikker (gjelder kun zoom-nivåer mindre enn 8)',
     'Rundede kanter på scrollbar i bildeinfo',
+    'Fikse hoppende knapper i Chrome/Edge',
   ],
   'v1.2.15': [
     'Flyttet minibildet til øvre venstre hjørnet, endret styling og la til informasjonsknapp',

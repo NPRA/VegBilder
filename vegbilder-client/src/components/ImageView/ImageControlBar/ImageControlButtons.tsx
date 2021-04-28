@@ -157,7 +157,7 @@ const ImageControlButtons = ({
       ]);
       return `${VEGKART}@${Math.round(Math.round(utm33coordinates[0]))},${Math.round(
         utm33coordinates[1]
-      )},13/vegsystemreferanse:${utm33coordinates[0]}:${utm33coordinates[1]}`;
+      )},14/vegsystemreferanse:${utm33coordinates[0]}:${utm33coordinates[1]}`;
     } else return VEGKART;
   };
 
@@ -451,14 +451,14 @@ const ImageControlButtons = ({
             <ListItemText primary="Del" />
           </MenuItem>
 
-          <MenuItem>
-            <ListItemIcon>
-              <ExploreOutlinedIcon />
-            </ListItemIcon>
-            <Link target="_blank" rel="noopener noreferer" href={getLinkToVegkart()}>
-              Gå til Vegkart
-            </Link>
-          </MenuItem>
+          <Link target="_blank" rel="noopener noreferer" href={getLinkToVegkart()}>
+            <MenuItem>
+              <ListItemIcon>
+                <ExploreOutlinedIcon />
+              </ListItemIcon>
+              <ListItemText primary="Gå til Vegkart" />
+            </MenuItem>
+          </Link>
         </Menu>
       ) : null}
     </>
