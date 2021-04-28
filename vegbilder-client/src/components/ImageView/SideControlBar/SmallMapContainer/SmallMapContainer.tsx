@@ -25,12 +25,14 @@ interface ISmallMapContainerProps {
   miniMapVisible: boolean;
   setMiniMapVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
+  setView: (view: string) => void;
 }
 
 const SmallMapContainer = ({
   miniMapVisible,
   setMiniMapVisible,
   isZoomedInImage,
+  setView,
 }: ISmallMapContainerProps) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const classes = useStyles();
@@ -53,6 +55,7 @@ const SmallMapContainer = ({
           }
         }}
         attributionControl={false}
+        onclick={() => setView('map')}
       >
         <TileLayer
           url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"

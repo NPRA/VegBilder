@@ -8,6 +8,7 @@ const versionLog = {
     'Link til vegkart oransje med ikonet når du hovrer',
     'Zoom nivå til vegkart 14',
     'Brukeren kan klikke på "skjema" for å åpne feilmeldingsskjema/tilbakemeldingsskjema. Den har også blitt stylet',
+    'Tilbake til stort kart ved å klikke på minikartet',
   ],
   'v1.2.15': [
     'Flyttet minibildet til øvre venstre hjørnet, endret styling og la til informasjonsknapp',

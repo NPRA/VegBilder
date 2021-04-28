@@ -51,6 +51,7 @@ const SideControlBar = ({
               miniMapVisible={miniMapVisible}
               setMiniMapVisible={setMiniMapVisible}
               isZoomedInImage={isZoomedInImage}
+              setView={setView}
             />
           </>
         ) : (
