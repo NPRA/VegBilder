@@ -9,7 +9,7 @@ const informationText = {
 const helpText = {
   header1: 'Bruk av vegbilder',
   text1:
-    'For å finne bilder der du ønsker kan du zomme deg inn eller klikke på kartet. Hvis du har valgt nyeste-modus, vil applikasjonen finne de nyeste bildene der du klikker på kartet. Når den har funnet bilder vil den automatisk sette året til det året med de nyeste bildene. Du kan også søke etter stedsnavn eller vegsystemreferanse. Når du har zoomet inn på en veg vil du få opp markører du kan klikke på for å se bildet. ',
+    'Kartet viser alle bildepunkt som representerer et bilde. Ved klikk på et bildepunkt, åpnes en forhåndsvisning av det aktuelle bildet. Dersom det ikke finnes bilder i nærheten av valgt punkt, zoomes kartet inn for en lettere valgmulighet. ',
   text2:
     'Søkefeltet gir mulighet til å søke etter stedsnavn eller vegsystemreferanse. I tillegg kan det filtreres på årgang. ',
   text3: 'Ved klikk på forhåndsvist bilde åpnes bildet i større format med flere valgmuligheter. ',
@@ -18,9 +18,15 @@ const helpText = {
   text5: 'Forslag/tilbakemelding sendes inn ',
 };
 
+const gdprText = {
+  header: 'GDPR',
+  text1:
+    'For å ivareta gjeldene personvernregler (GDPR) er alle bilder anonymisert før publisering. Prosessen er automatisert. ',
+};
+
 const settingsText = {
   header: 'Innstillinger',
   onboarding: 'Vis velkomstmelding ved oppstart',
 };
 
-export { informationText, helpText, settingsText };
+export { informationText, helpText, settingsText, gdprText };

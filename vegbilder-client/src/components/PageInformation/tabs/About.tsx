@@ -3,7 +3,6 @@ import { makeStyles, Typography } from '@material-ui/core';
 
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
 import { informationText } from 'constants/text';
-import { DotsHorizontalSmallIcon } from 'components/Icons/Icons';
 import { FEEDBACK_SCHEME_URL } from 'constants/urls';
 import CheckBox from 'components/CheckBox/CheckBox';
 
@@ -44,11 +43,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-interface IAboutProps {
-  isOnboarding?: boolean;
-}
-
-const About = ({ isOnboarding }: IAboutProps) => {
+const About = () => {
   const classes = useStyles();
   const [openForm, setOpenForm] = useState(false);
 

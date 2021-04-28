@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Button, Divider, makeStyles, Typography } from '@material-ui/core';
+import { Button, Divider, makeStyles } from '@material-ui/core';
 
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import UseOfVebilder from './tabs/UseOfVegbilder';
 import VersionLog from './tabs/VersionLog';
 import Theme from 'theme/Theme';
 import About from './tabs/About';
+import Gdpr from './tabs/Gdpr';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -29,24 +30,17 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('Om Vegbilder');
 
-  const tabs = ['Om Vegbilder', 'Bruk av vegbilder', 'Versjonslogg', 'Anonymisering'];
+  const tabs = ['Om Vegbilder', 'Bruk av vegbilder', 'Versjonslogg', 'GDPR'];
 
   const getComponentByTab = (tab: string) => {
     if (tab === 'Bruk av vegbilder') {
       return <UseOfVebilder />;
     } else if (tab === 'Versjonslogg') {
       return <VersionLog />;
-    } else if (tab === 'Anonymisering') {
-      return (
-        <>
-          <Typography variant="h2"> Anonymisering</Typography>
-          <Typography variant="body1" className={classes.paragraphs}>
-            Ikke implementert enda.
-          </Typography>
-        </>
-      );
+    } else if (tab === 'GDPR') {
+      return <Gdpr />;
     }
-    return <About isOnboarding={isOnboarding} />;
+    return <About />;
   };
 
   return (
