@@ -41,6 +41,11 @@ const SmallMapContainer = ({
 
   return (
     <div className={classes.minimap}>
+      <HideShowMiniMapButton
+        miniMapVisible={miniMapVisible}
+        isZoomedInImage={isZoomedInImage}
+        setMiniMapVisible={setMiniMapVisible}
+      />
       <Map
         center={currentCoordinates}
         zoom={currentCoordinates.zoom}
@@ -63,11 +68,6 @@ const SmallMapContainer = ({
           subdomains="123456789"
         />
         <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={false} />
-        <HideShowMiniMapButton
-          miniMapVisible={miniMapVisible}
-          isZoomedInImage={isZoomedInImage}
-          setMiniMapVisible={setMiniMapVisible}
-        />
       </Map>
     </div>
   );

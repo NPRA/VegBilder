@@ -31,8 +31,7 @@ const tekniskText = {
   subheader1: 'APIer',
   subheader2: 'Versjonslogg',
   text1: 'Stedsnavn, kommune og fylke hentes fra Geonorge.',
-  text2:
-    'Tunnel, bronavn, dagens vegsystemreferanse, fartsgrense, kontraktsområder, trafikkmengde, gatenavn og fartsgrense hentes fra NVDB.',
+  text2: 'Informasjon om vegnettet hentes fra NVDB',
 };
 
 const settingsText = {

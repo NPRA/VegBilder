@@ -143,10 +143,6 @@ const ImageInfo = ({
   const tunnelId = 67;
   const trafikkmengdeId = 540;
 
-  const getTrimmedVegsystemreferanse = (imagePoint: IImagePoint) => {
-    return getRoadReference(imagePoint).withoutFelt.replace(/\s/g, '').toLocaleLowerCase();
-  };
-
   const setResourceStateByEgenskapAndResourceId = async (
     trimmedVegsystemreferanse: string,
     resourceId: number,
