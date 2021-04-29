@@ -5,7 +5,7 @@ const informationText = {
   text1:
     'VEGBILDER er et webbasert fagsystem for visning av vegbilder, utviklet av Statens Vegvesen. Systemet gir tilgang til vegbilder som tas årlig på store deler av det norske vegnettet.',
   text2:
-    'Statens vegvesen tar forbehold om at tilgang og innhold kan bli endret ved behov. Det kan forekomme feil i datagrunnlaget og brukeren er selv ansvarlig for bruk av systemet og den informasjonen den måtte gi. ',
+    'Statens Vegvesen tar forbehold om at tilgang og innhold kan bli endret ved behov. Det kan forekomme feil i datagrunnlaget og brukeren er selv ansvarlig for bruk av systemet og den informasjonen den måtte gi. ',
 };
 
 const helpText = {
