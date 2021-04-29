@@ -78,9 +78,8 @@ const Header = ({ showMessage, setMapView, showInformation, setShowInformation }
           <Grid item className={classes.dateAndYearSelectorContainer}>
             <YearSelector showMessage={showMessage} />
             <Box width={'1.125rem'} />
-            {/* <DateFilter /> */}
           </Grid>
-          <Settings />
+          {/* <Settings /> */}
           <Tooltip title="Informasjon om Vegbilder">
             <IconButton
               aria-label="Informasjon om Vegbilder"
