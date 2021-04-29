@@ -241,7 +241,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       {showReportErrorsScheme ? (
         <ReportErrorFeedback setVisible={() => setShowReportErrorsScheme(false)} />
       ) : null}
-      {isZoomedInImage ? <CloseButton onClick={handleZoomOut} positionToTop={'5.5rem'} /> : null}
+      {isZoomedInImage ? <CloseButton onClick={handleZoomOut} positionToTop={'7.1rem'} /> : null}
     </>
   );
 };
