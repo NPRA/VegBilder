@@ -1,3 +1,5 @@
+import { settings } from './settings';
+
 export const REPORT_ERROR_SCHEME_URL =
   'https://forms.office.com/Pages/ResponsePage.aspx?id=VGmFOFXt90mL3XOP-7_TkIgX88vaXV9Notkd5xXWTp5UNUFGVlQ1MVRHT1E5SzI5UEdMRTlLSUhOUyQlQCN0PWcu';
 
@@ -12,4 +14,7 @@ export const VEGKART = 'https://vegkart.atlas.vegvesen.no/#kartlag:geodata/';
 
 export const S3_HEALTH = 'https://s3vegbilder.utv.atlas.vegvesen.no/ready';
 
-export const config = process.env.NODE_ENV === 'development' ? VEGBILDER_OGC : VEGBILDER_OGC_UTV;
+export const OGC_URL =
+  process.env.NODE_ENV === 'development' || settings.productionMode
+    ? VEGBILDER_OGC
+    : VEGBILDER_OGC_UTV;

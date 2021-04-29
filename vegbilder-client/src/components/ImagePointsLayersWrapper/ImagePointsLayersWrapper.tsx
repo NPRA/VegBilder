@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
-import { config } from 'constants/urls';
+import { OGC_URL } from 'constants/urls';
 
 const ImagePointLayersWrapper = () => {
   const zoom = useLeafletZoom();
@@ -25,7 +25,7 @@ const ImagePointLayersWrapper = () => {
     } else {
       return (
         <WMSTileLayer
-          url={config}
+          url={OGC_URL}
           attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
           layers={oversiktsKartlag}
           format="image/png"
