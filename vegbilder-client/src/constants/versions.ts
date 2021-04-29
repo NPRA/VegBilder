@@ -4,6 +4,7 @@ const versionLog = {
     'Klikke på skjul/vis minikart',
     'Ta vekk innstillingsknappen',
     'Fikse buggy vis/skjul oppstartsmelding',
+    'Lenker til geonorge og nvdb',
   ],
   'v1.2.16': [
     'Velkomstmelding og sideinformasjon er nå samme komponent',
