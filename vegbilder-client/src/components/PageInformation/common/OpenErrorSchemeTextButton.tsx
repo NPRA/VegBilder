@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     border: 'none',
     background: 'inherit',
     color: 'inherit',
-    borderBottom: `1px solid ${theme.palette.common.charcoalLighter}`,
+    borderBottom: `1px solid ${theme.palette.common.grayRegular}`,
     fontFamily: 'inherit',
     fontSize: 'inherit',
     cursor: 'pointer',
