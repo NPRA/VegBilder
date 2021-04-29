@@ -1,7 +1,7 @@
 const versionLog = {
   'v1.2.16': [
     'Velkomstmelding og sideinformasjon er nå samme komponent',
-    'Teksten er oppdatert',
+    'Teksten og tabs er oppdatert',
     'Zoom inn brukeren noen hakk dersom appen ikke finner bilder der den klikker (gjelder kun zoom-nivåer mindre enn 8)',
     'Rundede kanter på scrollbar i bildeinfo',
     'Fikse hoppende knapper i Chrome/Edge',

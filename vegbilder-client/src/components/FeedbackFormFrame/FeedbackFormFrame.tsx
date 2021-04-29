@@ -5,14 +5,17 @@ interface IFeedbackFormFrameProps {
 }
 
 const FeedbackFormFrame = ({ formLink }: IFeedbackFormFrameProps) => {
-  const webPageHeightInPixels = document.body.offsetHeight;
-  const webPageWidthInPixels = document.body.offsetWidth;
+  const webPageHeightInPixels = document.documentElement.clientHeight;
+  const webPageWidthInPixels = document.documentElement.clientWidth;
+
+  const offset = webPageHeightInPixels * 0.3;
+
   return (
     <iframe
       title="tilbakemeldingsskjema"
       src={formLink}
       width={webPageWidthInPixels / 2}
-      height={webPageHeightInPixels - 120} // iframe needs height and width in pixels.
+      height={webPageHeightInPixels - offset} // iframe needs height and width in pixels.
       frameBorder="0"
       marginWidth={0}
       marginHeight={0}
