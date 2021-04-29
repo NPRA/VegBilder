@@ -30,8 +30,8 @@ const tekniskText = {
   header: 'Teknisk',
   subheader1: 'APIer',
   subheader2: 'Versjonslogg',
-  text1: 'Stedsnavn, kommune og fylke hentes fra Geonorge.',
-  text2: 'Informasjon om vegnettet hentes fra NVDB',
+  text1: 'Stedsnavn, kommune og fylke hentes fra ',
+  text2: 'Informasjon om vegnettet hentes fra ',
 };
 
 const settingsText = {

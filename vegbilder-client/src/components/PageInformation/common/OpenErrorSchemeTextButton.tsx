@@ -10,7 +10,7 @@ const useStyles = makeStyles((theme) => ({
     border: 'none',
     background: 'inherit',
     color: 'inherit',
-    borderBottom: `0.5px solid ${theme.palette.common.charcoalLighter}`,
+    borderBottom: `1px solid ${theme.palette.common.charcoalLighter}`,
     fontFamily: 'inherit',
     fontSize: 'inherit',
     cursor: 'pointer',
@@ -18,7 +18,7 @@ const useStyles = makeStyles((theme) => ({
     marginBottom: '1rem',
     '&:hover': {
       color: theme.palette.common.orangeDark,
-      borderBottom: `0.5px solid ${theme.palette.common.orangeDark}`,
+      borderBottom: `1px solid ${theme.palette.common.orangeDark}`,
     },
   },
 }));

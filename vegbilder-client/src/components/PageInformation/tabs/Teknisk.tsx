@@ -3,6 +3,7 @@ import { makeStyles, Typography } from '@material-ui/core';
 
 import { versionLog } from 'constants/versions';
 import { tekniskText } from 'constants/text';
+import nvdbApi from 'apis/NVDB/nvdbApi';
 
 const useStyles = makeStyles((theme) => ({
   bullets: {
@@ -31,6 +32,15 @@ const useStyles = makeStyles((theme) => ({
   paragraphs: {
     paddingBottom: '1rem',
   },
+  link: {
+    color: theme.palette.common.grayRegular,
+    textDecoration: 'none',
+    borderBottom: `1px solid ${theme.palette.common.grayRegular}`,
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+      borderBottom: `1px solid ${theme.palette.common.orangeDark}`,
+    },
+  },
 }));
 
 const Teknisk = () => {
@@ -44,10 +54,31 @@ const Teknisk = () => {
 
       <div className={classes.scrollContainer}>
         <Typography variant="subtitle1"> {tekniskText.subheader1} </Typography>
-        <Typography variant="body1"> {tekniskText.text1} </Typography>
-        <Typography variant="body1" className={classes.paragraphs}>
-          {tekniskText.text2}
-        </Typography>
+        <ul className={classes.bullets}>
+          <li>
+            <Typography variant="body1">
+              {' '}
+              {tekniskText.text1}
+              <a className={classes.link} rel="noopener noreferrer" href="https://www.geonorge.no">
+                {' '}
+                Geonorge{' '}
+              </a>
+            </Typography>
+          </li>
+          <li>
+            <Typography variant="body1" className={classes.paragraphs}>
+              {tekniskText.text2}
+              <a
+                className={classes.link}
+                rel="noopener noreferrer"
+                href="https://www.vegvesen.no/fag/teknologi/nasjonal+vegdatabank"
+              >
+                {' '}
+                NVDB{' '}
+              </a>
+            </Typography>
+          </li>
+        </ul>
         <Typography variant="subtitle1"> {tekniskText.subheader2} </Typography>
         {Object.entries(versionLog).map(([versionNumber, changes]) => (
           <>
