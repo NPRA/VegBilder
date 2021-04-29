@@ -26,9 +26,18 @@ const gdprText = {
     'For å ivareta gjeldene personvernregler (GDPR) er alle bilder anonymisert før publisering. Prosessen er automatisert. ',
 };
 
+const tekniskText = {
+  header: 'Teknisk',
+  subheader1: 'APIer',
+  subheader2: 'Versjonslogg',
+  text1: 'Stedsnavn, kommune og fylke hentes fra Geonorge.',
+  text2:
+    'Tunnel, bronavn, dagens vegsystemreferanse, fartsgrense, kontraktsområder, trafikkmengde, gatenavn og fartsgrense hentes fra NVDB.',
+};
+
 const settingsText = {
   header: 'Innstillinger',
   onboarding: 'Vis velkomstmelding ved oppstart',
 };
 
-export { informationText, helpText, settingsText, gdprText };
+export { informationText, helpText, settingsText, gdprText, tekniskText };

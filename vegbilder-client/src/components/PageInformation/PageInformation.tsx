@@ -3,7 +3,7 @@ import { Button, Divider, makeStyles } from '@material-ui/core';
 
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import UseOfVebilder from './tabs/UseOfVegbilder';
-import VersionLog from './tabs/VersionLog';
+import Teknisk from './tabs/Teknisk';
 import Theme from 'theme/Theme';
 import About from './tabs/About';
 import Gdpr from './tabs/Gdpr';
@@ -32,13 +32,13 @@ const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('Om Vegbilder');
 
-  const tabs = ['Om', 'Bruk', 'GDPR', 'Tilbakemelding', 'Versjonslogg'];
+  const tabs = ['Om', 'Bruk', 'GDPR', 'Tilbakemelding', 'Teknisk'];
 
   const getComponentByTab = (tab: string) => {
     if (tab === 'Bruk') {
       return <UseOfVebilder />;
-    } else if (tab === 'Versjonslogg') {
-      return <VersionLog />;
+    } else if (tab === 'Teknisk') {
+      return <Teknisk />;
     } else if (tab === 'GDPR') {
       return <Gdpr />;
     } else if (tab === 'Tilbakemelding') {
