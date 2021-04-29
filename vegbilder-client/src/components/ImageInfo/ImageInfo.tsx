@@ -247,14 +247,18 @@ const ImageInfo = ({
         (res: any) =>
           res.vegsystemreferanse.vegsystem.vegkategori === imagePoint.properties.VEGKATEGORI
       );
+      let trimmedVegsystemreferanse = res[0].vegsystemreferanse.kortform.replace(/\s/g, '');
       if (vegsytemreferanseWithSameVegkategori) {
-        const trimmedVegsystemreferanse = vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform.replace(
+        trimmedVegsystemreferanse = vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform.replace(
           /\s/g,
           ''
         );
-        setVegsystemReferanse(vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform);
-        getPropertiesFromNvdbAndSetResourceState(trimmedVegsystemreferanse);
       }
+      setVegsystemReferanse(
+        vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform ??
+          res[0].vegsystemreferanse.kortform
+      );
+      getPropertiesFromNvdbAndSetResourceState(trimmedVegsystemreferanse);
     });
   };
 
