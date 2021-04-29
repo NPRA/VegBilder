@@ -80,8 +80,8 @@ const App = () => {
 
   const searchParams = new URLSearchParams(window.location.search);
 
-  const shouldShowOnboarding = localStorage.getItem('HideSplashOnStartup') === 'false';
-  const [showPageInformation, setShowPageInformation] = useState(shouldShowOnboarding);
+  const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
+  const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
 
   const showSnackbarMessage = (message: string) => {
     setSnackbarMessage(message);

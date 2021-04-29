@@ -85,7 +85,11 @@ const About = () => {
       </Typography>
 
       <div>
-        <CheckBox handleChange={handleStartupChange} label={'Ikke vis ved oppstart'} />
+        <CheckBox
+          handleChange={handleStartupChange}
+          label={'Ikke vis ved oppstart'}
+          checked={hideWasSet}
+        />
       </div>
     </>
   );
