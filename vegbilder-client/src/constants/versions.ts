@@ -1,4 +1,10 @@
 const versionLog = {
+  'v1.2.17': [
+    'Max bredde på sideinformasjonen',
+    'Klikke på skjul/vis minikart',
+    'Ta vekk innstillingsknappen',
+    'Fikse buggy vis/skjul oppstartsmelding',
+  ],
   'v1.2.16': [
     'Velkomstmelding og sideinformasjon er nå samme komponent',
     'Teksten og tabs er oppdatert',
