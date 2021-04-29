@@ -24,9 +24,6 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: `1px solid ${theme.palette.common.orangeDark}`,
     },
   },
-  content: {
-    margin: '2rem 2rem 0 2rem',
-  },
   headline: {
     textAlign: 'center',
   },

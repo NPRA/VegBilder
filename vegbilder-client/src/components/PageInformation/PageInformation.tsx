@@ -13,6 +13,8 @@ import { FEEDBACK_SCHEME_URL } from 'constants/urls';
 const useStyles = makeStyles(() => ({
   content: {
     padding: '2rem 2rem 1rem 2rem',
+    display: 'flex',
+    flexDirection: 'column',
   },
   paragraphs: {
     paddingBottom: '1rem',

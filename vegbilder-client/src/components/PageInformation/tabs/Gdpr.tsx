@@ -5,20 +5,8 @@ import { gdprText } from 'constants/text';
 import OpenErrorSchemeTextButton from '../common/OpenErrorSchemeTextButton';
 
 const useStyles = makeStyles(() => ({
-  content: {
-    margin: '2rem 2rem 1rem 2rem',
-  },
   paragraphs: {
     paddingBottom: '1rem',
-  },
-  rigthLeftText: {
-    display: 'flex',
-    justifyContent: 'space-between',
-  },
-  icon: {
-    width: '0.8rem',
-    height: '0.8rem',
-    margin: '0 0.1rem',
   },
 }));
 
@@ -27,7 +15,7 @@ const Gdpr = () => {
   const [openForm, setOpenForm] = useState(false);
 
   return (
-    <div className={classes.content}>
+    <>
       {openForm ? null : (
         <>
           <Typography variant="h4" className={classes.paragraphs}>
@@ -41,7 +29,7 @@ const Gdpr = () => {
         </>
       )}
       <OpenErrorSchemeTextButton openForm={openForm} setOpenForm={setOpenForm} />
-    </div>
+    </>
   );
 };
 

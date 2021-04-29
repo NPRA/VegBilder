@@ -20,6 +20,7 @@ const FeedbackFormFrame = ({ formLink }: IFeedbackFormFrameProps) => {
       marginWidth={0}
       marginHeight={0}
       sandbox="allow-same-origin allow-scripts"
+      style={{ alignSelf: 'center' }}
     />
   );
 };
