@@ -9,7 +9,7 @@ const useStyles = makeStyles((theme) => ({
     transform: 'translate(-50%, -50%)',
     top: '50%',
     left: '50%',
-    minWidth: '50rem',
+    width: '60%',
     maxHeight: '95vh',
     overflowY: 'auto',
     zIndex: 100000,
