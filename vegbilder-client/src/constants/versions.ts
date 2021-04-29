@@ -1,5 +1,9 @@
 const versionLog = {
-  'v1.2.18': ['Sentrere tilbakemelding og feilmeldingsskjema'],
+  'v1.2.18': [
+    'Sentrere tilbakemelding og feilmeldingsskjema',
+    'Disable knapp for tilbake til hovedkart når brukeren er i zoom-modus',
+    'Legge lukkeknappen på linje med knappene på venstre side',
+  ],
   'v1.2.17': [
     'Max bredde på sideinformasjonen',
     'Klikke på skjul/vis minikart',

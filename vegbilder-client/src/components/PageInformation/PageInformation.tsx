@@ -32,7 +32,7 @@ interface IInformationProps {
 
 const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
   const classes = useStyles();
-  const [selectedTab, setSelectedTab] = useState('Om Vegbilder');
+  const [selectedTab, setSelectedTab] = useState('Om');
 
   const tabs = ['Om', 'Bruk', 'GDPR', 'Tilbakemelding', 'Teknisk'];
 
