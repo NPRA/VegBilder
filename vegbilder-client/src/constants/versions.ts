@@ -3,6 +3,9 @@ const versionLog = {
     'Sentrere tilbakemelding og feilmeldingsskjema',
     'Disable knapp for tilbake til hovedkart når brukeren er i zoom-modus',
     'Legge lukkeknappen på linje med knappene på venstre side',
+    'Større skriftstørrelse på overskifter i bildeinfo',
+    'Lik padding på alle tabs',
+    'Aktiv tab "Om" fra start',
   ],
   'v1.2.17': [
     'Max bredde på sideinformasjonen',
