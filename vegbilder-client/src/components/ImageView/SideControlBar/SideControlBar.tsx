@@ -43,7 +43,7 @@ const SideControlBar = ({
 
   return (
     <div className={classes.sideControlBar}>
-      <BackToBigMapButton setView={setView} />
+      <BackToBigMapButton setView={setView} isZoomedInImage={isZoomedInImage} />
       <>
         {showMiniMap ? (
           <>

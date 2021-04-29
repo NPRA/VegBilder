@@ -1,10 +1,11 @@
 const versionLog = {
+  'v1.2.18': ['Sentrere tilbakemelding og feilmeldingsskjema'],
   'v1.2.17': [
     'Max bredde på sideinformasjonen',
     'Klikke på skjul/vis minikart',
     'Ta vekk innstillingsknappen',
     'Fikse buggy vis/skjul oppstartsmelding',
-    'Lenker til geonorge og nvdb',
+    'Lenker til Geonorge og NVDB',
   ],
   'v1.2.16': [
     'Velkomstmelding og sideinformasjon er nå samme komponent',
@@ -16,7 +17,7 @@ const versionLog = {
     'Zoom nivå til vegkart 14',
     'Brukeren kan klikke på "skjema" for å åpne feilmeldingsskjema/tilbakemeldingsskjema. Den har også blitt stylet',
     'Tilbake til stort kart ved å klikke på minikartet',
-    'Gjør oppslag på vegsystemreferanse til nvdb uansett år',
+    'Gjør oppslag på vegsystemreferanse til NVDB uansett år',
   ],
   'v1.2.15': [
     'Flyttet minibildet til øvre venstre hjørnet, endret styling og la til informasjonsknapp',
@@ -31,7 +32,7 @@ const versionLog = {
     'Ikoner i fargeforklareren og ikke sirkler',
     'Søkefelt like stort som forslag under',
     'Versjonslogg (redesign av velkomstvindu/info)',
-    'Filtrere på vegkategori ved spørring om vegsystemreferanse fra nvdb (2019 og eldre)',
+    'Filtrere på vegkategori ved spørring om vegsystemreferanse fra NVDB (2019 og eldre)',
   ],
 };
 

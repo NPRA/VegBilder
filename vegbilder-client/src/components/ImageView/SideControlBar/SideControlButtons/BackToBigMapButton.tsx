@@ -22,17 +22,27 @@ const useStyles = makeStyles((theme) => ({
     margin: '0 0.375rem 0 0',
     alignSelf: 'center',
   },
+  buttonDisabled: {
+    margin: '0.2rem 0.2rem 0.35rem 0.2rem',
+    backgroundColor: theme.palette.common.grayDark,
+    opacity: 0.7,
+  },
 }));
 
 interface IBackToBigMapButton {
   setView: (view: string) => void;
+  isZoomedInImage: boolean;
 }
 
-const BackToBigMapButton = ({ setView }: IBackToBigMapButton) => {
+const BackToBigMapButton = ({ setView, isZoomedInImage }: IBackToBigMapButton) => {
   const classes = useStyles();
   return (
     <Tooltip title="Tilbake til hovedkart">
-      <IconButton className={classes.backToMapButton} onClick={() => setView('map')}>
+      <IconButton
+        className={isZoomedInImage ? classes.buttonDisabled : classes.backToMapButton}
+        onClick={() => setView('map')}
+        disabled={isZoomedInImage}
+      >
         {' '}
         <ArrowBack className={classes.arrowBack} />
       </IconButton>
