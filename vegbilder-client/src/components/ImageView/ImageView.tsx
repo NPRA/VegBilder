@@ -134,6 +134,10 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     isZoomedInImage ? setCursor('grab') : setCursor('zoom-in');
   }, [isZoomedInImage]);
 
+  useEffect(() => {
+    if (isZoomedInImage) setMeterLineVisible(false);
+  }, [isZoomedInImage]);
+
   // We add mouse event handlers that lets the user drag the image to scroll. If the user only clicks we zoom in/out.
   useEffect(() => {
     const currentImageContainerRef = imageContainerRef.current;
