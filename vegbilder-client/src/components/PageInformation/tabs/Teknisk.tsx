@@ -59,7 +59,12 @@ const Teknisk = () => {
             <Typography variant="body1">
               {' '}
               {tekniskText.text1}
-              <a className={classes.link} rel="noopener noreferrer" href="https://www.geonorge.no">
+              <a
+                target="_blank"
+                className={classes.link}
+                rel="noopener noreferrer"
+                href="https://www.geonorge.no"
+              >
                 {' '}
                 Geonorge{' '}
               </a>
@@ -69,6 +74,7 @@ const Teknisk = () => {
             <Typography variant="body1" className={classes.paragraphs}>
               {tekniskText.text2}
               <a
+                target="_blank"
                 className={classes.link}
                 rel="noopener noreferrer"
                 href="https://www.vegvesen.no/fag/teknologi/nasjonal+vegdatabank"
