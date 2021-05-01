@@ -68,7 +68,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.grayRegular,
     backgroundColor: theme.palette.common.grayDarker,
     borderRadius: '10px',
-    width: '25rem',
+    width: '100%',
     maxHeight: '40rem',
     overflowY: 'auto',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
