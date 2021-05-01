@@ -17,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     borderRadius: '10px',
+    border: `0.5px solid ${theme.palette.common.grayDark}`,
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
     padding: '0.2rem',
     '&::-webkit-scrollbar': {
