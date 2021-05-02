@@ -1,4 +1,10 @@
 const versionLog = {
+  'v.1.2.19': [
+    'Åpne lenker til NVDB og Geonorge i ny fane',
+    'Fikse bug som oppstår når brukeren zoomer inn, går frem og zoomer ut',
+    'Søkefelt like stort som forslag under',
+    'Tynn ramme på søkemeny og sideinformasjon',
+  ],
   'v1.2.18': [
     'Sentrere tilbakemelding og feilmeldingsskjema',
     'Disable knapp for tilbake til hovedkart når brukeren er i zoom-modus',
@@ -37,7 +43,6 @@ const versionLog = {
     'Nytt instillingsikon',
     'Gjenommsiktighet på bakgrunner og ikke tekst/andre ting',
     'Ikoner i fargeforklareren og ikke sirkler',
-    'Søkefelt like stort som forslag under',
     'Versjonslogg (redesign av velkomstvindu/info)',
     'Filtrere på vegkategori ved spørring om vegsystemreferanse fra NVDB (2019 og eldre)',
   ],
