@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { IImagePoint } from 'types';
 import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
 import BackToBigMapButton from './SideControlButtons/BackToBigMapButton';
-import HideShowMiniMapButton from './SideControlButtons/HideShowMiniMapButton';
 import ImageInfoButton from '../../ImageInfo/ImageInfoButton';
 import ImageInfo from '../../ImageInfo/ImageInfo';
 
@@ -37,31 +36,19 @@ const SideControlBar = ({
   const [showInformation, setShowInformation] = useState(false);
   const [miniMapVisible, setMiniMapVisible] = useState(true);
 
-  const showMiniMap = (miniMapVisible && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
   const showInformationBox =
     (showInformation && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
 
   return (
     <div className={classes.sideControlBar}>
       <BackToBigMapButton setView={setView} isZoomedInImage={isZoomedInImage} />
-      <>
-        {showMiniMap ? (
-          <>
-            <SmallMapContainer
-              miniMapVisible={miniMapVisible}
-              setMiniMapVisible={setMiniMapVisible}
-              isZoomedInImage={isZoomedInImage}
-              setView={setView}
-            />
-          </>
-        ) : (
-          <HideShowMiniMapButton
-            miniMapVisible={miniMapVisible}
-            setMiniMapVisible={setMiniMapVisible}
-            isZoomedInImage={isZoomedInImage}
-          />
-        )}
-      </>
+      <SmallMapContainer
+        miniMapVisible={miniMapVisible}
+        setMiniMapVisible={setMiniMapVisible}
+        isZoomedInImage={isZoomedInImage}
+        setView={setView}
+        isHistoryMode={isHistoryMode}
+      />
       {showInformationBox ? (
         <ImageInfo
           showInformation={showInformation}

@@ -28,6 +28,7 @@ import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
+
   const [fetchedBboxes] = useState([]);
   const [targetBbox] = useState(null);
   const { filteredImagePoints } = useFilteredImagePoints();
