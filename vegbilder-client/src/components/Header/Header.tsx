@@ -8,7 +8,6 @@ import Search from './Search/Search';
 import YearSelector from './YearSelector/YearSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
-import Settings from './Settings/Settings';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles({

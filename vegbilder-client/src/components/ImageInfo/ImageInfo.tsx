@@ -1,7 +1,7 @@
 import React, { FunctionComponent, SVGProps, useEffect, useState } from 'react';
 import { makeStyles, Paper, SvgIconTypeMap, Typography } from '@material-ui/core';
 
-import { getImagePointLatLng, getRoadReference } from 'utilities/imagePointUtilities';
+import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
 import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLatLng';
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';

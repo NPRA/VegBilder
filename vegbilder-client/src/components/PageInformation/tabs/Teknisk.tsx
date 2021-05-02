@@ -3,7 +3,6 @@ import { makeStyles, Typography } from '@material-ui/core';
 
 import { versionLog } from 'constants/versions';
 import { tekniskText } from 'constants/text';
-import nvdbApi from 'apis/NVDB/nvdbApi';
 
 const useStyles = makeStyles((theme) => ({
   bullets: {

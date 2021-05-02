@@ -19,14 +19,6 @@ const useStyles = makeStyles(() => ({
     zIndex: 5,
     marginBottom: '0.35rem',
   },
-  hiddenMapContainer: {
-    height: '30%',
-    width: '18vw',
-    boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
-    borderRadius: '10px',
-    zIndex: 5,
-    marginBottom: '0.35rem',
-  },
   hiddenMap: {
     display: 'none',
   },
