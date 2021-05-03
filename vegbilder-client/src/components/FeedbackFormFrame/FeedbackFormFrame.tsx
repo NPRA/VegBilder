@@ -10,11 +10,13 @@ const FeedbackFormFrame = ({ formLink }: IFeedbackFormFrameProps) => {
 
   const offset = webPageHeightInPixels * 0.3;
 
+  const width = Math.min(webPageWidthInPixels / 2.5, 700);
+
   return (
     <iframe
       title="tilbakemeldingsskjema"
       src={formLink}
-      width={webPageWidthInPixels / 2.5}
+      width={width}
       height={webPageHeightInPixels - offset} // iframe needs height and width in pixels.
       frameBorder="0"
       marginWidth={0}

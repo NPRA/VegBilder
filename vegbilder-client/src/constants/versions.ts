@@ -1,4 +1,5 @@
 const versionLog = {
+  'v.1.2.20': ['Rettet opp skrivefeil', 'Bedre skalering av skjema'],
   'v.1.2.19': [
     'Åpne lenker til NVDB og Geonorge i ny fane',
     'Fikse bug som oppstår når brukeren zoomer inn, går frem og zoomer ut',

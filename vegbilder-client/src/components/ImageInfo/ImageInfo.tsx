@@ -382,7 +382,7 @@ const ImageInfo = ({
           ) : null}
           {imagePoint.properties.DETEKTERTEOBJEKTER ? (
             <ItemGroupContainer
-              headline={`Sladdet objekter (${getNumberOfDetectedObjects(imagePoint)})`}
+              headline={`Maskerte objekter (${getNumberOfDetectedObjects(imagePoint)})`}
               Icon={SladdetIcon}
             >
               <div className={classes.detectedObjects}>
