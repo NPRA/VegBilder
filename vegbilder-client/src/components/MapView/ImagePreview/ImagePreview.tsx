@@ -16,6 +16,8 @@ const useStyles = makeStyles((theme) => ({
   image: {
     cursor: 'pointer',
     borderRadius: '0px 0px 10px 10px',
+    maxHeight: '28vh',
+    height: 'auto',
   },
   enlargeButton: {
     marginRight: '0.3rem',
@@ -30,6 +32,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
     borderRadius: '10px',
     marginBottom: '0.35rem',
+    maxHeight: '25rem',
   },
   imageMetadata: {
     borderRadius: '10px 10px 0 0',
@@ -40,12 +43,12 @@ const useStyles = makeStyles((theme) => ({
     background: 'rgba(46, 53, 57, 0.80)',
   },
   imagePreviewAndInfo: {
-    width: '50vh',
+    width: '30vw',
+    maxWidth: '30rem',
     position: 'absolute',
     left: '1.1875rem',
     top: '1.1875rem',
     zIndex: 1,
-    height: '95%',
   },
   buttons: {
     marginTop: '0.5rem',
@@ -96,7 +99,7 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
             showInformation={showInformation}
             setShowInformation={setShowInformation}
             imagePoint={currentImagePoint}
-            maxHeight={'50%'}
+            maxHeight={'50vh'}
           />
         ) : (
           <>
