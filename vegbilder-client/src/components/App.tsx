@@ -19,6 +19,8 @@ import {
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import PageInformation from './PageInformation/PageInformation';
+import { useIsMobile } from 'hooks/useIsMobile';
+import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -70,15 +72,15 @@ const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {.
 const App = () => {
   const classes = useStyles();
   const [view, setView] = useRecoilState(viewQueryParamterState);
-  const [snackbarVisible, setSnackbarVisible] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
-
   const { setCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
 
   const searchParams = new URLSearchParams(window.location.search);
+  const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const isMobile = useIsMobile();
 
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
@@ -179,35 +181,41 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <FilteredImagePointsProvider>
-        <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
-          <Grid item className={classes.header}>
-            <Header
-              showMessage={showSnackbarMessage}
-              setMapView={() => setView('map')}
-              showInformation={showPageInformation}
-              setShowInformation={setShowPageInformation}
-            />
-          </Grid>
-          {renderContent()}
-        </Grid>
-        <Snackbar
-          key={snackbarMessage}
-          open={snackbarVisible}
-          autoHideDuration={4000}
-          onClose={(reason) => handleSnackbarClose(reason)}
-          className={classes.snackbar}
-        >
-          <Alert
-            onClose={(reason) => handleSnackbarClose(reason)}
-            severity="info"
-            classes={{ root: classes.alertMessage, icon: classes.alertIcon }}
-          >
-            <Typography variant="subtitle1">{snackbarMessage}</Typography>
-          </Alert>
-        </Snackbar>
-        {showPageInformation ? (
-          <PageInformation setVisible={() => setShowPageInformation(false)} />
-        ) : null}
+        {isMobile ? (
+          <MobileLandingPage />
+        ) : (
+          <>
+            <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
+              <Grid item className={classes.header}>
+                <Header
+                  showMessage={showSnackbarMessage}
+                  setMapView={() => setView('map')}
+                  showInformation={showPageInformation}
+                  setShowInformation={setShowPageInformation}
+                />
+              </Grid>
+              {renderContent()}
+            </Grid>
+            <Snackbar
+              key={snackbarMessage}
+              open={snackbarVisible}
+              autoHideDuration={4000}
+              onClose={(reason) => handleSnackbarClose(reason)}
+              className={classes.snackbar}
+            >
+              <Alert
+                onClose={(reason) => handleSnackbarClose(reason)}
+                severity="info"
+                classes={{ root: classes.alertMessage, icon: classes.alertIcon }}
+              >
+                <Typography variant="subtitle1">{snackbarMessage}</Typography>
+              </Alert>
+            </Snackbar>
+            {showPageInformation ? (
+              <PageInformation setVisible={() => setShowPageInformation(false)} />
+            ) : null}
+          </>
+        )}
       </FilteredImagePointsProvider>
     </ThemeProvider>
   );

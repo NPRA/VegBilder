@@ -68,6 +68,12 @@ const LFTEticaSemiBold = {
     'U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF',
 };
 
+export const MEDIA_QUERIES = {
+  mobile: '@media (max-width: 1024px)',
+  portrait: '@media (orientation: portrait)',
+  landspace: '@media (orientation: landscape)',
+};
+
 export default createMuiTheme({
   typography: {
     fontFamily: ['sans-serif', '"LFT-Etica"'].join(','),
@@ -88,6 +94,10 @@ export default createMuiTheme({
     h5: {
       fontFamily: '"LFT-Etica semi-bold"',
       fontSize: '0.9375rem',
+    },
+    h6: {
+      fontFamily: '"LFT-Etica thin"',
+      fontSize: '0.875rem',
     },
     subtitle1: {
       fontFamily: '"LFT-Etica semi-bold"',
