@@ -3,7 +3,7 @@ import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 
 import MapContainer from 'components/MapContainer/MapContainer';
-import ImagePreview from './ImagePreview/ImagePreview';
+import ImagePreviewAndInformation from './ImagePreviewAndInformation/ImagePreviewAndInformation';
 import RoadColorExplaination from './RoadColorExplaination/RoadColorExplaination';
 
 const useStyles = makeStyles({
@@ -25,7 +25,7 @@ const MapView = ({ setView, showMessage }: IMapViewProps) => {
   return (
     <Grid item className={classes.content}>
       <MapContainer showMessage={showMessage} />
-      <ImagePreview openImageView={setView} />
+      <ImagePreviewAndInformation openImageView={setView} />
       <RoadColorExplaination />
     </Grid>
   );

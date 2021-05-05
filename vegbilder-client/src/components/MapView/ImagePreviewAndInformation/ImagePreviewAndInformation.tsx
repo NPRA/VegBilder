@@ -58,11 +58,11 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-interface IImagePreviewProps {
+interface IImagePreviewAndInfoProps {
   openImageView: () => void;
 }
 
-const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
+const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -119,4 +119,4 @@ const ImagePreview = ({ openImageView }: IImagePreviewProps) => {
   } else return null;
 };
 
-export default ImagePreview;
+export default ImagePreviewAndInformation;
