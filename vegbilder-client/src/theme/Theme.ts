@@ -69,7 +69,7 @@ const LFTEticaSemiBold = {
 };
 
 export const MEDIA_QUERIES = {
-  mobile: '@media (max-width: 1024px)',
+  mobile: '@media (max-width: 760px)',
   portrait: '@media (orientation: portrait)',
   landspace: '@media (orientation: landscape)',
 };
