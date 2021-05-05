@@ -1,5 +1,8 @@
 const versionLog = {
-  'v.1.2.21': ['Bugfiks 🐞🐛'],
+  'v.1.2.21': [
+    '🐞 Bugfiks: kan klikke på markører i nærheten av og under bildet ',
+    'Landingsside for mobil',
+  ],
   'v.1.2.20': ['Rettet opp skrivefeil', 'Bedre skalering av skjema'],
   'v.1.2.19': [
     'Åpne lenker til NVDB og Geonorge i ny fane',

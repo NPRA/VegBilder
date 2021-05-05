@@ -24,7 +24,7 @@ const MobileLandingPage = () => {
       <img src="images/svv-logo.svg" alt="Logo - Statens vegvesen" className={classes.logo} />
       <Typography variant="h6" style={{ marginTop: '2rem' }}>
         {' '}
-        Vegbilder fungerer best på stor skjerm, besøk oss på PC eller nettbrett 😊
+        VEGBILDER fungerer best på stor skjerm, besøk oss på PC eller nettbrett 😊
       </Typography>
     </div>
   );
