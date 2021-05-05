@@ -12,7 +12,7 @@ import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
 import { EnlargeIcon } from 'components/Icons/Icons';
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
   image: {
     cursor: 'pointer',
     borderRadius: '0px 0px 10px 10px',
@@ -33,6 +33,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: '10px',
     marginBottom: '0.35rem',
     maxHeight: '25rem',
+    pointerEvents: 'all',
   },
   imageMetadata: {
     borderRadius: '10px 10px 0 0',
@@ -45,10 +46,12 @@ const useStyles = makeStyles((theme) => ({
   imagePreviewAndInfo: {
     width: '30vw',
     maxWidth: '30rem',
+    minWidth: '16.375rem',
     position: 'absolute',
     left: '1.1875rem',
     top: '1.1875rem',
     zIndex: 1,
+    pointerEvents: 'none',
   },
   buttons: {
     marginTop: '0.5rem',

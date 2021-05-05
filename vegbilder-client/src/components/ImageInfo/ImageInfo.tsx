@@ -23,6 +23,7 @@ const useStyles = makeStyles((theme) => ({
     paddingBottom: '0.5rem',
     minHeight: '5%',
     boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
+    pointerEvents: 'all',
   },
   scrollContainer: {
     overflowY: 'auto',
