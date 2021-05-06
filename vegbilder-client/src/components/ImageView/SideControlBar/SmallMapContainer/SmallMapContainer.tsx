@@ -67,8 +67,6 @@ const SmallMapContainer = ({
           zoomControl={false}
           onViewportChanged={({ center, zoom }) => {
             if (center && zoom) {
-              console.log(center);
-              console.log(zoom);
               const latlng = { lat: center[0], lng: center[1] };
               setCurrentCoordinates({ ...latlng, zoom: zoom });
             }
