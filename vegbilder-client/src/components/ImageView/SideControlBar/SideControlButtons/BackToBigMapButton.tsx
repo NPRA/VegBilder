@@ -1,6 +1,9 @@
 import { Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 import React from 'react';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { currentHistoryImageState, currentImagePointState, isHistoryModeState } from 'recoil/atoms';
+import { imagePointQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   backToMapButton: {
@@ -36,11 +39,23 @@ interface IBackToBigMapButton {
 
 const BackToBigMapButton = ({ setView, isZoomedInImage }: IBackToBigMapButton) => {
   const classes = useStyles();
+
+  const isHistoryMode = useRecoilValue(isHistoryModeState);
+  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
+  const setCurrentImagePoint = useSetRecoilState(imagePointQueryParameterState);
+
+  const handleClick = () => {
+    if (isHistoryMode && currentHistoryImage) {
+      setCurrentImagePoint(currentHistoryImage);
+    }
+    setView('map');
+  };
+
   return (
     <Tooltip title="Tilbake til hovedkart">
       <IconButton
         className={isZoomedInImage ? classes.buttonDisabled : classes.backToMapButton}
-        onClick={() => setView('map')}
+        onClick={handleClick}
         disabled={isZoomedInImage}
       >
         {' '}

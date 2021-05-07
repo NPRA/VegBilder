@@ -189,8 +189,19 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
     }
   }, [loadedImagePoints, createBboxForVisibleMapArea]);
 
+  const [currentImage, setCurrentImage] = useState(null);
+
+  // useEffect(() => {
+  //   if (isHistoryMode) {
+  //     setCurrentImage(currentHistoryImage);
+  //   } else {
+  //     setCurrentImage(currentImagePoint);
+  //   }
+  // }, [currentHistoryImage, currentImagePoint]);
+
   const renderImagePoints = () => {
     if (imagePointsToRender) {
+      console.log(imagePointsToRender);
       return (
         <>
           {imagePointsToRender.map((imagePoint) => {
@@ -199,6 +210,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
             const isSelected = isHistoryMode
               ? currentHistoryImage && currentHistoryImage.id === imagePoint.id
               : currentImagePoint && currentImagePoint.id === imagePoint.id;
+            //const isSelected = currentImage && currentImage.id === imagePoint.id;
             const icon = getMarkerIcon(
               imagePoint.properties.VEGKATEGORI,
               isDirectional,

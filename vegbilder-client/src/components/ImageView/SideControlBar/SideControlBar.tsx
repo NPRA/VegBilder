@@ -47,7 +47,6 @@ const SideControlBar = ({
         setMiniMapVisible={setMiniMapVisible}
         isZoomedInImage={isZoomedInImage}
         setView={setView}
-        isHistoryMode={isHistoryMode}
       />
       {showInformationBox ? (
         <ImageInfo

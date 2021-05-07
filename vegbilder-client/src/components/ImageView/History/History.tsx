@@ -26,6 +26,8 @@ import {
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { currentHistoryImageState, isHistoryModeState, loadedImagePointsState } from 'recoil/atoms';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
+import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
+import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const useStyles = makeStyles((theme) => ({
   historyContent: {
@@ -118,7 +120,11 @@ const imagePointsAreOnSameVegkategori = (imagePointA: IImagePoint, imagePointB: 
   return imagePointA.properties.VEGKATEGORI === imagePointB.properties.VEGKATEGORI;
 };
 
-const History = () => {
+interface IHistoryProps {
+  showMessage: (message: string) => void;
+}
+
+const History = ({ showMessage }: IHistoryProps) => {
   const classes = useStyles();
 
   const availableYears = useRecoilValue(availableYearsQuery);
@@ -132,12 +138,19 @@ const History = () => {
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
+  const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
+
   const handleImageClick = (imagePoint: IImagePoint) => {
     setCurrentHistoryImage(imagePoint);
     const latlng = getImagePointLatLng(imagePoint);
     if (latlng) setCurrentCoordinates(latlng);
-    if (imagePoint.properties.AAR !== currentYear) {
-      setCurrentYear(imagePoint.properties.AAR);
+    const yearOfClickedImage = imagePoint.properties.AAR;
+    if (yearOfClickedImage !== currentYear) {
+      setCurrentYear(yearOfClickedImage);
+      if (loadedImagePoints) {
+        const bbox = loadedImagePoints.bbox;
+        fetchImagePointsFromOGC(yearOfClickedImage, bbox);
+      }
     }
   };
 
@@ -146,6 +159,7 @@ const History = () => {
       setCurrentImagePoint(currentHistoryImage);
     }
     setHistoryMode(false);
+    setCurrentHistoryImage(null);
   };
 
   const getCurrentImagePointBearing = (

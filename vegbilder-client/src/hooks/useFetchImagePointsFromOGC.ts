@@ -9,7 +9,7 @@ const useFetchImagePointsFromOGC = () => {
   const [isFetching, setIsFetching] = useState(false);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
 
-  async function fetchImagePointsByYearAndLatLng(year: number, bbox: IBbox) {
+  async function fetchImagePointsByYearAndBbox(year: number, bbox: IBbox) {
     if (isFetching) return;
     setIsFetching(true);
     const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(bbox, year);
@@ -26,7 +26,7 @@ const useFetchImagePointsFromOGC = () => {
     setIsFetching(false);
   }
 
-  return (year: number, bbox: IBbox) => fetchImagePointsByYearAndLatLng(year, bbox);
+  return (year: number, bbox: IBbox) => fetchImagePointsByYearAndBbox(year, bbox);
 };
 
 export default useFetchImagePointsFromOGC;

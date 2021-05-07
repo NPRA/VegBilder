@@ -207,7 +207,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               timeBetweenImages={timeBetweenImages}
               showMessage={showSnackbarMessage}
             />
-            <History />
+            <History showMessage={showSnackbarMessage} />
           </div>
         ) : (
           <div
