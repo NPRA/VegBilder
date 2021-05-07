@@ -26,7 +26,6 @@ import {
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { currentHistoryImageState, isHistoryModeState, loadedImagePointsState } from 'recoil/atoms';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
-import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const useStyles = makeStyles((theme) => ({
@@ -120,11 +119,7 @@ const imagePointsAreOnSameVegkategori = (imagePointA: IImagePoint, imagePointB: 
   return imagePointA.properties.VEGKATEGORI === imagePointB.properties.VEGKATEGORI;
 };
 
-interface IHistoryProps {
-  showMessage: (message: string) => void;
-}
-
-const History = ({ showMessage }: IHistoryProps) => {
+const History = () => {
   const classes = useStyles();
 
   const availableYears = useRecoilValue(availableYearsQuery);
@@ -133,7 +128,6 @@ const History = ({ showMessage }: IHistoryProps) => {
 
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  //const { filteredImagePoints } = useFilteredImagePoints();
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);

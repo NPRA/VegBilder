@@ -2,7 +2,7 @@ import { Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 import React from 'react';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { currentHistoryImageState, currentImagePointState, isHistoryModeState } from 'recoil/atoms';
+import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
