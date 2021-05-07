@@ -1,4 +1,5 @@
 const versionLog = {
+  'v1.2.23': ['🐞 Bugfiks på historiske bilder'],
   'v1.2.22': ['Bedre tilpassning av mobilsiden'],
   'v1.2.21': [
     '🐞 Bugfiks: kan klikke på markører i nærheten av og under bildet ',
