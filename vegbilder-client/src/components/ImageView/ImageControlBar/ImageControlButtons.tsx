@@ -236,8 +236,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={isZoomedInImage ? 'Vis skalert bilde' : 'Vis bilde i 1:1 størrelse'}>
         <IconButton
+          disabled={isHistoryMode}
           aria-label="Zoom inn/ut"
-          className={classes.button}
+          className={isHistoryMode ? classes.buttonDisabled : classes.button}
           onClick={() => {
             setIsZoomedInImage(!isZoomedInImage);
             if (isZoomedInImage) setMeterLineVisible(false);
