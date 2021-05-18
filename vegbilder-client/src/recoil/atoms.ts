@@ -53,3 +53,8 @@ export const loadedImagePointsState = atom<ILoadedImagePoints | null>({
   key: 'loadedImagePoints',
   default: null,
 });
+
+export const filteredImagePointsState = atom<IImagePoint[] | null>({
+  key: 'filteredImagePoints',
+  default: null,
+});

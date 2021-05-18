@@ -21,6 +21,7 @@ import {
   isHistoryModeState,
   currentLatLngZoomState,
   loadedImagePointsState,
+  filteredImagePointsState,
 } from 'recoil/atoms';
 import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/settings';
@@ -31,7 +32,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
 
   const [fetchedBboxes] = useState([]);
   const [targetBbox] = useState(null);
-  const { filteredImagePoints } = useFilteredImagePoints();
+  const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
@@ -180,14 +181,14 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   };
 
   useEffect(() => {
-    if (loadedImagePoints) {
+    if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
-      const imagePoints = loadedImagePoints.imagePoints.filter((imagePoint) =>
+      const imagePoints = filteredImagePoints.filter((imagePoint) =>
         imagePointIsWithinBbox(imagePoint, mapBbox)
       );
       setImagePointsToRender(imagePoints);
     }
-  }, [loadedImagePoints, createBboxForVisibleMapArea]);
+  }, [filteredImagePoints, createBboxForVisibleMapArea]);
 
   const renderImagePoints = () => {
     if (imagePointsToRender) {

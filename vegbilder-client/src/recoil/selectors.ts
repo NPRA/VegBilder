@@ -1,13 +1,26 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
-import { groupBy } from 'lodash';
+import { Dictionary, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
-import { getDateString, groupBySeries } from 'utilities/imagePointUtilities';
+import {
+  IBbox,
+  IImagePoint,
+  ILatlng,
+  ILoadedImagePoints,
+  queryParamterNames,
+  viewTypes,
+} from 'types';
+import {
+  getDateString,
+  getFilteredImagePoints,
+  getRoadReference,
+  groupBySeries,
+} from 'utilities/imagePointUtilities';
 import {
   currentImagePointState,
   currentLatLngZoomState,
   currentViewState,
   currentYearState,
+  filteredImagePointsState,
   loadedImagePointsState,
 } from './atoms';
 
@@ -60,10 +73,17 @@ export const imagePointQueryParameterState = selector({
   get: ({ get }) => {
     return get(currentImagePointState);
   },
-  set: ({ set }, newImagePoint: IImagePoint | null | DefaultValue) => {
+  set: ({ get, set }, newImagePoint: IImagePoint | null | DefaultValue) => {
     if (!(newImagePoint instanceof DefaultValue)) {
       const imagePointId = newImagePoint ? newImagePoint.id : '';
       setNewQueryParamter('imageId', imagePointId);
+      if (newImagePoint) {
+        const loadedImagePoints = get(loadedImagePointsState);
+        if (loadedImagePoints) {
+          const filteredImagePoints = getFilteredImagePoints(loadedImagePoints, newImagePoint);
+          set(filteredImagePointsState, filteredImagePoints);
+        }
+      }
     }
     set(currentImagePointState, newImagePoint);
   },
@@ -128,7 +148,6 @@ export const loadedImagePointsFilterState = selector({
 });
 
 // utilities
-
 const setNewQueryParamter = (name: queryParamterNames, value: string) => {
   const newSearchParams = new URLSearchParams(window.location.search);
   newSearchParams.set(name, value);

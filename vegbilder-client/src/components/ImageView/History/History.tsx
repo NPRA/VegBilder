@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
@@ -11,6 +11,7 @@ import {
   getBearingBetweenImagePoints,
   getDateString,
   getDistanceToBetweenImagePoints,
+  getFilteredImagePoints,
   getImagePointLatLng,
   getImageUrl,
   getRoadReference,
@@ -24,7 +25,12 @@ import {
   yearQueryParameterState,
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { currentHistoryImageState, isHistoryModeState, loadedImagePointsState } from 'recoil/atoms';
+import {
+  currentHistoryImageState,
+  filteredImagePointsState,
+  isHistoryModeState,
+  loadedImagePointsState,
+} from 'recoil/atoms';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
@@ -131,6 +137,7 @@ const History = () => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
+  const setFilteredImagePoints = useSetRecoilState(filteredImagePointsState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
@@ -145,6 +152,10 @@ const History = () => {
         const bbox = loadedImagePoints.bbox;
         fetchImagePointsFromOGC(yearOfClickedImage, bbox);
       }
+    }
+    if (loadedImagePoints) {
+      const filteredImagePoints = getFilteredImagePoints(loadedImagePoints, imagePoint);
+      setFilteredImagePoints(filteredImagePoints);
     }
   };
 
