@@ -33,12 +33,7 @@ import {
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import {
-  isHistoryModeState,
-  playVideoState,
-  currentHistoryImageState,
-  currentLatLngZoomState,
-} from 'recoil/atoms';
+import { isHistoryModeState, playVideoState, currentLatLngZoomState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS } from 'constants/defaultParamters';
@@ -114,7 +109,6 @@ const ImageControlButtons = ({
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
   const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
-  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
@@ -134,14 +128,7 @@ const ImageControlButtons = ({
   };
 
   const handleHistoryButtonClick = () => {
-    if (isHistoryMode) {
-      if (currentHistoryImage) {
-        setCurrentImagePoint(currentHistoryImage);
-      }
-      setHistoryMode(false);
-    } else {
-      setHistoryMode(true);
-    }
+    setHistoryMode(!isHistoryMode);
   };
 
   const getLinkToVegkart = () => {

@@ -13,11 +13,9 @@ import {
   findNearestImagePoint,
   getGenericRoadReference,
 } from 'utilities/imagePointUtilities';
-import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import {
   currentYearState,
   playVideoState,
-  currentHistoryImageState,
   isHistoryModeState,
   currentLatLngZoomState,
   loadedImagePointsState,
@@ -41,7 +39,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const playVideo = useRecoilValue(playVideoState);
   const availableYears = useRecoilValue(availableYearsQuery);
   const isHistoryMode = useRecoilValue(isHistoryModeState);
-  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();
@@ -197,9 +194,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           {imagePointsToRender.map((imagePoint) => {
             const latlng = getImagePointLatLng(imagePoint);
             const isDirectional = imagePoint.properties.RETNING != null;
-            const isSelected = isHistoryMode
-              ? currentHistoryImage && currentHistoryImage.id === imagePoint.id
-              : currentImagePoint && currentImagePoint.id === imagePoint.id;
+            const isSelected = currentImagePoint && currentImagePoint.id === imagePoint.id;
             const icon = getMarkerIcon(
               imagePoint.properties.VEGKATEGORI,
               isDirectional,

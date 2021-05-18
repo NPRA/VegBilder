@@ -1,5 +1,5 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
-import { Dictionary, groupBy } from 'lodash';
+import { groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
 import {
   IBbox,
@@ -12,7 +12,6 @@ import {
 import {
   getDateString,
   getFilteredImagePoints,
-  getRoadReference,
   groupBySeries,
 } from 'utilities/imagePointUtilities';
 import {

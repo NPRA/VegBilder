@@ -25,12 +25,7 @@ import {
   yearQueryParameterState,
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import {
-  currentHistoryImageState,
-  filteredImagePointsState,
-  isHistoryModeState,
-  loadedImagePointsState,
-} from 'recoil/atoms';
+import { filteredImagePointsState, isHistoryModeState, loadedImagePointsState } from 'recoil/atoms';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
@@ -129,7 +124,6 @@ const History = () => {
   const classes = useStyles();
 
   const availableYears = useRecoilValue(availableYearsQuery);
-  const [currentHistoryImage, setCurrentHistoryImage] = useRecoilState(currentHistoryImageState);
   const [, setHistoryMode] = useRecoilState(isHistoryModeState);
 
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -142,7 +136,6 @@ const History = () => {
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
   const handleImageClick = (imagePoint: IImagePoint) => {
-    setCurrentHistoryImage(imagePoint);
     const latlng = getImagePointLatLng(imagePoint);
     if (latlng) setCurrentCoordinates(latlng);
     const yearOfClickedImage = imagePoint.properties.AAR;
@@ -161,11 +154,7 @@ const History = () => {
   };
 
   const onClose = () => {
-    if (currentHistoryImage) {
-      setCurrentImagePoint(currentHistoryImage);
-    }
     setHistoryMode(false);
-    setCurrentHistoryImage(null);
   };
 
   const getCurrentImagePointBearing = (
@@ -197,7 +186,6 @@ const History = () => {
       const shouldNotRecalcualteHistoryImages = historyImagePoints.includes(currentImagePoint);
       if (!shouldNotRecalcualteHistoryImages) {
         setHistoryImagePoints([]);
-        setCurrentHistoryImage(currentImagePoint);
         const currentCoordinates = getImagePointLatLng(currentImagePoint);
 
         const bbox = {
@@ -293,13 +281,13 @@ const History = () => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImagePoint, availableYears, setCurrentHistoryImage]);
+  }, [currentImagePoint, availableYears]);
 
   return (
     <Paper className={classes.historyContent} square={true}>
       <div className={classes.historyHeader}>
         <Typography variant="h3" className={classes.headerText}>
-          Vegbilder fra samme lokasjon og kjøreretning
+          Samme lokasjon og kjøreretning
         </Typography>
         <IconButton onClick={onClose} className={classes.closeButton}>
           <CloseIcon />
@@ -309,7 +297,7 @@ const History = () => {
         ? sortImagePointsByDate(historyImagePoints)?.map((imagePoint) => (
             <div key={imagePoint.id}>
               <div className={classes.imageContainer}>
-                {imagePoint.id === currentHistoryImage?.id ? (
+                {imagePoint.id === currentImagePoint?.id ? (
                   <SelectIcon className={classes.selectIcon} />
                 ) : null}
                 <img
