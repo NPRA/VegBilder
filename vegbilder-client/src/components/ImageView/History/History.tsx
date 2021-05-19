@@ -146,12 +146,17 @@ const History = () => {
         fetchImagePointsFromOGC(yearOfClickedImage, bbox);
       }
     }
-    if (loadedImagePoints) {
-      const filteredImagePoints = getFilteredImagePoints(loadedImagePoints, imagePoint);
-      setFilteredImagePoints(filteredImagePoints);
-    }
+
     setCurrentImagePoint(imagePoint);
   };
+
+  useEffect(() => {
+    if (loadedImagePoints && currentImagePoint) {
+      console.log(loadedImagePoints.year);
+      const filteredImagePoints = getFilteredImagePoints(loadedImagePoints, currentImagePoint);
+      setFilteredImagePoints(filteredImagePoints);
+    }
+  }, [loadedImagePoints]);
 
   const onClose = () => {
     setHistoryMode(false);
