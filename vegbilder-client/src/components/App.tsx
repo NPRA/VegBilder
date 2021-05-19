@@ -6,7 +6,6 @@ import { useRecoilState } from 'recoil';
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
-import { FilteredImagePointsProvider } from 'contexts/FilteredImagePointsContext';
 import Header from './Header/Header';
 import ImageView from './ImageView/ImageView';
 import MapView from './MapView/MapView';
@@ -180,43 +179,41 @@ const App = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <FilteredImagePointsProvider>
-        {isMobile ? (
-          <MobileLandingPage />
-        ) : (
-          <>
-            <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
-              <Grid item className={classes.header}>
-                <Header
-                  showMessage={showSnackbarMessage}
-                  setMapView={() => setView('map')}
-                  showInformation={showPageInformation}
-                  setShowInformation={setShowPageInformation}
-                />
-              </Grid>
-              {renderContent()}
+      {isMobile ? (
+        <MobileLandingPage />
+      ) : (
+        <>
+          <Grid container direction="column" className={classes.gridRoot} wrap="nowrap">
+            <Grid item className={classes.header}>
+              <Header
+                showMessage={showSnackbarMessage}
+                setMapView={() => setView('map')}
+                showInformation={showPageInformation}
+                setShowInformation={setShowPageInformation}
+              />
             </Grid>
-            <Snackbar
-              key={snackbarMessage}
-              open={snackbarVisible}
-              autoHideDuration={4000}
+            {renderContent()}
+          </Grid>
+          <Snackbar
+            key={snackbarMessage}
+            open={snackbarVisible}
+            autoHideDuration={4000}
+            onClose={(reason) => handleSnackbarClose(reason)}
+            className={classes.snackbar}
+          >
+            <Alert
               onClose={(reason) => handleSnackbarClose(reason)}
-              className={classes.snackbar}
+              severity="info"
+              classes={{ root: classes.alertMessage, icon: classes.alertIcon }}
             >
-              <Alert
-                onClose={(reason) => handleSnackbarClose(reason)}
-                severity="info"
-                classes={{ root: classes.alertMessage, icon: classes.alertIcon }}
-              >
-                <Typography variant="subtitle1">{snackbarMessage}</Typography>
-              </Alert>
-            </Snackbar>
-            {showPageInformation ? (
-              <PageInformation setVisible={() => setShowPageInformation(false)} />
-            ) : null}
-          </>
-        )}
-      </FilteredImagePointsProvider>
+              <Typography variant="subtitle1">{snackbarMessage}</Typography>
+            </Alert>
+          </Snackbar>
+          {showPageInformation ? (
+            <PageInformation setVisible={() => setShowPageInformation(false)} />
+          ) : null}
+        </>
+      )}
     </ThemeProvider>
   );
 };

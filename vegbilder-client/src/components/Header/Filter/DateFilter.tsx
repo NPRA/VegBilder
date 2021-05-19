@@ -7,7 +7,6 @@ import { createStyles, fade, makeStyles, WithStyles, withStyles } from '@materia
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
-import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import Theme from 'theme/Theme';
 import { CheckmarkIcon } from 'components/Icons/Icons';
 import { getFormattedDateString } from 'utilities/imagePointUtilities';
@@ -71,7 +70,6 @@ const DateFilter = () => {
   const classes = useStyles();
   //const { availableImageSeries, currentImageSeries, setCurrentImageSeries } = useImageSeries();
   const { setCommand } = useCommand();
-  const { resetFilteredImagePoints } = useFilteredImagePoints();
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   //const currentImageSeries
 

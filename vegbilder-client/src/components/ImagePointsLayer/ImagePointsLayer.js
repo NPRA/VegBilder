@@ -16,7 +16,6 @@ import {
 import {
   currentYearState,
   playVideoState,
-  isHistoryModeState,
   currentLatLngZoomState,
   loadedImagePointsState,
   filteredImagePointsState,
@@ -38,7 +37,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
   const availableYears = useRecoilValue(availableYearsQuery);
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();

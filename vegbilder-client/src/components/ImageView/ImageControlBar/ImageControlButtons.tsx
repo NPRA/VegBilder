@@ -100,7 +100,7 @@ const ImageControlButtons = ({
 }: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
-  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const currentImagePoint = useRecoilValue(imagePointQueryParameterState);
 
   const { copyToClipboard } = useCopyToClipboard();
 

@@ -1,9 +1,6 @@
 import { Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 import React from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-import { isHistoryModeState } from 'recoil/atoms';
-import { imagePointQueryParameterState } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
   backToMapButton: {

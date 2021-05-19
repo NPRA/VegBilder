@@ -1,14 +1,7 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import {
-  IBbox,
-  IImagePoint,
-  ILatlng,
-  ILoadedImagePoints,
-  queryParamterNames,
-  viewTypes,
-} from 'types';
+import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import {
   getDateString,
   getFilteredImagePoints,

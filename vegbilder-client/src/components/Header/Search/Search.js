@@ -8,7 +8,6 @@ import { debounce } from 'lodash';
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
-import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
 import { MagnifyingGlassIcon } from '../../Icons/Icons';
@@ -103,7 +102,6 @@ const Search = ({ showMessage, setMapView }) => {
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
   const currentYear = useRecoilValue(currentYearState);
-  const { resetFilteredImagePoints } = useFilteredImagePoints();
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const throwError = useAsyncError();
@@ -156,12 +154,11 @@ const Search = ({ showMessage, setMapView }) => {
     if (resetImagePoint) {
       setCurrentImagePoint(null);
       setLoadedImagePoints(null);
-      resetFilteredImagePoints();
     }
     return () => {
       setResetImagePoint(false);
     };
-  }, [resetImagePoint, resetFilteredImagePoints, setCurrentImagePoint]);
+  }, [resetImagePoint, setCurrentImagePoint]);
 
   const handleSelectedOption = (latlng, zoom) => {
     /* Select nearest image point close to coordinates of the place. If no image is found,

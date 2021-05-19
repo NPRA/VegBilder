@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import { getRoadReference } from 'utilities/imagePointUtilities';
-import { currentImagePointState, isHistoryModeState } from 'recoil/atoms';
+import { currentImagePointState } from 'recoil/atoms';
 
 const useStyles = makeStyles(() => ({
   metadata: {
@@ -18,7 +18,6 @@ const ImageMetadata = () => {
   const classes = useStyles();
 
   const currentImagePoint = useRecoilValue(currentImagePointState);
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
 
   let roadReference;
   let dateAndTime;

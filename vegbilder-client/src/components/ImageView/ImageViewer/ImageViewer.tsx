@@ -14,7 +14,7 @@ import {
   shouldIncludeImagePoint,
 } from 'utilities/imagePointUtilities';
 import MeterLineCanvas from './MeterLineCanvas';
-import { playVideoState, isHistoryModeState, filteredImagePointsState } from 'recoil/atoms';
+import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 
@@ -65,7 +65,6 @@ const ImageViewer = ({
   const { command, resetCommand } = useCommand();
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
