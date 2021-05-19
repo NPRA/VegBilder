@@ -37,6 +37,7 @@ const useStyles = makeStyles((theme) => ({
     overflowY: 'auto',
     overflowX: 'hidden',
     width: '100%',
+    minWidth: '30%',
     '&::-webkit-scrollbar': {
       backgroundColor: theme.palette.common.grayDarker,
       width: '1rem',
