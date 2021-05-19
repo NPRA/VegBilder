@@ -1,4 +1,11 @@
 const versionLog = {
+  'v1.2.24': [
+    'Kan gå fremover/bakover i historiske bilder',
+    'Deaktivert zoom-knappen i historisk visning',
+    'Endret teksten på headeren til historiske bilder til "Fra samme lokasjon og kjøreretning"',
+    'Endret valg for hastighet i filmmodus (fjernet 1 sekunds hastighet)',
+    'Hent fylkesnummer fra API i stedet for metadata (dagsaktuelt)',
+  ],
   'v1.2.23': ['🐞 Bugfiks på historiske bilder'],
   'v1.2.22': ['Bedre tilpassning av mobilsiden'],
   'v1.2.21': [
