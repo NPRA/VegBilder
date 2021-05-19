@@ -156,7 +156,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
 
   useEffect(() => {
     if (loadedImagePoints && currentImagePoint) {
-      console.log(loadedImagePoints.year);
       const filteredImagePoints = getFilteredImagePoints(loadedImagePoints, currentImagePoint);
       setFilteredImagePoints(filteredImagePoints);
     }

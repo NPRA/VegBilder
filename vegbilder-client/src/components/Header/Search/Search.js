@@ -133,7 +133,6 @@ const Search = ({ showMessage, setMapView }) => {
   const delayedVegQuery = useCallback(
     debounce(async (vegsystemreferanse) => {
       const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
-      console.log(vegResponse);
       if (vegResponse) {
         if (vegResponse.status !== 200) {
           throwError(vegResponse);
