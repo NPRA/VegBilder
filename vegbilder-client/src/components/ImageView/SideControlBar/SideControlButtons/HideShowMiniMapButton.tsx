@@ -5,6 +5,7 @@ import { MapIcon } from 'components/Icons/Icons';
 
 const useStyles = makeStyles((theme) => ({
   button: {
+    pointerEvents: 'all',
     backgroundColor: theme.palette.common.grayDark,
     margin: '0.2rem 0.2rem 0.35rem 0.2rem',
     '& .MuiIconButton-label': {
@@ -16,6 +17,7 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   active: {
+    pointerEvents: 'all',
     backgroundColor: theme.palette.common.grayDark,
     margin: '0.2rem 0.2rem 0.35rem 0.2rem',
     '& .MuiIconButton-label': {

@@ -18,6 +18,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: '10px',
     zIndex: 5,
     marginBottom: '0.35rem',
+    pointerEvents: 'all',
   },
   hiddenMap: {
     display: 'none',
@@ -25,6 +26,7 @@ const useStyles = makeStyles(() => ({
   mapContainer: {
     height: '100%',
     width: '100%',
+    pointerEvents: 'all',
   },
 }));
 

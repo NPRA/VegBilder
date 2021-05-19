@@ -22,6 +22,7 @@ const useStyles = makeStyles(() => ({
     flexDirection: 'column',
     width: '18vw',
     height: '95%',
+    pointerEvents: 'none',
   },
 }));
 

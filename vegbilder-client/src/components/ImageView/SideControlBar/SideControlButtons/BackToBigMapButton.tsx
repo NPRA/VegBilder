@@ -4,6 +4,7 @@ import React from 'react';
 
 const useStyles = makeStyles((theme) => ({
   backToMapButton: {
+    pointerEvents: 'all',
     border: 'none',
     backgroundColor: theme.palette.common.grayDark,
     zIndex: 1000,
