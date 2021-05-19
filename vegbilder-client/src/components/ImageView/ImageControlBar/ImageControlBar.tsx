@@ -37,6 +37,8 @@ interface IImageControlBarProps {
   setMeterLineVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
+  isHistoryMode: boolean;
+  setIsHistoryMode: (isHistoryMode: boolean) => void;
 }
 
 const ImageControlBar = ({
@@ -48,6 +50,8 @@ const ImageControlBar = ({
   setMeterLineVisible,
   isZoomedInImage,
   setIsZoomedInImage,
+  isHistoryMode,
+  setIsHistoryMode,
 }: IImageControlBarProps) => {
   const classes = useStyles();
 
@@ -67,6 +71,8 @@ const ImageControlBar = ({
             setShowReportErrorsScheme={setShowReportErrorsScheme}
             isZoomedInImage={isZoomedInImage}
             setIsZoomedInImage={setIsZoomedInImage}
+            isHistoryMode={isHistoryMode}
+            setIsHistoryMode={setIsHistoryMode}
           />
         </Grid>
         <Grid item className={classes.rightItem} />

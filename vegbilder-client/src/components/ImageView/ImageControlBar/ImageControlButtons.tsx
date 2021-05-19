@@ -33,7 +33,7 @@ import {
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import { isHistoryModeState, playVideoState, currentLatLngZoomState } from 'recoil/atoms';
+import { playVideoState, currentLatLngZoomState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS } from 'constants/defaultParamters';
@@ -86,6 +86,8 @@ interface IImageControlButtonsProps {
   setMeterLineVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
+  isHistoryMode: boolean;
+  setIsHistoryMode: (isHistoryMode: boolean) => void;
 }
 
 const ImageControlButtons = ({
@@ -97,6 +99,8 @@ const ImageControlButtons = ({
   setMeterLineVisible,
   isZoomedInImage,
   setIsZoomedInImage,
+  isHistoryMode,
+  setIsHistoryMode,
 }: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
@@ -107,7 +111,6 @@ const ImageControlButtons = ({
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState<Element | null>(null);
   const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState<Element | null>(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
-  const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
 
@@ -128,7 +131,7 @@ const ImageControlButtons = ({
   };
 
   const handleHistoryButtonClick = () => {
-    setHistoryMode(!isHistoryMode);
+    setIsHistoryMode(!isHistoryMode);
   };
 
   const getLinkToVegkart = () => {

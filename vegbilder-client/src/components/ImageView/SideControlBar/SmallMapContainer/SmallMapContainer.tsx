@@ -9,7 +9,6 @@ import './SmallMapContainer.css';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
 import HideShowMiniMapButton from '../SideControlButtons/HideShowMiniMapButton';
-import { isHistoryModeState } from 'recoil/atoms';
 
 const useStyles = makeStyles(() => ({
   mapAndButtonContainer: {
@@ -34,6 +33,7 @@ interface ISmallMapContainerProps {
   setMiniMapVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
   setView: (view: string) => void;
+  isHistoryMode: boolean;
 }
 
 const SmallMapContainer = ({
@@ -41,9 +41,9 @@ const SmallMapContainer = ({
   setMiniMapVisible,
   isZoomedInImage,
   setView,
+  isHistoryMode,
 }: ISmallMapContainerProps) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
   const classes = useStyles();
   const minZoom = 13;
   const maxZoom = 16;
