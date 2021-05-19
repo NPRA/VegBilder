@@ -13,14 +13,12 @@ import {
   findNearestImagePoint,
   getGenericRoadReference,
 } from 'utilities/imagePointUtilities';
-import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import {
   currentYearState,
   playVideoState,
-  currentHistoryImageState,
-  isHistoryModeState,
   currentLatLngZoomState,
   loadedImagePointsState,
+  filteredImagePointsState,
 } from 'recoil/atoms';
 import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/settings';
@@ -31,7 +29,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
 
   const [fetchedBboxes] = useState([]);
   const [targetBbox] = useState(null);
-  const { filteredImagePoints } = useFilteredImagePoints();
+  const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
@@ -39,8 +37,6 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
   const availableYears = useRecoilValue(availableYearsQuery);
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
-  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();
@@ -180,14 +176,14 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   };
 
   useEffect(() => {
-    if (loadedImagePoints) {
+    if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
-      const imagePoints = loadedImagePoints.imagePoints.filter((imagePoint) =>
+      const imagePoints = filteredImagePoints.filter((imagePoint) =>
         imagePointIsWithinBbox(imagePoint, mapBbox)
       );
       setImagePointsToRender(imagePoints);
     }
-  }, [loadedImagePoints, createBboxForVisibleMapArea]);
+  }, [filteredImagePoints, createBboxForVisibleMapArea]);
 
   const renderImagePoints = () => {
     if (imagePointsToRender) {
@@ -196,9 +192,7 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
           {imagePointsToRender.map((imagePoint) => {
             const latlng = getImagePointLatLng(imagePoint);
             const isDirectional = imagePoint.properties.RETNING != null;
-            const isSelected = isHistoryMode
-              ? currentHistoryImage && currentHistoryImage.id === imagePoint.id
-              : currentImagePoint && currentImagePoint.id === imagePoint.id;
+            const isSelected = currentImagePoint && currentImagePoint.id === imagePoint.id;
             const icon = getMarkerIcon(
               imagePoint.properties.VEGKATEGORI,
               isDirectional,

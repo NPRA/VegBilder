@@ -2,7 +2,7 @@ import groupBy from 'lodash/groupBy';
 
 import { getBearingBetween, getDistanceInMetersBetween } from './latlngUtilities';
 import { splitDateTimeString } from './dateTimeUtilities';
-import { IImagePoint, ILatlng } from 'types';
+import { IImagePoint, ILatlng, ILoadedImagePoints } from 'types';
 import { Dictionary } from 'lodash';
 //import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
@@ -241,6 +241,42 @@ const shouldIncludeImagePoint = (imagePoint: IImagePoint, currentImagePoint: IIm
   return true;
 };
 
+const findLatestImageSeries = (availableImageSeries: Dictionary<IImagePoint[]>) => {
+  let latest = '0001-01-01';
+  for (const imageSeriesDate of Object.getOwnPropertyNames(availableImageSeries)) {
+    if (imageSeriesDate > latest) {
+      latest = imageSeriesDate;
+    }
+  }
+  return availableImageSeries[latest];
+};
+
+const getFilteredImagePoints = (
+  loadedImagePoints: ILoadedImagePoints,
+  currentImagePoint: IImagePoint
+) => {
+  if (loadedImagePoints?.imagePointsGroupedBySeries) {
+    const currentImageSeries = {
+      roadReference: getRoadReference(currentImagePoint).withoutMeter,
+      date: getDateString(currentImagePoint),
+    };
+    let filteredImagePoints: IImagePoint[] = [];
+    for (const [roadReference, availableImageSeriesForRoadReference] of Object.entries(
+      loadedImagePoints.imagePointsGroupedBySeries
+    )) {
+      const imagePointsForRoadReference =
+        roadReference === currentImageSeries?.roadReference
+          ? availableImageSeriesForRoadReference[currentImageSeries.date]
+          : findLatestImageSeries(availableImageSeriesForRoadReference);
+      if (imagePointsForRoadReference) {
+        filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
+      }
+    }
+    return filteredImagePoints;
+  }
+  return null;
+};
+
 export {
   getImagePointLatLng,
   getImageUrl,
@@ -255,4 +291,5 @@ export {
   getDistanceToBetweenImagePoints,
   getBearingBetweenImagePoints,
   shouldIncludeImagePoint,
+  getFilteredImagePoints,
 };

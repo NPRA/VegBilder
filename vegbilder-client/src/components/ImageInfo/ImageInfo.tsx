@@ -213,7 +213,8 @@ const ImageInfo = ({
 
   const getKommuneAndFylke = async (latlng: ILatlng) => {
     const response = await GetKommuneAndFylkeByLatLng(latlng);
-    setFylkesNavn(response.fylkesnavn);
+    console.log(response);
+    setFylkesNavn(`${response.fylkesnavn} (${response.fylkesnummer}) `);
     setKommuneNavn(`${response.kommunenavn} (${response.kommunenummer})  `);
   };
 
@@ -361,7 +362,7 @@ const ImageInfo = ({
             ) : null}
             {fylkesNavn.length && imagePoint.properties.FYLKENUMMER ? (
               <Typography variant="body1" className={classes.lines}>
-                {`${fylkesNavn} (${imagePoint.properties.FYLKENUMMER})`}
+                {fylkesNavn}
               </Typography>
             ) : null}
           </ItemGroupContainer>

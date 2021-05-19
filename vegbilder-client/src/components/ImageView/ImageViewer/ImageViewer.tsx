@@ -3,7 +3,6 @@ import { makeStyles } from '@material-ui/core/styles';
 import orderBy from 'lodash/orderBy';
 import { useRecoilValue, useRecoilState } from 'recoil';
 
-import { useFilteredImagePoints } from 'contexts/FilteredImagePointsContext';
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { isEvenNumber } from 'utilities/mathUtilities';
 import {
@@ -15,7 +14,7 @@ import {
   shouldIncludeImagePoint,
 } from 'utilities/imagePointUtilities';
 import MeterLineCanvas from './MeterLineCanvas';
-import { playVideoState, isHistoryModeState, currentHistoryImageState } from 'recoil/atoms';
+import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 
@@ -62,12 +61,10 @@ const ImageViewer = ({
 }: IImageViewerProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  const { filteredImagePoints } = useFilteredImagePoints();
+  const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const { command, resetCommand } = useCommand();
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
-  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -92,6 +89,7 @@ const ImageViewer = ({
 
   const goToNearestImagePointInOppositeLane = useCallback(() => {
     if (!currentImagePoint) return;
+    if (!filteredImagePoints) return;
     const imagePointsInOppositeLane = filteredImagePoints.filter(
       (ip: IImagePoint) =>
         ip.properties.VEGKATEGORI === currentImagePoint.properties.VEGKATEGORI &&
@@ -139,7 +137,7 @@ const ImageViewer = ({
   }, [currentImagePoint]);
 
   useEffect(() => {
-    if (currentImagePoint) {
+    if (currentImagePoint && filteredImagePoints) {
       const getSortedImagePointsForCurrentLane = () => {
         const currentLaneImagePoints = filteredImagePoints.filter((ip: IImagePoint) =>
           shouldIncludeImagePoint(ip, currentImagePoint)
@@ -308,11 +306,7 @@ const ImageViewer = ({
         {currentImagePoint && (
           <>
             <img
-              src={
-                isHistoryMode && currentHistoryImage
-                  ? getImageUrl(currentHistoryImage)
-                  : getImageUrl(currentImagePoint)
-              }
+              src={getImageUrl(currentImagePoint)}
               alt="vegbilde"
               className={isZoomedInImage ? classes.enlargedImage : classes.image}
               ref={imgRef}

@@ -6,10 +6,9 @@ import { makeStyles } from '@material-ui/core/styles';
 import { crsUtm33N } from '../../../MapContainer/crs';
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 import './SmallMapContainer.css';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { latLngZoomQueryParameterState } from 'recoil/selectors';
 import HideShowMiniMapButton from '../SideControlButtons/HideShowMiniMapButton';
-import { currentHistoryImageState, isHistoryModeState } from 'recoil/atoms';
 
 const useStyles = makeStyles(() => ({
   mapAndButtonContainer: {
@@ -34,6 +33,7 @@ interface ISmallMapContainerProps {
   setMiniMapVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
   setView: (view: string) => void;
+  isHistoryMode: boolean;
 }
 
 const SmallMapContainer = ({
@@ -41,11 +41,9 @@ const SmallMapContainer = ({
   setMiniMapVisible,
   isZoomedInImage,
   setView,
+  isHistoryMode,
 }: ISmallMapContainerProps) => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
-  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
-  const setCurrentImagePoint = useSetRecoilState(imagePointQueryParameterState);
   const classes = useStyles();
   const minZoom = 13;
   const maxZoom = 16;
@@ -53,9 +51,6 @@ const SmallMapContainer = ({
   const showMiniMap = (miniMapVisible && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
 
   const handleClick = () => {
-    if (isHistoryMode && currentHistoryImage) {
-      setCurrentImagePoint(currentHistoryImage);
-    }
     setView('map');
   };
 

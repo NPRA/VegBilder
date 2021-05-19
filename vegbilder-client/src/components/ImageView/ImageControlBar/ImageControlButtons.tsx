@@ -33,12 +33,7 @@ import {
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import {
-  isHistoryModeState,
-  playVideoState,
-  currentHistoryImageState,
-  currentLatLngZoomState,
-} from 'recoil/atoms';
+import { playVideoState, currentLatLngZoomState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS } from 'constants/defaultParamters';
@@ -91,6 +86,8 @@ interface IImageControlButtonsProps {
   setMeterLineVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
+  isHistoryMode: boolean;
+  setIsHistoryMode: (isHistoryMode: boolean) => void;
 }
 
 const ImageControlButtons = ({
@@ -102,19 +99,19 @@ const ImageControlButtons = ({
   setMeterLineVisible,
   isZoomedInImage,
   setIsZoomedInImage,
+  isHistoryMode,
+  setIsHistoryMode,
 }: IImageControlButtonsProps) => {
   const classes = useStyles();
   const { setCommand } = useCommand();
-  const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const currentImagePoint = useRecoilValue(imagePointQueryParameterState);
 
   const { copyToClipboard } = useCopyToClipboard();
 
   const [moreControlsAnchorEl, setMoreControlsAnchorEl] = useState<Element | null>(null);
   const [timerOptionsAnchorEl, setTimerOptionsAnchorEl] = useState<Element | null>(null);
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
-  const [isHistoryMode, setHistoryMode] = useRecoilState(isHistoryModeState);
   const [playMode, setPlayMode] = useState(false);
-  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
@@ -134,14 +131,7 @@ const ImageControlButtons = ({
   };
 
   const handleHistoryButtonClick = () => {
-    if (isHistoryMode) {
-      if (currentHistoryImage) {
-        setCurrentImagePoint(currentHistoryImage);
-      }
-      setHistoryMode(false);
-    } else {
-      setHistoryMode(true);
-    }
+    setIsHistoryMode(!isHistoryMode);
   };
 
   const getLinkToVegkart = () => {
@@ -236,8 +226,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={isZoomedInImage ? 'Vis skalert bilde' : 'Vis bilde i 1:1 størrelse'}>
         <IconButton
+          disabled={isHistoryMode}
           aria-label="Zoom inn/ut"
-          className={classes.button}
+          className={isHistoryMode ? classes.buttonDisabled : classes.button}
           onClick={() => {
             setIsZoomedInImage(!isZoomedInImage);
             if (isZoomedInImage) setMeterLineVisible(false);

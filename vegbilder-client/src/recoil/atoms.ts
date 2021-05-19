@@ -14,16 +14,6 @@ export const currentYearState = atom<string | number>({
   default: parseInt(searchParams.get('year')!) || 'Nyeste',
 });
 
-export const isHistoryModeState = atom({
-  key: 'imageSeriesState',
-  default: false,
-});
-
-export const currentHistoryImageState = atom<IImagePoint | null>({
-  key: 'currentHistoryImage',
-  default: null,
-});
-
 export const currentImagePointState = atom<IImagePoint | null>({
   key: 'currentImagePoint',
   default: null,
@@ -51,5 +41,10 @@ export const availableDatesForImageSeries = atom<string[]>({
 
 export const loadedImagePointsState = atom<ILoadedImagePoints | null>({
   key: 'loadedImagePoints',
+  default: null,
+});
+
+export const filteredImagePointsState = atom<IImagePoint[] | null>({
+  key: 'filteredImagePoints',
   default: null,
 });

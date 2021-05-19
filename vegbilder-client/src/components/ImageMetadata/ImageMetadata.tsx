@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import { getRoadReference } from 'utilities/imagePointUtilities';
-import { currentHistoryImageState, currentImagePointState, isHistoryModeState } from 'recoil/atoms';
+import { currentImagePointState } from 'recoil/atoms';
 
 const useStyles = makeStyles(() => ({
   metadata: {
@@ -18,25 +18,15 @@ const ImageMetadata = () => {
   const classes = useStyles();
 
   const currentImagePoint = useRecoilValue(currentImagePointState);
-  const currentHistoryImage = useRecoilValue(currentHistoryImageState);
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
 
   let roadReference;
   let dateAndTime;
 
-  if (isHistoryMode) {
-    if (!currentHistoryImage) return null;
-    const { TIDSPUNKT } = currentHistoryImage.properties;
-    roadReference = getRoadReference(currentHistoryImage).complete;
-    const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
-    dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
-  } else {
-    if (!currentImagePoint) return null;
-    const { TIDSPUNKT } = currentImagePoint.properties;
-    roadReference = getRoadReference(currentImagePoint).complete;
-    const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
-    dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
-  }
+  if (!currentImagePoint) return null;
+  const { TIDSPUNKT } = currentImagePoint.properties;
+  roadReference = getRoadReference(currentImagePoint).complete;
+  const dateTime = TIDSPUNKT ? toLocaleDateAndTime(TIDSPUNKT) : null;
+  dateAndTime = `${dateTime?.date} kl. ${dateTime?.time}`;
 
   return (
     <div className={classes.metadata}>

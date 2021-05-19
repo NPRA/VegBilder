@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 
 import ImageControlBar from './ImageControlBar/ImageControlBar';
 import ImageViewer from './ImageViewer/ImageViewer';
-import { currentImagePointState, isHistoryModeState } from 'recoil/atoms';
+import { currentImagePointState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
@@ -52,7 +52,7 @@ type ScrollAction =
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
-  const isHistoryMode = useRecoilValue(isHistoryModeState);
+  const [isHistoryMode, setIsHistoryMode] = useState(false);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
@@ -207,7 +207,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               timeBetweenImages={timeBetweenImages}
               showMessage={showSnackbarMessage}
             />
-            <History />
+            <History setIsHistoryMode={setIsHistoryMode} />
           </div>
         ) : (
           <div
@@ -240,6 +240,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           setTimeBetweenImages={setTimeBetweenImages}
           isZoomedInImage={isHistoryMode ? false : isZoomedInImage}
           setIsZoomedInImage={setIsZoomedInImage}
+          isHistoryMode={isHistoryMode}
+          setIsHistoryMode={setIsHistoryMode}
         />
       </Grid>
       {showReportErrorsScheme ? (
