@@ -48,7 +48,8 @@ interface IScrollState {
 type ScrollAction =
   | { type: 'mousePosition'; newVal: { x: number; y: number } }
   | { type: 'scroll'; newVal: { x: number; y: number } }
-  | { type: 'reset' };
+  | { type: 'reset' }
+  | { type: 'init'; newVal: { x: number; y: number } };
 
 const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
@@ -123,6 +124,21 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           mousePosition: { x: 0, y: 0 },
         };
       }
+      case 'init': {
+        const currentImageContainerRef = imageContainerRef.current;
+        if (currentImageContainerRef) {
+          currentImageContainerRef.scrollLeft = action.newVal.x;
+          currentImageContainerRef.scrollTop = action.newVal.y;
+        }
+        return {
+          ...state,
+          scroll: {
+            x: action.newVal.x,
+            y: action.newVal.y,
+          },
+          mousePosition: { x: action.newVal.x, y: action.newVal.y },
+        };
+      }
       default:
         return state;
     }
@@ -153,11 +169,20 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       mouseMoved = false;
     };
 
-    const onMouseUp = () => {
+    const onMouseUp = (event: MouseEvent) => {
       shouldScroll = false;
       if (!mouseMoved && !isHistoryMode) {
+        const prevState = isZoomedInImage;
+
+        if (isZoomedInImage) {
+          dispatch({ type: 'reset' });
+        }
+
         setIsZoomedInImage((prevState) => !prevState);
-        dispatch({ type: 'reset' });
+
+        if (!prevState) {
+          dispatch({ type: 'init', newVal: { x: event.clientX, y: event.clientY } });
+        }
       }
       if (mouseMoved && isZoomedInImage) {
         setCursor('grab');
@@ -188,7 +213,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mouseup', onMouseUp);
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
-      dispatch({ type: 'reset' });
     };
   }, [isZoomedInImage, isHistoryMode]);
 
