@@ -78,7 +78,6 @@ const Header = ({ showMessage, setMapView, showInformation, setShowInformation }
             <YearSelector showMessage={showMessage} />
             <Box width={'1.125rem'} />
           </Grid>
-          {/* <Settings /> */}
           <Tooltip title="Informasjon om Vegbilder">
             <IconButton
               aria-label="Informasjon om Vegbilder"
