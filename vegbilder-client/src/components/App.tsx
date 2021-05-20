@@ -146,16 +146,6 @@ const App = () => {
     }
   }, []);
 
-  // useEffect(() => {
-  //   if (process.env.NODE_ENV !== 'development') {
-  //     s3HealtCheck().then((response) => {
-  //       if (response.status !== 200) {
-  //         throwError('Tjenesten som leverer bildene er nede.');
-  //       }
-  //     });
-  //   }
-  // }, []);
-
   const handleSnackbarClose = (reason: any) => {
     if (reason && reason._reactName !== 'onClick') {
       return;
