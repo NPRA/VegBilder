@@ -8,24 +8,25 @@ For å kjøre applikasjonen, må du ha [node](https://nodejs.org/) installert. N
 
 1. Klon dette repoet.
 2. Åpne et terminalvindu, og naviger til `vegbilder-client`-mappen.
-3. Kjør `npm install`.
+3. Kjør `npm install`
 4. Kjør `npm run start`. Frontend-serveren vil automatisk transpilere og laste siden på nytt når filendringer registreres.
 
 ## Prosjektstruktur
 
 Prosjektet består av en frontend skrevet i React, og koden er primært lokalisert i `vegbilder-client/src/`. Statiske filer ligger i `vegbilder-client/public`.
 
-I `src`-mappen ligger `index.tsx`, som tar seg av oppstart av React-appen, og mounter `App`-komponenten. `App` ligger i `components`-mappen, i likhet med alle andre vanlige komponenter. 
+I `src`-mappen ligger `index.tsx`, som tar seg av oppstart av React-appen, og mounter `App`-komponenten. `App` ligger i `components`-mappen, i likhet med alle andre vanlige komponenter. `types` inneholder typedefinisjoner.
 
 De andre undermappene i `src` inneholder forskjellige klasser av hjelpefiler:
 
-- `api` inneholder apier som tar seg av kommunikasjon med backend-tjenester
+- `apis` inneholder apier som tar seg av kommunikasjon med backend-tjenester
 - `contexts` inneholder definisjoner av React-kontekster, som brukes for å injisere data i komponenter
 - `hooks` inneholder egendefinerte React-hooks
 - `theme` inneholder styling og tema for Material UI komponenter ut ifra merkevaren til vegvesenet
 - `utilities` inneholder hjelpefunksjoner
-- `constants` inneholder konstanter
-- `recoil` inneholder atoms, selectors og typer for tilstandshåndtering 
+- `constants` inneholder konstanter og versjonslogg
+- `recoil` inneholder atoms og selectors for tilstandshåndtering 
+-  `fonts` inneholder egendefinerte fonter (SVV-standard)
 
 ## Teknologier
 
@@ -33,8 +34,11 @@ De andre undermappene i `src` inneholder forskjellige klasser av hjelpefiler:
 - [Material UI](https://material-ui.com/) designsystem for react
 - [TypeScript](https://www.typescriptlang.org/) utvider javascript ved å legge til typer
 - [Leaflet](https://leafletjs.com/) kart
+- [Recoiljs](https://recoiljs.org/) bibliotek for tilstandshåndtering
 
 ## Atlas Bygge & Utrullning
+
+Dokumentasjon til Atlas (må akseseres via SVV nett): [Atlas](https://atlas-docs.atlas.vegvesen.no/atlas-dokumentasjon/)
 
 ### Bygg med npm
 
