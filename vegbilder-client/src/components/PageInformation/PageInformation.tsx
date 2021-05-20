@@ -27,10 +27,9 @@ const useStyles = makeStyles(() => ({
 
 interface IInformationProps {
   setVisible: () => void;
-  isOnboarding?: boolean;
 }
 
-const PageInformation = ({ setVisible, isOnboarding }: IInformationProps) => {
+const PageInformation = ({ setVisible }: IInformationProps) => {
   const classes = useStyles();
   const [selectedTab, setSelectedTab] = useState('Om');
 
