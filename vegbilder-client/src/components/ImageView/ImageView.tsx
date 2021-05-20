@@ -88,8 +88,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
         let newScrollLeft = state.scroll.x - action.newVal.x + state.mousePosition.x;
         let newScrollTop = state.scroll.y - action.newVal.y + state.mousePosition.y;
 
-        console.log(document.body.clientWidth);
-
         if (newScrollLeft >= maxScrollWidth || newScrollLeft < 0) newScrollLeft = state.scroll.x;
         if (newScrollTop >= maxScrollHeight || newScrollTop < 0) newScrollTop = state.scroll.y;
 
@@ -164,13 +162,25 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     const onMouseUp = (event: MouseEvent) => {
       shouldScroll = false;
       if (!mouseMoved && !isHistoryMode) {
-        const prevState = isZoomedInImage;
-        if (isZoomedInImage) {
+        const isCurrentlyZoomedInImage = isZoomedInImage;
+        if (isCurrentlyZoomedInImage) {
+          // zoom out and reset state
           dispatch({ type: 'reset' });
         }
+
         setIsZoomedInImage((prevState) => !prevState);
-        if (!prevState) {
-          dispatch({ type: 'init', newVal: { x: event.clientX, y: event.clientY } });
+
+        if (!isCurrentlyZoomedInImage) {
+          // zoom in and init scroll/mouse position to where the user clicked
+          // this have to come after we set the image to a zoomed in state in order to update the
+          // state of the big image element.
+          dispatch({
+            type: 'init',
+            newVal: {
+              x: event.clientX,
+              y: event.clientY,
+            },
+          });
         }
       }
       if (mouseMoved && isZoomedInImage) {
