@@ -4,9 +4,9 @@ import 'leaflet/dist/leaflet.css';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { crsUtm33N } from 'constants/crs';
-import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
+import ImagePointDirectionalMarkersLayer from 'components/ImagePointDirectionalMarkersLayer/ImagePointDirectionalMarkersLayer';
 import './SmallMapContainer.css';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
 import HideShowMiniMapButton from '../SideControlButtons/HideShowMiniMapButton';
 
@@ -85,7 +85,7 @@ const SmallMapContainer = ({
             attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
             subdomains="123456789"
           />
-          <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={false} />
+          <ImagePointDirectionalMarkersLayer shouldUseMapBoundsAsTargetBbox={false} />
         </Map>
       </div>
     </div>

@@ -24,7 +24,7 @@ import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selec
 import { settings } from 'constants/settings';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
-const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
+const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const [[south, west], [north, east]] = useLeafletBounds();
 
   const [fetchedBboxes] = useState([]);
@@ -275,4 +275,4 @@ const ImagePointsLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   );
 };
 
-export default ImagePointsLayer;
+export default ImagePointDirectionalMarkersLayer;

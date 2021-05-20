@@ -3,7 +3,7 @@ import { useLeafletZoom } from 'use-leaflet';
 import { WMSTileLayer } from 'react-leaflet';
 import { useRecoilValue } from 'recoil';
 
-import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
+import ImagePointDirectionalMarkersLayer from 'components/ImagePointDirectionalMarkersLayer/ImagePointDirectionalMarkersLayer';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import { OGC_URL } from 'constants/urls';
 
@@ -21,7 +21,7 @@ const ImagePointMapLayers = () => {
 
   const renderImagePointsLayer = () => {
     if (showImagePointsMarkers) {
-      return <ImagePointsLayer shouldUseMapBoundsAsTargetBbox={true} />;
+      return <ImagePointDirectionalMarkersLayer shouldUseMapBoundsAsTargetBbox={true} />;
     } else {
       return (
         <WMSTileLayer
