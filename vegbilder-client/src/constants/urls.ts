@@ -14,6 +14,10 @@ export const VEGKART = 'https://vegkart.atlas.vegvesen.no/#kartlag:geodata/';
 
 export const S3_HEALTH = 'https://s3vegbilder.utv.atlas.vegvesen.no/ready';
 
+export const WSGEONORGE = 'https://ws.geonorge.no/';
+
+export const NVDBAPI = 'https://nvdbapiles-v3.atlas.vegvesen.no/';
+
 export const OGC_URL =
   process.env.NODE_ENV === 'development' || settings.productionMode
     ? VEGBILDER_OGC
