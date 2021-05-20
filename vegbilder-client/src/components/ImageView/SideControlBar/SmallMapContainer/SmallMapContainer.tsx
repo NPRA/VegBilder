@@ -3,7 +3,7 @@ import { Map, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { makeStyles } from '@material-ui/core/styles';
 
-import { crsUtm33N } from '../../../MapContainer/crs';
+import { crsUtm33N } from 'constants/crs';
 import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 import './SmallMapContainer.css';
 import { useRecoilState, useRecoilValue } from 'recoil';

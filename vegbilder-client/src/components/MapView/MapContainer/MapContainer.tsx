@@ -3,7 +3,7 @@ import { Map, TileLayer } from 'react-leaflet';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
 
-import { crsUtm33N } from './crs';
+import { crsUtm33N } from 'constants/crs';
 import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
 import MapControls from './MapControls/MapControls';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
