@@ -12,8 +12,6 @@ export const VEGBILDER_OGC = 'https://www.vegvesen.no/kart/ogc/vegbilder_1_0/ows
 
 export const VEGKART = 'https://vegkart.atlas.vegvesen.no/#kartlag:geodata/';
 
-export const S3_HEALTH = 'https://s3vegbilder.utv.atlas.vegvesen.no/ready';
-
 export const WSGEONORGE = 'https://ws.geonorge.no/';
 
 export const NVDBAPI = 'https://nvdbapiles-v3.atlas.vegvesen.no/';
