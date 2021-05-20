@@ -63,23 +63,13 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
   const [meterLineVisible, setMeterLineVisible] = useState(false);
 
-  const maxScrollHeight = Math.max(
-    document.body.scrollHeight,
-    document.documentElement.scrollHeight,
-    document.body.offsetHeight,
-    document.documentElement.offsetHeight,
-    document.body.clientHeight,
-    document.documentElement.clientHeight
-  );
+  const maxScrollHeight =
+    (document.getElementById('vegbilde')?.clientHeight || 1000) -
+    175 -
+    document.body.clientHeight / 2;
 
-  const maxScrollWidth = Math.max(
-    document.body.scrollWidth,
-    document.documentElement.scrollWidth,
-    document.body.offsetWidth,
-    document.documentElement.offsetWidth,
-    document.body.clientWidth,
-    document.documentElement.clientWidth
-  );
+  const maxScrollWidth =
+    (document.getElementById('vegbilde')?.clientWidth || 1000) - document.body.clientWidth;
 
   const initialScrollState = {
     mousePosition: { x: 0, y: 0 },
@@ -97,6 +87,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       case 'scroll': {
         let newScrollLeft = state.scroll.x - action.newVal.x + state.mousePosition.x;
         let newScrollTop = state.scroll.y - action.newVal.y + state.mousePosition.y;
+
+        console.log(document.body.clientWidth);
 
         if (newScrollLeft >= maxScrollWidth || newScrollLeft < 0) newScrollLeft = state.scroll.x;
         if (newScrollTop >= maxScrollHeight || newScrollTop < 0) newScrollTop = state.scroll.y;
@@ -173,13 +165,10 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       shouldScroll = false;
       if (!mouseMoved && !isHistoryMode) {
         const prevState = isZoomedInImage;
-
         if (isZoomedInImage) {
           dispatch({ type: 'reset' });
         }
-
         setIsZoomedInImage((prevState) => !prevState);
-
         if (!prevState) {
           dispatch({ type: 'init', newVal: { x: event.clientX, y: event.clientY } });
         }

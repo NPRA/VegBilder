@@ -306,6 +306,7 @@ const ImageViewer = ({
         {currentImagePoint && (
           <>
             <img
+              id="vegbilde"
               src={getImageUrl(currentImagePoint)}
               alt="vegbilde"
               className={isZoomedInImage ? classes.enlargedImage : classes.image}
