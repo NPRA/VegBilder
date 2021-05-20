@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
 
 import { crsUtm33N } from 'constants/crs';
-import ImagePointLayersWrapper from 'components/ImagePointsLayersWrapper/ImagePointsLayersWrapper';
+import ImagePointMapLayers from './ImagePointMapLayers/ImagePointMapLayers';
 import MapControls from './MapControls/MapControls';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
@@ -118,7 +118,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
         subdomains="123456789"
       />
-      <ImagePointLayersWrapper />
+      <ImagePointMapLayers />
       <MapControls showMessage={showMessage} />
     </Map>
   );

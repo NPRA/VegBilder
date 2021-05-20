@@ -7,7 +7,7 @@ import ImagePointsLayer from 'components/ImagePointsLayer/ImagePointsLayer';
 import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import { OGC_URL } from 'constants/urls';
 
-const ImagePointLayersWrapper = () => {
+const ImagePointMapLayers = () => {
   const zoom = useLeafletZoom();
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
@@ -38,4 +38,4 @@ const ImagePointLayersWrapper = () => {
   return renderImagePointsLayer();
 };
 
-export default ImagePointLayersWrapper;
+export default ImagePointMapLayers;
