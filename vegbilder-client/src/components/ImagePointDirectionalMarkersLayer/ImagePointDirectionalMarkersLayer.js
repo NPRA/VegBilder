@@ -21,7 +21,7 @@ import {
   loadedImagePointsState,
   filteredImagePointsState,
 } from 'recoil/atoms';
-import { availableYearsQuery, imagePointQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/settings';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
@@ -37,7 +37,6 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
-  const availableYears = useRecoilValue(availableYearsQuery);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();
@@ -150,9 +149,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   const getMarkerIcon = (vegkategori, isDirectional, isSelected) => {
     const iconUrl = `images/markers/marker-${
       vegkategori === 'E' || vegkategori === 'R' ? 'ER' : 'FK'
-    }-${currentYear === availableYears[0] ? 'newest' : 'older'}-${
-      isDirectional ? 'directional' : 'nondirectional'
-    }${isSelected ? '-selected' : ''}.svg`;
+    }-${isDirectional ? 'directional' : 'nondirectional'}${isSelected ? '-selected' : ''}.svg`;
     let iconSizeX, iconSizeY;
 
     if (isDirectional) {

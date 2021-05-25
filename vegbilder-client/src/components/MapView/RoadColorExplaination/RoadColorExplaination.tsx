@@ -3,7 +3,6 @@ import { makeStyles, Paper, Typography } from '@material-ui/core';
 import { useRecoilValue } from 'recoil';
 
 import { currentImagePointState, currentLatLngZoomState, currentYearState } from 'recoil/atoms';
-import { availableYearsQuery } from 'recoil/selectors';
 
 const useStyles = makeStyles(() => ({
   paperContainer: {
@@ -28,14 +27,12 @@ const useStyles = makeStyles(() => ({
 
 const RoadColorExplaination = () => {
   const classes = useStyles();
-  const currentYear = useRecoilValue(currentYearState);
-  const availableYears = useRecoilValue(availableYearsQuery);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const zoomLevel = useRecoilValue(currentLatLngZoomState).zoom;
 
   const getMarkerIcon = (vegkategori: string) => {
-    return `images/markers/marker-${vegkategori === 'E' || vegkategori === 'R' ? 'ER' : 'FK'}-${
-      currentYear === availableYears[0] ? 'newest' : 'older'
+    return `images/markers/marker-${
+      vegkategori === 'E' || vegkategori === 'R' ? 'ER' : 'FK'
     }-directional.svg`;
   };
 
