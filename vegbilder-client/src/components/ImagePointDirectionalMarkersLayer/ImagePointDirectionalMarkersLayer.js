@@ -12,6 +12,7 @@ import {
   getImagePointLatLng,
   findNearestImagePoint,
   getGenericRoadReference,
+  getFilteredImagePoints,
 } from 'utilities/imagePointUtilities';
 import {
   currentYearState,

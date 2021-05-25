@@ -116,7 +116,7 @@ export const loadedImagePointsFilterState = selector({
     return get(loadedImagePointsState);
   },
   set: (
-    { set },
+    { get, set },
     newLoadedImagePoints:
       | ({ imagePoints: IImagePoint[] } & { year: number } & { bbox: IBbox })
       | DefaultValue
@@ -133,6 +133,11 @@ export const loadedImagePointsFilterState = selector({
         availableDates: availableDates,
       };
       set(loadedImagePointsState, newLoaded);
+      const currImagePoint = get(currentImagePointState);
+      if (currImagePoint) {
+        const filteredImagePoints = getFilteredImagePoints(newLoaded, currImagePoint);
+        set(filteredImagePointsState, filteredImagePoints);
+      }
     } else {
       set(loadedImagePointsState, null);
     }

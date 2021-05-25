@@ -213,7 +213,6 @@ const ImageInfo = ({
 
   const getKommuneAndFylke = async (latlng: ILatlng) => {
     const response = await GetKommuneAndFylkeByLatLng(latlng);
-    console.log(response);
     setFylkesNavn(`${response.fylkesnavn} (${response.fylkesnummer}) `);
     setKommuneNavn(`${response.kommunenavn} (${response.kommunenummer})  `);
   };
