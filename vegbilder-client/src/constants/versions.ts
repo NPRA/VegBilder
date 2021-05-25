@@ -1,4 +1,5 @@
 const versionLog = {
+  'v1.2.26': ['🐞 Bugfiks: oppdater bildepunktene når man drar i kartet'],
   'v1.2.25': ['Zoom in hvor brukeren klikket', 'Forbedringer på scroll'],
   'v1.2.24': [
     'Kan gå fremover/bakover i historiske bilder',
