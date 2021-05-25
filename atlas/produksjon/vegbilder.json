@@ -23,7 +23,7 @@
       "spec": {
         "hostname": "vegbilder.atlas.vegvesen.no",
         "termination": "edge",
-        "expose": "internal"
+        "expose": "external"
       }
     },
     "probes": {
