@@ -1,5 +1,5 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
-import { groupBy } from 'lodash';
+import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
 import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import {
@@ -89,9 +89,14 @@ export const latLngZoomQueryParameterState = selector({
   },
   set: ({ set }, newCoordinates: (ILatlng & { zoom?: number }) | DefaultValue) => {
     if (!(newCoordinates instanceof DefaultValue)) {
-      setNewQueryParamter('lat', newCoordinates.lat.toString());
-      setNewQueryParamter('lng', newCoordinates.lng.toString());
-      if (newCoordinates.zoom) setNewQueryParamter('zoom', newCoordinates.zoom.toString());
+      const newSearchParams = new URLSearchParams(window.location.search);
+
+      newSearchParams.set('lat', newCoordinates.lat.toString());
+      newSearchParams.set('lng', newCoordinates.lng.toString());
+      if (newCoordinates.zoom) newSearchParams.set('zoom', newCoordinates.zoom.toString());
+
+      replaceHistory(newSearchParams);
+      
     }
     set(currentLatLngZoomState, newCoordinates);
   },
@@ -148,8 +153,15 @@ export const loadedImagePointsFilterState = selector({
 const setNewQueryParamter = (name: queryParamterNames, value: string) => {
   const newSearchParams = new URLSearchParams(window.location.search);
   newSearchParams.set(name, value);
-  window.history.replaceState(null, '', '?' + newSearchParams.toString());
+  replaceHistory(newSearchParams);
 };
+
+const replaceHistory = 
+  debounce((searchParams: URLSearchParams) => {
+    console.log('replacing history');
+    window.history.replaceState(null, '', '?' + searchParams.toString());
+  }, 300)
+
 
 const getAvailableDates = (imagePoints: IImagePoint[]) => {
   const imagePointsGroupedByDate = groupBy(imagePoints, (imagePoint) => getDateString(imagePoint));
