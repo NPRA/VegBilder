@@ -1,5 +1,5 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
-import { debounce, groupBy } from 'lodash';
+import { debounce, groupBy, throttle } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
 import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import {
@@ -14,6 +14,7 @@ import {
   currentYearState,
   filteredImagePointsState,
   loadedImagePointsState,
+  playVideoState,
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -68,7 +69,8 @@ export const imagePointQueryParameterState = selector({
   set: ({ get, set }, newImagePoint: IImagePoint | null | DefaultValue) => {
     if (!(newImagePoint instanceof DefaultValue)) {
       const imagePointId = newImagePoint ? newImagePoint.id : '';
-      setNewQueryParamter('imageId', imagePointId);
+      const isVideoPlaying = get(playVideoState);
+      setNewQueryParamter('imageId', imagePointId, isVideoPlaying);
       if (newImagePoint) {
         const loadedImagePoints = get(loadedImagePointsState);
         if (loadedImagePoints) {
@@ -87,7 +89,7 @@ export const latLngZoomQueryParameterState = selector({
   get: ({ get }) => {
     return get(currentLatLngZoomState);
   },
-  set: ({ set }, newCoordinates: (ILatlng & { zoom?: number }) | DefaultValue) => {
+  set: ({ get, set }, newCoordinates: (ILatlng & { zoom?: number }) | DefaultValue) => {
     if (!(newCoordinates instanceof DefaultValue)) {
       const newSearchParams = new URLSearchParams(window.location.search);
 
@@ -95,7 +97,14 @@ export const latLngZoomQueryParameterState = selector({
       newSearchParams.set('lng', newCoordinates.lng.toString());
       if (newCoordinates.zoom) newSearchParams.set('zoom', newCoordinates.zoom.toString());
 
-      replaceHistory(newSearchParams);
+      if (get(playVideoState)){
+        delayedReplaceHistory(newSearchParams);
+      }
+      else {
+        window.history.replaceState(null, '', '?' + newSearchParams.toString());
+      }
+
+
       
     }
     set(currentLatLngZoomState, newCoordinates);
@@ -150,17 +159,25 @@ export const loadedImagePointsFilterState = selector({
 });
 
 // utilities
-const setNewQueryParamter = (name: queryParamterNames, value: string) => {
+const setNewQueryParamter = (name: queryParamterNames, value: string, isVideoPlaying = false) => {
   const newSearchParams = new URLSearchParams(window.location.search);
   newSearchParams.set(name, value);
-  replaceHistory(newSearchParams);
+  if (isVideoPlaying){
+    delayedReplaceHistory(newSearchParams)
+  }
+  else {
+    window.history.replaceState(null, '', '?' + newSearchParams.toString());
+
+  }
 };
 
-const replaceHistory = 
+
+// in Safari, the app will crash if you play video because history is replaced too much. 
+// Therefore, we ensure that we dont replace history too often by throttling
+const delayedReplaceHistory = 
   debounce((searchParams: URLSearchParams) => {
-    console.log('replacing history');
     window.history.replaceState(null, '', '?' + searchParams.toString());
-  }, 300)
+  }, 200)
 
 
 const getAvailableDates = (imagePoints: IImagePoint[]) => {

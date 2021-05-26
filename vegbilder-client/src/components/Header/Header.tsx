@@ -54,9 +54,9 @@ const Header = ({ showMessage, setMapView, showInformation, setShowInformation }
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const resetToDefaultStates = () => {
-    setCurrentCoordinates({ ...DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
     setCurrentImagePoint(null);
     setMapView();
+    setCurrentCoordinates({ ...DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
   };
 
   return (

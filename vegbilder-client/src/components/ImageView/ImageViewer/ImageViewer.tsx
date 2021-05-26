@@ -17,6 +17,7 @@ import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
+import { debounce } from 'lodash';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -287,18 +288,22 @@ const ImageViewer = ({
   useEffect(() => {
     if (autoPlay) {
       if (nextImagePoint) {
-        sleep(timeBetweenImages).then(() => {
-          const latlng = getImagePointLatLng(nextImagePoint);
-          setCurrentImagePoint(nextImagePoint);
-          if (latlng) setCurrentCoordinates(latlng);
-        });
+        playNextImage(nextImagePoint);
       } else {
         setAutoPlay(false);
         showMessage('Stopper film, dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoPlay, nextImagePoint, showMessage, timeBetweenImages]);
+  }, [autoPlay, nextImagePoint, timeBetweenImages]);
+
+
+  const playNextImage = 
+  debounce((nextImagePoint: IImagePoint) => {
+    const latlng = getImagePointLatLng(nextImagePoint);
+    setCurrentImagePoint(nextImagePoint);
+    if (latlng) setCurrentCoordinates(latlng);
+  }, timeBetweenImages)
 
   return (
     <>
@@ -320,7 +325,5 @@ const ImageViewer = ({
     </>
   );
 };
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default ImageViewer;
