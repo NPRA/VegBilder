@@ -2,6 +2,14 @@
   "schemaVersion": "v1",
   "type": "Deployment",
   "spec": {
+    "image": {
+      "type": "ImageReferenceDescriptor",
+      "spec": {
+        "imageRepositoryName": "atlas-docker.artrepo.vegvesen.no/vegfoto/vegbilder",
+        "tag": "1.3.0",
+        "port": 8080
+      }
+    },
     "replicas": 2,
     "resources": [
       {
