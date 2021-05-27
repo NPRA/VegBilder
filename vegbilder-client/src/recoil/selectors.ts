@@ -103,9 +103,6 @@ export const latLngZoomQueryParameterState = selector({
       else {
         window.history.replaceState(null, '', '?' + newSearchParams.toString());
       }
-
-
-      
     }
     set(currentLatLngZoomState, newCoordinates);
   },
