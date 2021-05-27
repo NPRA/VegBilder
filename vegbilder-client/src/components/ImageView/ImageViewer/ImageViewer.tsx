@@ -82,6 +82,11 @@ const ImageViewer = ({
     return isEvenNumber(primaryFeltkode1) !== isEvenNumber(primaryFeltkode2);
   };
 
+  const isOnSameHovedparsell = (HP1: string | null, HP2: string | null) => {
+    // for old vegreferanser (before 2020). Most of the time, the oppoiste lane will have the same hovedparselnumber.
+    return HP1 === HP2;
+  }
+
   const onImageLoaded = () => {
     const img = imgRef.current;
     if (img) {
@@ -92,7 +97,7 @@ const ImageViewer = ({
   const goToNearestImagePointInOppositeLane = useCallback(() => {
     if (!currentImagePoint) return;
     if (!filteredImagePoints) return;
-    const imagePointsInOppositeLane = filteredImagePoints.filter(
+    let imagePointsInOppositeLane = filteredImagePoints.filter(
       (ip: IImagePoint) =>
         ip.properties.VEGKATEGORI === currentImagePoint.properties.VEGKATEGORI &&
         ip.properties.VEGSTATUS === currentImagePoint.properties.VEGSTATUS &&
@@ -104,8 +109,18 @@ const ImageViewer = ({
         ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
         hasOppositeParity(ip.properties.FELTKODE, currentImagePoint.properties.FELTKODE)
     );
+    
+    const usesOldVegreferanse = currentImagePoint.properties.AAR < 2020;
+    if (usesOldVegreferanse) {
+      imagePointsInOppositeLane = imagePointsInOppositeLane.filter((imagePoint) => isOnSameHovedparsell(currentImagePoint.properties.HP, imagePoint.properties.HP))
+    }
+
     const latlngCurrentImagePoint = getImagePointLatLng(currentImagePoint);
-    if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) return;
+      
+    if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) {
+      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning'); 
+      return
+    }
     const nearestImagePointInOppositeLane = findNearestImagePoint(
       imagePointsInOppositeLane,
       latlngCurrentImagePoint
