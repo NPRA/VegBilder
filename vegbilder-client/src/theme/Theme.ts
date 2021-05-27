@@ -214,7 +214,6 @@ export default createMuiTheme({
           },
         },
         '&$selected': {
-          backgroundColor: grayDarker,
           '& .MuiListItemIcon-root, & .MuiListItemText-primary': {
             color: orangeDark,
           },
