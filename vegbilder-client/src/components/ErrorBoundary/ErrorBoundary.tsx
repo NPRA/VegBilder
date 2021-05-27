@@ -25,7 +25,7 @@ class ErrorBoundary extends Component<IErrorBoundaryProps, State> {
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
-    this.setState({ hasError: true, errorMessage: errorInfo.componentStack });
+    this.setState({ hasError: true, errorMessage: error.message });
   }
 
   public render() {
@@ -50,7 +50,7 @@ class ErrorBoundary extends Component<IErrorBoundaryProps, State> {
               marginBottom: '3rem',
             }}
           >
-            Tilbake til vegbilder
+            Tilbake til Vegbilder
           </a>
           <Typography variant="body1" style={{ marginTop: '3rem' }}>
             {this.state.errorMessage}
