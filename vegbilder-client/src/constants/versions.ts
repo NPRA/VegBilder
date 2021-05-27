@@ -1,4 +1,5 @@
 const versionLog = {
+  'v1.3.1': ['🐞 Bugfiks: La til en forsinkelse på oppdatering av url i filmmodus. Tidligere krasjet noen nettlesere fordi urlen ble oppdatert for ofte her', 'Fjernet React-favicon', 'La til pre-lasting av neste bildepunkt'],
   'v1.3.0': ['Oppdatere til samme bildemarkører for eldre årganger og nyeste', 'Endre ruten i produksjon til å være ekstern' ],
   'v1.2.26': ['🐞 Bugfiks: oppdater bildepunktene når man drar i kartet'],
   'v1.2.25': ['Zoom in hvor brukeren klikket', 'Forbedringer på scroll'],
