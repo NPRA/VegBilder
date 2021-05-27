@@ -288,6 +288,7 @@ const ImageViewer = ({
   useEffect(() => {
     if (autoPlay) {
       if (nextImagePoint) {
+        new Image().src = getImageUrl(nextImagePoint);
         playNextImage(nextImagePoint);
       } else {
         setAutoPlay(false);
