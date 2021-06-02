@@ -18,7 +18,7 @@ import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { debounce } from 'lodash';
-import ThreeSixtyImage from './ThreeSixtyImage';
+import ThreeSixtyImage from './PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
