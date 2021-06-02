@@ -18,6 +18,7 @@ import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { debounce } from 'lodash';
+import ThreeSixtyImage from './ThreeSixtyImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -325,11 +326,13 @@ const ImageViewer = ({
   return (
     <>
       <div className={classes.imageArea}>
-        {currentImagePoint && (
+        <ThreeSixtyImage />
+        {/* {currentImagePoint && (
           <>
             <img
               id="vegbilde"
               src={getImageUrl(currentImagePoint)}
+              //src={testImg}
               alt="vegbilde"
               className={isZoomedInImage ? classes.enlargedImage : classes.image}
               ref={imgRef}
@@ -337,7 +340,7 @@ const ImageViewer = ({
             />
             {renderMeterLine()}
           </>
-        )}
+        )} */}
       </div>
     </>
   );

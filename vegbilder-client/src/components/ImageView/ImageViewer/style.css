@@ -1,0 +1,23 @@
+.pnlm-load-box {
+  color: #ececec;
+  background-color: #2e3539;
+  border-radius: 10px;
+}
+
+.pnlm-panorama-info {
+  background-color: transparent;
+}
+
+.pnlm-lbox {
+  border: none;
+  border-radius: 20px;
+}
+
+.pnlm-lbar {
+  border-radius: 20px;
+  height: 10px;
+}
+
+.pnlm-lbar-fill {
+  background: #ececec;
+}
