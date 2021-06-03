@@ -17,15 +17,14 @@ import { ReactComponent as CheckmarkIcon } from './checkmark.svg';
 import { ReactComponent as PauseIcon } from './Pause.svg';
 import { ReactComponent as SelectIcon } from './selectedImage.svg';
 import { ReactComponent as InformIcon } from './Inform.svg';
-import { ReactComponent as DotsHorizontalSmallIcon } from './Dots-Horizontal-small.svg';
 import { ReactComponent as ZoomInIcon } from './zoom-in.svg';
 import { ReactComponent as ZoomOutIcon } from './zoom-out.svg';
 import { ReactComponent as SettingsIcon } from './settings.svg';
 import { ReactComponent as DistanceToIcon } from './DistanceTo.svg';
 import { ReactComponent as MyLocationIcon } from './myLocationIcon.svg';
-import { ReactComponent as HistorySmallIcon } from './HistorySmall.svg';
 import { ReactComponent as SladdetIcon } from './sladdet.svg';
 import { ReactComponent as ContractIcon } from './contract.svg';
+import { ReactComponent as FilterIcon } from './filter.svg';
 
 export {
   ArrowDownIcon,
@@ -47,8 +46,6 @@ export {
   PauseIcon,
   SelectIcon,
   InformIcon,
-  DotsHorizontalSmallIcon,
-  HistorySmallIcon,
   ZoomInIcon,
   ZoomOutIcon,
   MyLocationIcon,
@@ -56,4 +53,5 @@ export {
   DistanceToIcon,
   SladdetIcon,
   ContractIcon,
+  FilterIcon
 };
