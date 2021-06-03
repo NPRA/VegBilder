@@ -1,23 +1,25 @@
+.pnlm-container {
+  background: transparent;
+}
+
 .pnlm-load-box {
-  color: #ececec;
-  background-color: #2e3539;
-  border-radius: 10px;
+  display: none;
+  background: transparent;
 }
 
 .pnlm-panorama-info {
+  display: none;
   background-color: transparent;
 }
 
 .pnlm-lbox {
-  border: none;
-  border-radius: 20px;
+  display: none;
 }
 
 .pnlm-lbar {
-  border-radius: 20px;
-  height: 10px;
+  display: none;
 }
 
 .pnlm-lbar-fill {
-  background: #ececec;
+  display: none;
 }

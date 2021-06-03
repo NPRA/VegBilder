@@ -9,7 +9,7 @@ const ThreeSixtyImage = () => {
 
   const uiText = {
     bylineLabel: '',
-    loadingLabel: "Laster...",
+    loadingLabel: '',
   }
 
   const config = {
