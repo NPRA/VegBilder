@@ -20,11 +20,12 @@ import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 const useStyles = makeStyles((theme) => ({
   yearSelect: {
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.secondary.main, 0.8),
-    color: theme.palette.secondary.contrastText,
+    border: `0.5px solid ${theme.palette.common.grayRegular}`,
+    color: theme.palette.common.grayRegular,
     width: '10rem',
     '&:hover': {
-      backgroundColor: fade(theme.palette.secondary.main, 1.0),
+      opacity: 0.9,
+      //backgroundColor: theme.palette.common.grayMedium,
     },
   },
   calendarIcon: {

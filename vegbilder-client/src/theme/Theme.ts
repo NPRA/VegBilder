@@ -154,6 +154,8 @@ export default createMuiTheme({
         color: grayMenuItems,
         boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
         borderRadius: '10px',
+        border: `0.5px solid ${grayDark}`,
+
       },
     },
     MuiButton: {
