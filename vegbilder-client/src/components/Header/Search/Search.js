@@ -21,6 +21,7 @@ import useAsyncError from 'hooks/useAsyncError';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { currentYearState } from 'recoil/atoms';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
+import Filter from '../Filter/Filter';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -116,6 +117,7 @@ const Search = ({ showMessage, setMapView }) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [resetImagePoint, setResetImagePoint] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const [openFilterMenu, setOpenFilterMenu] = useState(false);
 
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
@@ -357,9 +359,11 @@ const Search = ({ showMessage, setMapView }) => {
         <IconButton
         aria-label="Filter"
         classes={{root: classes.button }}
+        onClick={() => setOpenFilterMenu(!openFilterMenu)}
         >
           <FilterIcon />
         </IconButton>
+        <Filter openMenu={openFilterMenu} setOpenMenu={setOpenFilterMenu}></Filter>
       </div>
     </ClickAwayListener>
   );

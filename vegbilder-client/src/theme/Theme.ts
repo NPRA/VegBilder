@@ -187,7 +187,11 @@ export default createMuiTheme({
             '& svg': {
               '& path': {
                 fill: orangeDark,
+                stroke: orangeDark,
               },
+              '& circle': {
+                stroke: orangeDark,
+              }
             },
           },
         },
