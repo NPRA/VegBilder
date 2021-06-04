@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import InputBase from '@material-ui/core/InputBase';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ClickAwayListener, ListSubheader } from '@material-ui/core';
+import IconButton from '@material-ui/core/IconButton';
 import { debounce } from 'lodash';
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
-import { MagnifyingGlassIcon } from '../../Icons/Icons';
+import { MagnifyingGlassIcon, FilterIcon } from '../../Icons/Icons';
 import {
   imagePointQueryParameterState,
   latLngZoomQueryParameterState,
@@ -27,10 +28,11 @@ const useStyles = makeStyles((theme) => ({
   },
   search: {
     position: 'relative',
+    alignItems: 'center',
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.secondary.main, 0.8),
+    backgroundColor: theme.palette.common.grayDark,
     '&:hover': {
-      backgroundColor: fade(theme.palette.secondary.main, 1.0),
+      backgroundColor: theme.palette.common.grayMedium,
     },
     marginLeft: 0,
     width: '100%',
@@ -49,6 +51,7 @@ const useStyles = makeStyles((theme) => ({
   },
   inputRoot: {
     color: 'inherit',
+    width: '50ch',
   },
   inputInput: {
     padding: theme.spacing(1.1, 1.1, 1.1, 0),
@@ -56,7 +59,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: '50ch',
       height: '3ch',
     },
   },
@@ -88,6 +90,22 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  button: {
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+      backgroundColor: theme.palette.common.grayDark,
+      '& span': {
+        '& svg': {
+          '& path': {
+            stroke: theme.palette.common.orangeDark,
+          },
+          '& circle': {
+            stroke: theme.palette.common.orangeDark,
+          }
+        },
+      },
+  }
+}
 }));
 
 const Search = ({ showMessage, setMapView }) => {
@@ -336,6 +354,12 @@ const Search = ({ showMessage, setMapView }) => {
             )}
           </div>
         )}
+        <IconButton
+        aria-label="Filter"
+        classes={{root: classes.button }}
+        >
+          <FilterIcon />
+        </IconButton>
       </div>
     </ClickAwayListener>
   );
