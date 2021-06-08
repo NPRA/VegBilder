@@ -7,10 +7,10 @@ import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
-import Theme from 'theme/Theme';
 import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
 import { EnlargeIcon } from 'components/Icons/Icons';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
   image: {
@@ -21,6 +21,7 @@ const useStyles = makeStyles(() => ({
   },
   enlargeButton: {
     marginRight: '0.3rem',
+    backgroundColor: Theme.palette.common.grayDark,
   },
   infoButton: {
     margin: '0.4rem',

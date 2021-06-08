@@ -2,6 +2,7 @@ import React from 'react';
 import { IconButton } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { makeStyles } from '@material-ui/styles';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
   closeButton: {
@@ -36,7 +37,7 @@ const CloseButton = ({ onClick, transparent, positionToTop, position }: ICloseBu
     <IconButton
       className={classes.closeButton}
       style={{
-        background: transparent ? 'transparent' : '',
+        background: transparent ? 'transparent' : `${Theme.palette.common.grayDark}`,
         top: positionToTop ?? '0.3125rem',
         position: position ? position : 'absolute',
       }}

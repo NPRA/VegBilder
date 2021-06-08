@@ -155,7 +155,6 @@ export default createMuiTheme({
         boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
         borderRadius: '10px',
         border: `0.5px solid ${grayDark}`,
-
       },
     },
     MuiButton: {
@@ -175,7 +174,6 @@ export default createMuiTheme({
         fontFamily: '"LFT-Etica"',
         borderRadius: '0.625rem',
         borderStyle: 'none',
-        backgroundColor: grayDark,
         color: grayIcons,
         width: '2.3125rem',
         height: '2.1875rem',
@@ -187,11 +185,7 @@ export default createMuiTheme({
             '& svg': {
               '& path': {
                 fill: orangeDark,
-                stroke: orangeDark,
               },
-              '& circle': {
-                stroke: orangeDark,
-              }
             },
           },
         },
@@ -279,6 +273,14 @@ export default createMuiTheme({
           color: orangeDark,
           backgroundColor: grayDarker,
         },
+      },
+    },
+    MuiFormLabel: {
+      root: {
+        color: grayRegular,
+        fontFamily: '"LFT-Etica"',
+        fontSize: '1.125rem',
+        padding: '0.5rem 0',
       },
     },
   },
