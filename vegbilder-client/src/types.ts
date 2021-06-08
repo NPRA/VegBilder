@@ -55,3 +55,5 @@ export interface ILoadedImagePoints {
 export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
 
 export type viewTypes = 'map' | 'image';
+
+export type cameraTypes = 'planar' | 'panorama' | 'dekkekamera';

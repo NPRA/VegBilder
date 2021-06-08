@@ -7,6 +7,9 @@ import {
   FormLabel,
 } from '@material-ui/core';
 import React, { useState } from 'react';
+import { useSetRecoilState } from 'recoil';
+import { cameraFilterState } from 'recoil/atoms';
+import { cameraTypes } from 'types';
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -47,6 +50,7 @@ interface IFilterProps {
 
 const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
   const classes = useStyles();
+  const setFilterMapState = useSetRecoilState(cameraFilterState);
 
   const [vegtyperChecked, setVegtyperChecked] = useState({ riksveger: false, fylkesveger: false });
 
@@ -57,6 +61,10 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
   });
 
   const handleChange = () => {};
+
+  const handleCameraTypeFilter = (cameraType: cameraTypes) => {
+    setFilterMapState(cameraType);
+  };
 
   const { riksveger, fylkesveger } = vegtyperChecked;
   const { panorama, dekkekamera, planar } = cameraTypeChecked;
@@ -82,17 +90,33 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
             <FormGroup>
               <FormLabel> Kameratype </FormLabel>
               <FormControlLabel
-                control={<Checkbox checked={panorama} onChange={handleChange} name="panorama" />}
+                control={
+                  <Checkbox
+                    checked={panorama}
+                    onChange={() => handleCameraTypeFilter('panorama')}
+                    name="panorama"
+                  />
+                }
                 label="360"
               />
               <FormControlLabel
                 control={
-                  <Checkbox checked={dekkekamera} onChange={handleChange} name="dekkekamera" />
+                  <Checkbox
+                    checked={dekkekamera}
+                    onChange={() => handleCameraTypeFilter('dekkekamera')}
+                    name="dekkekamera"
+                  />
                 }
                 label="Dekkekamera"
               />
               <FormControlLabel
-                control={<Checkbox checked={planar} onChange={handleChange} name="planar" />}
+                control={
+                  <Checkbox
+                    checked={planar}
+                    onChange={() => handleCameraTypeFilter('planar')}
+                    name="planar"
+                  />
+                }
                 label="Planar"
               />
             </FormGroup>

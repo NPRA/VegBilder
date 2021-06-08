@@ -4,20 +4,27 @@ import { WMSTileLayer } from 'react-leaflet';
 import { useRecoilValue } from 'recoil';
 
 import ImagePointDirectionalMarkersLayer from 'components/ImagePointDirectionalMarkersLayer/ImagePointDirectionalMarkersLayer';
-import { currentImagePointState, currentYearState } from 'recoil/atoms';
+import { cameraFilterState, currentImagePointState, currentYearState } from 'recoil/atoms';
 import { OGC_URL } from 'constants/urls';
 
 const ImagePointMapLayers = () => {
   const zoom = useLeafletZoom();
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
+  const cameraFilter = useRecoilValue(cameraFilterState);
 
   const showImagePointsMarkers = zoom > 14 && currentYear !== 'Nyeste' && currentImagePoint;
   const showNyesteKartlag = currentYear === 'Nyeste';
 
-  const oversiktsKartlag = showNyesteKartlag
-    ? `Vegbilder_dekning`
-    : `Vegbilder_oversikt_${currentYear}`;
+  const getMapLayer = () => {
+    if (showNyesteKartlag) {
+      return 'Vegbilder_dekning';
+    } else if (cameraFilter === 'panorama') {
+      return `Vegbilder_360_${currentYear}`;
+    } else {
+      return `Vegbilder_oversikt_${currentYear}`;
+    }
+  };
 
   const renderImagePointsLayer = () => {
     if (showImagePointsMarkers) {
@@ -27,7 +34,7 @@ const ImagePointMapLayers = () => {
         <WMSTileLayer
           url={OGC_URL}
           attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
-          layers={oversiktsKartlag}
+          layers={getMapLayer()}
           format="image/png"
           transparent={true}
           opacity={0.6}
