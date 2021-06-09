@@ -16,14 +16,19 @@ const ImagePointMapLayers = () => {
   const showImagePointsMarkers = zoom > 14 && currentYear !== 'Nyeste' && currentImagePoint;
   const showNyesteKartlag = currentYear === 'Nyeste';
 
-  const getMapLayer = () => {
-    if (showNyesteKartlag) {
-      return 'Vegbilder_dekning';
-    } else if (cameraFilter.includes('panorama')) {
-      return `Vegbilder_360_${currentYear}`;
-    } else {
-      return `Vegbilder_oversikt_${currentYear}`;
+  const getMapLayers = () => {
+    const currentFilteredLayers: string[] = [];
+
+    if (cameraFilter.includes('panorama'))
+      currentFilteredLayers.push(`Vegbilder_360_${currentYear}`);
+    if (cameraFilter.includes('planar')) {
+      if (showNyesteKartlag) {
+        currentFilteredLayers.push('Vegbilder_dekning');
+      } else {
+        currentFilteredLayers.push(`Vegbilder_oversikt_${currentYear}`);
+      }
     }
+    return currentFilteredLayers;
   };
 
   const renderImagePointsLayer = () => {
@@ -31,14 +36,19 @@ const ImagePointMapLayers = () => {
       return <ImagePointDirectionalMarkersLayer shouldUseMapBoundsAsTargetBbox={true} />;
     } else {
       return (
-        <WMSTileLayer
-          url={OGC_URL}
-          attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
-          layers={getMapLayer()}
-          format="image/png"
-          transparent={true}
-          opacity={0.6}
-        />
+        <>
+          {getMapLayers().map((maplayer) => (
+            <WMSTileLayer
+              key={maplayer}
+              url={OGC_URL}
+              attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
+              layers={maplayer}
+              format="image/png"
+              transparent={true}
+              opacity={0.6}
+            />
+          ))}
+        </>
       );
     }
   };
