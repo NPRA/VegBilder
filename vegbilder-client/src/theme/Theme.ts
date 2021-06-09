@@ -275,13 +275,5 @@ export default createMuiTheme({
         },
       },
     },
-    MuiFormLabel: {
-      root: {
-        color: grayRegular,
-        fontFamily: '"LFT-Etica"',
-        fontSize: '1.125rem',
-        padding: '0.5rem 0',
-      },
-    },
   },
 });
