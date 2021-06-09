@@ -88,7 +88,7 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
       {openMenu && (
         <div className={classes.menu} tabIndex={1}>
           <FormControl component="fieldset">
-            <Typography variant="h5"> Vegtyper </Typography>
+            {/* <Typography variant="h5"> Vegtyper </Typography>
             <FormGroup>
               <FormControlLabel
                 control={<Checkbox checked={riksveger} onChange={handleChange} name="riksveger" />}
@@ -100,7 +100,7 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
                 }
                 label="Fylkesveger"
               />
-            </FormGroup>
+            </FormGroup> */}
             <FormGroup>
               <Typography variant="h5"> Kameratype </Typography>
               <FormControlLabel
