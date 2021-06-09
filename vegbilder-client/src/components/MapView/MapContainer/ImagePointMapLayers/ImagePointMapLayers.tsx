@@ -19,7 +19,7 @@ const ImagePointMapLayers = () => {
   const getMapLayer = () => {
     if (showNyesteKartlag) {
       return 'Vegbilder_dekning';
-    } else if (cameraFilter === 'panorama') {
+    } else if (cameraFilter.includes('panorama')) {
       return `Vegbilder_360_${currentYear}`;
     } else {
       return `Vegbilder_oversikt_${currentYear}`;

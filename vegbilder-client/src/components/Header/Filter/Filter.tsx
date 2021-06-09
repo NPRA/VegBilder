@@ -7,8 +7,9 @@ import {
   FormLabel,
   Typography,
 } from '@material-ui/core';
+import { CameraAltOutlined } from '@material-ui/icons';
 import React, { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { cameraFilterState } from 'recoil/atoms';
 import { cameraTypes } from 'types';
 
@@ -51,7 +52,7 @@ interface IFilterProps {
 
 const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
   const classes = useStyles();
-  const setFilterMapState = useSetRecoilState(cameraFilterState);
+  const [cameraTypeFilter, setCameraTypeFilter] = useRecoilState(cameraFilterState);
 
   const [vegtyperChecked, setVegtyperChecked] = useState({ riksveger: false, fylkesveger: false });
 
@@ -63,9 +64,20 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
 
   const handleChange = () => {};
 
-  const handleCameraTypeFilter = (cameraType: cameraTypes, checked: boolean) => {
-    if (!checked) setFilterMapState(cameraType);
-    else setFilterMapState('planar');
+  const deleteElementFromArray = (arr: cameraTypes[], itemToRemove: cameraTypes) => {
+    arr = arr.filter((item) => {
+      return item !== itemToRemove;
+    });
+    return arr;
+  };
+
+  const handleCameraTypeFilterCheck = (cameraType: cameraTypes, checked: boolean) => {
+    if (!checked) {
+      setCameraTypeFilter((prevState) => [...prevState, cameraType]);
+    } else {
+      const newCameraFilter = deleteElementFromArray(cameraTypeFilter, cameraType);
+      setCameraTypeFilter(newCameraFilter);
+    }
   };
 
   const { riksveger, fylkesveger } = vegtyperChecked;
@@ -96,7 +108,7 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
                   <Checkbox
                     checked={panorama}
                     onChange={() => {
-                      handleCameraTypeFilter('panorama', panorama);
+                      handleCameraTypeFilterCheck('panorama', panorama);
                       setCameraTypeChecked({ ...cameraTypeChecked, panorama: !panorama });
                     }}
                     name="panorama"
@@ -109,7 +121,7 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
                   <Checkbox
                     checked={dekkekamera}
                     onChange={() => {
-                      handleCameraTypeFilter('dekkekamera', dekkekamera);
+                      handleCameraTypeFilterCheck('dekkekamera', dekkekamera);
                       setCameraTypeChecked({ ...cameraTypeChecked, dekkekamera: !dekkekamera });
                     }}
                     name="dekkekamera"
@@ -122,7 +134,7 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
                   <Checkbox
                     checked={planar}
                     onChange={() => {
-                      handleCameraTypeFilter('planar', planar);
+                      handleCameraTypeFilterCheck('planar', planar);
                       setCameraTypeChecked({ ...cameraTypeChecked, planar: !planar });
                     }}
                     name="planar"
