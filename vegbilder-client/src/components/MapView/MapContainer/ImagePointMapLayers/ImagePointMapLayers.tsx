@@ -19,8 +19,7 @@ const ImagePointMapLayers = () => {
   const getMapLayers = () => {
     const currentFilteredLayers: string[] = [];
 
-    if (cameraFilter.includes('panorama'))
-      currentFilteredLayers.push(`Vegbilder_360_${currentYear}`);
+    if (cameraFilter.includes('panorama')) currentFilteredLayers.push(`Vegbilder_360_2021`);
     if (cameraFilter.includes('planar')) {
       if (showNyesteKartlag) {
         currentFilteredLayers.push('Vegbilder_dekning');
