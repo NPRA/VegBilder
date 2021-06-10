@@ -1,0 +1,25 @@
+.pnlm-container {
+  background: transparent;
+}
+
+.pnlm-load-box {
+  display: none;
+  background: transparent;
+}
+
+.pnlm-panorama-info {
+  display: none;
+  background-color: transparent;
+}
+
+.pnlm-lbox {
+  display: none;
+}
+
+.pnlm-lbar {
+  display: none;
+}
+
+.pnlm-lbar-fill {
+  display: none;
+}
