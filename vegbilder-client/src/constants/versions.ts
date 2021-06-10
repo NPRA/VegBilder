@@ -1,4 +1,5 @@
 const versionLog = {
+  'v1.3.4': ['Bedre skalering av headeren,'],
   'v1.3.3': ['Mulighet for filtrering på kameratype'],
   'v1.3.2': [
     'Uthev fokuserte elementer litt i menyene',

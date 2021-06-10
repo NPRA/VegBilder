@@ -4,7 +4,6 @@ import { getBearingBetween, getDistanceInMetersBetween } from './latlngUtilities
 import { splitDateTimeString } from './dateTimeUtilities';
 import { IImagePoint, ILatlng, ILoadedImagePoints } from 'types';
 import { Dictionary } from 'lodash';
-//import { rewriteUrlDomainToLocalhost } from 'local-dev/rewriteurl';
 
 const getImagePointLatLng = (imagePoint: IImagePoint) => {
   if (imagePoint) {
