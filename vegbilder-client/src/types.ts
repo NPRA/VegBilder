@@ -9,6 +9,7 @@ export interface IImagePoint {
   };
   geometry_name: string;
   properties: {
+    BILDETYPE: string;
     AAR: number;
     TIDSPUNKT: string;
     FYLKENUMMER: string;

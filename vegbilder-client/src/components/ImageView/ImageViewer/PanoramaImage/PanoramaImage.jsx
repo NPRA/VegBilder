@@ -1,16 +1,13 @@
-import React from "react";
-import ReactPannellum from "react-pannellum";
-import Theme from "theme/Theme";
-import testImg from './test-img.png';
+import React from 'react';
+import ReactPannellum from 'react-pannellum';
+import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
-
-const ThreeSixtyImage = () => {
-
+const ThreeSixtyImage = ({ imageUrl }) => {
   const uiText = {
     bylineLabel: '',
     loadingLabel: '',
-  }
+  };
 
   const config = {
     autoLoad: true,
@@ -19,22 +16,22 @@ const ThreeSixtyImage = () => {
     uiText: uiText,
   };
 
-    return (
-      <>
-        <ReactPannellum
-          id="1"
-          sceneId="firstScene"
-          imageSource={testImg}
-          config={config}
-          style={{
+  return (
+    <>
+      <ReactPannellum
+        id="1"
+        sceneId="firstScene"
+        imageSource={imageUrl}
+        config={config}
+        style={{
           objectFit: 'contain',
           margin: '0 auto',
           fontFamily: '"LFT-Etica"',
           color: Theme.palette.common.grayRegular,
-          }}
-        />
-      </>
-    );
-  }
+        }}
+      />
+    </>
+  );
+};
 
 export default ThreeSixtyImage;

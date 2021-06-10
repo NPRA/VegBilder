@@ -86,7 +86,7 @@ const ImageViewer = ({
   const isOnSameHovedparsell = (HP1: string | null, HP2: string | null) => {
     // for old vegreferanser (before 2020). Most of the time, the oppoiste lane will have the same hovedparselnumber.
     return HP1 === HP2;
-  }
+  };
 
   const onImageLoaded = () => {
     const img = imgRef.current;
@@ -110,17 +110,19 @@ const ImageViewer = ({
         ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
         hasOppositeParity(ip.properties.FELTKODE, currentImagePoint.properties.FELTKODE)
     );
-    
+
     const usesOldVegreferanse = currentImagePoint.properties.AAR < 2020;
     if (usesOldVegreferanse) {
-      imagePointsInOppositeLane = imagePointsInOppositeLane.filter((imagePoint) => isOnSameHovedparsell(currentImagePoint.properties.HP, imagePoint.properties.HP))
+      imagePointsInOppositeLane = imagePointsInOppositeLane.filter((imagePoint) =>
+        isOnSameHovedparsell(currentImagePoint.properties.HP, imagePoint.properties.HP)
+      );
     }
 
     const latlngCurrentImagePoint = getImagePointLatLng(currentImagePoint);
-      
+
     if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) {
-      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning'); 
-      return
+      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
+      return;
     }
     const nearestImagePointInOppositeLane = findNearestImagePoint(
       imagePointsInOppositeLane,
@@ -315,32 +317,34 @@ const ImageViewer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay, nextImagePoint, timeBetweenImages]);
 
-
-  const playNextImage = 
-  debounce((nextImagePoint: IImagePoint) => {
+  const playNextImage = debounce((nextImagePoint: IImagePoint) => {
     const latlng = getImagePointLatLng(nextImagePoint);
     setCurrentImagePoint(nextImagePoint);
     if (latlng) setCurrentCoordinates(latlng);
-  }, timeBetweenImages)
+  }, timeBetweenImages);
 
   return (
     <>
       <div className={classes.imageArea}>
-        <ThreeSixtyImage />
-        {/* {currentImagePoint && (
+        {currentImagePoint && (
           <>
-            <img
-              id="vegbilde"
-              src={getImageUrl(currentImagePoint)}
-              //src={testImg}
-              alt="vegbilde"
-              className={isZoomedInImage ? classes.enlargedImage : classes.image}
-              ref={imgRef}
-              onLoad={onImageLoaded}
-            />
-            {renderMeterLine()}
+            {currentImagePoint.properties.BILDETYPE === '360' ? (
+              <ThreeSixtyImage imageUrl={getImageUrl(currentImagePoint)} />
+            ) : (
+              <>
+                <img
+                  id="vegbilde"
+                  src={getImageUrl(currentImagePoint)}
+                  alt="vegbilde"
+                  className={isZoomedInImage ? classes.enlargedImage : classes.image}
+                  ref={imgRef}
+                  onLoad={onImageLoaded}
+                />
+                {renderMeterLine()}
+              </>
+            )}
           </>
-        )} */}
+        )}
       </div>
     </>
   );
