@@ -24,8 +24,8 @@ const useStyles = makeStyles({
     flex: '1 1 auto',
   },
   searchContainer: {
-    margin: '0 1.125rem',
-    width: '45%',
+    marginRight: '1.125rem',
+    width: '50%',
     maxWidth: '30rem',
   },
   logo: {

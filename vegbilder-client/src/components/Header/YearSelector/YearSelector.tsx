@@ -22,10 +22,9 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     border: `0.5px solid ${theme.palette.common.grayRegular}`,
     color: theme.palette.common.grayRegular,
-    width: '10rem',
+    width: '8rem',
     '&:hover': {
       opacity: 0.9,
-      //backgroundColor: theme.palette.common.grayMedium,
     },
   },
   calendarIcon: {

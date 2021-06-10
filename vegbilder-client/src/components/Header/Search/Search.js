@@ -32,6 +32,8 @@ const useStyles = makeStyles((theme) => ({
     alignItems: 'center',
     borderRadius: theme.shape.borderRadius,
     backgroundColor: theme.palette.common.grayDark,
+    minWidth: '44ch',
+    maxWidth: '70ch',
     '&:hover': {
       backgroundColor: theme.palette.common.grayMedium,
     },
@@ -52,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
   inputRoot: {
     color: 'inherit',
-    width: '50ch',
+    width: '90%',
   },
   inputInput: {
     padding: theme.spacing(1.1, 1.1, 1.1, 0),
@@ -102,11 +104,11 @@ const useStyles = makeStyles((theme) => ({
           },
           '& circle': {
             stroke: theme.palette.common.orangeDark,
-          }
+          },
         },
       },
-  }
-}
+    },
+  },
 }));
 
 const Search = ({ showMessage, setMapView }) => {
@@ -357,9 +359,9 @@ const Search = ({ showMessage, setMapView }) => {
           </div>
         )}
         <IconButton
-        aria-label="Filter"
-        classes={{root: classes.button }}
-        onClick={() => setOpenFilterMenu(!openFilterMenu)}
+          aria-label="Filter"
+          classes={{ root: classes.button }}
+          onClick={() => setOpenFilterMenu(!openFilterMenu)}
         >
           <FilterIcon />
         </IconButton>
