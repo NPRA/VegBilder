@@ -12,7 +12,6 @@ import {
   getImagePointLatLng,
   findNearestImagePoint,
   getGenericRoadReference,
-  getFilteredImagePoints,
 } from 'utilities/imagePointUtilities';
 import {
   currentYearState,
@@ -20,6 +19,7 @@ import {
   currentLatLngZoomState,
   loadedImagePointsState,
   filteredImagePointsState,
+  cameraFilterState,
 } from 'recoil/atoms';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/settings';
@@ -37,6 +37,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
+  const cameraFilter = useRecoilValue(cameraFilterState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();
@@ -176,12 +177,18 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   useEffect(() => {
     if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
-      const imagePoints = filteredImagePoints.filter((imagePoint) =>
-        imagePointIsWithinBbox(imagePoint, mapBbox)
-      );
+      const imagePoints = filteredImagePoints.filter((imagePoint) => {
+        if (cameraFilter.includes('panorama')) {
+          return (
+            imagePointIsWithinBbox(imagePoint, mapBbox) && imagePoint.properties.BILDETYPE === '360'
+          );
+        }
+        return imagePointIsWithinBbox(imagePoint, mapBbox);
+      });
+
       setImagePointsToRender(imagePoints);
     }
-  }, [filteredImagePoints, createBboxForVisibleMapArea]);
+  }, [filteredImagePoints, createBboxForVisibleMapArea, cameraFilter]);
 
   const renderImagePoints = () => {
     if (imagePointsToRender) {
