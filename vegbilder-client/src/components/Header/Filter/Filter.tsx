@@ -6,6 +6,7 @@ import {
   FormGroup,
   FormLabel,
   Typography,
+  Radio,
 } from '@material-ui/core';
 import { CameraAltOutlined } from '@material-ui/icons';
 import React, { useState } from 'react';
@@ -56,32 +57,11 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
 
   const [vegtyperChecked, setVegtyperChecked] = useState({ riksveger: false, fylkesveger: false });
 
-  const [cameraTypeChecked, setCameraTypeChecked] = useState({
-    panorama: false,
-    dekkekamera: false,
-    planar: true,
-  });
-
-  const handleChange = () => {};
-
-  const deleteElementFromArray = (arr: cameraTypes[], itemToRemove: cameraTypes) => {
-    arr = arr.filter((item) => {
-      return item !== itemToRemove;
-    });
-    return arr;
-  };
-
-  const handleCameraTypeFilterCheck = (cameraType: cameraTypes, checked: boolean) => {
-    if (!checked) {
-      setCameraTypeFilter((prevState) => [...prevState, cameraType]);
-    } else {
-      const newCameraFilter = deleteElementFromArray(cameraTypeFilter, cameraType);
-      setCameraTypeFilter(newCameraFilter);
-    }
+  const handleCameraTypeFilterCheck = (cameraType: cameraTypes) => {
+    setCameraTypeFilter(cameraType);
   };
 
   const { riksveger, fylkesveger } = vegtyperChecked;
-  const { panorama, dekkekamera, planar } = cameraTypeChecked;
 
   return (
     <>
@@ -105,11 +85,10 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
               <Typography variant="h5"> Kameratype </Typography>
               <FormControlLabel
                 control={
-                  <Checkbox
-                    checked={panorama}
+                  <Radio
+                    checked={cameraTypeFilter === 'panorama'}
                     onChange={() => {
-                      handleCameraTypeFilterCheck('panorama', panorama);
-                      setCameraTypeChecked({ ...cameraTypeChecked, panorama: !panorama });
+                      handleCameraTypeFilterCheck('panorama');
                     }}
                     name="panorama"
                   />
@@ -118,11 +97,10 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
               />
               <FormControlLabel
                 control={
-                  <Checkbox
-                    checked={dekkekamera}
+                  <Radio
+                    checked={cameraTypeFilter === 'dekkekamera'}
                     onChange={() => {
-                      handleCameraTypeFilterCheck('dekkekamera', dekkekamera);
-                      setCameraTypeChecked({ ...cameraTypeChecked, dekkekamera: !dekkekamera });
+                      handleCameraTypeFilterCheck('dekkekamera');
                     }}
                     name="dekkekamera"
                   />
@@ -131,11 +109,10 @@ const Filter = ({ openMenu, setOpenMenu }: IFilterProps) => {
               />
               <FormControlLabel
                 control={
-                  <Checkbox
-                    checked={planar}
+                  <Radio
+                    checked={cameraTypeFilter === 'planar'}
                     onChange={() => {
-                      handleCameraTypeFilterCheck('planar', planar);
-                      setCameraTypeChecked({ ...cameraTypeChecked, planar: !planar });
+                      handleCameraTypeFilterCheck('planar');
                     }}
                     name="planar"
                   />
