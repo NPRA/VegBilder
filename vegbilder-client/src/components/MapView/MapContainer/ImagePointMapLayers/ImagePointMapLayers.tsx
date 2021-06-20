@@ -16,18 +16,16 @@ const ImagePointMapLayers = () => {
   const showImagePointsMarkers = zoom > 14 && currentYear !== 'Nyeste' && currentImagePoint;
   const showNyesteKartlag = currentYear === 'Nyeste';
 
-  const getMapLayers = () => {
-    const currentFilteredLayers: string[] = [];
-
-    if (cameraFilter.includes('panorama')) currentFilteredLayers.push(`Vegbilder_360_2021`);
-    if (cameraFilter.includes('planar')) {
+  const getMapLayer = () => {
+    if (cameraFilter === 'panorama') return `Vegbilder_360_2021`;
+    if (cameraFilter === 'planar') {
       if (showNyesteKartlag) {
-        currentFilteredLayers.push('Vegbilder_dekning');
+        return 'Vegbilder_dekning';
       } else {
-        currentFilteredLayers.push(`Vegbilder_oversikt_${currentYear}`);
+        return `Vegbilder_oversikt_${currentYear}`;
       }
     }
-    return currentFilteredLayers;
+    return '';
   };
 
   const renderImagePointsLayer = () => {
@@ -36,17 +34,15 @@ const ImagePointMapLayers = () => {
     } else {
       return (
         <>
-          {getMapLayers().map((maplayer) => (
-            <WMSTileLayer
-              key={maplayer}
-              url={OGC_URL}
-              attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
-              layers={maplayer}
-              format="image/png"
-              transparent={true}
-              opacity={0.6}
-            />
-          ))}
+          <WMSTileLayer
+            url={OGC_URL}
+            attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
+            layers={getMapLayer()}
+            format="image/png"
+            transparent={true}
+            opacity={0.6}
+          />
+          )
         </>
       );
     }

@@ -25,7 +25,7 @@ import {
   yearQueryParameterState,
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { filteredImagePointsState, loadedImagePointsState } from 'recoil/atoms';
+import { cameraFilterState, filteredImagePointsState, loadedImagePointsState } from 'recoil/atoms';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
@@ -136,6 +136,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const setFilteredImagePoints = useSetRecoilState(filteredImagePointsState);
+  const cameraFilter = useRecoilValue(cameraFilterState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
@@ -215,7 +216,11 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
         setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
 
         availableYears.forEach(async (year) => {
-          await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
+          const typename =
+            cameraFilter === 'panorama'
+              ? `vegbilder_1_0:Vegbilder_360_2021`
+              : `vegbilder_1_0:Vegbilder_${year}`;
+          await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
             const imagePoints = res.imagePoints;
             const uniqueDates: Set<number> = new Set();
             const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
