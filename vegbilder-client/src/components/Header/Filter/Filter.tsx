@@ -108,11 +108,11 @@ const Filter = ({ openMenu, setOpenMenu, showMessage }: IFilterProps) => {
               <FormControlLabel
                 control={
                   <Radio
-                    checked={cameraTypeFilter === 'panorama'}
+                    checked={cameraTypeFilter === '360'}
                     onChange={() => {
-                      handleCameraTypeFilterCheck('panorama');
+                      handleCameraTypeFilterCheck('360');
                     }}
-                    name="panorama"
+                    name="360"
                   />
                 }
                 label="360"

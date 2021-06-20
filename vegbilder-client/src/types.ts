@@ -57,4 +57,4 @@ export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | '
 
 export type viewTypes = 'map' | 'image';
 
-export type cameraTypes = 'planar' | 'panorama' | 'dekkekamera';
+export type cameraTypes = 'planar' | '360' | 'dekkekamera';

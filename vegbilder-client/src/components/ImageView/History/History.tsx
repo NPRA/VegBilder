@@ -217,7 +217,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
 
         availableYears.forEach(async (year) => {
           const typename =
-            cameraFilter === 'panorama'
+            cameraFilter === '360'
               ? `vegbilder_1_0:Vegbilder_360_2021`
               : `vegbilder_1_0:Vegbilder_${year}`;
           await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {

@@ -14,7 +14,7 @@ const useFetchImagePointsFromOGC = () => {
 
   useEffect(() => {
     setTypeNamePrefix(
-      cameraFilter === 'panorama' ? `vegbilder_1_0:Vegbilder_360_2021` : `vegbilder_1_0:Vegbilder_`
+      cameraFilter === '360' ? `vegbilder_1_0:Vegbilder_360_2021` : `vegbilder_1_0:Vegbilder_`
     );
   }, [cameraFilter]);
 
