@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { IBbox } from 'types';
@@ -8,16 +8,23 @@ import { cameraFilterState } from 'recoil/atoms';
 
 const useFetchImagePointsFromOGC = () => {
   const [isFetching, setIsFetching] = useState(false);
+  const [typeNamePrefix, setTypeNamePrefix] = useState('vegbilder_1_0:Vegbilder_');
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
   const cameraFilter = useRecoilValue(cameraFilterState);
+
+  useEffect(() => {
+    setTypeNamePrefix(
+      cameraFilter === 'panorama' ? `vegbilder_1_0:Vegbilder_360_2021` : `vegbilder_1_0:Vegbilder_`
+    );
+  }, [cameraFilter]);
 
   async function fetchImagePointsByYearAndBbox(year: number, bbox: IBbox) {
     if (isFetching) return;
     setIsFetching(true);
-    const typename =
-      cameraFilter === 'panorama'
-        ? `vegbilder_1_0:Vegbilder_360_2021`
-        : `vegbilder_1_0:Vegbilder_${year}`;
+    let typename = typeNamePrefix;
+    if (!typeNamePrefix.includes('360')) {
+      typename = `${typeNamePrefix}${year}`;
+    }
     const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
       bbox,
       typename

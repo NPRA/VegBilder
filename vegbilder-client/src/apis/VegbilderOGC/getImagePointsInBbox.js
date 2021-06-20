@@ -8,7 +8,6 @@ const getImagePointsInBbox = async (bbox, typename) => {
     version: '2.0.0',
     request: 'GetFeature',
     typenames: typename,
-    //typename: typename,
     startindex: 0,
     count: 10000,
     srsname: srsname,

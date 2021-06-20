@@ -365,7 +365,11 @@ const Search = ({ showMessage, setMapView }) => {
         >
           <FilterIcon />
         </IconButton>
-        <Filter openMenu={openFilterMenu} setOpenMenu={setOpenFilterMenu}></Filter>
+        <Filter
+          openMenu={openFilterMenu}
+          setOpenMenu={setOpenFilterMenu}
+          showMessage={showMessage}
+        />
       </div>
     </ClickAwayListener>
   );
