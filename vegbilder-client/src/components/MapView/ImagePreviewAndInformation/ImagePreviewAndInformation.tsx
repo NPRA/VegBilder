@@ -11,6 +11,7 @@ import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
 import { EnlargeIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
+import ThreeSixtyImage from 'components/ImageView/ImageViewer/PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles(() => ({
   image: {
@@ -91,12 +92,17 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-          <img
-            src={getImageUrl(currentImagePoint)}
-            className={classes.image}
-            alt="Bilde tatt langs veg"
-            onClick={openImage}
-          />
+
+          {currentImagePoint.properties.BILDETYPE === '360' ? (
+            <ThreeSixtyImage imageUrl={getImageUrl(currentImagePoint)} />
+          ) : (
+            <img
+              src={getImageUrl(currentImagePoint)}
+              className={classes.image}
+              alt="Bilde tatt langs veg"
+              onClick={openImage}
+            />
+          )}
         </div>
         {showInformation ? (
           <ImageInfo
