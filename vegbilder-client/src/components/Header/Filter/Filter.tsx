@@ -1,14 +1,11 @@
 import {
   makeStyles,
-  Checkbox,
   FormControl,
   FormControlLabel,
   FormGroup,
-  FormLabel,
   Typography,
   Radio,
 } from '@material-ui/core';
-import { CameraAltOutlined } from '@material-ui/icons';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -16,7 +13,6 @@ import {
   cameraFilterState,
   currentImagePointState,
   currentLatLngZoomState,
-  currentYearState,
   loadedImagePointsState,
 } from 'recoil/atoms';
 import { cameraTypes } from 'types';
