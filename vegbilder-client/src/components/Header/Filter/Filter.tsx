@@ -79,7 +79,7 @@ const Filter = ({ openMenu, setOpenMenu, showMessage }: IFilterProps) => {
       // otherwise, we dont have to do anything besides switching map layer
       setLoadedImagePoits(null); // reset state
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
-      fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR);
+      fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR, '360');
     }
   };
 

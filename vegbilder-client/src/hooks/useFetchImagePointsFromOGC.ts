@@ -1,30 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { IBbox } from 'types';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { cameraTypes, IBbox } from 'types';
+import { useSetRecoilState } from 'recoil';
 import { loadedImagePointsFilterState } from 'recoil/selectors';
-import { cameraFilterState } from 'recoil/atoms';
 
 const useFetchImagePointsFromOGC = () => {
   const [isFetching, setIsFetching] = useState(false);
-  const [typeNamePrefix, setTypeNamePrefix] = useState('vegbilder_1_0:Vegbilder_');
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
-  const cameraFilter = useRecoilValue(cameraFilterState);
 
-  useEffect(() => {
-    setTypeNamePrefix(
-      cameraFilter === '360' ? `vegbilder_1_0:Vegbilder_360_2021` : `vegbilder_1_0:Vegbilder_`
-    );
-  }, [cameraFilter]);
-
-  async function fetchImagePointsByYearAndBbox(year: number, bbox: IBbox) {
+  async function fetchImagePointsByYearAndBbox(year: number, bbox: IBbox, cameraType: cameraTypes) {
     if (isFetching) return;
     setIsFetching(true);
-    let typename = typeNamePrefix;
-    if (!typeNamePrefix.includes('360')) {
-      typename = `${typeNamePrefix}${year}`;
-    }
+
+    let typename =
+      cameraType === '360' ? `vegbilder_1_0:Vegbilder_360_2021` : `vegbilder_1_0:Vegbilder_${year}`;
+
     const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
       bbox,
       typename
@@ -35,6 +26,7 @@ const useFetchImagePointsFromOGC = () => {
         imagePoints: imagePoints,
         bbox: expandedBbox,
         year: year,
+        cameraType: cameraType,
       });
       setIsFetching(false);
       return imagePoints;
@@ -42,7 +34,8 @@ const useFetchImagePointsFromOGC = () => {
     setIsFetching(false);
   }
 
-  return (year: number, bbox: IBbox) => fetchImagePointsByYearAndBbox(year, bbox);
+  return (year: number, bbox: IBbox, cameraType: cameraTypes) =>
+    fetchImagePointsByYearAndBbox(year, bbox, cameraType);
 };
 
 export default useFetchImagePointsFromOGC;

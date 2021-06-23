@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { find } from 'lodash';
 
 import { settings } from 'constants/settings';
-import { ILatlng, IImagePoint } from 'types';
+import { ILatlng, IImagePoint, cameraTypes } from 'types';
 import {
   findNearestImagePoint,
   getGenericRoadReference,
@@ -27,15 +27,20 @@ const useFetchNearestImagePoint = (
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
-  async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
+  async function fetchImagePointsByYearAndLatLng(
+    latlng: ILatlng,
+    year: number,
+    cameraType = loadedImagePoints?.cameraType ?? 'planar'
+  ) {
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
       loadedImagePoints.year !== year ||
-      !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox);
+      !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox) ||
+      loadedImagePoints.cameraType !== cameraType;
     if (shouldFetchNewImagePointsFromOGC) {
       showMessage(`Leter etter bilder i ${year}...`);
-      return fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints) => {
+      fetchImagePointsFromOGC(year, bboxVisibleMapArea, cameraType).then((imagePoints) => {
         if (imagePoints && imagePoints.length) {
           let nearestImagePoint;
           if (action === 'findByImageId') {
@@ -52,6 +57,7 @@ const useFetchNearestImagePoint = (
         } else {
           showMessage(errorMessage);
           setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
+          return null;
         }
       });
     } else {
@@ -124,7 +130,8 @@ const useFetchNearestImagePoint = (
     }
   };
 
-  return (latlng: ILatlng, year: number) => fetchImagePointsByYearAndLatLng(latlng, year);
+  return (latlng: ILatlng, year: number, cameraType?: cameraTypes) =>
+    fetchImagePointsByYearAndLatLng(latlng, year, cameraType);
 };
 
 export default useFetchNearestImagePoint;

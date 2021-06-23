@@ -148,7 +148,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       setCurrentYear(yearOfClickedImage);
       if (loadedImagePoints) {
         const bbox = loadedImagePoints.bbox;
-        fetchImagePointsFromOGC(yearOfClickedImage, bbox);
+        fetchImagePointsFromOGC(yearOfClickedImage, bbox, cameraFilter);
       }
     }
 

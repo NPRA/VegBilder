@@ -49,6 +49,7 @@ export interface ILoadedImagePoints {
   imagePoints: IImagePoint[];
   bbox: IBbox;
   year: number;
+  cameraType: cameraTypes;
   imagePointsGroupedBySeries?: Dictionary<Dictionary<IImagePoint[]>>;
   availableDates?: string[];
 }

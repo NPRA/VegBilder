@@ -1,7 +1,7 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
-import { debounce, groupBy, throttle } from 'lodash';
+import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { cameraTypes, IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import {
   getDateString,
   getFilteredImagePoints,
@@ -97,10 +97,9 @@ export const latLngZoomQueryParameterState = selector({
       newSearchParams.set('lng', newCoordinates.lng.toString());
       if (newCoordinates.zoom) newSearchParams.set('zoom', newCoordinates.zoom.toString());
 
-      if (get(playVideoState)){
+      if (get(playVideoState)) {
         delayedReplaceHistory(newSearchParams);
-      }
-      else {
+      } else {
         window.history.replaceState(null, '', '?' + newSearchParams.toString());
       }
     }
@@ -121,18 +120,16 @@ export const viewQueryParamterState = selector({
   },
 });
 
+type newLoadedImagePoints = { imagePoints: IImagePoint[] } & { year: number } & {
+  bbox: IBbox;
+} & { cameraType: cameraTypes };
+
 export const loadedImagePointsFilterState = selector({
   key: 'loadedImagePointsFilterState',
   get: ({ get }) => {
     return get(loadedImagePointsState);
   },
-  set: (
-    { get, set },
-    newLoadedImagePoints:
-      | ({ imagePoints: IImagePoint[] } & { year: number } & { bbox: IBbox })
-      | DefaultValue
-      | null
-  ) => {
+  set: ({ get, set }, newLoadedImagePoints: newLoadedImagePoints | DefaultValue | null) => {
     if (!(newLoadedImagePoints instanceof DefaultValue) && newLoadedImagePoints) {
       const imagePointsGroupedBySeries = groupBySeries(newLoadedImagePoints.imagePoints);
       const availableDates = getAvailableDates(newLoadedImagePoints.imagePoints);
@@ -142,6 +139,7 @@ export const loadedImagePointsFilterState = selector({
         bbox: newLoadedImagePoints.bbox,
         imagePointsGroupedBySeries: imagePointsGroupedBySeries,
         availableDates: availableDates,
+        cameraType: newLoadedImagePoints.cameraType,
       };
       set(loadedImagePointsState, newLoaded);
       const currImagePoint = get(currentImagePointState);
@@ -159,23 +157,18 @@ export const loadedImagePointsFilterState = selector({
 const setNewQueryParamter = (name: queryParamterNames, value: string, isVideoPlaying = false) => {
   const newSearchParams = new URLSearchParams(window.location.search);
   newSearchParams.set(name, value);
-  if (isVideoPlaying){
-    delayedReplaceHistory(newSearchParams)
-  }
-  else {
+  if (isVideoPlaying) {
+    delayedReplaceHistory(newSearchParams);
+  } else {
     window.history.replaceState(null, '', '?' + newSearchParams.toString());
-
   }
 };
 
-
-// in Safari, the app will crash if you play video because history is replaced too much. 
+// in Safari, the app will crash if you play video because history is replaced too much.
 // Therefore, we ensure that we dont replace history too often by throttling
-const delayedReplaceHistory = 
-  debounce((searchParams: URLSearchParams) => {
-    window.history.replaceState(null, '', '?' + searchParams.toString());
-  }, 200)
-
+const delayedReplaceHistory = debounce((searchParams: URLSearchParams) => {
+  window.history.replaceState(null, '', '?' + searchParams.toString());
+}, 200);
 
 const getAvailableDates = (imagePoints: IImagePoint[]) => {
   const imagePointsGroupedByDate = groupBy(imagePoints, (imagePoint) => getDateString(imagePoint));
