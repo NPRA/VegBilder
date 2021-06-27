@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Map, TileLayer } from 'react-leaflet';
+import { TileLayer, MapContainer, useMapEvents, useMap } from 'react-leaflet';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
 
@@ -16,20 +16,17 @@ interface IMapContainerProps {
   showMessage: (message: string) => void;
 }
 
-const MapContainer = ({ showMessage }: IMapContainerProps) => {
-  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
-  const [cursor, setCursor] = useState('pointer');
-  const currentYear = useRecoilValue(currentYearState);
-  const currentImagePoint = useRecoilValue(currentImagePointState);
+interface IMapContainerEventHandlerProps {
+  showMessage: (message: string) => void;
+  setCursor: (cursor: string) => void;
+}
 
+const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEventHandlerProps) => {
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
-
-  /* We use "prikkekartet" when no image point is selected or when we are in nyeste mode. Then, the user can click on the map to select an image. */
-  const clickableMap =
-    currentYear === 'Nyeste' ||
-    !currentImagePoint ||
-    (currentCoordinates.zoom && currentCoordinates.zoom < 15);
+  const currentYear = useRecoilValue(currentYearState);
+  const currentImagePoint = useRecoilValue(currentImagePointState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
@@ -61,40 +58,56 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
     }
   };
 
-  const onMouseDown = (event: LeafletMouseEvent) => {
-    event.originalEvent.preventDefault();
-    setScrolling(true);
-    setMouseMoved(false);
-  };
+  const map = useMapEvents({
+    mousedown(event: LeafletMouseEvent) {
+      console.log('hei');
+      event.originalEvent.preventDefault();
+      setScrolling(true);
+      setMouseMoved(false);
+    },
+    mouseup(event: LeafletMouseEvent) {
+      setScrolling(false);
+      setCursor('pointer');
+      let clickedControlButtons = false;
+      if (event.originalEvent.target) {
+        clickedControlButtons =
+          // @ts-ignore: Unreachable code error
+          event.originalEvent.target.id === 'zoom-out' ||
+          // @ts-ignore: Unreachable code error
+          event.originalEvent.target.id === 'zoom-in' ||
+          // @ts-ignore: Unreachable code error
+          event.originalEvent.target.id === 'my-location';
+      }
+      if (!mouseMoved && !clickedControlButtons) {
+        handleClick(event);
+      }
+    },
+    mousemove(event: LeafletMouseEvent) {
+      event.originalEvent.preventDefault();
+      setMouseMoved(true);
+      if (scrolling) {
+        setCursor('grabbing');
+      }
+    },
+  });
+  return null;
+};
 
-  const onMouseUp = (event: LeafletMouseEvent) => {
-    setScrolling(false);
-    setCursor('pointer');
-    let clickedControlButtons = false;
-    if (event.originalEvent.target) {
-      clickedControlButtons =
-        // @ts-ignore: Unreachable code error
-        event.originalEvent.target.id === 'zoom-out' ||
-        // @ts-ignore: Unreachable code error
-        event.originalEvent.target.id === 'zoom-in' ||
-        // @ts-ignore: Unreachable code error
-        event.originalEvent.target.id === 'my-location';
-    }
-    if (!mouseMoved && !clickedControlButtons) {
-      handleClick(event);
-    }
-  };
+const Map = ({ showMessage }: IMapContainerProps) => {
+  const currentYear = useRecoilValue(currentYearState);
+  const currentImagePoint = useRecoilValue(currentImagePointState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const [cursor, setCursor] = useState('pointer');
 
-  const onMouseMove = (event: LeafletMouseEvent) => {
-    event.originalEvent.preventDefault();
-    setMouseMoved(true);
-    if (scrolling) {
-      setCursor('grabbing');
-    }
-  };
+  /* We use "prikkekartet" when no image point is selected or when we are in nyeste mode. Then, the user can click on the map to select an image. */
+
+  const clickableMap =
+    currentYear === 'Nyeste' ||
+    !currentImagePoint ||
+    (currentCoordinates.zoom && currentCoordinates.zoom < 15);
 
   return (
-    <Map
+    <MapContainer
       center={currentCoordinates}
       style={clickableMap ? { cursor: cursor } : {}}
       zoom={currentCoordinates.zoom}
@@ -102,10 +115,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       minZoom={4}
       maxZoom={16}
       zoomControl={false}
-      onmousedown={onMouseDown}
-      onmousemove={onMouseMove}
-      onmouseup={onMouseUp}
-      onViewportChanged={({ center, zoom }) => {
+      onViewportChanged={({ center, zoom }: { center: number[]; zoom: number }) => {
         if (center && zoom) {
           // Center and zoom is not defined immediately after rendering, for some reason, so the above if check is necessary. (Or the app would crash if you start dragging the map immediately after rendering.)
           const latlng = { lat: center[0], lng: center[1] };
@@ -113,6 +123,7 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
         }
       }}
     >
+      <MapContainerEventHandler showMessage={showMessage} setCursor={setCursor} />
       <TileLayer
         url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
@@ -120,8 +131,8 @@ const MapContainer = ({ showMessage }: IMapContainerProps) => {
       />
       <ImagePointMapLayers />
       <MapControls showMessage={showMessage} />
-    </Map>
+    </MapContainer>
   );
 };
 
-export default MapContainer;
+export default Map;

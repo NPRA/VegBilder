@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Icon } from 'leaflet';
 import { useLeafletBounds } from 'use-leaflet';
-import { Rectangle, Marker } from 'react-leaflet';
+import { Rectangle, Marker, useMap } from 'react-leaflet';
 // eslint-disable-next-line
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -26,7 +26,13 @@ import { settings } from 'constants/settings';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
-  const [[south, west], [north, east]] = useLeafletBounds();
+  const bounds = useMap().getBounds();
+  console.log(bounds);
+
+  const [[south, west], [north, east]] = [
+    [bounds.getSouth, bounds.getWest()],
+    [bounds.getNorth(), bounds.getEast()],
+  ];
 
   const [fetchedBboxes] = useState([]);
   const [targetBbox] = useState(null);

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Map, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -64,14 +64,14 @@ const SmallMapContainer = ({
         setMiniMapVisible={setMiniMapVisible}
       />
       <div className={showMiniMap ? classes.mapContainer : classes.hiddenMap}>
-        <Map
+        <MapContainer
           center={currentCoordinates}
           zoom={currentCoordinates.zoom}
           crs={crsUtm33N}
           minZoom={minZoom}
           maxZoom={maxZoom}
           zoomControl={false}
-          onViewportChanged={({ center, zoom }) => {
+          onViewportChanged={({ center, zoom }: { center: number[]; zoom: number }) => {
             if (center && zoom) {
               const latlng = { lat: center[0], lng: center[1] };
               setCurrentCoordinates({ ...latlng, zoom: zoom });
@@ -86,7 +86,7 @@ const SmallMapContainer = ({
             subdomains="123456789"
           />
           <ImagePointDirectionalMarkersLayer shouldUseMapBoundsAsTargetBbox={false} />
-        </Map>
+        </MapContainer>
       </div>
     </div>
   );

@@ -2,7 +2,7 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 
-import MapContainer from 'components/MapView/MapContainer/MapContainer';
+import Map from 'components/MapView/MapContainer/Map';
 import ImagePreviewAndInformation from './ImagePreviewAndInformation/ImagePreviewAndInformation';
 import RoadColorExplaination from './RoadColorExplaination/RoadColorExplaination';
 
@@ -24,7 +24,7 @@ const MapView = ({ setView, showMessage }: IMapViewProps) => {
 
   return (
     <Grid item className={classes.content}>
-      <MapContainer showMessage={showMessage} />
+      <Map showMessage={showMessage} />
       <ImagePreviewAndInformation openImageView={setView} />
       <RoadColorExplaination />
     </Grid>
