@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Icon } from 'leaflet';
-import { useLeafletBounds } from 'use-leaflet';
 import { Rectangle, Marker, useMap } from 'react-leaflet';
 // eslint-disable-next-line
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
@@ -12,7 +11,6 @@ import {
   getImagePointLatLng,
   findNearestImagePoint,
   getGenericRoadReference,
-  getFilteredImagePoints,
 } from 'utilities/imagePointUtilities';
 import {
   currentYearState,
@@ -27,10 +25,9 @@ import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
   const bounds = useMap().getBounds();
-  console.log(bounds);
 
   const [[south, west], [north, east]] = [
-    [bounds.getSouth, bounds.getWest()],
+    [bounds.getSouth(), bounds.getWest()],
     [bounds.getNorth(), bounds.getEast()],
   ];
 
@@ -210,10 +207,12 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
                 rotationAngle={imagePoint.properties.RETNING}
                 rotationOrigin={'center center'}
                 zIndexOffset={isSelected ? 10000 : 0}
-                onclick={() => {
-                  if (!playVideo) {
-                    setCurrentImagePoint(imagePoint);
-                  }
+                eventHandlers={{
+                  click: () => {
+                    if (!playVideo) {
+                      setCurrentImagePoint(imagePoint);
+                    }
+                  },
                 }}
               />
             );

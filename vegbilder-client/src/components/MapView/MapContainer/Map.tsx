@@ -12,6 +12,7 @@ import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
 import './MapContainer.css';
 import { ILatlng } from 'types';
+import { debounce } from 'lodash';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -66,6 +67,9 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
       }
     }
   };
+  const delayedUpdate = debounce((latlng: ILatlng, zoom: number) => {
+    setCurrentCoordinates({ ...latlng, zoom: zoom });
+  }, 300);
 
   useMapEvents({
     mousedown(event: LeafletMouseEvent) {
@@ -97,14 +101,19 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
         setCursor('grabbing');
       }
     },
-    zoom(event: LeafletEvent) {
-      const latlng = event.target._animateToCenter;
-      if (latlng && event.target._animateToZoom)
-        setCurrentCoordinates({ ...latlng, zoom: event.target._animateToZoom });
-    },
+    // zoom(event: LeafletEvent) {
+    //   const latlng = event.target._animateToCenter;
+    //   const zoom = event.target._animateToZoom;
+    //   if (latlng && zoom) {
+    //     console.log(event);
+    //     console.log('zoom');
+    //     delayedUpdate(latlng, zoom);
+    //   }
+    // },
     dragend(event: LeafletEvent) {
       const latlng = event.target._animateToCenter;
       if (latlng) {
+        console.log('dragend');
         setCurrentCoordinates({ ...latlng });
       }
     },
