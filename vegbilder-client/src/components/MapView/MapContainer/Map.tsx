@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TileLayer, MapContainer, useMapEvents, useMap } from 'react-leaflet';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { LeafletMouseEvent } from 'leaflet';
+import { LeafletEvent, LeafletMouseEvent } from 'leaflet';
 
 import { crsUtm33N } from 'constants/crs';
 import ImagePointMapLayers from './ImagePointMapLayers/ImagePointMapLayers';
@@ -11,6 +11,7 @@ import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoi
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
 import './MapContainer.css';
+import { ILatlng } from 'types';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -20,6 +21,14 @@ interface IMapContainerEventHandlerProps {
   showMessage: (message: string) => void;
   setCursor: (cursor: string) => void;
 }
+
+const ChangeView = ({ center, zoom }: { center: ILatlng; zoom: number | undefined }) => {
+  const map = useMap();
+  if (center && zoom) {
+    map.setView(center, zoom);
+  }
+  return null;
+};
 
 const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEventHandlerProps) => {
   const [mouseMoved, setMouseMoved] = useState(false);
@@ -58,9 +67,8 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
     }
   };
 
-  const map = useMapEvents({
+  useMapEvents({
     mousedown(event: LeafletMouseEvent) {
-      console.log('hei');
       event.originalEvent.preventDefault();
       setScrolling(true);
       setMouseMoved(false);
@@ -89,6 +97,17 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
         setCursor('grabbing');
       }
     },
+    zoom(event: LeafletEvent) {
+      const latlng = event.target._animateToCenter;
+      if (latlng && event.target._animateToZoom)
+        setCurrentCoordinates({ ...latlng, zoom: event.target._animateToZoom });
+    },
+    dragend(event: LeafletEvent) {
+      const latlng = event.target._animateToCenter;
+      if (latlng) {
+        setCurrentCoordinates({ ...latlng });
+      }
+    },
   });
   return null;
 };
@@ -108,22 +127,14 @@ const Map = ({ showMessage }: IMapContainerProps) => {
 
   return (
     <MapContainer
-      center={currentCoordinates}
       style={clickableMap ? { cursor: cursor } : {}}
-      zoom={currentCoordinates.zoom}
       crs={crsUtm33N}
       minZoom={4}
       maxZoom={16}
       zoomControl={false}
-      onViewportChanged={({ center, zoom }: { center: number[]; zoom: number }) => {
-        if (center && zoom) {
-          // Center and zoom is not defined immediately after rendering, for some reason, so the above if check is necessary. (Or the app would crash if you start dragging the map immediately after rendering.)
-          const latlng = { lat: center[0], lng: center[1] };
-          setCurrentCoordinates({ ...latlng, zoom: zoom });
-        }
-      }}
     >
       <MapContainerEventHandler showMessage={showMessage} setCursor={setCursor} />
+      <ChangeView center={currentCoordinates} zoom={currentCoordinates.zoom} />
       <TileLayer
         url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
