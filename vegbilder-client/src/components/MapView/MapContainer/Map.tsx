@@ -101,19 +101,18 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
         setCursor('grabbing');
       }
     },
-    // zoom(event: LeafletEvent) {
-    //   const latlng = event.target._animateToCenter;
-    //   const zoom = event.target._animateToZoom;
-    //   if (latlng && zoom) {
-    //     console.log(event);
-    //     console.log('zoom');
-    //     delayedUpdate(latlng, zoom);
-    //   }
-    // },
+    zoom(event: LeafletEvent) {
+      const latlng = event.target._animateToCenter;
+      const zoom = event.target._animateToZoom;
+      if (latlng && zoom) {
+        console.log('zoom');
+        delayedUpdate(latlng, zoom);
+      }
+    },
     dragend(event: LeafletEvent) {
       const latlng = event.target._animateToCenter;
+      console.log(event);
       if (latlng) {
-        console.log('dragend');
         setCurrentCoordinates({ ...latlng });
       }
     },
@@ -136,6 +135,8 @@ const Map = ({ showMessage }: IMapContainerProps) => {
 
   return (
     <MapContainer
+      center={[currentCoordinates.lat, currentCoordinates.lng]}
+      zoom={currentCoordinates.zoom}
       style={clickableMap ? { cursor: cursor } : {}}
       crs={crsUtm33N}
       minZoom={4}
