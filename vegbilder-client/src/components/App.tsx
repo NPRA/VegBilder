@@ -20,6 +20,10 @@ import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defau
 import PageInformation from './PageInformation/PageInformation';
 import { useIsMobile } from 'hooks/useIsMobile';
 import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
+import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
+import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
+import { IImagePoint } from 'types';
+import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -108,12 +112,38 @@ const App = () => {
     );
   };
 
+  const openAppByVegsystemreferanse = async (vegsystemreferanse: string | undefined) => {
+    if (vegsystemreferanse) {
+      const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
+      if (vegResponse) {
+        if (vegResponse.status !== 200) {
+          //throwError(vegResponse);
+          return;
+        }
+        const vegsystemData = vegResponse.data;
+        const wkt = vegsystemData.geometri.wkt;
+        const latlng = getCoordinatesFromWkt(wkt);
+        const zoom = 16;
+
+        if (latlng) {
+          setCurrentCoordinates({ ...latlng, zoom });
+          fetchNearestLatestImagePoint(latlng);
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     const imageIdQuery = searchParams.get('imageId');
     const latQuery = searchParams.get('lat');
     const lngQuery = searchParams.get('lng');
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
+    const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
+
+    if (vegsystemreferanseQuery) {
+      openAppByVegsystemreferanse(vegsystemreferanseQuery);
+    }
 
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {

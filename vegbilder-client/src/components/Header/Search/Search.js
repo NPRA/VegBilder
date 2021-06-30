@@ -20,6 +20,7 @@ import useAsyncError from 'hooks/useAsyncError';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { currentYearState } from 'recoil/atoms';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
+import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -182,20 +183,9 @@ const Search = ({ showMessage, setMapView }) => {
   };
 
   const handleVegSystemReferanseClick = async (wkt) => {
-    const latlng = await getCoordinatesFromWkt(wkt);
+    const latlng = getCoordinatesFromWkt(wkt);
     const zoom = 16;
     handleSelectedOption(latlng, zoom);
-  };
-
-  const getCoordinatesFromWkt = (wkt) => {
-    const split = wkt?.split(/[()]/);
-    const coordinateString = split[1];
-    if (!coordinateString) return null;
-    const coordinates = coordinateString.split(' ');
-    return {
-      lat: parseFloat(coordinates[0]),
-      lng: parseFloat(coordinates[1]),
-    };
   };
 
   const getZoomByTypeOfPlace = (stedsnavn) => {
