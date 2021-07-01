@@ -22,7 +22,7 @@ interface IMapContainerEventHandlerProps {
   setCursor: (cursor: string) => void;
 }
 
-const ChangeView = ({ center, zoom }: { center: ILatlng; zoom: number | undefined }) => {
+const ChangeMapView = ({ center, zoom }: { center: ILatlng; zoom: number | undefined }) => {
   const map = useMap();
   if (center && zoom) {
     map.setView(center, zoom);
@@ -114,11 +114,10 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
 const Map = ({ showMessage }: IMapContainerProps) => {
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
-  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const currentCoordinates = useRecoilValue(latLngZoomQueryParameterState);
   const [cursor, setCursor] = useState('pointer');
 
   /* We use "prikkekartet" when no image point is selected or when we are in nyeste mode. Then, the user can click on the map to select an image. */
-
   const clickableMap =
     currentYear === 'Nyeste' ||
     !currentImagePoint ||
@@ -135,7 +134,7 @@ const Map = ({ showMessage }: IMapContainerProps) => {
       zoomControl={false}
     >
       <MapContainerEventHandler showMessage={showMessage} setCursor={setCursor} />
-      <ChangeView
+      <ChangeMapView
         center={{ lat: currentCoordinates.lat, lng: currentCoordinates.lng }}
         zoom={currentCoordinates.zoom}
       />
