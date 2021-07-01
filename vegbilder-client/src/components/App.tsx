@@ -165,8 +165,9 @@ const App = () => {
     }
 
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
-    else if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
-      setCurrentCoordinates({ ...currentCoordinates, zoom: 15 });
+    if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
+      const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
+      setCurrentCoordinates({ ...latlng, zoom: 15 });
       if (yearQuery === 'Nyeste' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {

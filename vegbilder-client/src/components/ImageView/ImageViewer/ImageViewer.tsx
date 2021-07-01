@@ -65,7 +65,7 @@ const ImageViewer = ({
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const { command, resetCommand } = useCommand();
-  const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
@@ -85,7 +85,7 @@ const ImageViewer = ({
   const isOnSameHovedparsell = (HP1: string | null, HP2: string | null) => {
     // for old vegreferanser (before 2020). Most of the time, the oppoiste lane will have the same hovedparselnumber.
     return HP1 === HP2;
-  }
+  };
 
   const onImageLoaded = () => {
     const img = imgRef.current;
@@ -109,17 +109,19 @@ const ImageViewer = ({
         ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
         hasOppositeParity(ip.properties.FELTKODE, currentImagePoint.properties.FELTKODE)
     );
-    
+
     const usesOldVegreferanse = currentImagePoint.properties.AAR < 2020;
     if (usesOldVegreferanse) {
-      imagePointsInOppositeLane = imagePointsInOppositeLane.filter((imagePoint) => isOnSameHovedparsell(currentImagePoint.properties.HP, imagePoint.properties.HP))
+      imagePointsInOppositeLane = imagePointsInOppositeLane.filter((imagePoint) =>
+        isOnSameHovedparsell(currentImagePoint.properties.HP, imagePoint.properties.HP)
+      );
     }
 
     const latlngCurrentImagePoint = getImagePointLatLng(currentImagePoint);
-      
+
     if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) {
-      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning'); 
-      return
+      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
+      return;
     }
     const nearestImagePointInOppositeLane = findNearestImagePoint(
       imagePointsInOppositeLane,
@@ -131,7 +133,7 @@ const ImageViewer = ({
       );
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
-        setCurrentCoordinates(latlngNearestImagePointInOppositeLane);
+        setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 15 });
       }
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
@@ -244,7 +246,7 @@ const ImageViewer = ({
           if (nextImagePoint) {
             const latlng = getImagePointLatLng(nextImagePoint);
             setCurrentImagePoint(nextImagePoint);
-            if (latlng) setCurrentCoordinates(latlng);
+            if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
             showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
           }
@@ -253,7 +255,7 @@ const ImageViewer = ({
           if (previousImagePoint) {
             const latlng = getImagePointLatLng(previousImagePoint);
             setCurrentImagePoint(previousImagePoint);
-            if (latlng) setCurrentCoordinates(latlng);
+            if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
             showMessage('Dette er første bilde i serien. Velg nytt bildepunkt i kartet.');
           }
@@ -314,13 +316,11 @@ const ImageViewer = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoPlay, nextImagePoint, timeBetweenImages]);
 
-
-  const playNextImage = 
-  debounce((nextImagePoint: IImagePoint) => {
+  const playNextImage = debounce((nextImagePoint: IImagePoint) => {
     const latlng = getImagePointLatLng(nextImagePoint);
     setCurrentImagePoint(nextImagePoint);
-    if (latlng) setCurrentCoordinates(latlng);
-  }, timeBetweenImages)
+    if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
+  }, timeBetweenImages);
 
   return (
     <>

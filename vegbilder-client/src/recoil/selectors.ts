@@ -1,5 +1,5 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
-import { debounce, groupBy, throttle } from 'lodash';
+import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
 import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import {
@@ -89,18 +89,16 @@ export const latLngZoomQueryParameterState = selector({
   get: ({ get }) => {
     return get(currentLatLngZoomState);
   },
-  set: ({ get, set }, newCoordinates: (ILatlng & { zoom?: number }) | DefaultValue) => {
+  set: ({ get, set }, newCoordinates: (ILatlng & { zoom: number }) | DefaultValue) => {
     if (!(newCoordinates instanceof DefaultValue)) {
       const newSearchParams = new URLSearchParams(window.location.search);
-
       newSearchParams.set('lat', newCoordinates.lat.toString());
       newSearchParams.set('lng', newCoordinates.lng.toString());
       if (newCoordinates.zoom) newSearchParams.set('zoom', newCoordinates.zoom.toString());
 
-      if (get(playVideoState)){
+      if (get(playVideoState)) {
         delayedReplaceHistory(newSearchParams);
-      }
-      else {
+      } else {
         window.history.replaceState(null, '', '?' + newSearchParams.toString());
       }
     }
@@ -159,23 +157,18 @@ export const loadedImagePointsFilterState = selector({
 const setNewQueryParamter = (name: queryParamterNames, value: string, isVideoPlaying = false) => {
   const newSearchParams = new URLSearchParams(window.location.search);
   newSearchParams.set(name, value);
-  if (isVideoPlaying){
-    delayedReplaceHistory(newSearchParams)
-  }
-  else {
+  if (isVideoPlaying) {
+    delayedReplaceHistory(newSearchParams);
+  } else {
     window.history.replaceState(null, '', '?' + newSearchParams.toString());
-
   }
 };
 
-
-// in Safari, the app will crash if you play video because history is replaced too much. 
+// in Safari, the app will crash if you play video because history is replaced too much.
 // Therefore, we ensure that we dont replace history too often by throttling
-const delayedReplaceHistory = 
-  debounce((searchParams: URLSearchParams) => {
-    window.history.replaceState(null, '', '?' + searchParams.toString());
-  }, 200)
-
+const delayedReplaceHistory = debounce((searchParams: URLSearchParams) => {
+  window.history.replaceState(null, '', '?' + searchParams.toString());
+}, 200);
 
 const getAvailableDates = (imagePoints: IImagePoint[]) => {
   const imagePointsGroupedByDate = groupBy(imagePoints, (imagePoint) => getDateString(imagePoint));

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLeaflet } from 'react-leaflet';
+import { useMap } from 'react-leaflet';
 import { IconButton, makeStyles } from '@material-ui/core';
 import { AddRounded, RemoveRounded } from '@material-ui/icons';
 
@@ -31,7 +31,7 @@ const useStyles = makeStyles((theme) => ({
 
 const ZoomControl = () => {
   const classes = useStyles();
-  const { map } = useLeaflet();
+  const map = useMap();
 
   const zoomIn = () => {
     if (map) map.zoomIn();

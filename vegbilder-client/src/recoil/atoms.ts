@@ -20,7 +20,7 @@ export const currentImagePointState = atom<IImagePoint | null>({
 });
 
 // LatLng and zoom must be the same state in order to render leaflet map properly on state change.
-export const currentLatLngZoomState = atom<ILatlng & { zoom?: number }>({
+export const currentLatLngZoomState = atom<ILatlng & { zoom: number }>({
   key: 'currentLatLngZoom',
   default: {
     lat: parseFloat(searchParams.get('lat')!) || DEFAULT_COORDINATES.lat,
