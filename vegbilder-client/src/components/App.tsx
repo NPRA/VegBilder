@@ -137,7 +137,13 @@ const App = () => {
 
         if (latlng) {
           if (year) {
-            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year));
+            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year)).then(
+              (imagePoint: IImagePoint | undefined) => {
+                if (!imagePoint) {
+                  setCurrentCoordinates({ ...latlng, zoom: 15 });
+                }
+              }
+            );
           } else {
             fetchNearestLatestImagePoint(latlng);
           }
