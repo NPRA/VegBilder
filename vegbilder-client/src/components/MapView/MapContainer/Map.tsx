@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { TileLayer, MapContainer, useMapEvents, useMap } from 'react-leaflet';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { LeafletEvent, LeafletMouseEvent } from 'leaflet';
+import { LeafletMouseEvent } from 'leaflet';
 
 import { crsUtm33N } from 'constants/crs';
 import ImagePointMapLayers from './ImagePointMapLayers/ImagePointMapLayers';
@@ -12,7 +12,6 @@ import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
 import './MapContainer.css';
 import { ILatlng } from 'types';
-import { debounce } from 'lodash';
 
 interface IMapContainerProps {
   showMessage: (message: string) => void;
@@ -37,6 +36,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const map = useMap();
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
@@ -67,9 +67,6 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
       }
     }
   };
-  const delayedUpdate = debounce((latlng: ILatlng, zoom: number) => {
-    setCurrentCoordinates({ ...latlng, zoom: zoom });
-  }, 300);
 
   useMapEvents({
     mousedown(event: LeafletMouseEvent) {
@@ -101,20 +98,14 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
         setCursor('grabbing');
       }
     },
-    zoom(event: LeafletEvent) {
-      const latlng = event.target._animateToCenter;
-      const zoom = event.target._animateToZoom;
-      if (latlng && zoom) {
-        console.log('zoom');
-        delayedUpdate(latlng, zoom);
-      }
+    zoom() {
+      const zoom = map.getZoom();
+      const center = map.getCenter();
+      setCurrentCoordinates({ ...center, zoom });
     },
-    dragend(event: LeafletEvent) {
-      const latlng = event.target._animateToCenter;
-      console.log(event);
-      if (latlng) {
-        setCurrentCoordinates({ ...latlng });
-      }
+    dragend() {
+      const center = map.getCenter();
+      setCurrentCoordinates(center);
     },
   });
   return null;
@@ -144,7 +135,10 @@ const Map = ({ showMessage }: IMapContainerProps) => {
       zoomControl={false}
     >
       <MapContainerEventHandler showMessage={showMessage} setCursor={setCursor} />
-      <ChangeView center={currentCoordinates} zoom={currentCoordinates.zoom} />
+      <ChangeView
+        center={{ lat: currentCoordinates.lat, lng: currentCoordinates.lng }}
+        zoom={currentCoordinates.zoom}
+      />
       <TileLayer
         url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
         attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"
