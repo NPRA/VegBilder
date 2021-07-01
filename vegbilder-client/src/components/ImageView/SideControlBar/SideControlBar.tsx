@@ -1,7 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
 import { IImagePoint } from 'types';
-import SmallMapContainer from './SmallMapContainer/SmallMapContainer';
+import MiniMap from './MiniMap/MiniMap';
 import BackToBigMapButton from './SideControlButtons/BackToBigMapButton';
 import ImageInfoButton from '../../ImageInfo/ImageInfoButton';
 import ImageInfo from '../../ImageInfo/ImageInfo';
@@ -43,7 +43,7 @@ const SideControlBar = ({
   return (
     <div className={classes.sideControlBar}>
       <BackToBigMapButton setView={setView} isZoomedInImage={isZoomedInImage} />
-      <SmallMapContainer
+      <MiniMap
         miniMapVisible={miniMapVisible}
         setMiniMapVisible={setMiniMapVisible}
         isZoomedInImage={isZoomedInImage}

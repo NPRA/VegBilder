@@ -5,8 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 
 import { crsUtm33N } from 'constants/crs';
 import ImagePointDirectionalMarkersLayer from 'components/ImagePointDirectionalMarkersLayer/ImagePointDirectionalMarkersLayer';
-import './SmallMapContainer.css';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import './MiniMap.css';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
 import HideShowMiniMapButton from '../SideControlButtons/HideShowMiniMapButton';
 import { ILatlng } from 'types';
@@ -31,7 +31,7 @@ const useStyles = makeStyles(() => ({
   },
 }));
 
-interface ISmallMapContainerProps {
+interface MiniMapProps {
   miniMapVisible: boolean;
   setMiniMapVisible: (visible: boolean) => void;
   isZoomedInImage: boolean;
@@ -73,14 +73,14 @@ const MiniMapEventHandler = ({ setView }: IMiniMapEventHandlerProps) => {
   return null;
 };
 
-const SmallMapContainer = ({
+const MiniMap = ({
   miniMapVisible,
   setMiniMapVisible,
   isZoomedInImage,
   setView,
   isHistoryMode,
-}: ISmallMapContainerProps) => {
-  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+}: MiniMapProps) => {
+  const currentCoordinates = useRecoilValue(latLngZoomQueryParameterState);
   const classes = useStyles();
   const minZoom = 13;
   const maxZoom = 16;
@@ -121,4 +121,4 @@ const SmallMapContainer = ({
   );
 };
 
-export default SmallMapContainer;
+export default MiniMap;
