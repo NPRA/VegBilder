@@ -35,7 +35,7 @@ const useFetchNearestImagePoint = (
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox);
     if (shouldFetchNewImagePointsFromOGC) {
       showMessage(`Leter etter bilder i ${year}...`);
-      return fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints) => {
+      fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints) => {
         if (imagePoints && imagePoints.length > 0) {
           let nearestImagePoint;
           if (action === 'findByImageId') {
@@ -48,10 +48,10 @@ const useFetchNearestImagePoint = (
           if (nearestImagePoint) {
             handleFoundNearestImagePoint(nearestImagePoint);
             return nearestImagePoint;
+          } else {
+            showMessage(errorMessage);
+            setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
           }
-        } else {
-          showMessage(errorMessage);
-          setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
         }
       });
     } else {
