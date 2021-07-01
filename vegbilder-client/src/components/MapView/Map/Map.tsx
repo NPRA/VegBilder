@@ -10,7 +10,7 @@ import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
-import './MapContainer.css';
+import './Map.css';
 import { ILatlng } from 'types';
 
 interface IMapContainerProps {
@@ -104,8 +104,9 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
       setCurrentCoordinates({ ...center, zoom });
     },
     dragend() {
+      const zoom = map.getZoom();
       const center = map.getCenter();
-      setCurrentCoordinates(center);
+      setCurrentCoordinates({ ...center, zoom });
     },
   });
   return null;

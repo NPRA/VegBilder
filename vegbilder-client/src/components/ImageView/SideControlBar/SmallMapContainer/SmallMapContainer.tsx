@@ -1,14 +1,15 @@
 import React from 'react';
-import { MapContainer, TileLayer } from 'react-leaflet';
+import { MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import { makeStyles } from '@material-ui/core/styles';
 
 import { crsUtm33N } from 'constants/crs';
 import ImagePointDirectionalMarkersLayer from 'components/ImagePointDirectionalMarkersLayer/ImagePointDirectionalMarkersLayer';
 import './SmallMapContainer.css';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
 import HideShowMiniMapButton from '../SideControlButtons/HideShowMiniMapButton';
+import { ILatlng } from 'types';
 
 const useStyles = makeStyles(() => ({
   mapAndButtonContainer: {
@@ -38,6 +39,40 @@ interface ISmallMapContainerProps {
   isHistoryMode: boolean;
 }
 
+interface IMiniMapEventHandlerProps {
+  setView: (view: string) => void;
+}
+
+const ChangeMapView = ({ center, zoom }: { center: ILatlng; zoom: number | undefined }) => {
+  const map = useMap();
+  if (center && zoom) {
+    map.setView(center, zoom);
+  }
+  return null;
+};
+
+const MiniMapEventHandler = ({ setView }: IMiniMapEventHandlerProps) => {
+  const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
+  const map = useMap();
+
+  useMapEvents({
+    click() {
+      setView('map');
+    },
+    zoom() {
+      const zoom = map.getZoom();
+      const center = map.getCenter();
+      setCurrentCoordinates({ ...center, zoom });
+    },
+    dragend() {
+      const zoom = map.getZoom();
+      const center = map.getCenter();
+      setCurrentCoordinates({ ...center, zoom });
+    },
+  });
+  return null;
+};
+
 const SmallMapContainer = ({
   miniMapVisible,
   setMiniMapVisible,
@@ -51,10 +86,6 @@ const SmallMapContainer = ({
   const maxZoom = 16;
 
   const showMiniMap = (miniMapVisible && !isZoomedInImage) || (isZoomedInImage && isHistoryMode);
-
-  const handleClick = () => {
-    setView('map');
-  };
 
   return (
     <div className={showMiniMap ? classes.mapAndButtonContainer : ''}>
@@ -71,15 +102,13 @@ const SmallMapContainer = ({
           minZoom={minZoom}
           maxZoom={maxZoom}
           zoomControl={false}
-          onViewportChanged={({ center, zoom }: { center: number[]; zoom: number }) => {
-            if (center && zoom) {
-              const latlng = { lat: center[0], lng: center[1] };
-              setCurrentCoordinates({ ...latlng, zoom: zoom });
-            }
-          }}
           attributionControl={false}
-          onclick={handleClick}
         >
+          <MiniMapEventHandler setView={setView} />
+          <ChangeMapView
+            center={{ lat: currentCoordinates.lat, lng: currentCoordinates.lng }}
+            zoom={currentCoordinates.zoom ?? 15}
+          />
           <TileLayer
             url="https://services.geodataonline.no/arcgis/rest/services/Trafikkportalen/GeocacheTrafikkJPG/MapServer/tile/{z}/{y}/{x}"
             attribution="© NVDB, Geovekst, kommunene og Open Street Map contributors (utenfor Norge)"

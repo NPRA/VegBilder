@@ -2,7 +2,7 @@ import React from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 
-import Map from 'components/MapView/MapContainer/Map';
+import Map from 'components/MapView/Map/Map';
 import ImagePreviewAndInformation from './ImagePreviewAndInformation/ImagePreviewAndInformation';
 import RoadColorExplaination from './RoadColorExplaination/RoadColorExplaination';
 
