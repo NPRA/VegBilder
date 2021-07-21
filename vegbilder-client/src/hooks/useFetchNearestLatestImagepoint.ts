@@ -18,8 +18,8 @@ const useFetchNearestLatestImagePoint = (
   );
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
+    let foundImage = false;
     if (!loadedImagePoints || currentYear === 'Nyeste') {
-      let foundImage = false;
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
         await fetchImagePointsByLatLongAndYear(latlng, year).then((imagePoint) => {
