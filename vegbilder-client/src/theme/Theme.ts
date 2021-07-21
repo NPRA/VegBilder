@@ -76,7 +76,7 @@ export const MEDIA_QUERIES = {
 
 export default createMuiTheme({
   typography: {
-    fontFamily: ['sans-serif', '"LFT-Etica"'].join(','),
+    fontFamily: ['"LFT-Etica"', 'sans-serif'].join(','),
     h1: {
       fontFamily: '"LFT-Etica thin"',
     },
@@ -88,7 +88,6 @@ export default createMuiTheme({
       fontSize: '1.125rem',
     },
     h4: {
-      fontFamily: '"LFT-Etica"',
       fontSize: '1.725rem',
     },
     h5: {
@@ -108,7 +107,6 @@ export default createMuiTheme({
       fontSize: '0.775rem',
     },
     body1: {
-      fontFamily: '"LFT-Etica"',
       fontSize: '0.875rem',
     },
   },
