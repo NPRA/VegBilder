@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState, KeyboardEvent } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -10,7 +10,7 @@ import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
-import { MagnifyingGlassIcon } from '../../Icons/Icons';
+import { MagnifyingGlassIcon } from 'components/Icons/Icons';
 import {
   imagePointQueryParameterState,
   latLngZoomQueryParameterState,
@@ -21,6 +21,7 @@ import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { currentYearState } from 'recoil/atoms';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
+import { ILatlng } from 'types';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,11 +92,64 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Search = ({ showMessage, setMapView }) => {
+interface ISearchProps {
+  showMessage: (message: string) => void;
+  setMapView: () => void;
+}
+
+interface IStedsnavn {
+  ssrId: string;
+  navnetype: string;
+  kommunenavn: string;
+  fylkesnavn: string;
+  stedsnavn: string;
+  aust: string;
+  nord: string;
+  skrivemaatestatus: string;
+  spraak: string;
+  skrivemaatenavn: string;
+  epsgKode: string;
+}
+
+interface IVegsystemData {
+  vegsystemreferanse: {
+    vegsystem: {
+      id: number;
+      versjon: number;
+      vegkategori: string;
+      fase: string;
+      nummer: number;
+    };
+    strekning: {
+      id: number;
+      versjon: number;
+      strekning: number;
+      delstrekning: number;
+      arm: false;
+      adskilte_løp: string;
+      trafikantgruppe: string;
+      meter: number;
+      retning: string;
+    };
+    kortform: string;
+  };
+  veglenkesekvens: {
+    veglenkesekvensid: number;
+    relativPosisjon: number;
+    kortform: string;
+  };
+  geometri: {
+    wkt: string;
+    srid: number;
+  };
+  kommune: number;
+}
+
+const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState('');
-  const [stedsnavnOptions, setStedsnavnOptions] = useState([]);
-  const [vegSystemReferanser, setVegSystemReferanser] = useState([]);
+  const [stedsnavnOptions, setStedsnavnOptions] = useState<IStedsnavn[]>([]);
+  const [vegSystemReferanser, setVegSystemReferanser] = useState<IVegsystemData[]>([]);
   const [openMenu, setOpenMenu] = useState(false);
   const [resetImagePoint, setResetImagePoint] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -160,35 +214,35 @@ const Search = ({ showMessage, setMapView }) => {
     };
   }, [resetImagePoint, setCurrentImagePoint]);
 
-  const handleSelectedOption = (latlng, zoom) => {
+  const handleSelectedOption = (latlng: ILatlng | null, zoom: number) => {
     /* Select nearest image point close to coordinates of the place. If no image is found,
      * The user is brought back to the map.
      */
     setOpenMenu(false);
     setSelectedIndex(0);
     if (latlng && latlng.lat && latlng.lng) {
-      const latlng_ = { lat: parseFloat(latlng.lat), lng: parseFloat(latlng.lng) };
-      setCurrentCoordinates({ ...latlng_, zoom: zoom });
+      setCurrentCoordinates({ ...latlng, zoom: zoom });
       setResetImagePoint(true);
-      fetchNearestImagePoint(latlng_, currentYear).then((imagePoint) => {
-        if (imagePoint) {
-          const imagePointLatLng = getImagePointLatLng(imagePoint);
-          if (imagePointLatLng) setCurrentCoordinates({ ...imagePointLatLng, zoom: zoom });
-        } else {
-          setMapView();
-        }
-      });
+      if (typeof currentYear === 'number')
+        fetchNearestImagePoint(latlng, currentYear).then((imagePoint) => {
+          if (imagePoint) {
+            const imagePointLatLng = getImagePointLatLng(imagePoint);
+            if (imagePointLatLng) setCurrentCoordinates({ ...imagePointLatLng, zoom: zoom });
+          } else {
+            setMapView();
+          }
+        });
       setSearchString('');
     }
   };
 
-  const handleVegSystemReferanseClick = async (wkt) => {
+  const handleVegSystemReferanseClick = async (wkt: string) => {
     const latlng = getCoordinatesFromWkt(wkt);
     const zoom = 16;
     handleSelectedOption(latlng, zoom);
   };
 
-  const getZoomByTypeOfPlace = (stedsnavn) => {
+  const getZoomByTypeOfPlace = (stedsnavn: string) => {
     let zoom;
     switch (stedsnavn) {
       case 'Adressenavn (veg/gate)':
@@ -203,8 +257,8 @@ const Search = ({ showMessage, setMapView }) => {
     return zoom;
   };
 
-  const onChange = async (event) => {
-    if (event) {
+  const onChange = async (event: any) => {
+    if (event && event.target) {
       const search = event.target.value;
       const previousSearch = searchString;
       setSearchString(search);
@@ -216,7 +270,10 @@ const Search = ({ showMessage, setMapView }) => {
 
         const validVegsystemReferanse = matchAndPadVegsystemreferanse(trimmedSearch);
         if (validVegsystemReferanse) {
-          if (!vegSystemReferanser.includes(validVegsystemReferanse)) {
+          const vegreferanser = vegSystemReferanser.map(
+            (referaneData) => referaneData.vegsystemreferanse.kortform
+          );
+          if (!vegreferanser.includes(validVegsystemReferanse)) {
             await delayedVegQuery(validVegsystemReferanse);
           }
         } else {
@@ -230,7 +287,7 @@ const Search = ({ showMessage, setMapView }) => {
     }
   };
 
-  const onKeyUp = (event) => {
+  const onKeyUp = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       if (vegSystemReferanser.length) {
         const referance = vegSystemReferanser[selectedIndex];
@@ -240,7 +297,8 @@ const Search = ({ showMessage, setMapView }) => {
         const stedsnavn = stedsnavnOptions[selectedIndex];
         if (stedsnavn) {
           const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
-          handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+          const latlng = { lat: parseFloat(stedsnavn.nord), lng: parseFloat(stedsnavn.aust) };
+          handleSelectedOption(latlng, zoom);
         }
       }
     }
@@ -278,7 +336,7 @@ const Search = ({ showMessage, setMapView }) => {
           onFocus={onFocus}
         />
         {openMenu && (
-          <div className={classes.menu} tabIndex="1">
+          <div className={classes.menu} tabIndex={1}>
             {vegSystemReferanser.length > 0 && (
               <>
                 <ListSubheader style={{ paddingTop: '0.5rem' }}>
@@ -312,7 +370,11 @@ const Search = ({ showMessage, setMapView }) => {
                     style={{ paddingLeft: '1.875rem' }}
                     onClick={() => {
                       const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
-                      handleSelectedOption({ lat: stedsnavn.nord, lng: stedsnavn.aust }, zoom);
+                      const latlng = {
+                        lat: parseFloat(stedsnavn.nord),
+                        lng: parseFloat(stedsnavn.aust),
+                      };
+                      handleSelectedOption(latlng, zoom);
                     }}
                   >
                     <ListItemText
