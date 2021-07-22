@@ -22,6 +22,7 @@ import { currentYearState } from 'recoil/atoms';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { ILatlng } from 'types';
+import { IStedsnavn, IVegsystemData } from './types';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -95,54 +96,6 @@ const useStyles = makeStyles((theme) => ({
 interface ISearchProps {
   showMessage: (message: string) => void;
   setMapView: () => void;
-}
-
-interface IStedsnavn {
-  ssrId: string;
-  navnetype: string;
-  kommunenavn: string;
-  fylkesnavn: string;
-  stedsnavn: string;
-  aust: string;
-  nord: string;
-  skrivemaatestatus: string;
-  spraak: string;
-  skrivemaatenavn: string;
-  epsgKode: string;
-}
-
-interface IVegsystemData {
-  vegsystemreferanse: {
-    vegsystem: {
-      id: number;
-      versjon: number;
-      vegkategori: string;
-      fase: string;
-      nummer: number;
-    };
-    strekning: {
-      id: number;
-      versjon: number;
-      strekning: number;
-      delstrekning: number;
-      arm: false;
-      adskilte_løp: string;
-      trafikantgruppe: string;
-      meter: number;
-      retning: string;
-    };
-    kortform: string;
-  };
-  veglenkesekvens: {
-    veglenkesekvensid: number;
-    relativPosisjon: number;
-    kortform: string;
-  };
-  geometri: {
-    wkt: string;
-    srid: number;
-  };
-  kommune: number;
 }
 
 const Search = ({ showMessage, setMapView }: ISearchProps) => {
@@ -257,7 +210,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     return zoom;
   };
 
-  const onChange = async (event: any) => {
+  const handleSearch = async (event: React.ChangeEvent<{ value: string }>) => {
     if (event && event.target) {
       const search = event.target.value;
       const previousSearch = searchString;
@@ -287,7 +240,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     }
   };
 
-  const onKeyUp = (event: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyboardEvents = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === 'Enter') {
       if (vegSystemReferanser.length) {
         const referance = vegSystemReferanser[selectedIndex];
@@ -310,7 +263,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     }
   };
 
-  const onFocus = () => {
+  const handleInputFieldFocus = () => {
     if (searchString.length && (vegSystemReferanser.length || stedsnavnOptions.length)) {
       setOpenMenu(true);
       setSelectedIndex(0);
@@ -330,10 +283,10 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
             input: classes.inputInput,
           }}
           inputProps={{ 'aria-label': 'search' }}
-          onChange={onChange}
+          onChange={handleSearch}
           value={searchString}
-          onKeyUp={onKeyUp}
-          onFocus={onFocus}
+          onKeyUp={handleKeyboardEvents}
+          onFocus={handleInputFieldFocus}
         />
         {openMenu && (
           <div className={classes.menu} tabIndex={1}>
