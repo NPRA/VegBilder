@@ -159,6 +159,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       const filteredImagePoints = getFilteredImagePoints(loadedImagePoints, currentImagePoint);
       setFilteredImagePoints(filteredImagePoints);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedImagePoints]);
 
   const onClose = () => {

@@ -271,6 +271,7 @@ const ImageViewer = ({
         resetCommand();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     command,
     resetCommand,

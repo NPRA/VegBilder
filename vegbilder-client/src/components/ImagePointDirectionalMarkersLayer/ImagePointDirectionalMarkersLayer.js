@@ -108,6 +108,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
     ) {
       fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createBboxForVisibleMapArea]);
 
   // Apply command if present
