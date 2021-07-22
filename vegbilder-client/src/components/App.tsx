@@ -23,7 +23,6 @@ import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { IImagePoint } from 'types';
-import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({

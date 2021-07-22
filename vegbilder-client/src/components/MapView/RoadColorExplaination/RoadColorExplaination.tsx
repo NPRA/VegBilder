@@ -2,7 +2,7 @@ import React from 'react';
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import { useRecoilValue } from 'recoil';
 
-import { currentImagePointState, currentLatLngZoomState, currentYearState } from 'recoil/atoms';
+import { currentImagePointState, currentLatLngZoomState } from 'recoil/atoms';
 
 const useStyles = makeStyles(() => ({
   paperContainer: {
