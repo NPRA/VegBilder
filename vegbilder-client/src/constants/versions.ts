@@ -1,5 +1,5 @@
 const versionLog = {
-  'v1.3.5': ['Pakkeoppdateringer, inkludert en stor endring i kartet.'],
+  'v1.3.5': ['Pakkeoppdateringer, inkludert en stor endring i kartet og diverse kodeforbedringer'],
   'v1.3.2': [
     'Uthev fokuserte elementer litt i menyene',
     'Pass på at basislinjen alltid holder seg på veien når bildet/skjermen skaleres',
