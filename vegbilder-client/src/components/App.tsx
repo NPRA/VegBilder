@@ -20,6 +20,10 @@ import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defau
 import PageInformation from './PageInformation/PageInformation';
 import { useIsMobile } from 'hooks/useIsMobile';
 import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
+import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
+import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
+import { IImagePoint } from 'types';
+import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
   gridRoot: {
@@ -84,6 +88,8 @@ const App = () => {
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
 
+  const throwError = useAsyncError();
+
   const showSnackbarMessage = (message: string) => {
     setSnackbarMessage(message);
     setSnackbarVisible(true);
@@ -91,13 +97,18 @@ const App = () => {
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten av angitte koordinater'
+    'Fant ingen bilder i nærheten'
   );
 
   const fetchNearestImagePointToYearAndCoordinatesByImageId = useFetchNearestImagePoint(
     showSnackbarMessage,
     'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.',
     'findByImageId'
+  );
+
+  const fetchNearestImagePointToYearAndCoordinates = useFetchNearestImagePoint(
+    showSnackbarMessage,
+    'Fant ingen bilder i nærheten'
   );
 
   const isDefaultCoordinates = (lat: string | null, lng: string | null) => {
@@ -108,16 +119,54 @@ const App = () => {
     );
   };
 
+  const openAppByVegsystemreferanse = async (
+    vegsystemreferanse: string | undefined,
+    year: string | null
+  ) => {
+    if (vegsystemreferanse) {
+      const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
+      if (vegResponse) {
+        if (vegResponse.status !== 200) {
+          throwError(vegResponse);
+          return;
+        }
+        const vegsystemData = vegResponse.data;
+        const wkt = vegsystemData.geometri.wkt;
+        const latlng = getCoordinatesFromWkt(wkt);
+
+        if (latlng) {
+          if (year) {
+            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year)).then(
+              (imagePoint: IImagePoint | undefined) => {
+                if (!imagePoint) {
+                  setCurrentCoordinates({ ...latlng, zoom: 15 });
+                }
+              }
+            );
+          } else {
+            fetchNearestLatestImagePoint(latlng);
+          }
+        }
+      }
+    }
+  };
+
   useEffect(() => {
     const imageIdQuery = searchParams.get('imageId');
     const latQuery = searchParams.get('lat');
     const lngQuery = searchParams.get('lng');
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
+    const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
+
+    if (vegsystemreferanseQuery) {
+      openAppByVegsystemreferanse(vegsystemreferanseQuery, yearQuery);
+    }
 
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
-      setCurrentCoordinates({ ...currentCoordinates, zoom: 15 });
+      const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
+      setCurrentCoordinates({ ...latlng, zoom: 15 });
       if (yearQuery === 'Nyeste' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {

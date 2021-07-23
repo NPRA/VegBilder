@@ -82,6 +82,17 @@ const isBboxWithinContainingBbox = (bbox: IBbox, containingBbox: IBbox) => {
   );
 };
 
+const getCoordinatesFromWkt = (wkt: string) => {
+  const split = wkt?.split(/[()]/);
+  const coordinateString = split[1];
+  if (!coordinateString) return null;
+  const coordinates = coordinateString.split(' ');
+  return {
+    lat: parseFloat(coordinates[0]),
+    lng: parseFloat(coordinates[1]),
+  };
+};
+
 export {
   getDistanceInMetersBetween,
   createSquareBboxAroundPoint,
@@ -90,4 +101,5 @@ export {
   isBboxWithinContainingBbox,
   getBearingBetween,
   getDistanceFromLatLonInKm,
+  getCoordinatesFromWkt,
 };

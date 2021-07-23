@@ -89,10 +89,9 @@ export const latLngZoomQueryParameterState = selector({
   get: ({ get }) => {
     return get(currentLatLngZoomState);
   },
-  set: ({ get, set }, newCoordinates: (ILatlng & { zoom?: number }) | DefaultValue) => {
+  set: ({ get, set }, newCoordinates: (ILatlng & { zoom: number }) | DefaultValue) => {
     if (!(newCoordinates instanceof DefaultValue)) {
       const newSearchParams = new URLSearchParams(window.location.search);
-
       newSearchParams.set('lat', newCoordinates.lat.toString());
       newSearchParams.set('lng', newCoordinates.lng.toString());
       if (newCoordinates.zoom) newSearchParams.set('zoom', newCoordinates.zoom.toString());

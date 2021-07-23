@@ -130,7 +130,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
 
   const availableYears = useRecoilValue(availableYearsQuery);
 
-  const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
@@ -142,7 +142,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
 
   const handleImageClick = (imagePoint: IImagePoint) => {
     const latlng = getImagePointLatLng(imagePoint);
-    if (latlng) setCurrentCoordinates(latlng);
+    if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
     const yearOfClickedImage = imagePoint.properties.AAR;
     if (yearOfClickedImage !== currentYear) {
       setCurrentYear(yearOfClickedImage);
@@ -160,6 +160,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       const filteredImagePoints = getFilteredImagePoints(loadedImagePoints, currentImagePoint);
       setFilteredImagePoints(filteredImagePoints);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedImagePoints]);
 
   const onClose = () => {

@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { loadedImagePointsState } from 'recoil/atoms';
 
+import { loadedImagePointsState } from 'recoil/atoms';
 import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';
@@ -18,8 +18,8 @@ const useFetchNearestLatestImagePoint = (
   );
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
+    let foundImage = false;
     if (!loadedImagePoints || currentYear === 'Nyeste') {
-      let foundImage = false;
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
         await fetchImagePointsByLatLongAndYear(latlng, year).then((imagePoint) => {

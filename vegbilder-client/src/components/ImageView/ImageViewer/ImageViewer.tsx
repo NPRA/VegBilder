@@ -66,7 +66,7 @@ const ImageViewer = ({
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const { command, resetCommand } = useCommand();
-  const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
@@ -134,7 +134,7 @@ const ImageViewer = ({
       );
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
-        setCurrentCoordinates(latlngNearestImagePointInOppositeLane);
+        setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 15 });
       }
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
@@ -247,7 +247,7 @@ const ImageViewer = ({
           if (nextImagePoint) {
             const latlng = getImagePointLatLng(nextImagePoint);
             setCurrentImagePoint(nextImagePoint);
-            if (latlng) setCurrentCoordinates(latlng);
+            if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
             showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
           }
@@ -256,7 +256,7 @@ const ImageViewer = ({
           if (previousImagePoint) {
             const latlng = getImagePointLatLng(previousImagePoint);
             setCurrentImagePoint(previousImagePoint);
-            if (latlng) setCurrentCoordinates(latlng);
+            if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
             showMessage('Dette er første bilde i serien. Velg nytt bildepunkt i kartet.');
           }
@@ -272,6 +272,7 @@ const ImageViewer = ({
         resetCommand();
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     command,
     resetCommand,
@@ -320,7 +321,7 @@ const ImageViewer = ({
   const playNextImage = debounce((nextImagePoint: IImagePoint) => {
     const latlng = getImagePointLatLng(nextImagePoint);
     setCurrentImagePoint(nextImagePoint);
-    if (latlng) setCurrentCoordinates(latlng);
+    if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
   }, timeBetweenImages);
 
   return (

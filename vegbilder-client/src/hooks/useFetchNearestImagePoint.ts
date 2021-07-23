@@ -53,11 +53,12 @@ const useFetchNearestImagePoint = (
           if (nearestImagePoint) {
             handleFoundNearestImagePoint(nearestImagePoint);
             return nearestImagePoint;
+          } else {
+            showMessage(errorMessage);
+            setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
           }
         } else {
           showMessage(errorMessage);
-          setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
-          return null;
         }
       });
     } else {
