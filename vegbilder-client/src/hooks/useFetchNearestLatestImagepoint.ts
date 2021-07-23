@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
-import { loadedImagePointsState } from 'recoil/atoms';
 
+import { loadedImagePointsState } from 'recoil/atoms';
 import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';

@@ -246,10 +246,8 @@ const ImageInfo = ({
       );
       let trimmedVegsystemreferanse = res[0].vegsystemreferanse.kortform.replace(/\s/g, '');
       if (vegsytemreferanseWithSameVegkategori) {
-        trimmedVegsystemreferanse = vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform.replace(
-          /\s/g,
-          ''
-        );
+        trimmedVegsystemreferanse =
+          vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform.replace(/\s/g, '');
       }
       setVegsystemReferanse(
         vegsytemreferanseWithSameVegkategori.vegsystemreferanse.kortform ??

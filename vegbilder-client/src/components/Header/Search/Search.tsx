@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState, KeyboardEvent } from 'react';
+import React, { useEffect, useState, KeyboardEvent, useMemo } from 'react';
 import InputBase from '@material-ui/core/InputBase';
 import { fade, makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -118,43 +118,45 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     'Fant ingen bilder i nærheten av stedet du søkte på.'
   );
 
-  const delayedStedsnavnQuery = useCallback(
-    debounce(async (trimmedSearch) => {
-      const response = await getStedsnavnByName(trimmedSearch);
-      if (response.status !== 200) {
-        throwError(response);
-        return;
-      }
-      const stedsnavn = response.data;
-      if (stedsnavn && stedsnavn.totaltAntallTreff !== '0') {
-        const newOptions = stedsnavn.stedsnavn[0]
-          ? [...stedsnavn.stedsnavn]
-          : [stedsnavn.stedsnavn];
-        setStedsnavnOptions(newOptions);
-      } else {
-        setStedsnavnOptions([]);
-      }
-    }, 300),
-    []
-  );
-
-  const delayedVegQuery = useCallback(
-    debounce(async (vegsystemreferanse) => {
-      const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
-      if (vegResponse) {
-        if (vegResponse.status !== 200) {
-          throwError(vegResponse);
+  const delayedStedsnavnQuery = useMemo(
+    () =>
+      debounce(async (trimmedSearch) => {
+        const response = await getStedsnavnByName(trimmedSearch);
+        if (response.status !== 200) {
+          throwError(response);
           return;
         }
-        const vegsystemData = vegResponse.data;
-        const newReferanceState = [vegsystemData, ...vegSystemReferanser];
-        setVegSystemReferanser(newReferanceState);
-      } else {
-        showMessage('Ugyldig ERF-veg');
-        setVegSystemReferanser([]);
-      }
-    }, 300),
-    []
+        const stedsnavn = response.data;
+        if (stedsnavn && stedsnavn.totaltAntallTreff !== '0') {
+          const newOptions = stedsnavn.stedsnavn[0]
+            ? [...stedsnavn.stedsnavn]
+            : [stedsnavn.stedsnavn];
+          setStedsnavnOptions(newOptions);
+        } else {
+          setStedsnavnOptions([]);
+        }
+      }, 300),
+    [throwError]
+  );
+
+  const delayedVegQuery = useMemo(
+    () =>
+      debounce(async (vegsystemreferanse) => {
+        const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
+        if (vegResponse) {
+          if (vegResponse.status !== 200) {
+            throwError(vegResponse);
+            return;
+          }
+          const vegsystemData = vegResponse.data;
+          const newReferanceState = [vegsystemData, ...vegSystemReferanser];
+          setVegSystemReferanser(newReferanceState);
+        } else {
+          showMessage('Ugyldig ERF-veg');
+          setVegSystemReferanser([]);
+        }
+      }, 300),
+    [showMessage, throwError, vegSystemReferanser]
   );
 
   useEffect(() => {
@@ -165,7 +167,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     return () => {
       setResetImagePoint(false);
     };
-  }, [resetImagePoint, setCurrentImagePoint]);
+  }, [resetImagePoint, setCurrentImagePoint, setLoadedImagePoints]);
 
   const handleSelectedOption = (latlng: ILatlng | null, zoom: number) => {
     /* Select nearest image point close to coordinates of the place. If no image is found,

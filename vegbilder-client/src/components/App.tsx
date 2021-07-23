@@ -193,7 +193,6 @@ const App = () => {
         setCurrentView(DEFAULT_VIEW);
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSnackbarClose = (reason: any) => {
