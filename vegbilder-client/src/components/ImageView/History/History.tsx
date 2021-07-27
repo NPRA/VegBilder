@@ -16,7 +16,7 @@ import {
   getImageUrl,
   getRoadReference,
 } from 'utilities/imagePointUtilities';
-import { IBbox, IImagePoint } from 'types';
+import { IImagePoint } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
