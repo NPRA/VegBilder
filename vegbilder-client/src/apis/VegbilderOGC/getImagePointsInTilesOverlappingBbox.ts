@@ -1,13 +1,14 @@
 import { chain } from 'lodash';
 import getImagePointsInBbox from './getImagePointsInBbox';
 import { roundDownToNearest, roundUpToNearest } from 'utilities/mathUtilities';
+import { IBbox } from 'types';
 
 const settings = {
   bboxSizeInDegrees: 0.01, // ~1100 m
   bboxSizeDecimals: 2, // Make sure this equals the number of decimals in bboxSizeInDegrees
 };
 
-const getImagePointsInTilesOverlappingBbox = async (bbox, typename) => {
+const getImagePointsInTilesOverlappingBbox = async (bbox: IBbox, typename: string) => {
   const { south, west, north, east } = bbox;
   const { bboxSizeInDegrees, bboxSizeDecimals } = settings;
 
@@ -23,10 +24,10 @@ const getImagePointsInTilesOverlappingBbox = async (bbox, typename) => {
   for (let i = expandedBbox.west; i < east; i += bboxSizeInDegrees) {
     for (let j = expandedBbox.south; j < north; j += bboxSizeInDegrees) {
       const bbox = {
-        south: j.toFixed(bboxSizeDecimals),
-        west: i.toFixed(bboxSizeDecimals),
-        north: (j + bboxSizeInDegrees).toFixed(bboxSizeDecimals),
-        east: (i + bboxSizeInDegrees).toFixed(bboxSizeDecimals),
+        south: Number(j.toFixed(bboxSizeDecimals)),
+        west: Number(i.toFixed(bboxSizeDecimals)),
+        north: Number((j + bboxSizeInDegrees).toFixed(bboxSizeDecimals)),
+        east: Number((i + bboxSizeInDegrees).toFixed(bboxSizeDecimals)),
       };
       fetchedBboxes.push(bbox);
     }

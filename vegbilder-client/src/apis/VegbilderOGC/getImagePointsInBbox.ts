@@ -1,6 +1,7 @@
+import { IBbox } from 'types';
 import vegbilderOGC from './vegbilderOGC';
 
-const getImagePointsInBbox = async (bbox, typename) => {
+const getImagePointsInBbox = async (bbox: IBbox, typename: string) => {
   const srsname = 'urn:ogc:def:crs:EPSG::4326';
 
   const params = {

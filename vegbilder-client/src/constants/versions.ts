@@ -1,5 +1,5 @@
 const versionLog = {
-  'v1.3.5': ['Pakkeoppdateringer, inkludert en stor endring i kartet.'],
+  'v1.3.5': ['Pakkeoppdateringer, inkludert en stor endring i kartet og diverse kodeforbedringer'],
   'v1.3.4': ['Bedre skalering av headeren,'],
   'v1.3.3': ['Mulighet for filtrering på kameratype'],
   'v1.3.2': [
