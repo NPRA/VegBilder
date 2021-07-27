@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-const getBaseLineData = (baseLineInfo) => {
+const getBaseLineData = (baseLineInfo: string) => {
   let split = baseLineInfo.split(';');
   if (split.length !== 5) {
     return null;
@@ -33,8 +33,21 @@ const getBaseLineData = (baseLineInfo) => {
   };
 };
 
-const MeterLineCanvas = ({ baseLineInfo, ...rest }) => {
-  const canvasRef = useRef(null);
+const drawMeterTick = (x: number, y: number, context: CanvasRenderingContext2D) => {
+  context.moveTo(x, y - 20);
+  context.lineTo(x, y + 20);
+  context.stroke();
+};
+
+interface IMeterLineCanvasProps {
+  baseLineInfo: string;
+  width: number;
+  height: number;
+  className: string;
+}
+
+const MeterLineCanvas = ({ baseLineInfo, ...rest }: IMeterLineCanvasProps) => {
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   // Draw the meter line on canvas
   useEffect(() => {
@@ -47,11 +60,12 @@ const MeterLineCanvas = ({ baseLineInfo, ...rest }) => {
         return;
       }
       const canvas = canvasRef.current;
+      if (!canvas) return;
       const context = canvas.getContext('2d');
+      if (!context) return;
       context.strokeStyle = '#FFFFFF';
       context.lineWidth = 3;
       context.beginPath();
-
       const meter = baseLineData.baseLineTickInterval;
 
       // Baseline
@@ -66,19 +80,13 @@ const MeterLineCanvas = ({ baseLineInfo, ...rest }) => {
       const firstTickX = baseLineData.tiltPoint + baseLineData.baseLineTickOffset;
       let x = firstTickX;
       while (x >= baseLineStartX) {
-        drawMeterTick(x, y);
+        drawMeterTick(x, y, context);
         x = x - meter;
       }
       x = firstTickX + meter;
       while (x <= baseLineEndX) {
-        drawMeterTick(x, y);
+        drawMeterTick(x, y, context);
         x = x + meter;
-      }
-
-      function drawMeterTick(x, y) {
-        context.moveTo(x, y - 20);
-        context.lineTo(x, y + 20);
-        context.stroke();
       }
     }
   }, [baseLineInfo]);
