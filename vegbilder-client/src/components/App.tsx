@@ -97,8 +97,14 @@ const App = () => {
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten'
+    'Fant ingen bilder i nærheten.'
   );
+
+  const fetchNearestLatestImagePointVegkart = useFetchNearestLatestImagePoint(
+    showSnackbarMessage,
+    `Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet.`
+  );
+
 
   const fetchNearestImagePointToYearAndCoordinatesByImageId = useFetchNearestImagePoint(
     showSnackbarMessage,
@@ -108,7 +114,7 @@ const App = () => {
 
   const fetchNearestImagePointToYearAndCoordinates = useFetchNearestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten'
+    'Fant ingen bilder i nærheten.'
   );
 
   const isDefaultCoordinates = (lat: string | null, lng: string | null) => {
@@ -144,7 +150,7 @@ const App = () => {
               }
             );
           } else {
-            fetchNearestLatestImagePoint(latlng);
+            fetchNearestLatestImagePoint(latlng, 'default');
           }
         }
       }
@@ -162,13 +168,14 @@ const App = () => {
     if (vegsystemreferanseQuery) {
       openAppByVegsystemreferanse(vegsystemreferanseQuery, yearQuery);
     }
-
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       setCurrentCoordinates({ ...latlng, zoom: 15 });
-      if (yearQuery === 'Nyeste' || !yearQuery) {
-        fetchNearestLatestImagePoint(currentCoordinates);
+      if (!yearQuery && view === "image") { //To handleVegkart-url
+        fetchNearestLatestImagePointVegkart(currentCoordinates, "fromVegkart");
+      } else if (yearQuery === 'Nyeste' || !yearQuery) {
+        fetchNearestLatestImagePoint(currentCoordinates, 'default');
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
       }
