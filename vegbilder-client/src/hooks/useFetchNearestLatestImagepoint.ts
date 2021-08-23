@@ -1,30 +1,32 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { loadedImagePointsState } from 'recoil/atoms';
-import { availableYearsQuery, yearQueryParameterState, viewQueryParamterState } from 'recoil/selectors';
+import { availableYearsQuery, yearQueryParameterState, viewQueryParamterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';
 
-type action = 'default' | 'fromVegkart';
+type action = 'default' | 'narrowSearch';
 
 const useFetchNearestLatestImagePoint = (
   showMessage: (message: string) => void,
-  notFoundMessage: string
+  notFoundMessage: string,
+  action: action = 'default'
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const availableYears = useRecoilValue(availableYearsQuery);
 
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setView] = useRecoilState(viewQueryParamterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const fetchImagePointsByLatLongAndYear = useFetchNearestImagePoint(
     showMessage,
     'Fant ingen bilder ved dette området. Prøv å klikke et annet sted.'
   );
 
-  const fetchImagePointsByLatLongAndYearVegkart = useFetchNearestImagePoint(
+  const fetchImagePointsByLatLongAndYearNarrowSearch = useFetchNearestImagePoint(
     showMessage,
     'Fant ingen bilder på punktet du valgte. Velg et annet punkt.',
-    'fromVegkart'
+    'narrowSearch'
   )
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng, action: action) {
@@ -32,8 +34,8 @@ const useFetchNearestLatestImagePoint = (
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
-        if (action === "fromVegkart") {
-          await fetchImagePointsByLatLongAndYearVegkart(latlng, year).then((imagePoint) => {
+        if (action === "narrowSearch") {
+          await fetchImagePointsByLatLongAndYearNarrowSearch(latlng, year).then((imagePoint) => {
             if (imagePoint) {
               const year = imagePoint.properties.AAR;
               setCurrentYear(year);
@@ -57,8 +59,9 @@ const useFetchNearestLatestImagePoint = (
         } if (foundImage) break;
       }
       if (!foundImage) {
-        if (action === "fromVegkart") {
+        if (action === "narrowSearch") {
           setView("map");
+          setCurrentCoordinates({ ...currentCoordinates, zoom: 14 });
         }
         showMessage(notFoundMessage);
       }

@@ -100,7 +100,7 @@ const App = () => {
     'Fant ingen bilder i nærheten.'
   );
 
-  const fetchNearestLatestImagePointVegkart = useFetchNearestLatestImagePoint(
+  const fetchNearestLatestImagePointNarrowSearch = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
     `Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet.`
   );
@@ -172,8 +172,8 @@ const App = () => {
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       setCurrentCoordinates({ ...latlng, zoom: 15 });
-      if (!yearQuery && view === "image") { //To handleVegkart-url
-        fetchNearestLatestImagePointVegkart(currentCoordinates, "fromVegkart");
+      if (view === "image") {
+        fetchNearestLatestImagePointNarrowSearch(currentCoordinates, "narrowSearch");
       } else if (yearQuery === 'Nyeste' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates, 'default');
       } else {

@@ -14,7 +14,7 @@ import { imagePointQueryParameterState, latLngZoomQueryParameterState, viewQuery
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 import { loadedImagePointsState } from 'recoil/atoms';
 
-type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'fromVegkart';
+type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'narrowSearch';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
@@ -25,7 +25,7 @@ const useFetchNearestImagePoint = (
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
 
-const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
+  const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
   async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
@@ -38,10 +38,10 @@ const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
         if (imagePoints && imagePoints.length > 0) {
           let nearestImagePoint;
           if (action === 'findByImageId') {
-            nearestImagePoint = findImagePointByQueryId(imagePoints); 
+            nearestImagePoint = findImagePointByQueryId(imagePoints);
           } else if (currentImagePoint && action === 'findImageNearbyCurrentImagePoint') {
             nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
-          } else if (action === 'fromVegkart') {
+          } else if (action === 'narrowSearch') {
             nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 10);
           } else {
             nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 1000);
@@ -61,7 +61,7 @@ const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
       if (loadedImagePoints) {
         const nearestImagePoint = selectNearestImagePointToCoordinates(
           loadedImagePoints.imagePoints,
-          latlng, 
+          latlng,
           1000
         );
         if (nearestImagePoint) {
