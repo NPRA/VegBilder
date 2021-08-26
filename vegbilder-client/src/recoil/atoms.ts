@@ -1,6 +1,6 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
 import { atom } from 'recoil';
-import { IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
+import { IImagePoint, ILatlng, ILoadedImagePoints, IStatisticsFeature, viewTypes } from 'types';
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -48,3 +48,8 @@ export const filteredImagePointsState = atom<IImagePoint[] | null>({
   key: 'filteredImagePoints',
   default: null,
 });
+
+export const availableStatistics = atom<IStatisticsFeature[] | null>({
+  key: 'availableStatistics',
+  default: [],
+})

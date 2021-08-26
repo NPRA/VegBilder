@@ -1,7 +1,8 @@
+import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableStatisticsFromOGC';
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { IBbox, IImagePoint, ILatlng, IStatisticsFeature, queryParamterNames, viewTypes } from 'types';
 import {
   getDateString,
   getFilteredImagePoints,
@@ -15,6 +16,7 @@ import {
   filteredImagePointsState,
   loadedImagePointsState,
   playVideoState,
+  availableStatistics
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -43,6 +45,20 @@ export const availableYearsQuery = selector({
     }
     throw new Error('Karttjenesten er for øyeblikket utilgjengelig. Prøv igjen senere.');
   },
+});
+
+export const availableStatisticsQuery = selector({
+  key: 'availableStatistics',
+  get: async () => {
+    const response = await getAvailableStatisticsFromOGC();
+    if (response.status === 200) {
+      if (response.data.features) {
+        const features: IStatisticsFeature[] = response.data.features;
+        return features;
+      }
+    }
+    throw new Error('Statistikken er ikke tilgjengelig for øyeblikket');
+  }
 });
 
 export const yearQueryParameterState = selector({

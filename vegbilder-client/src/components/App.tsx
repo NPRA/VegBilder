@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, makeStyles, Snackbar, ThemeProvider, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
@@ -14,6 +14,7 @@ import {
   latLngZoomQueryParameterState,
   viewQueryParamterState,
   yearQueryParameterState,
+  availableStatisticsQuery
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
@@ -21,8 +22,9 @@ import PageInformation from './PageInformation/PageInformation';
 import { useIsMobile } from 'hooks/useIsMobile';
 import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
+import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableStatisticsFromOGC';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
-import { IImagePoint } from 'types';
+import { IImagePoint, IStatisticsFeature } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -69,10 +71,10 @@ const views = {
   mapView: 'map',
   imageView: 'image',
 };
-
 const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {...props} />;
 
 const App = () => {
+  const availableStatistics: IStatisticsFeature[] = useRecoilValue(availableStatisticsQuery);
   const classes = useStyles();
   const [view, setView] = useRecoilState(viewQueryParamterState);
   const { setCommand } = useCommand();

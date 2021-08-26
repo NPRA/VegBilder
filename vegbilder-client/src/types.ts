@@ -44,6 +44,21 @@ export interface IBbox {
   south: number;
 }
 
+export interface IStatisticsFeature {
+  type: string,
+  id: string,
+  geometry: {
+    type: string,
+    coordinates: [number, number]
+  },
+  properties: {
+    AAR: string,
+    ANTALL: number,
+    OPPDATERT: string,
+    VEGKATEGORI: string
+  };
+}
+
 export interface ILoadedImagePoints {
   imagePoints: IImagePoint[];
   bbox: IBbox;
