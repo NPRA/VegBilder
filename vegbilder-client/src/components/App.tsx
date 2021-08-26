@@ -74,7 +74,6 @@ const views = {
 const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {...props} />;
 
 const App = () => {
-  const availableStatistics: IStatisticsFeature[] = useRecoilValue(availableStatisticsQuery);
   const classes = useStyles();
   const [view, setView] = useRecoilState(viewQueryParamterState);
   const { setCommand } = useCommand();
@@ -258,5 +257,6 @@ const App = () => {
     </ThemeProvider>
   );
 };
+
 
 export default App;
