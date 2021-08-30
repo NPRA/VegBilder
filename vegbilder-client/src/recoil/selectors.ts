@@ -2,7 +2,7 @@ import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableSta
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IBbox, IImagePoint, ILatlng, IStatisticsFeature, queryParamterNames, viewTypes } from 'types';
+import { IBbox, IImagePoint, ILatlng, IStatisticsFeature, IStatisticsFeatureProperties, queryParamterNames, viewTypes } from 'types';
 import {
   getDateString,
   getFilteredImagePoints,
@@ -53,8 +53,8 @@ export const availableStatisticsQuery = selector({
     const response = await getAvailableStatisticsFromOGC();
     if (response.status === 200) {
       if (response.data.features) {
-        const features: IStatisticsFeature[] = response.data.features;
-        return features;
+        const statistics: IStatisticsFeatureProperties[] = response.data.features.map((feature: IStatisticsFeature) => feature.properties);
+        return statistics;
       }
     }
     throw new Error('Statistikken er ikke tilgjengelig for øyeblikket');

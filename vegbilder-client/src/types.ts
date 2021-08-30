@@ -59,6 +59,25 @@ export interface IStatisticsFeature {
   };
 }
 
+export interface IStatisticsFeatureProperties {
+  AAR: string,
+  ANTALL: number,
+  OPPDATERT: string,
+  VEGKATEGORI: string
+};
+
+export interface IRoadStatistics {
+  E: number,
+  F: number,
+  R: number
+}
+
+export interface IStatisticsRow {
+  year: string,
+  roadStatistics: IRoadStatistics
+}
+
+
 export interface ILoadedImagePoints {
   imagePoints: IImagePoint[];
   bbox: IBbox;

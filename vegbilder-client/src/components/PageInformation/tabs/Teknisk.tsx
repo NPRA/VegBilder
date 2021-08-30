@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
+import { StatisticsInfoBox } from '../../StatisticsInfoBox/StatisticsInfoBox';
 
 import { versionLog } from 'constants/versions';
 import { tekniskText } from 'constants/text';
@@ -52,6 +53,8 @@ const Teknisk = () => {
       </Typography>
 
       <div className={classes.scrollContainer}>
+        <Typography variant="subtitle1"> Bildestatistikk </Typography>
+        <StatisticsInfoBox />
         <Typography variant="subtitle1"> {tekniskText.subheader1} </Typography>
         <ul className={classes.bullets}>
           <li>

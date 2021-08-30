@@ -25,7 +25,6 @@ const MapView = ({ setView, showMessage }: IMapViewProps) => {
 
   return (
     <Grid item className={classes.content}>
-      <StatisticsInfoBox></StatisticsInfoBox>
       <Map showMessage={showMessage} />
       <ImagePreviewAndInformation openImageView={setView} />
       <RoadColorExplaination />
