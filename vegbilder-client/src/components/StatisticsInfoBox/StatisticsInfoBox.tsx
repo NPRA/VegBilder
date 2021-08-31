@@ -86,8 +86,8 @@ export const StatisticsInfoBox = () => {
                                     <Typography variant="body1">{row.year}</Typography>
                                 </TableCell>
                                 <TableCell> {row.E != null ? row.E : "--"}</TableCell>
-                                <TableCell> {row.F != null ? row.F : "--"}</TableCell>
                                 <TableCell> {row.R != null ? row.R : "--"}</TableCell>
+                                <TableCell> {row.F != null ? row.F : "--"}</TableCell>
                             </TableRow>
                         )
                     }
