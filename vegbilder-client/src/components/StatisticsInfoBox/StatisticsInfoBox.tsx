@@ -8,6 +8,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import { groupBy } from "../../utilities/customDataStructureUtilities";
+
 
 import { IStatisticsFeatureProperties, IStatisticsRow } from 'types';
 import {
@@ -31,11 +33,11 @@ const useStyles = makeStyles(() => ({
 const getRoadCategoryName = (category: string) => {
     switch (category) {
         case "E":
-            return "Europaveg";
+            return "Europaveger";
         case "F":
-            return "Fylkesveg";
+            return "Fylkesveger";
         case "R":
-            return "Riksveg";
+            return "Riksveger";
     }
 }
 
@@ -46,24 +48,19 @@ const getVegkategorierFromStatistics = (statistics: IStatisticsFeatureProperties
     return distinctRoadCategories;
 }
 
-const getYearsFromStatistics = (statistics: IStatisticsFeatureProperties[]) => {
-    const years = statistics.map((propertiesObject) => propertiesObject.AAR);
-    const distinctYears: string[] = [... new Set(years)];
-    return distinctYears;
-}
 
 const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]) => {
-    const tableRow = Object.create({});
-    statistics.forEach((statistic) => {
-        const currentCategory = statistic.VEGKATEGORI;
-        if (!(tableRow.hasOwnProperty(statistic.AAR))) {
-            tableRow[`${statistic.AAR}`] = {};
-        }
-        if (!(tableRow[`${statistic.AAR}`].hasOwnProperty(`${currentCategory}`))) {
-            tableRow[`${statistic.AAR}`][`${currentCategory}`] = statistic.ANTALL;
-        }
+    const statisticsGroupedByYear = groupBy(statistics, i => i.AAR);
+    const tableRows: IStatisticsRow[] = [];
+    Object.keys(statisticsGroupedByYear).map((year) => {
+        const row = Object.create({});
+        row[`year`] = year;
+        statisticsGroupedByYear[year].map((category) => {
+            row[`${category.VEGKATEGORI}`] = category.ANTALL;
+        });
+        tableRows.push(row);
     })
-    return tableRow as IStatisticsRow;
+    return tableRows as IStatisticsRow[];
 }
 
 export const StatisticsInfoBox = () => {
@@ -71,8 +68,6 @@ export const StatisticsInfoBox = () => {
     const availableStatistics: IStatisticsFeatureProperties[] = useRecoilValue(availableStatisticsQuery);
     const roadCategories = getVegkategorierFromStatistics(availableStatistics);
     const tableRows = createTableRowsFromStatistics(availableStatistics);
-
-    console.log(Object.entries(tableRows));
 
     return (
         <TableContainer component={Paper}>
@@ -84,18 +79,19 @@ export const StatisticsInfoBox = () => {
                     </TableRow>
                 </TableHead>
                 < TableBody >
-                    {Object.entries(tableRows).map((entry) => {
+                    {tableRows.map((row) => {
                         return (
                             <TableRow>
                                 <TableCell>
-                                    <Typography variant="body1">{entry[0]}</Typography>
+                                    <Typography variant="body1">{row.year}</Typography>
                                 </TableCell>
-                                {Object.keys(entry[1]).map((key) => (
-                                    <TableCell>{entry[1][key]}</TableCell>
-                                ))}
+                                <TableCell> {row.E != null ? row.E : "--"}</TableCell>
+                                <TableCell> {row.F != null ? row.F : "--"}</TableCell>
+                                <TableCell> {row.R != null ? row.R : "--"}</TableCell>
                             </TableRow>
                         )
-                    })}
+                    }
+                    )}
                     <TableRow>
                         <TableCell scope="row"><Button>Vis mer</Button></TableCell>
 

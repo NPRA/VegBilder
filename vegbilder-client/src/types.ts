@@ -65,18 +65,12 @@ export interface IStatisticsFeatureProperties {
   OPPDATERT: string,
   VEGKATEGORI: string
 };
-
-export interface IRoadStatistics {
+export interface IStatisticsRow {
+  year: string,
   E: number,
   F: number,
   R: number
 }
-
-export interface IStatisticsRow {
-  year: string,
-  roadStatistics: IRoadStatistics
-}
-
 
 export interface ILoadedImagePoints {
   imagePoints: IImagePoint[];
