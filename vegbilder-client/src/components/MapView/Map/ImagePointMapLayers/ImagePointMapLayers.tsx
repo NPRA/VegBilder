@@ -24,6 +24,7 @@ const ImagePointMapLayers = () => {
     } else {
       return (
         <WMSTileLayer
+          key={oversiktsKartlag}
           url={OGC_URL}
           attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
           layers={oversiktsKartlag}
