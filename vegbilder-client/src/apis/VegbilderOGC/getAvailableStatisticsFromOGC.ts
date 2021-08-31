@@ -14,9 +14,6 @@ export const getAvailableStatisticsFromOGC = async () => {
                 outputformat: 'application/json'
             }
         })
-        .then((featureCollection) => {
-            return featureCollection;
-        })
         .catch((error) => {
             return error;
         })
