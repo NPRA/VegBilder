@@ -135,7 +135,7 @@ const App = () => {
         const latlng = getCoordinatesFromWkt(wkt);
 
         if (latlng) {
-          if (year) {
+          if (year !== 'latest' && year !== null) {
             fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year)).then(
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
@@ -163,11 +163,10 @@ const App = () => {
       openAppByVegsystemreferanse(vegsystemreferanseQuery, yearQuery);
     }
 
-    // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       setCurrentCoordinates({ ...latlng, zoom: 15 });
-      if (yearQuery === 'Nyeste' || !yearQuery) {
+      if (yearQuery === 'latest' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
