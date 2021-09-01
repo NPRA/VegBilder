@@ -165,7 +165,7 @@ const App = () => {
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
       if (validVegsystemReferanse) {
-        openAppByVegsystemreferanse(vegsystemreferanseQuery, yearQuery);
+        openAppByVegsystemreferanse(validVegsystemReferanse, yearQuery);
       } else {
         showSnackbarMessage(`Fant ingen treff på vegsystemreferanse "${vegsystemreferanseQuery}". Prøv igjen i søkefeltet.`);
       }
