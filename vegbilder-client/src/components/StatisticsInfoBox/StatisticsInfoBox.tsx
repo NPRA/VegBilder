@@ -30,44 +30,85 @@ const useStyles = makeStyles(() => ({
     },
 }));
 
-const getRoadCategoryName = (category: string) => {
-    switch (category) {
-        case "E":
-            return "Europaveger";
-        case "F":
-            return "Fylkesveger";
-        case "R":
-            return "Riksveger";
-    }
-}
 
-
-const getVegkategorierFromStatistics = (statistics: IStatisticsFeatureProperties[]): string[] => {
-    const roadCategories = statistics.map((statistic) => statistic.VEGKATEGORI);
-    const distinctRoadCategories: string[] = [...new Set(roadCategories)];
-    return distinctRoadCategories;
-}
+const vegvesenRoadCategories: string[] = ["E", "R", "F"];
 
 
 const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]) => {
     const statisticsGroupedByYear = groupBy(statistics, i => i.AAR);
-    const tableRows: IStatisticsRow[] = [];
-    Object.keys(statisticsGroupedByYear).map((year) => {
+
+    const tableRows: IStatisticsRow[] = Object.keys(statisticsGroupedByYear).map((year) => {
         const row = Object.create({});
         row[`year`] = year;
-        statisticsGroupedByYear[year].map((category) => {
-            row[`${category.VEGKATEGORI}`] = category.ANTALL;
+        statisticsGroupedByYear[year].forEach((category) => {
+            if (vegvesenRoadCategories.includes(category.VEGKATEGORI)) {
+                row[`${category.VEGKATEGORI}`] = category.ANTALL;
+            } else {
+                if (!(row.hasOwnProperty(`other`))) {
+                    row[`other`] = category.ANTALL;
+                } else {
+                    row[`other`] += category.ANTALL;
+                }
+            }
         });
-        tableRows.push(row);
+        return row;
     })
     return tableRows as IStatisticsRow[];
+}
+
+
+const sortTableRowsBasedOnYear = (tableRows: IStatisticsRow[]) => {
+    return tableRows.sort((rowA, rowB) => (rowA.year < rowB.year) ? 1 : -1);
+}
+
+//Går ut ifra at inneværende å alltid sendes med selv om antall på alle veger skulle være 0.
+const getRowForCurrentYear = (sortedTableRows: IStatisticsRow[]) => {
+    return sortedTableRows[0];
+}
+
+//Synes ikke denne funskjonen er veldig pent skrevet per nå.
+const createTotalRowExcludingCurrentYear = (sortedTableRows: IStatisticsRow[]) => {
+    const currentYear = new Date().getFullYear();
+    const previousYear = currentYear - 1;
+    const rowListWithoutCurrentYear = sortedTableRows.filter((row) => row.year !== currentYear.toString());
+    const totalE = rowListWithoutCurrentYear.reduce((prev, cur) => prev + cur.E, 0);
+    const totalR = rowListWithoutCurrentYear.reduce((prev, cur) => prev + cur.R, 0);
+    const totalF = rowListWithoutCurrentYear.reduce((prev, cur) => prev + cur.F, 0);
+
+    //Legger bare sammen dersom "other" eksisterer på gjeldende rad.
+    const onlyExistingOtherValuesReducer = (prev: number, cur: IStatisticsRow) => {
+        return cur.other !== null || cur.other !== undefined ? prev + cur.other : prev;
+    }
+
+    let categoryOtherExists = false;
+    rowListWithoutCurrentYear.forEach((row) => row?.other ? categoryOtherExists = true : null);
+
+    if (categoryOtherExists) {
+        const totalOfCategoryOther = rowListWithoutCurrentYear.reduce(onlyExistingOtherValuesReducer, 0);
+        return {
+            year: `${previousYear.toString()} og eldre`,
+            E: totalE,
+            R: totalR,
+            F: totalF,
+            other: totalOfCategoryOther
+        } as IStatisticsRow
+    } else {
+        return {
+            year: `${previousYear.toString()} og eldre`,
+            E: totalE,
+            R: totalR,
+            F: totalF
+        } as IStatisticsRow;
+    }
 }
 
 export const StatisticsInfoBox = () => {
     const classes = useStyles();
     const availableStatistics: IStatisticsFeatureProperties[] = useRecoilValue(availableStatisticsQuery);
-    const roadCategories = getVegkategorierFromStatistics(availableStatistics);
     const tableRows = createTableRowsFromStatistics(availableStatistics);
+    const sortedTableRows = sortTableRowsBasedOnYear(tableRows);
+    const rowForCurrentYear = getRowForCurrentYear(sortedTableRows);
+    const totalRow = createTotalRowExcludingCurrentYear(sortedTableRows);
 
     return (
         <TableContainer component={Paper}>
@@ -75,26 +116,33 @@ export const StatisticsInfoBox = () => {
                 <TableHead>
                     <TableRow>
                         <TableCell>År</TableCell>
-                        {roadCategories.map((category) => (<TableCell><Typography>{getRoadCategoryName(category)}</Typography></TableCell>))}
+                        <TableCell>EV</TableCell>
+                        <TableCell>RV</TableCell>
+                        <TableCell>FV</TableCell>
+                        <TableCell>Øvrige</TableCell>
                     </TableRow>
                 </TableHead>
                 < TableBody >
-                    {tableRows.map((row) => {
+                    {sortedTableRows.map((row) => {
                         return (
                             <TableRow>
                                 <TableCell>
                                     <Typography variant="body1">{row.year}</Typography>
                                 </TableCell>
-                                <TableCell> {row.E != null ? row.E : "--"}</TableCell>
-                                <TableCell> {row.R != null ? row.R : "--"}</TableCell>
-                                <TableCell> {row.F != null ? row.F : "--"}</TableCell>
+                                <TableCell> {row.E}</TableCell>
+                                <TableCell> {row.R}</TableCell>
+                                <TableCell> {row.F}</TableCell>
+                                <TableCell> {row.other ? row.other : "--"}</TableCell>
                             </TableRow>
                         )
                     }
                     )}
                     <TableRow>
-                        <TableCell scope="row"><Button>Vis mer</Button></TableCell>
-
+                        <TableCell>{totalRow.year}</TableCell>
+                        <TableCell>{totalRow.E}</TableCell>
+                        <TableCell>{totalRow.R}</TableCell>
+                        <TableCell>{totalRow.F}</TableCell>
+                        <TableCell>{totalRow?.other ? totalRow.other : "--"}</TableCell>
                     </TableRow>
                 </TableBody>
             </Table>

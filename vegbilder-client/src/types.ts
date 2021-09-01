@@ -69,7 +69,8 @@ export interface IStatisticsRow {
   year: string,
   E: number,
   F: number,
-  R: number
+  R: number,
+  other: number
 }
 
 export interface ILoadedImagePoints {
