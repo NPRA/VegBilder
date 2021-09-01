@@ -16,7 +16,6 @@ import {
   filteredImagePointsState,
   loadedImagePointsState,
   playVideoState,
-  availableStatistics
 } from './atoms';
 
 export const availableYearsQuery = selector({
