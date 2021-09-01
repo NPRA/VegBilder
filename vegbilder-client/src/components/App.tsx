@@ -14,6 +14,7 @@ import {
   latLngZoomQueryParameterState,
   viewQueryParamterState,
   yearQueryParameterState,
+  vegsystemreferanseState
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
@@ -22,6 +23,7 @@ import { useIsMobile } from 'hooks/useIsMobile';
 import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
+import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { IImagePoint } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
@@ -79,6 +81,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
+  const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const searchParams = new URLSearchParams(window.location.search);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -160,7 +163,13 @@ const App = () => {
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
 
     if (vegsystemreferanseQuery) {
-      openAppByVegsystemreferanse(vegsystemreferanseQuery, yearQuery);
+      const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
+      if (validVegsystemReferanse) {
+        openAppByVegsystemreferanse(vegsystemreferanseQuery, yearQuery);
+      } else {
+        showSnackbarMessage(`Fant ingen treff på vegsystemreferanse "${vegsystemreferanseQuery}". Prøv igjen i søkefeltet.`);
+      }
+      setCurrentVegsystemreferanseState(null);
     }
 
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
