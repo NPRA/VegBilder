@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { makeStyles, Paper, Typography, Button } from '@material-ui/core';
 import Table from '@material-ui/core/Table';
@@ -8,6 +8,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+import { DEFAULT_ROAD_CATEGORIES } from '../../constants/defaultParamters';
 import { groupBy } from "../../utilities/customDataStructureUtilities";
 
 
@@ -17,23 +18,6 @@ import {
 } from 'recoil/selectors';
 
 
-const useStyles = makeStyles(() => ({
-    paperContainer: {
-        position: 'absolute',
-        right: '2rem',
-        bottom: '4rem',
-        padding: '0.5rem 1rem',
-        minWidth: '15rem',
-        background: 'rgba(46, 53, 57, 0.80)',
-        zIndex: 1,
-        display: 'flex',
-    },
-}));
-
-
-const vegvesenRoadCategories: string[] = ["E", "R", "F"];
-
-
 const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]) => {
     const statisticsGroupedByYear = groupBy(statistics, i => i.AAR);
 
@@ -41,7 +25,7 @@ const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[
         const row = Object.create({});
         row[`year`] = year;
         statisticsGroupedByYear[year].forEach((category) => {
-            if (vegvesenRoadCategories.includes(category.VEGKATEGORI)) {
+            if (DEFAULT_ROAD_CATEGORIES.includes(category.VEGKATEGORI)) {
                 row[`${category.VEGKATEGORI}`] = category.ANTALL;
             } else {
                 if (!(row.hasOwnProperty(`other`))) {
@@ -59,11 +43,6 @@ const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[
 
 const sortTableRowsBasedOnYear = (tableRows: IStatisticsRow[]) => {
     return tableRows.sort((rowA, rowB) => (rowA.year < rowB.year) ? 1 : -1);
-}
-
-//Går ut ifra at inneværende å alltid sendes med selv om antall på alle veger skulle være 0.
-const getRowForCurrentYear = (sortedTableRows: IStatisticsRow[]) => {
-    return sortedTableRows[0];
 }
 
 //Synes ikke denne funskjonen er veldig pent skrevet per nå.
@@ -103,12 +82,21 @@ const createTotalRowExcludingCurrentYear = (sortedTableRows: IStatisticsRow[]) =
 }
 
 export const StatisticsInfoBox = () => {
-    const classes = useStyles();
     const availableStatistics: IStatisticsFeatureProperties[] = useRecoilValue(availableStatisticsQuery);
     const tableRows = createTableRowsFromStatistics(availableStatistics);
     const sortedTableRows = sortTableRowsBasedOnYear(tableRows);
-    const rowForCurrentYear = getRowForCurrentYear(sortedTableRows);
+    const rowForCurrentYear = sortedTableRows[0];
+    const sortedTableRowsWithoutCurrentYear = sortedTableRows.slice(1);
     const totalRow = createTotalRowExcludingCurrentYear(sortedTableRows);
+    const [showExtendedTable, setShowExtendedTable] = useState(false);
+
+    const handleOpenExtendedTable = () => {
+        if (showExtendedTable === true) {
+            setShowExtendedTable(false);
+        } else {
+            setShowExtendedTable(true);
+        }
+    }
 
     return (
         <TableContainer component={Paper}>
@@ -116,19 +104,24 @@ export const StatisticsInfoBox = () => {
                 <TableHead>
                     <TableRow>
                         <TableCell>År</TableCell>
-                        <TableCell>EV</TableCell>
-                        <TableCell>RV</TableCell>
-                        <TableCell>FV</TableCell>
-                        <TableCell>Øvrige</TableCell>
+                        <TableCell align="center">EV</TableCell>
+                        <TableCell align="center">RV</TableCell>
+                        <TableCell align="center">FV</TableCell>
+                        <TableCell align="center">Øvrige</TableCell>
                     </TableRow>
                 </TableHead>
                 < TableBody >
-                    {sortedTableRows.map((row) => {
+                    <TableRow>
+                        <TableCell>{rowForCurrentYear.year}</TableCell>
+                        <TableCell>{rowForCurrentYear.E}</TableCell>
+                        <TableCell>{rowForCurrentYear.R}</TableCell>
+                        <TableCell>{rowForCurrentYear.F}</TableCell>
+                        <TableCell>{rowForCurrentYear?.other}</TableCell>
+                    </TableRow>
+                    {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                         return (
                             <TableRow>
-                                <TableCell>
-                                    <Typography variant="body1">{row.year}</Typography>
-                                </TableCell>
+                                <TableCell>{row.year}</TableCell>
                                 <TableCell> {row.E}</TableCell>
                                 <TableCell> {row.R}</TableCell>
                                 <TableCell> {row.F}</TableCell>
@@ -137,13 +130,14 @@ export const StatisticsInfoBox = () => {
                         )
                     }
                     )}
-                    <TableRow>
+                    {!showExtendedTable ? <TableRow>
                         <TableCell>{totalRow.year}</TableCell>
                         <TableCell>{totalRow.E}</TableCell>
                         <TableCell>{totalRow.R}</TableCell>
                         <TableCell>{totalRow.F}</TableCell>
                         <TableCell>{totalRow?.other ? totalRow.other : "--"}</TableCell>
-                    </TableRow>
+                    </TableRow> : null}
+                    <Button onClick={handleOpenExtendedTable}>{showExtendedTable ? "Vis mindre" : "Vis mer"}</Button>
                 </TableBody>
             </Table>
         </TableContainer >);
