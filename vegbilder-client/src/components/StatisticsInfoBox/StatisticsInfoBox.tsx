@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { makeStyles, Paper, Typography, Button } from '@material-ui/core';
+import { makeStyles, withStyles, Paper, Typography, Button, IconButton } from '@material-ui/core';
+import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -16,6 +18,20 @@ import { IStatisticsFeatureProperties, IStatisticsRow } from 'types';
 import {
     availableStatisticsQuery
 } from 'recoil/selectors';
+
+const useStyles = makeStyles((theme) => ({
+    button: {
+        color: theme.palette.common.orangeDark,
+        textDecoration: 'none',
+        backgroundColor: theme.palette.common.grayMedium,
+        border: `1px solid ${theme.palette.common.orangeDark}`,
+        '&:hover': {
+            color: theme.palette.common.orangeDark,
+            borderBottom: `2px solid ${theme.palette.common.orangeDark}`,
+            backgroundColor: theme.palette.common.charcoalLighter
+        },
+    },
+}));
 
 
 const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]) => {
@@ -81,7 +97,14 @@ const createTotalRowExcludingCurrentYear = (sortedTableRows: IStatisticsRow[]) =
     }
 }
 
+const StyledTableCell = withStyles((theme) => ({
+    root: {
+        color: "white",
+    }
+}))(TableCell);
+
 export const StatisticsInfoBox = () => {
+    const classes = useStyles();
     const availableStatistics: IStatisticsFeatureProperties[] = useRecoilValue(availableStatisticsQuery);
     const tableRows = createTableRowsFromStatistics(availableStatistics);
     const sortedTableRows = sortTableRowsBasedOnYear(tableRows);
@@ -99,47 +122,50 @@ export const StatisticsInfoBox = () => {
     }
 
     return (
-        <TableContainer component={Paper}>
-            <Table aria-label="simple table">
-                <TableHead>
-                    <TableRow>
-                        <TableCell>År</TableCell>
-                        <TableCell align="center">EV</TableCell>
-                        <TableCell align="center">RV</TableCell>
-                        <TableCell align="center">FV</TableCell>
-                        <TableCell align="center">Øvrige</TableCell>
-                    </TableRow>
-                </TableHead>
-                < TableBody >
-                    <TableRow>
-                        <TableCell>{rowForCurrentYear.year}</TableCell>
-                        <TableCell>{rowForCurrentYear.E}</TableCell>
-                        <TableCell>{rowForCurrentYear.R}</TableCell>
-                        <TableCell>{rowForCurrentYear.F}</TableCell>
-                        <TableCell>{rowForCurrentYear?.other}</TableCell>
-                    </TableRow>
-                    {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
-                        return (
-                            <TableRow>
-                                <TableCell>{row.year}</TableCell>
-                                <TableCell> {row.E}</TableCell>
-                                <TableCell> {row.R}</TableCell>
-                                <TableCell> {row.F}</TableCell>
-                                <TableCell> {row.other ? row.other : "--"}</TableCell>
-                            </TableRow>
-                        )
-                    }
-                    )}
-                    {!showExtendedTable ? <TableRow>
-                        <TableCell>{totalRow.year}</TableCell>
-                        <TableCell>{totalRow.E}</TableCell>
-                        <TableCell>{totalRow.R}</TableCell>
-                        <TableCell>{totalRow.F}</TableCell>
-                        <TableCell>{totalRow?.other ? totalRow.other : "--"}</TableCell>
-                    </TableRow> : null}
-                    <Button onClick={handleOpenExtendedTable}>{showExtendedTable ? "Vis mindre" : "Vis mer"}</Button>
-                </TableBody>
-            </Table>
-        </TableContainer >);
+        <div>
+            <TableContainer>
+                <Table aria-label="simple table">
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell>År</StyledTableCell>
+                            <StyledTableCell align="right">EV</StyledTableCell>
+                            <StyledTableCell align="right">RV</StyledTableCell>
+                            <StyledTableCell align="right">FV</StyledTableCell>
+                            <StyledTableCell align="right">Øvrige</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    < TableBody >
+                        <TableRow>
+                            <StyledTableCell>{rowForCurrentYear.year}</StyledTableCell>
+                            <StyledTableCell align="right">{rowForCurrentYear.E}</StyledTableCell>
+                            <StyledTableCell align="right">{rowForCurrentYear.R}</StyledTableCell>
+                            <StyledTableCell align="right">{rowForCurrentYear.F}</StyledTableCell>
+                            <StyledTableCell align="right">{rowForCurrentYear?.other ? rowForCurrentYear.other : "--"}</StyledTableCell>
+                        </TableRow>
+                        {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
+                            return (
+                                <TableRow>
+                                    <StyledTableCell >{row.year}</StyledTableCell>
+                                    <StyledTableCell align="right"> {row.E}</StyledTableCell>
+                                    <StyledTableCell align="right"> {row.R}</StyledTableCell>
+                                    <StyledTableCell align="right"> {row.F}</StyledTableCell>
+                                    <StyledTableCell align="right"> {row.other ? row.other : "--"}</StyledTableCell>
+                                </TableRow>
+                            )
+                        }
+                        )}
+                        {!showExtendedTable ? <TableRow>
+                            <StyledTableCell>{totalRow.year}</StyledTableCell>
+                            <StyledTableCell align="right">{totalRow.E}</StyledTableCell>
+                            <StyledTableCell align="right">{totalRow.R}</StyledTableCell>
+                            <StyledTableCell align="right">{totalRow.F}</StyledTableCell>
+                            <StyledTableCell align="right">{totalRow?.other ? totalRow.other : "--"}</StyledTableCell>
+                        </TableRow> : null}
+                    </TableBody>
+                </Table>
+            </TableContainer >
+            <IconButton onClick={handleOpenExtendedTable}>{showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}</IconButton>
+            {/* <Button startIcon={showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleOpenExtendedTable} className={classes.button}></Button> */}
+        </div>);
 }
 
