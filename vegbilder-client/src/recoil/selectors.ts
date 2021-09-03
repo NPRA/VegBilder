@@ -16,6 +16,7 @@ import {
   filteredImagePointsState,
   loadedImagePointsState,
   playVideoState,
+  currentVegsystemreferanseState
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -60,6 +61,22 @@ export const availableStatisticsQuery = selector({
   }
 });
 
+export const vegsystemreferanseState = selector({
+  key: 'vegsystemreferanseState',
+  get: ({ get }) => {
+    return get(currentVegsystemreferanseState);
+  },
+  set: ({ get, set }, newVegsystemreferanse) => {
+    if (get(currentVegsystemreferanseState) !== newVegsystemreferanse && typeof newVegsystemreferanse === 'string') {
+      setNewQueryParamter('vegsystemreferanse', newVegsystemreferanse);
+      set(currentVegsystemreferanseState, newVegsystemreferanse);
+    } else if (newVegsystemreferanse === null) {
+      setNewQueryParamter('vegsystemreferanse', null);
+      set(currentVegsystemreferanseState, newVegsystemreferanse);
+    }
+  }
+})
+
 export const yearQueryParameterState = selector({
   key: 'yearQueryParamterState',
   get: ({ get }) => {
@@ -83,7 +100,7 @@ export const imagePointQueryParameterState = selector({
   },
   set: ({ get, set }, newImagePoint: IImagePoint | null | DefaultValue) => {
     if (!(newImagePoint instanceof DefaultValue)) {
-      const imagePointId = newImagePoint ? newImagePoint.id : '';
+      const imagePointId = newImagePoint ? newImagePoint.id : null;
       const isVideoPlaying = get(playVideoState);
       setNewQueryParamter('imageId', imagePointId, isVideoPlaying);
       if (newImagePoint) {
@@ -169,12 +186,17 @@ export const loadedImagePointsFilterState = selector({
 });
 
 // utilities
-const setNewQueryParamter = (name: queryParamterNames, value: string, isVideoPlaying = false) => {
+const setNewQueryParamter = (name: queryParamterNames, value: string | null, isVideoPlaying = false) => {
   const newSearchParams = new URLSearchParams(window.location.search);
-  newSearchParams.set(name, value);
-  if (isVideoPlaying) {
-    delayedReplaceHistory(newSearchParams);
+  if (value !== null) {
+    newSearchParams.set(name, value);
+    if (isVideoPlaying) {
+      delayedReplaceHistory(newSearchParams);
+    } else {
+      window.history.replaceState(null, '', '?' + newSearchParams.toString());
+    }
   } else {
+    newSearchParams.delete(name);
     window.history.replaceState(null, '', '?' + newSearchParams.toString());
   }
 };

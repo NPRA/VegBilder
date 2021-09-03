@@ -14,6 +14,11 @@ export const currentYearState = atom<string | number>({
   default: parseInt(searchParams.get('year')!) || 'Nyeste',
 });
 
+export const currentVegsystemreferanseState = atom<string | null>({
+  key: 'currentVegsystemreferanse',
+  default: null
+})
+
 export const currentImagePointState = atom<IImagePoint | null>({
   key: 'currentImagePoint',
   default: null,

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, makeStyles, Snackbar, ThemeProvider, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
@@ -14,7 +14,7 @@ import {
   latLngZoomQueryParameterState,
   viewQueryParamterState,
   yearQueryParameterState,
-  availableStatisticsQuery
+  vegsystemreferanseState
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
@@ -22,9 +22,9 @@ import PageInformation from './PageInformation/PageInformation';
 import { useIsMobile } from 'hooks/useIsMobile';
 import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
-import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableStatisticsFromOGC';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
-import { IImagePoint, IStatisticsFeature } from 'types';
+import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
+import { IImagePoint } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -80,6 +80,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
+  const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const searchParams = new URLSearchParams(window.location.search);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -136,7 +137,7 @@ const App = () => {
         const latlng = getCoordinatesFromWkt(wkt);
 
         if (latlng) {
-          if (year) {
+          if (year !== 'latest' && year !== null) {
             fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year)).then(
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
@@ -161,14 +162,19 @@ const App = () => {
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
 
     if (vegsystemreferanseQuery) {
-      openAppByVegsystemreferanse(vegsystemreferanseQuery, yearQuery);
+      const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
+      if (validVegsystemReferanse) {
+        openAppByVegsystemreferanse(validVegsystemReferanse, yearQuery);
+      } else {
+        showSnackbarMessage(`Fant ingen treff på vegsystemreferanse "${vegsystemreferanseQuery}". Prøv igjen i søkefeltet.`);
+      }
+      setCurrentVegsystemreferanseState(null);
     }
 
-    // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       setCurrentCoordinates({ ...latlng, zoom: 15 });
-      if (yearQuery === 'Nyeste' || !yearQuery) {
+      if (yearQuery === 'latest' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
