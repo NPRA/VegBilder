@@ -61,40 +61,22 @@ const sortTableRowsBasedOnYear = (tableRows: IStatisticsRow[]) => {
     return tableRows.sort((rowA, rowB) => (rowA.year < rowB.year) ? 1 : -1);
 }
 
-//Synes ikke denne funskjonen er veldig pent skrevet per nå.
 const createTotalRowExcludingCurrentYear = (sortedTableRows: IStatisticsRow[]) => {
     const currentYear = new Date().getFullYear();
     const previousYear = currentYear - 1;
     const rowListWithoutCurrentYear = sortedTableRows.filter((row) => row.year !== currentYear.toString());
-    const totalE = rowListWithoutCurrentYear.reduce((prev, cur) => prev + cur.E, 0);
-    const totalR = rowListWithoutCurrentYear.reduce((prev, cur) => prev + cur.R, 0);
-    const totalF = rowListWithoutCurrentYear.reduce((prev, cur) => prev + cur.F, 0);
 
-    //Legger bare sammen dersom "other" eksisterer på gjeldende rad.
-    const onlyExistingOtherValuesReducer = (prev: number, cur: IStatisticsRow) => {
-        return cur.other !== null || cur.other !== undefined ? prev + cur.other : prev;
-    }
-
-    let categoryOtherExists = false;
-    rowListWithoutCurrentYear.forEach((row) => row?.other ? categoryOtherExists = true : null);
-
-    if (categoryOtherExists) {
-        const totalOfCategoryOther = rowListWithoutCurrentYear.reduce(onlyExistingOtherValuesReducer, 0);
+    //Legger bare sammen dersom propertu eksisterer på gjeldende rad for å unngå NaN i tabell.
+    const onlyExistingValuesReducer = (prev: IStatisticsRow, cur: IStatisticsRow) => {
         return {
             year: `${previousYear.toString()} og eldre`,
-            E: totalE,
-            R: totalR,
-            F: totalF,
-            other: totalOfCategoryOther
+            E: cur?.E ? prev.E + cur.E : prev.E,
+            R: cur?.R ? prev.R + cur.R : prev.R,
+            F: cur?.F ? prev.F + cur.F : prev.F,
+            other: cur?.other ? prev.other + cur.other : prev.other
         } as IStatisticsRow
-    } else {
-        return {
-            year: `${previousYear.toString()} og eldre`,
-            E: totalE,
-            R: totalR,
-            F: totalF
-        } as IStatisticsRow;
     }
+    return rowListWithoutCurrentYear.reduce(onlyExistingValuesReducer) as IStatisticsRow;
 }
 
 const StyledTableCell = withStyles((theme) => ({
@@ -110,7 +92,7 @@ export const StatisticsInfoBox = () => {
     const sortedTableRows = sortTableRowsBasedOnYear(tableRows);
     const rowForCurrentYear = sortedTableRows[0];
     const sortedTableRowsWithoutCurrentYear = sortedTableRows.slice(1);
-    const totalRow = createTotalRowExcludingCurrentYear(sortedTableRows);
+    const rowWithTotalValues = createTotalRowExcludingCurrentYear(sortedTableRows);
     const [showExtendedTable, setShowExtendedTable] = useState(false);
 
     const handleOpenExtendedTable = () => {
@@ -154,13 +136,13 @@ export const StatisticsInfoBox = () => {
                             )
                         }
                         )}
-                        {!showExtendedTable ? <TableRow>
-                            <StyledTableCell>{totalRow.year}</StyledTableCell>
-                            <StyledTableCell align="right">{totalRow.E}</StyledTableCell>
-                            <StyledTableCell align="right">{totalRow.R}</StyledTableCell>
-                            <StyledTableCell align="right">{totalRow.F}</StyledTableCell>
-                            <StyledTableCell align="right">{totalRow?.other ? totalRow.other : "--"}</StyledTableCell>
-                        </TableRow> : null}
+                        {!showExtendedTable && <TableRow>
+                            <StyledTableCell>{rowWithTotalValues.year}</StyledTableCell>
+                            <StyledTableCell align="right">{rowWithTotalValues.E}</StyledTableCell>
+                            <StyledTableCell align="right">{rowWithTotalValues.R}</StyledTableCell>
+                            <StyledTableCell align="right">{rowWithTotalValues.F}</StyledTableCell>
+                            <StyledTableCell align="right">{rowWithTotalValues?.other ? rowWithTotalValues.other : "--"}</StyledTableCell>
+                        </TableRow>}
                     </TableBody>
                 </Table>
             </TableContainer >
