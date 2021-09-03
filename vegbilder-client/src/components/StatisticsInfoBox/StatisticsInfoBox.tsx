@@ -147,7 +147,6 @@ export const StatisticsInfoBox = () => {
                 </Table>
             </TableContainer >
             <IconButton onClick={handleOpenExtendedTable}>{showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}</IconButton>
-            {/* <Button startIcon={showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />} onClick={handleOpenExtendedTable} className={classes.button}></Button> */}
         </div>);
 }
 
