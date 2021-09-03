@@ -86,7 +86,7 @@ const Teknisk = () => {
           </li>
         </ul>
         <Typography variant="subtitle1"> Bilder i databasen </Typography>
-        <Typography variant="body1" className={classes.paragraphs}> Tabellen under viser alle vegbilder tilgjengelig sortert etter år og vegkategori. </Typography>
+        <Typography variant="body1" > Tabellen under viser alle vegbilder tilgjengelig sortert etter år og vegkategori. </Typography>
         <StatisticsInfoBox />
         <Typography variant="subtitle1"> {tekniskText.subheader2} </Typography>
         {Object.entries(versionLog).map(([versionNumber, changes]) => (
