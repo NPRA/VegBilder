@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { makeStyles, withStyles, Paper, Typography, Button, IconButton } from '@material-ui/core';
+import { makeStyles, withStyles, IconButton } from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Table from '@material-ui/core/Table';
@@ -23,12 +23,10 @@ const useStyles = makeStyles((theme) => ({
     button: {
         color: theme.palette.common.orangeDark,
         textDecoration: 'none',
-        backgroundColor: theme.palette.common.grayMedium,
-        border: `1px solid ${theme.palette.common.orangeDark}`,
+        backgroundColor: "transparent",
         '&:hover': {
             color: theme.palette.common.orangeDark,
-            borderBottom: `2px solid ${theme.palette.common.orangeDark}`,
-            backgroundColor: theme.palette.common.charcoalLighter
+            backgroundColor: "transparent"
         },
     },
 }));
@@ -146,7 +144,9 @@ export const StatisticsInfoBox = () => {
                     </TableBody>
                 </Table>
             </TableContainer >
-            <IconButton onClick={handleOpenExtendedTable}>{showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}</IconButton>
+            <IconButton onClick={handleOpenExtendedTable} className={classes.button}>
+                {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
         </div>);
 }
 
