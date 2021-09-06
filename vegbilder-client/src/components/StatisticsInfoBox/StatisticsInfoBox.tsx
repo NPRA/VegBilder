@@ -6,6 +6,7 @@ import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import TableFooter from '@material-ui/core/TableFooter';
 import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
@@ -30,6 +31,20 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
+
+const StyledTableCell = withStyles((theme) => ({
+    root: {
+        color: "white",
+        borderBottom: "0.5px dotted white"
+    }
+}))(TableCell);
+
+const StyledFooterCell = withStyles((theme) => ({
+    root: {
+        borderBottom: "none",
+
+    }
+}))(TableCell)
 
 
 const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]) => {
@@ -77,11 +92,6 @@ const createTotalRowExcludingCurrentYear = (sortedTableRows: IStatisticsRow[]) =
     return rowListWithoutCurrentYear.reduce(onlyExistingValuesReducer) as IStatisticsRow;
 }
 
-const StyledTableCell = withStyles((theme) => ({
-    root: {
-        color: "white",
-    }
-}))(TableCell);
 
 export const StatisticsInfoBox = () => {
     const classes = useStyles();
@@ -92,6 +102,7 @@ export const StatisticsInfoBox = () => {
     const sortedTableRowsWithoutCurrentYear = sortedTableRows.slice(1);
     const rowWithTotalValues = createTotalRowExcludingCurrentYear(sortedTableRows);
     const [showExtendedTable, setShowExtendedTable] = useState(false);
+    const showOvrigeTable = rowWithTotalValues.other != undefined ? true : false;
 
     const handleOpenExtendedTable = () => {
         if (showExtendedTable === true) {
@@ -111,7 +122,7 @@ export const StatisticsInfoBox = () => {
                             <StyledTableCell align="right">EV</StyledTableCell>
                             <StyledTableCell align="right">RV</StyledTableCell>
                             <StyledTableCell align="right">FV</StyledTableCell>
-                            <StyledTableCell align="right">Øvrige</StyledTableCell>
+                            {showOvrigeTable && <StyledTableCell align="right">Øvrige</StyledTableCell>}
                         </TableRow>
                     </TableHead>
                     < TableBody >
@@ -120,7 +131,7 @@ export const StatisticsInfoBox = () => {
                             <StyledTableCell align="right">{rowForCurrentYear.E}</StyledTableCell>
                             <StyledTableCell align="right">{rowForCurrentYear.R}</StyledTableCell>
                             <StyledTableCell align="right">{rowForCurrentYear.F}</StyledTableCell>
-                            <StyledTableCell align="right">{rowForCurrentYear?.other ? rowForCurrentYear.other : "--"}</StyledTableCell>
+                            {showOvrigeTable && <StyledTableCell align="right">{rowForCurrentYear?.other ? rowForCurrentYear.other : ""}</StyledTableCell>}
                         </TableRow>
                         {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                             return (
@@ -129,24 +140,31 @@ export const StatisticsInfoBox = () => {
                                     <StyledTableCell align="right"> {row.E}</StyledTableCell>
                                     <StyledTableCell align="right"> {row.R}</StyledTableCell>
                                     <StyledTableCell align="right"> {row.F}</StyledTableCell>
-                                    <StyledTableCell align="right"> {row.other ? row.other : "--"}</StyledTableCell>
+                                    {showOvrigeTable && <StyledTableCell align="right"> {row.other ? row.other : ""}</StyledTableCell>}
                                 </TableRow>
                             )
                         }
                         )}
                         {!showExtendedTable && <TableRow>
-                            <StyledTableCell>{rowWithTotalValues.year}</StyledTableCell>
+                            <StyledTableCell >{rowWithTotalValues.year}</StyledTableCell>
                             <StyledTableCell align="right">{rowWithTotalValues.E}</StyledTableCell>
                             <StyledTableCell align="right">{rowWithTotalValues.R}</StyledTableCell>
                             <StyledTableCell align="right">{rowWithTotalValues.F}</StyledTableCell>
-                            <StyledTableCell align="right">{rowWithTotalValues?.other ? rowWithTotalValues.other : "--"}</StyledTableCell>
+                            {showOvrigeTable && <StyledTableCell align="right">{rowWithTotalValues?.other ? rowWithTotalValues.other : ""}</StyledTableCell>}
                         </TableRow>}
                     </TableBody>
+                    <TableFooter>
+                        <TableRow>
+                            <StyledFooterCell colSpan={showOvrigeTable ? 5 : 4}>
+                                <IconButton onClick={handleOpenExtendedTable} className={classes.button}>
+                                {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                                </IconButton>
+                            </StyledFooterCell>
+                        </TableRow>
+                    </TableFooter>
                 </Table>
             </TableContainer >
-            <IconButton onClick={handleOpenExtendedTable} className={classes.button}>
-                {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-            </IconButton>
+
         </div>);
 }
 
