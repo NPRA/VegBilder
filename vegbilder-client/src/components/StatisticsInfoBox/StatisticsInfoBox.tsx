@@ -132,11 +132,7 @@ export const StatisticsInfoBox = () => {
     const showOvrigeTable = rowWithTotalValues.other != undefined ? true : false;
 
     const handleOpenExtendedTable = () => {
-        if (showExtendedTable === true) {
-            setShowExtendedTable(false);
-        } else {
-            setShowExtendedTable(true);
-        }
+        showExtendedTable ? setShowExtendedTable(false) : setShowExtendedTable(true);
     }
 
     return (
