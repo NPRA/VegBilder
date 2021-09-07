@@ -17,7 +17,9 @@ import {
 const useStyles = makeStyles((theme) => ({
     table: {
         width: "90%",
-        margin: "auto"
+        margin: "auto",
+        display: "flex",
+        flexDirection: "column"
     },
     headerCell: {
         width: "25%",
@@ -61,6 +63,10 @@ const useStyles = makeStyles((theme) => ({
         borderBottom: "none",
         padding: "2px",
         textAlign: "right"
+    },
+    buttonContainer: {
+        display: "flex",
+        justifyContent: "flex-end"
     },
     button: {
         color: theme.palette.common.orangeDark,
@@ -129,14 +135,15 @@ export const StatisticsInfoBox = () => {
     const sortedTableRowsWithoutCurrentYear = sortedTableRows.slice(1);
     const rowWithTotalValues = createTotalRowExcludingCurrentYear(sortedTableRows);
     const [showExtendedTable, setShowExtendedTable] = useState(false);
-    const showOvrigeColumn = rowWithTotalValues.other != undefined ? true : false;
+    const showOvrigeColumn = rowWithTotalValues.other !== undefined ? true : false;
 
     const handleOpenExtendedTable = () => {
         showExtendedTable ? setShowExtendedTable(false) : setShowExtendedTable(true);
     }
 
     return (
-            <TableContainer className={classes.table}>
+        <div className={classes.table}>
+            <TableContainer>
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
@@ -175,16 +182,13 @@ export const StatisticsInfoBox = () => {
                             {showOvrigeColumn && <TableCell align="right">{rowWithTotalValues?.other ? rowWithTotalValues.other : ""}</TableCell>}
                         </TableRow>}
                     </TableBody>
-                    <TableFooter>
-                        <TableRow>
-                            <TableCell className={classes.footerCell} colSpan={showOvrigeColumn ? 5 : 4}>
-                                <IconButton onClick={handleOpenExtendedTable} className={classes.button}>
-                                {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                                </IconButton>
-                            </TableCell>
-                        </TableRow>
-                    </TableFooter>
                 </Table>
-            </TableContainer >);
+            </TableContainer >
+            <div className={classes.buttonContainer}>
+                <IconButton onClick={handleOpenExtendedTable} className={classes.button}>
+                    {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                </IconButton>
+            </div>
+        </div>);
 }
 
