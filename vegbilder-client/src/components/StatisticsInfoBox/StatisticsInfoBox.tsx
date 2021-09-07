@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { makeStyles, IconButton} from '@material-ui/core';
-import { Table, TableBody, TableCell, TableFooter, TableContainer, TableHead, TableRow} from '@material-ui/core';
+import { makeStyles, IconButton, Tooltip} from '@material-ui/core';
+import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@material-ui/core';
 import { visuallyHidden } from '@material-ui/utils';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
@@ -187,9 +187,11 @@ export const StatisticsInfoBox = () => {
                 </Table>
             </TableContainer >
             <div className={classes.buttonContainer}>
-                <IconButton onClick={handleOpenExtendedTable} className={classes.button} aria-label="Vis og skjul flere år.">
-                    {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-                </IconButton>
+                <Tooltip title={showExtendedTable ? "Skjul tidligere år" : "Vis tidligere år"}>
+                    <IconButton onClick={handleOpenExtendedTable} className={classes.button} aria-label="Vis og skjul flere år.">
+                        {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+                    </IconButton>
+                </Tooltip>
             </div>
         </div>);
 }
