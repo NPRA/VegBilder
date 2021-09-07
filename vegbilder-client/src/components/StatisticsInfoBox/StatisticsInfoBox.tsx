@@ -21,6 +21,53 @@ import {
 } from 'recoil/selectors';
 
 const useStyles = makeStyles((theme) => ({
+    table: {
+        width: "90%",
+        margin: "auto"
+    },
+    headerCell: {
+        width: "25%",
+        textAlign: "left",
+        color: theme.palette.common.grayRegular,
+        borderWidth: "2px",
+        fontWeight: "bold",
+        padding: "10px 20px 10px 20px",
+        '&.Right' : {
+            textAlign: "right"
+        }
+    },
+    contentCell: {
+        color: theme.palette.common.grayRegular,
+        textAlign: "right",
+        padding: "5px 20px 5px 20px",
+        '&.currentYear': {
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            borderWidth: "2px",
+            '&.year': {
+                textAlign: "left"
+            }
+        },
+        '&.previousYears': {
+            borderBottom: `0.5px solid #999999`,
+            '&.year': {
+                textAlign: "left"
+            },
+        '&.total': {
+            paddingTop: "10px",
+            paddingBottom: "10px",
+            '&.year': {
+                textAlign: "left"
+            },
+        }
+        }
+
+    },
+    footerCell: {
+        borderBottom: "none",
+        padding: "2px",
+        textAlign: "right"
+    },
     button: {
         color: theme.palette.common.orangeDark,
         textDecoration: 'none',
@@ -31,20 +78,6 @@ const useStyles = makeStyles((theme) => ({
         },
     },
 }));
-
-const StyledTableCell = withStyles((theme) => ({
-    root: {
-        color: "white",
-        borderBottom: "0.5px dotted white"
-    }
-}))(TableCell);
-
-const StyledFooterCell = withStyles((theme) => ({
-    root: {
-        borderBottom: "none",
-
-    }
-}))(TableCell)
 
 
 const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]) => {
@@ -113,58 +146,55 @@ export const StatisticsInfoBox = () => {
     }
 
     return (
-        <div>
-            <TableContainer>
+            <TableContainer className={classes.table}>
                 <Table aria-label="simple table">
                     <TableHead>
                         <TableRow>
-                            <StyledTableCell>År</StyledTableCell>
-                            <StyledTableCell align="right">EV</StyledTableCell>
-                            <StyledTableCell align="right">RV</StyledTableCell>
-                            <StyledTableCell align="right">FV</StyledTableCell>
-                            {showOvrigeTable && <StyledTableCell align="right">Øvrige</StyledTableCell>}
+                            <TableCell className={classes.headerCell}>År</TableCell>
+                            <TableCell className={`${classes.headerCell} Right`}>EV</TableCell>
+                            <TableCell className={`${classes.headerCell} Right`}>RV</TableCell>
+                            <TableCell className={`${classes.headerCell} Right`}>FV</TableCell>
+                            {showOvrigeTable && <TableCell className={`${classes.headerCell} Right`}>Øvrige</TableCell>}
                         </TableRow>
                     </TableHead>
                     < TableBody >
                         <TableRow>
-                            <StyledTableCell>{rowForCurrentYear.year}</StyledTableCell>
-                            <StyledTableCell align="right">{rowForCurrentYear.E}</StyledTableCell>
-                            <StyledTableCell align="right">{rowForCurrentYear.R}</StyledTableCell>
-                            <StyledTableCell align="right">{rowForCurrentYear.F}</StyledTableCell>
-                            {showOvrigeTable && <StyledTableCell align="right">{rowForCurrentYear?.other ? rowForCurrentYear.other : ""}</StyledTableCell>}
+                            <TableCell className={`${classes.contentCell} currentYear year`}>{rowForCurrentYear.year}</TableCell>
+                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.E}</TableCell>
+                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.R}</TableCell>
+                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.F}</TableCell>
+                            {showOvrigeTable && <TableCell align="right">{rowForCurrentYear?.other ? rowForCurrentYear.other : ""}</TableCell>}
                         </TableRow>
                         {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                             return (
                                 <TableRow>
-                                    <StyledTableCell >{row.year}</StyledTableCell>
-                                    <StyledTableCell align="right"> {row.E}</StyledTableCell>
-                                    <StyledTableCell align="right"> {row.R}</StyledTableCell>
-                                    <StyledTableCell align="right"> {row.F}</StyledTableCell>
-                                    {showOvrigeTable && <StyledTableCell align="right"> {row.other ? row.other : ""}</StyledTableCell>}
+                                    <TableCell className={`${classes.contentCell} previousYears year`}>{row.year}</TableCell>
+                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.E}</TableCell>
+                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.R}</TableCell>
+                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.F}</TableCell>
+                                    {showOvrigeTable && <TableCell align="right"> {row.other ? row.other : ""}</TableCell>}
                                 </TableRow>
                             )
                         }
                         )}
                         {!showExtendedTable && <TableRow>
-                            <StyledTableCell >{rowWithTotalValues.year}</StyledTableCell>
-                            <StyledTableCell align="right">{rowWithTotalValues.E}</StyledTableCell>
-                            <StyledTableCell align="right">{rowWithTotalValues.R}</StyledTableCell>
-                            <StyledTableCell align="right">{rowWithTotalValues.F}</StyledTableCell>
-                            {showOvrigeTable && <StyledTableCell align="right">{rowWithTotalValues?.other ? rowWithTotalValues.other : ""}</StyledTableCell>}
+                            <TableCell className={`${classes.contentCell} previousYears total year`}>{rowWithTotalValues.year}</TableCell>
+                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.E}</TableCell>
+                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.R}</TableCell>
+                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.F}</TableCell>
+                            {showOvrigeTable && <TableCell align="right">{rowWithTotalValues?.other ? rowWithTotalValues.other : ""}</TableCell>}
                         </TableRow>}
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <StyledFooterCell colSpan={showOvrigeTable ? 5 : 4}>
+                            <TableCell className={classes.footerCell} colSpan={showOvrigeTable ? 5 : 4}>
                                 <IconButton onClick={handleOpenExtendedTable} className={classes.button}>
                                 {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                                 </IconButton>
-                            </StyledFooterCell>
+                            </TableCell>
                         </TableRow>
                     </TableFooter>
                 </Table>
-            </TableContainer >
-
-        </div>);
+            </TableContainer >);
 }
 
