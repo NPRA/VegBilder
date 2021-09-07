@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import { makeStyles, IconButton} from '@material-ui/core';
 import { Table, TableBody, TableCell, TableFooter, TableContainer, TableHead, TableRow} from '@material-ui/core';
+import { visuallyHidden } from '@material-ui/utils';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 
@@ -144,19 +145,20 @@ export const StatisticsInfoBox = () => {
     return (
         <div className={classes.table}>
             <TableContainer>
-                <Table aria-label="simple table">
+                <Table>
+                    <caption style={visuallyHidden}>En tabell som viser antall tilgjengelige bilder på nettsiden kategorisert etter år og vegkategorier.</caption>
                     <TableHead>
                         <TableRow>
-                            <TableCell className={classes.headerCell}>År</TableCell>
-                            <TableCell className={`${classes.headerCell} Right`}>EV</TableCell>
-                            <TableCell className={`${classes.headerCell} Right`}>RV</TableCell>
-                            <TableCell className={`${classes.headerCell} Right`}>FV</TableCell>
+                            <TableCell className={classes.headerCell} scope="col">År</TableCell>
+                            <TableCell className={`${classes.headerCell} Right`} scope="col">EV</TableCell>
+                            <TableCell className={`${classes.headerCell} Right`} scope="col">RV</TableCell>
+                            <TableCell className={`${classes.headerCell} Right`} scope="col">FV</TableCell>
                             {showOvrigeColumn && <TableCell className={`${classes.headerCell} Right`}>Øvrige</TableCell>}
                         </TableRow>
                     </TableHead>
                     < TableBody >
                         <TableRow>
-                            <TableCell className={`${classes.contentCell} currentYear year`}>{rowForCurrentYear.year}</TableCell>
+                            <TableCell className={`${classes.contentCell} currentYear year`} component="th" scope="row">{rowForCurrentYear.year}</TableCell>
                             <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.E.toLocaleString()}</TableCell>
                             <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.R.toLocaleString()}</TableCell>
                             <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.F.toLocaleString()}</TableCell>
@@ -165,7 +167,7 @@ export const StatisticsInfoBox = () => {
                         {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                             return (
                                 <TableRow>
-                                    <TableCell className={`${classes.contentCell} previousYears year`}>{row.year}</TableCell>
+                                    <TableCell className={`${classes.contentCell} previousYears year`} component="th" scope="row">{row.year}</TableCell>
                                     <TableCell className={`${classes.contentCell} previousYears`}> {row.E.toLocaleString()}</TableCell>
                                     <TableCell className={`${classes.contentCell} previousYears`}> {row.R.toLocaleString()}</TableCell>
                                     <TableCell className={`${classes.contentCell} previousYears`}> {row.F.toLocaleString()}</TableCell>
@@ -175,7 +177,7 @@ export const StatisticsInfoBox = () => {
                         }
                         )}
                         {!showExtendedTable && <TableRow>
-                            <TableCell className={`${classes.contentCell} previousYears total year`}>{rowWithTotalValues.year}</TableCell>
+                            <TableCell className={`${classes.contentCell} previousYears total year`} component="th" scope="row">{rowWithTotalValues.year}</TableCell>
                             <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.E.toLocaleString()}</TableCell>
                             <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.R.toLocaleString()}</TableCell>
                             <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.F.toLocaleString()}</TableCell>
@@ -185,7 +187,7 @@ export const StatisticsInfoBox = () => {
                 </Table>
             </TableContainer >
             <div className={classes.buttonContainer}>
-                <IconButton onClick={handleOpenExtendedTable} className={classes.button}>
+                <IconButton onClick={handleOpenExtendedTable} className={classes.button} aria-label="Vis og skjul flere år.">
                     {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                 </IconButton>
             </div>
