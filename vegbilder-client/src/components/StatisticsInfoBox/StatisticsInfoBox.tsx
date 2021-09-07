@@ -1,15 +1,9 @@
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { makeStyles, withStyles, IconButton } from '@material-ui/core';
+import { makeStyles, IconButton} from '@material-ui/core';
+import { Table, TableBody, TableCell, TableFooter, TableContainer, TableHead, TableRow} from '@material-ui/core';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableFooter from '@material-ui/core/TableFooter';
-import TableContainer from '@material-ui/core/TableContainer';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 
 import { DEFAULT_ROAD_CATEGORIES } from '../../constants/defaultParamters';
 import { groupBy } from "../../utilities/customDataStructureUtilities";
