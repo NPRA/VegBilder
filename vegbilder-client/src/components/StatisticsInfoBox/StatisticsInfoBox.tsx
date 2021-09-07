@@ -150,18 +150,18 @@ export const StatisticsInfoBox = () => {
                     < TableBody >
                         <TableRow>
                             <TableCell className={`${classes.contentCell} currentYear year`}>{rowForCurrentYear.year}</TableCell>
-                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.E}</TableCell>
-                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.R}</TableCell>
-                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.F}</TableCell>
+                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.E.toLocaleString()}</TableCell>
+                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.R.toLocaleString()}</TableCell>
+                            <TableCell className={`${classes.contentCell} currentYear`}>{rowForCurrentYear.F.toLocaleString()}</TableCell>
                             {showOvrigeTable && <TableCell align="right">{rowForCurrentYear?.other ? rowForCurrentYear.other : ""}</TableCell>}
                         </TableRow>
                         {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                             return (
                                 <TableRow>
                                     <TableCell className={`${classes.contentCell} previousYears year`}>{row.year}</TableCell>
-                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.E}</TableCell>
-                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.R}</TableCell>
-                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.F}</TableCell>
+                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.E.toLocaleString()}</TableCell>
+                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.R.toLocaleString()}</TableCell>
+                                    <TableCell className={`${classes.contentCell} previousYears`}> {row.F.toLocaleString()}</TableCell>
                                     {showOvrigeTable && <TableCell align="right"> {row.other ? row.other : ""}</TableCell>}
                                 </TableRow>
                             )
@@ -169,9 +169,9 @@ export const StatisticsInfoBox = () => {
                         )}
                         {!showExtendedTable && <TableRow>
                             <TableCell className={`${classes.contentCell} previousYears total year`}>{rowWithTotalValues.year}</TableCell>
-                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.E}</TableCell>
-                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.R}</TableCell>
-                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.F}</TableCell>
+                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.E.toLocaleString()}</TableCell>
+                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.R.toLocaleString()}</TableCell>
+                            <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.F.toLocaleString()}</TableCell>
                             {showOvrigeTable && <TableCell align="right">{rowWithTotalValues?.other ? rowWithTotalValues.other : ""}</TableCell>}
                         </TableRow>}
                     </TableBody>
