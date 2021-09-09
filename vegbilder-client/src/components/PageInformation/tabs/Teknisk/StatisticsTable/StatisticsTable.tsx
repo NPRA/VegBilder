@@ -114,11 +114,7 @@ const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[
             if (DEFAULT_ROAD_CATEGORIES.includes(category.VEGKATEGORI)) {
                 row[`${category.VEGKATEGORI}`] = category.ANTALL;
             } else {
-                if (!(row.hasOwnProperty(`other`))) {
-                    row[`other`] = category.ANTALL;
-                } else {
-                    row[`other`] += category.ANTALL;
-                }
+                row[`other`] = category.ANTALL;
             }
         });
         return row;
