@@ -1,6 +1,5 @@
 import React from 'react';
-import { useLeafletZoom } from 'use-leaflet';
-import { WMSTileLayer } from 'react-leaflet';
+import { useMap, WMSTileLayer } from 'react-leaflet';
 import { useRecoilValue } from 'recoil';
 
 import ImagePointDirectionalMarkersLayer from 'components/ImagePointDirectionalMarkersLayer/ImagePointDirectionalMarkersLayer';
@@ -8,7 +7,7 @@ import { currentImagePointState, currentYearState } from 'recoil/atoms';
 import { OGC_URL } from 'constants/urls';
 
 const ImagePointMapLayers = () => {
-  const zoom = useLeafletZoom();
+  const zoom = useMap().getZoom();
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
 
@@ -25,6 +24,7 @@ const ImagePointMapLayers = () => {
     } else {
       return (
         <WMSTileLayer
+          key={oversiktsKartlag}
           url={OGC_URL}
           attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
           layers={oversiktsKartlag}

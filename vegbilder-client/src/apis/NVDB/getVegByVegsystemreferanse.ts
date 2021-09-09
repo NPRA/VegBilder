@@ -1,6 +1,6 @@
 import nvdbApi from './nvdbApi';
 
-const getVegByVegsystemreferanse = async (vegsystemreferanse) => {
+const getVegByVegsystemreferanse = async (vegsystemreferanse: string) => {
   return await nvdbApi
     .get('/veg', {
       params: {
@@ -9,8 +9,8 @@ const getVegByVegsystemreferanse = async (vegsystemreferanse) => {
       },
     })
     .then((response) => {
-      if (response.code === 4012) {
-        console.warn(response.message);
+      if (response.status === 4012) {
+        console.warn(response.statusText);
         return;
       }
       return response;

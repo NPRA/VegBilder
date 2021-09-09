@@ -1,5 +1,5 @@
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
-import { debounce, groupBy, throttle } from 'lodash';
+import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
 import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import {
@@ -15,6 +15,7 @@ import {
   filteredImagePointsState,
   loadedImagePointsState,
   playVideoState,
+  currentVegsystemreferanseState
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -45,6 +46,22 @@ export const availableYearsQuery = selector({
   },
 });
 
+export const vegsystemreferanseState = selector({
+  key: 'vegsystemreferanseState',
+  get: ({ get }) => {
+    return get(currentVegsystemreferanseState);
+  },
+  set: ({ get, set }, newVegsystemreferanse) => {
+    if (get(currentVegsystemreferanseState) !== newVegsystemreferanse && typeof newVegsystemreferanse === 'string') {
+      setNewQueryParamter('vegsystemreferanse', newVegsystemreferanse);
+      set(currentVegsystemreferanseState, newVegsystemreferanse);
+    } else if (newVegsystemreferanse === null) {
+      setNewQueryParamter('vegsystemreferanse', null);
+      set(currentVegsystemreferanseState, newVegsystemreferanse);
+    }
+  }
+})
+
 export const yearQueryParameterState = selector({
   key: 'yearQueryParamterState',
   get: ({ get }) => {
@@ -68,7 +85,7 @@ export const imagePointQueryParameterState = selector({
   },
   set: ({ get, set }, newImagePoint: IImagePoint | null | DefaultValue) => {
     if (!(newImagePoint instanceof DefaultValue)) {
-      const imagePointId = newImagePoint ? newImagePoint.id : '';
+      const imagePointId = newImagePoint ? newImagePoint.id : null;
       const isVideoPlaying = get(playVideoState);
       setNewQueryParamter('imageId', imagePointId, isVideoPlaying);
       if (newImagePoint) {
@@ -89,18 +106,16 @@ export const latLngZoomQueryParameterState = selector({
   get: ({ get }) => {
     return get(currentLatLngZoomState);
   },
-  set: ({ get, set }, newCoordinates: (ILatlng & { zoom?: number }) | DefaultValue) => {
+  set: ({ get, set }, newCoordinates: (ILatlng & { zoom: number }) | DefaultValue) => {
     if (!(newCoordinates instanceof DefaultValue)) {
       const newSearchParams = new URLSearchParams(window.location.search);
-
       newSearchParams.set('lat', newCoordinates.lat.toString());
       newSearchParams.set('lng', newCoordinates.lng.toString());
       if (newCoordinates.zoom) newSearchParams.set('zoom', newCoordinates.zoom.toString());
 
-      if (get(playVideoState)){
+      if (get(playVideoState)) {
         delayedReplaceHistory(newSearchParams);
-      }
-      else {
+      } else {
         window.history.replaceState(null, '', '?' + newSearchParams.toString());
       }
     }
@@ -156,26 +171,26 @@ export const loadedImagePointsFilterState = selector({
 });
 
 // utilities
-const setNewQueryParamter = (name: queryParamterNames, value: string, isVideoPlaying = false) => {
+const setNewQueryParamter = (name: queryParamterNames, value: string | null, isVideoPlaying = false) => {
   const newSearchParams = new URLSearchParams(window.location.search);
-  newSearchParams.set(name, value);
-  if (isVideoPlaying){
-    delayedReplaceHistory(newSearchParams)
-  }
-  else {
+  if (value !== null) {
+    newSearchParams.set(name, value);
+    if (isVideoPlaying) {
+      delayedReplaceHistory(newSearchParams);
+    } else {
+      window.history.replaceState(null, '', '?' + newSearchParams.toString());
+    }
+  } else {
+    newSearchParams.delete(name);
     window.history.replaceState(null, '', '?' + newSearchParams.toString());
-
   }
 };
 
-
-// in Safari, the app will crash if you play video because history is replaced too much. 
+// in Safari, the app will crash if you play video because history is replaced too much.
 // Therefore, we ensure that we dont replace history too often by throttling
-const delayedReplaceHistory = 
-  debounce((searchParams: URLSearchParams) => {
-    window.history.replaceState(null, '', '?' + searchParams.toString());
-  }, 200)
-
+const delayedReplaceHistory = debounce((searchParams: URLSearchParams) => {
+  window.history.replaceState(null, '', '?' + searchParams.toString());
+}, 200);
 
 const getAvailableDates = (imagePoints: IImagePoint[]) => {
   const imagePointsGroupedByDate = groupBy(imagePoints, (imagePoint) => getDateString(imagePoint));

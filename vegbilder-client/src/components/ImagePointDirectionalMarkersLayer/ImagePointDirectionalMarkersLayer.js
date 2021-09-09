@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { Icon } from 'leaflet';
-import { useLeafletBounds } from 'use-leaflet';
-import { Rectangle, Marker } from 'react-leaflet';
+import { Rectangle, Marker, useMap } from 'react-leaflet';
 // eslint-disable-next-line
 import leafletrotatedmarker from 'leaflet-rotatedmarker'; // Your IDE may report this as unused, but it is required for the rotationAngle property of Marker to work
 import { useRecoilState, useRecoilValue } from 'recoil';
@@ -12,7 +11,6 @@ import {
   getImagePointLatLng,
   findNearestImagePoint,
   getGenericRoadReference,
-  getFilteredImagePoints,
 } from 'utilities/imagePointUtilities';
 import {
   currentYearState,
@@ -26,7 +24,12 @@ import { settings } from 'constants/settings';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
 const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) => {
-  const [[south, west], [north, east]] = useLeafletBounds();
+  const bounds = useMap().getBounds();
+
+  const [[south, west], [north, east]] = [
+    [bounds.getSouth(), bounds.getWest()],
+    [bounds.getNorth(), bounds.getEast()],
+  ];
 
   const [fetchedBboxes] = useState([]);
   const [targetBbox] = useState(null);
@@ -105,6 +108,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
     ) {
       fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createBboxForVisibleMapArea]);
 
   // Apply command if present
@@ -204,10 +208,12 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
                 rotationAngle={imagePoint.properties.RETNING}
                 rotationOrigin={'center center'}
                 zIndexOffset={isSelected ? 10000 : 0}
-                onclick={() => {
-                  if (!playVideo) {
-                    setCurrentImagePoint(imagePoint);
-                  }
+                eventHandlers={{
+                  click: () => {
+                    if (!playVideo) {
+                      setCurrentImagePoint(imagePoint);
+                    }
+                  },
                 }}
               />
             );

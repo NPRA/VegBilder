@@ -1,7 +1,21 @@
 const versionLog = {
-  'v1.3.2': ['Uthev fokuserte elementer litt i menyene', 'Pass på at basislinjen alltid holder seg på veien når bildet/skjermen skaleres', 'Legg til en sjekk på hovedparsell når brukeren bytter retning for game vegreferanser. Dette gjør at den ikke alltid bytter på flerfeltsveiene, men til gjengjeld alltid bytter til andre veien'],
-  'v1.3.1': ['🐞 Bugfiks: La til en forsinkelse på oppdatering av url i filmmodus. Tidligere krasjet noen nettlesere fordi urlen ble oppdatert for ofte her', 'Fjernet React-favicon', 'La til pre-lasting av neste bildepunkt', 'Gi brukeren en forståelig feilmelding når appen crasher'],
-  'v1.3.0': ['Oppdatere til samme bildemarkører for eldre årganger og nyeste', 'Endre ruten i produksjon til å være ekstern' ],
+  'v1.3.6': ['Kan sende med vegsystemreferanse i url'],
+  'v1.3.5': ['Pakkeoppdateringer, inkludert en stor endring i kartet og diverse kodeforbedringer'],
+  'v1.3.2': [
+    'Uthev fokuserte elementer litt i menyene',
+    'Pass på at basislinjen alltid holder seg på veien når bildet/skjermen skaleres',
+    'Legg til en sjekk på hovedparsell når brukeren bytter retning for game vegreferanser. Dette gjør at den ikke alltid bytter på flerfeltsveiene, men til gjengjeld alltid bytter til andre veien',
+  ],
+  'v1.3.1': [
+    '🐞 Bugfiks: La til en forsinkelse på oppdatering av url i filmmodus. Tidligere krasjet noen nettlesere fordi urlen ble oppdatert for ofte her',
+    'Fjernet React-favicon',
+    'La til pre-lasting av neste bildepunkt',
+    'Gi brukeren en forståelig feilmelding når appen crasher',
+  ],
+  'v1.3.0': [
+    'Oppdatere til samme bildemarkører for eldre årganger og nyeste',
+    'Endre ruten i produksjon til å være ekstern',
+  ],
   'v1.2.26': ['🐞 Bugfiks: oppdater bildepunktene når man drar i kartet'],
   'v1.2.25': ['Zoom in hvor brukeren klikket', 'Forbedringer på scroll'],
   'v1.2.24': [

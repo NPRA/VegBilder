@@ -130,7 +130,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
 
   const availableYears = useRecoilValue(availableYearsQuery);
 
-  const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
@@ -141,7 +141,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
 
   const handleImageClick = (imagePoint: IImagePoint) => {
     const latlng = getImagePointLatLng(imagePoint);
-    if (latlng) setCurrentCoordinates(latlng);
+    if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
     const yearOfClickedImage = imagePoint.properties.AAR;
     if (yearOfClickedImage !== currentYear) {
       setCurrentYear(yearOfClickedImage);
@@ -159,6 +159,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       const filteredImagePoints = getFilteredImagePoints(loadedImagePoints, currentImagePoint);
       setFilteredImagePoints(filteredImagePoints);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [loadedImagePoints]);
 
   const onClose = () => {
@@ -195,14 +196,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       if (!shouldNotRecalcualteHistoryImages) {
         setHistoryImagePoints([]);
         const currentCoordinates = getImagePointLatLng(currentImagePoint);
-
-        const bbox = {
-          west: currentCoordinates?.lng,
-          south: currentCoordinates?.lat,
-          east: currentCoordinates?.lng, // create the smallest possible bbox area
-          north: currentCoordinates?.lat,
-        };
-
         const currentImagePointTime = getDateObj(currentImagePoint).getTime();
         const currentImagePointBearing = getCurrentImagePointBearing(
           loadedImagePoints.imagePoints,
@@ -214,78 +207,86 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
 
         setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
 
-        availableYears.forEach(async (year) => {
-          await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
-            const imagePoints = res.imagePoints;
-            const uniqueDates: Set<number> = new Set();
-            const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
-              imagePoints,
-              (imagePoint: IImagePoint) => {
-                const time = getDateObj(imagePoint).getTime();
-                if (time !== currentImagePointTime) {
-                  uniqueDates.add(time);
-                  return time;
-                }
-              }
-            );
-
-            [...uniqueDates].forEach((date) => {
-              const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
+        if (currentCoordinates) {
+          const bbox = {
+            west: currentCoordinates.lng,
+            south: currentCoordinates.lat,
+            east: currentCoordinates.lng, // create the smallest possible bbox area
+            north: currentCoordinates.lat,
+          };
+          availableYears.forEach(async (year) => {
+            await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
+              const imagePoints = res.imagePoints;
+              const uniqueDates: Set<number> = new Set();
+              const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
+                imagePoints,
                 (imagePoint: IImagePoint) => {
-                  if (imagePoint) {
-                    if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
-                      const distanceBetween = getDistanceToBetweenImagePoints(
-                        currentImagePoint,
-                        imagePoint
-                      );
-                      if (distanceBetween && distanceBetween < maxDistance) {
-                        const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                        if (imagePointDirection && currentImagePointDirection) {
-                          if (
-                            imagePointDirection < currentImagePointDirection + 10 &&
-                            imagePointDirection > currentImagePointDirection - 10
-                          )
-                            return imagePoint;
-                        } else {
-                          const bearingBetween = getBearingBetweenImagePoints(
-                            currentImagePoint,
-                            imagePoint
-                          );
-                          if (
-                            currentImagePointBearing &&
-                            bearingBetween &&
-                            bearingBetween < currentImagePointBearing + 10 &&
-                            bearingBetween > currentImagePointBearing - 10
-                          ) {
-                            return imagePoint;
+                  const time = getDateObj(imagePoint).getTime();
+                  if (time !== currentImagePointTime) {
+                    uniqueDates.add(time);
+                    return time;
+                  }
+                }
+              );
+
+              [...uniqueDates].forEach((date) => {
+                const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
+                  (imagePoint: IImagePoint) => {
+                    if (imagePoint) {
+                      if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
+                        const distanceBetween = getDistanceToBetweenImagePoints(
+                          currentImagePoint,
+                          imagePoint
+                        );
+                        if (distanceBetween && distanceBetween < maxDistance) {
+                          const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
+                          if (imagePointDirection && currentImagePointDirection) {
+                            if (
+                              imagePointDirection < currentImagePointDirection + 10 &&
+                              imagePointDirection > currentImagePointDirection - 10
+                            )
+                              return imagePoint;
+                          } else {
+                            const bearingBetween = getBearingBetweenImagePoints(
+                              currentImagePoint,
+                              imagePoint
+                            );
+                            if (
+                              currentImagePointBearing &&
+                              bearingBetween &&
+                              bearingBetween < currentImagePointBearing + 10 &&
+                              bearingBetween > currentImagePointBearing - 10
+                            ) {
+                              return imagePoint;
+                            }
                           }
                         }
                       }
                     }
-                  }
-                  return false;
-                }
-              );
-              if (imagePointsInSameDirection.length) {
-                const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
-                  (prevImgpoint, currImgPoint) => {
-                    const prevDistance =
-                      getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
-                    const currDistance =
-                      getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
-                    return prevDistance < currDistance ? prevImgpoint : currImgPoint;
+                    return false;
                   }
                 );
-                if (closestImagePointInSameDirection) {
-                  setHistoryImagePoints((prevState) => [
-                    ...prevState,
-                    closestImagePointInSameDirection,
-                  ]);
+                if (imagePointsInSameDirection.length) {
+                  const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
+                    (prevImgpoint, currImgPoint) => {
+                      const prevDistance =
+                        getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
+                      const currDistance =
+                        getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
+                      return prevDistance < currDistance ? prevImgpoint : currImgPoint;
+                    }
+                  );
+                  if (closestImagePointInSameDirection) {
+                    setHistoryImagePoints((prevState) => [
+                      ...prevState,
+                      closestImagePointInSameDirection,
+                    ]);
+                  }
                 }
-              }
+              });
             });
           });
-        });
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
