@@ -2,7 +2,8 @@ import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableSta
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IBbox, IImagePoint, ILatlng, IStatisticsFeature, IStatisticsFeatureProperties, queryParamterNames, viewTypes } from 'types';
+import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { IStatisticsFeature, IStatisticsFeatureProperties } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 import {
   getDateString,
   getFilteredImagePoints,

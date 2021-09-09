@@ -1,6 +1,7 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
 import { atom } from 'recoil';
-import { IImagePoint, ILatlng, ILoadedImagePoints, IStatisticsFeature, viewTypes } from 'types';
+import { IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
+import { IStatisticsFeature } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 
 const searchParams = new URLSearchParams(window.location.search);
 

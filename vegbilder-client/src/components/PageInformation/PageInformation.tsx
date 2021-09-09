@@ -3,7 +3,7 @@ import { Button, Divider, makeStyles } from '@material-ui/core';
 
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import UseOfVebilder from './tabs/UseOfVegbilder';
-import Teknisk from './tabs/Teknisk';
+import Teknisk from './tabs/Teknisk/Teknisk';
 import Theme from 'theme/Theme';
 import About from './tabs/About';
 import Gdpr from './tabs/Gdpr';
