@@ -1,11 +1,85 @@
-import {IStatisticsRow } from '../components/PageInformation/tabs/Teknisk/StatisticsTable/types';
+import { IStatisticsRow, IStatisticsFeatureProperties } from '../components/PageInformation/tabs/Teknisk/StatisticsTable/types';
 
 const getRandomInt = (max: number): number => {
     return Math.floor(Math.random() * max);
 }
 
-// Kan byttes ut med tableRow i statistikken 
-export const availableStatisticsMock: IStatisticsRow[] = [
+export const availableStatisticsMock: IStatisticsFeatureProperties[] = [
+    {
+        AAR: '2021',
+        ANTALL: 10,
+        OPPDATERT: '',
+        VEGKATEGORI: 'E'
+    },
+    {
+        AAR: '2021',
+        ANTALL: 20,
+        OPPDATERT: '',
+        VEGKATEGORI: 'F'
+    },
+    {
+        AAR: '2021',
+        ANTALL: 30,
+        OPPDATERT: '',
+        VEGKATEGORI: 'R'
+    },
+    {
+        AAR: '2021',
+        ANTALL: 1,
+        OPPDATERT: '',
+        VEGKATEGORI: 'K'
+    },
+    {
+        AAR: '2020',
+        ANTALL: 10,
+        OPPDATERT: '',
+        VEGKATEGORI: 'E'
+    },
+    {
+        AAR: '2020',
+        ANTALL: 20,
+        OPPDATERT: '',
+        VEGKATEGORI: 'F'
+    },
+    {
+        AAR: '2020',
+        ANTALL: 1,
+        OPPDATERT: '',
+        VEGKATEGORI: 'X'
+    },
+    {
+        AAR: '2019',
+        ANTALL: 10,
+        OPPDATERT: '',
+        VEGKATEGORI: 'E'
+    },
+    {
+        AAR: '2019',
+        ANTALL: 20,
+        OPPDATERT: '',
+        VEGKATEGORI: 'F'
+    },
+    {
+        AAR: '2019',
+        ANTALL: 30,
+        OPPDATERT: '',
+        VEGKATEGORI: 'R'
+    },
+    {
+        AAR: '2018',
+        ANTALL: 10,
+        OPPDATERT: '',
+        VEGKATEGORI: 'E'
+    },
+    {
+        AAR: '2018',
+        ANTALL: 1,
+        OPPDATERT: '',
+        VEGKATEGORI: 'Y'
+    }
+]
+
+export const tableRowsMock: IStatisticsRow[] = [
     {year: "2021",
     E: getRandomInt(1000000000),
     F: getRandomInt(1000000000),
