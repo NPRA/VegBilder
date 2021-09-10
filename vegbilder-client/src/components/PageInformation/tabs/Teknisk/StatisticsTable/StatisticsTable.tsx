@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { makeStyles, IconButton, Tooltip} from '@material-ui/core';
+import { makeStyles, IconButton} from '@material-ui/core';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@material-ui/core';
 import { visuallyHidden } from '@material-ui/utils';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -104,6 +104,7 @@ const useStyles = makeStyles((theme) => ({
 
 const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]): IStatisticsRow[] => {
     const statisticsGroupedByYear = groupBy(statistics, i => i.AAR);
+    const currentYear = new Date().getFullYear().toString();
 
     const tableRows: IStatisticsRow[] = Object.keys(statisticsGroupedByYear).map((year) => {
         const row: IStatisticsRow = {year: year, E: 0, R: 0, F: 0, other: 0};
@@ -118,6 +119,12 @@ const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[
         });
         return row;
     });
+
+    // Dersom det ikke er lagt ut data for det inneværende året skal året fortsatt vises i tabellen.
+    if (!tableRows.some(row => row.year === currentYear)) {
+        tableRows.push({year: currentYear, E: 0, R: 0, F: 0, other: 0});
+    };
+    
     return tableRows;
 }
 
@@ -164,7 +171,7 @@ export const StatisticsTable = () => {
             <div className={classes.scrollContainer}>
                 <TableContainer>
                     <Table>
-                        <caption style={visuallyHidden}>En tabell som gir en oversikt over hvor mange vegbilder som er tilgjengelige på nettsida, kategorisert etter år og vegkategori.</caption>
+                        <caption style={visuallyHidden}>En tabell som gir en oversikt over hvor mange vegbilder som er tilgjengelige, kategorisert etter år og vegkategori.</caption>
                         <TableHead>
                             <TableRow>
                                 <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""}`} scope="col">År</TableCell>
@@ -206,11 +213,9 @@ export const StatisticsTable = () => {
                 </TableContainer >
             </div>
             <div className={classes.buttonContainer}>
-                <Tooltip title={showExtendedTable ? "Skjul tidligere år" : "Vis tidligere år"}>
                     <IconButton onClick={handleOpenExtendedTable} className={classes.button} aria-label="Vis og skjul flere år.">
                         {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
-                </Tooltip>
             </div>
         </div>);
 }
