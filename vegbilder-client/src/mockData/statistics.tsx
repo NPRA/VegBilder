@@ -12,24 +12,6 @@ export const availableStatisticsMock: IStatisticsFeatureProperties[] = [
         VEGKATEGORI: 'E'
     },
     {
-        AAR: '2021',
-        ANTALL: 20,
-        OPPDATERT: '',
-        VEGKATEGORI: 'F'
-    },
-    {
-        AAR: '2021',
-        ANTALL: 30,
-        OPPDATERT: '',
-        VEGKATEGORI: 'R'
-    },
-    {
-        AAR: '2021',
-        ANTALL: 1,
-        OPPDATERT: '',
-        VEGKATEGORI: 'K'
-    },
-    {
         AAR: '2020',
         ANTALL: 10,
         OPPDATERT: '',
@@ -46,6 +28,12 @@ export const availableStatisticsMock: IStatisticsFeatureProperties[] = [
         ANTALL: 1,
         OPPDATERT: '',
         VEGKATEGORI: 'X'
+    },
+    {
+        AAR: '2020',
+        ANTALL: 1,
+        OPPDATERT: '',
+        VEGKATEGORI: 'Y'
     },
     {
         AAR: '2019',
@@ -81,62 +69,62 @@ export const availableStatisticsMock: IStatisticsFeatureProperties[] = [
 
 export const tableRowsMock: IStatisticsRow[] = [
     {year: "2021",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
     R: 0,
     other: 0
     },
     {year: "2020",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
     R: 0,
     other: 0
     },
     {year: "2019",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
     R: 0,
     other: 0
     },
     {year: "2018",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
     R: 0,
-    other: getRandomInt(1000000000)
+    other: getRandomInt(1000000)
     },
     {year: "2017",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
-    R: getRandomInt(1000000000),
-    other: getRandomInt(1000000000)
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
+    R: getRandomInt(1000000),
+    other: getRandomInt(1000000)
     },
     {year: "2016",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
-    R: getRandomInt(1000000000),
-    other: getRandomInt(1000000000)
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
+    R: getRandomInt(1000000),
+    other: getRandomInt(1000000)
     },
     {year: "2015",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
-    R: getRandomInt(1000000000),
-    other: getRandomInt(1000000000)
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
+    R: getRandomInt(1000000),
+    other: getRandomInt(1000000)
     },
     {year: "2014",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
-    R: getRandomInt(1000000000),
-    other: getRandomInt(1000000000)
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
+    R: getRandomInt(1000000),
+    other: getRandomInt(1000000)
     },
     {year: "2013",
-    E: getRandomInt(1000000000),
-    F: getRandomInt(1000000000),
-    R: getRandomInt(1000000000),
-    other: getRandomInt(1000000000)
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
+    R: getRandomInt(1000000),
+    other: getRandomInt(1000000)
     },
     {year: "2012",
-    E: getRandomInt(100000000),
-    F: getRandomInt(100000000),
+    E: getRandomInt(1000000),
+    F: getRandomInt(1000000),
     R: getRandomInt(1000000),
     other: getRandomInt(1000000)
     },
