@@ -1,5 +1,5 @@
 const versionLog = {
-  'v1.3.7': [
+  'v1.3.8': [
     'Kan sende med vegsystemreferanse i url',
     'La til statistikk som gir en oversikt over hvor mange bilder som er tilgjengelige.'
   ],
