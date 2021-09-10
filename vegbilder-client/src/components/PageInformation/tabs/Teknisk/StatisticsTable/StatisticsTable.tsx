@@ -101,6 +101,9 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
+const formatTableCell = (rowCategory: number): string => {
+    return rowCategory !== 0 ? rowCategory.toLocaleString() : "";
+}
 
 const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]): IStatisticsRow[] => {
     const statisticsGroupedByYear = groupBy(statistics, i => i.AAR);
@@ -150,7 +153,6 @@ const createTotalRowExcludingCurrentYear = (sortedTableRowsWithoutCurrentYear: I
     return totalRow;
 }
 
-
 export const StatisticsTable = () => {
     const classes = useStyles();
     const availableStatistics: IStatisticsFeatureProperties[] = useRecoilValue(availableStatisticsQuery);
@@ -184,29 +186,29 @@ export const StatisticsTable = () => {
                         < TableBody >
                             <TableRow>
                                 <TableCell className={`${classes.contentCell} currentYear year`} component="th" scope="row">{rowForCurrentYear.year}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{rowForCurrentYear.E !== 0 ? rowForCurrentYear.E.toLocaleString() : ""}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{rowForCurrentYear.R !== 0 ? rowForCurrentYear.R.toLocaleString() : ""}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{rowForCurrentYear.F !== 0 ? rowForCurrentYear.F.toLocaleString() : ""}</TableCell>
-                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{rowForCurrentYear.other !== 0 ? rowForCurrentYear.other.toLocaleString() : ""}</TableCell>}
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.E)}</TableCell>
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.R)}</TableCell>
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.F)}</TableCell>
+                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.other)}</TableCell>}
                             </TableRow>
                             {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                                 return (
                                     <TableRow>
                                         <TableCell className={`${classes.contentCell} previousYears year`} component="th" scope="row">{row.year}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {row.E !== 0 ? row.E.toLocaleString() : ""}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {row.R !== 0 ? row.R.toLocaleString() : ""}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {row.F !== 0 ? row.F.toLocaleString() : ""}</TableCell>
-                                        {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears`}> {row.other !== 0 ? row.other.toLocaleString() : ""}</TableCell>}
+                                        <TableCell className={`${classes.contentCell} previousYears`}> {formatTableCell(row.E)}</TableCell>
+                                        <TableCell className={`${classes.contentCell} previousYears`}> {formatTableCell(row.R)}</TableCell>
+                                        <TableCell className={`${classes.contentCell} previousYears`}> {formatTableCell(row.F)}</TableCell>
+                                        {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears`}> {formatTableCell(row.other)}</TableCell>}
                                     </TableRow>
                                 )
                             }
                             )}
                             {!showExtendedTable && <TableRow>
                                 <TableCell className={`${classes.contentCell} previousYears total year`} component="th" scope="row">{rowWithTotalValues.year}</TableCell>
-                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.E !== 0 ? rowWithTotalValues.E.toLocaleString() : ""}</TableCell>
-                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.R !== 0 ? rowWithTotalValues.R.toLocaleString() : ""}</TableCell>
-                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.F !== 0 ? rowWithTotalValues.F.toLocaleString() : ""}</TableCell>
-                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.other !== 0 ? rowWithTotalValues.other.toLocaleString() : ""}</TableCell>}
+                                <TableCell className={`${classes.contentCell} previousYears total`}>{formatTableCell(rowWithTotalValues.E)}</TableCell>
+                                <TableCell className={`${classes.contentCell} previousYears total`}>{formatTableCell(rowWithTotalValues.R)}</TableCell>
+                                <TableCell className={`${classes.contentCell} previousYears total`}>{formatTableCell(rowWithTotalValues.F)}</TableCell>
+                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears total`}>{formatTableCell(rowWithTotalValues.other)}</TableCell>}
                             </TableRow>}
                         </TableBody>
                     </Table>
