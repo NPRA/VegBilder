@@ -23,14 +23,6 @@ export interface IStatisticsFeatureProperties {
 
 export interface IStatisticsRow {
   year: string,
-  E?: number,
-  F?: number,
-  R?: number,
-  other?: number
-}
-
-export interface IStatisticsTotalRow {
-  year: string,
   E: number,
   F: number,
   R: number,

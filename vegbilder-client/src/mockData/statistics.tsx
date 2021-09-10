@@ -83,19 +83,25 @@ export const tableRowsMock: IStatisticsRow[] = [
     {year: "2021",
     E: getRandomInt(1000000000),
     F: getRandomInt(1000000000),
+    R: 0,
+    other: 0
     },
     {year: "2020",
     E: getRandomInt(1000000000),
     F: getRandomInt(1000000000),
+    R: 0,
+    other: 0
     },
     {year: "2019",
     E: getRandomInt(1000000000),
     F: getRandomInt(1000000000),
-    other: getRandomInt(1000000000)
+    R: 0,
+    other: 0
     },
     {year: "2018",
     E: getRandomInt(1000000000),
     F: getRandomInt(1000000000),
+    R: 0,
     other: getRandomInt(1000000000)
     },
     {year: "2017",

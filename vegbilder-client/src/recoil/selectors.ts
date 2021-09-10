@@ -52,11 +52,9 @@ export const availableStatisticsQuery = selector({
   key: 'availableStatistics',
   get: async () => {
     const response = await getAvailableStatisticsFromOGC();
-    if (response.status === 200) {
-      if (response.data.features) {
+    if (response.status === 200 && response.data.features) {
         const statistics: IStatisticsFeatureProperties[] = response.data.features.map((feature: IStatisticsFeature) => feature.properties);
         return statistics;
-      }
     }
     throw new Error('Statistikken er ikke tilgjengelig for øyeblikket');
   }

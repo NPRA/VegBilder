@@ -5,11 +5,9 @@ import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from 
 import { visuallyHidden } from '@material-ui/utils';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
+import {groupBy} from "lodash";
 
-import { DEFAULT_ROAD_CATEGORIES } from '../../../../../constants/defaultParamters';
-import { groupBy } from "../../../../../utilities/customDataStructureUtilities";
-
-import {IStatisticsFeatureProperties, IStatisticsRow, IStatisticsTotalRow } from './types';
+import {IStatisticsFeatureProperties, IStatisticsRow } from './types';
 import {
     availableStatisticsQuery
 } from 'recoil/selectors';
@@ -104,22 +102,23 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]) => {
+const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[]): IStatisticsRow[] => {
     const statisticsGroupedByYear = groupBy(statistics, i => i.AAR);
 
     const tableRows: IStatisticsRow[] = Object.keys(statisticsGroupedByYear).map((year) => {
-        const row = Object.create({});
-        row[`year`] = year;
+        const row: IStatisticsRow = {year: year, E: 0, R: 0, F: 0, other: 0};
+        
         statisticsGroupedByYear[year].forEach((category) => {
-            if (DEFAULT_ROAD_CATEGORIES.includes(category.VEGKATEGORI)) {
-                row[`${category.VEGKATEGORI}`] = category.ANTALL;
-            } else {
-                row[`other`] = category.ANTALL;
-            }
+            switch (category.VEGKATEGORI) {
+                case "E": row.E = category.ANTALL; break;
+                case "R": row.R = category.ANTALL; break;
+                case "F": row.F = category.ANTALL; break;
+                default: row.other += category.ANTALL; break;
+            };
         });
         return row;
-    })
-    return tableRows as IStatisticsRow[];
+    });
+    return tableRows;
 }
 
 
@@ -127,22 +126,21 @@ const sortTableRowsBasedOnYear = (tableRows: IStatisticsRow[]) => {
     return tableRows.sort((rowA, rowB) => (rowA.year < rowB.year) ? 1 : -1);
 }
 
-const createTotalRowExcludingCurrentYear = (sortedTableRowsWithoutCurrentYear: IStatisticsRow[]) => {
+const createTotalRowExcludingCurrentYear = (sortedTableRowsWithoutCurrentYear: IStatisticsRow[]): IStatisticsRow => {
     const currentYear = new Date().getFullYear();
     const previousYear = currentYear - 1;
-    const initialValues: IStatisticsRow = {year: '', E: 0, R: 0, F: 0, other: 0};
 
-    //Legger bare sammen dersom property eksisterer på gjeldende rad for å unngå NaN i tabell. Trenger initial values for å unngå undefined.
     const onlyExistingValuesReducer = (prev: IStatisticsRow, cur: IStatisticsRow) => {
         return {
             year: `${previousYear} og eldre`,
-            E: typeof cur.E === "number" && typeof prev.E === "number" ? prev.E + cur.E : prev.E,
-            R: typeof cur.R === "number" && typeof prev.R === "number" ? prev.R + cur.R : prev.R,
-            F: typeof cur.F === "number" && typeof prev.F === "number" ? prev.F + cur.F : prev.F,
-            other: typeof cur.other === "number" && typeof prev.other === "number" ? prev.other + cur.other : prev.other,
-        } as IStatisticsTotalRow
+            E: prev.E + cur.E,
+            R: prev.R + cur.R,
+            F: prev.F + cur.F,
+            other: prev.other + cur.other,
+        }
     }
-    return sortedTableRowsWithoutCurrentYear.reduce(onlyExistingValuesReducer, initialValues) as IStatisticsTotalRow;
+    const totalRow = sortedTableRowsWithoutCurrentYear.reduce(onlyExistingValuesReducer);
+    return totalRow;
 }
 
 
@@ -179,29 +177,29 @@ export const StatisticsTable = () => {
                         < TableBody >
                             <TableRow>
                                 <TableCell className={`${classes.contentCell} currentYear year`} component="th" scope="row">{rowForCurrentYear.year}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{typeof rowForCurrentYear.E === "number" ? rowForCurrentYear.E.toLocaleString() : ""}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{typeof rowForCurrentYear.R === "number" ? rowForCurrentYear.R.toLocaleString() : ""}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{typeof rowForCurrentYear.F === "number" ? rowForCurrentYear.F.toLocaleString() : ""}</TableCell>
-                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{typeof rowForCurrentYear.other === "number" ? rowForCurrentYear.other.toLocaleString() : ""}</TableCell>}
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{rowForCurrentYear.E !== 0 ? rowForCurrentYear.E.toLocaleString() : ""}</TableCell>
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{rowForCurrentYear.R !== 0 ? rowForCurrentYear.R.toLocaleString() : ""}</TableCell>
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{rowForCurrentYear.F !== 0 ? rowForCurrentYear.F.toLocaleString() : ""}</TableCell>
+                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{rowForCurrentYear.other !== 0 ? rowForCurrentYear.other.toLocaleString() : ""}</TableCell>}
                             </TableRow>
                             {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                                 return (
                                     <TableRow>
                                         <TableCell className={`${classes.contentCell} previousYears year`} component="th" scope="row">{row.year}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {typeof row.E === "number" ? row.E.toLocaleString() : ""}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {typeof row.R === "number" ? row.R.toLocaleString() : ""}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {typeof row.F === "number" ? row.F.toLocaleString() : ""}</TableCell>
-                                        {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears`}> {typeof row.other === "number" ? row.other.toLocaleString() : ""}</TableCell>}
+                                        <TableCell className={`${classes.contentCell} previousYears`}> {row.E !== 0 ? row.E.toLocaleString() : ""}</TableCell>
+                                        <TableCell className={`${classes.contentCell} previousYears`}> {row.R !== 0 ? row.R.toLocaleString() : ""}</TableCell>
+                                        <TableCell className={`${classes.contentCell} previousYears`}> {row.F !== 0 ? row.F.toLocaleString() : ""}</TableCell>
+                                        {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears`}> {row.other !== 0 ? row.other.toLocaleString() : ""}</TableCell>}
                                     </TableRow>
                                 )
                             }
                             )}
                             {!showExtendedTable && <TableRow>
                                 <TableCell className={`${classes.contentCell} previousYears total year`} component="th" scope="row">{rowWithTotalValues.year}</TableCell>
-                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.E !== 0 && rowWithTotalValues.E !== undefined ? rowWithTotalValues.E.toLocaleString() : ""}</TableCell>
-                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.R !== 0 && rowWithTotalValues.R !== undefined ? rowWithTotalValues.R.toLocaleString() : ""}</TableCell>
-                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.F !== 0 && rowWithTotalValues.F !== undefined ? rowWithTotalValues.F.toLocaleString() : ""}</TableCell>
-                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.other !== 0 && rowWithTotalValues.other !== undefined ? rowWithTotalValues.other.toLocaleString() : ""}</TableCell>}
+                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.E !== 0 ? rowWithTotalValues.E.toLocaleString() : ""}</TableCell>
+                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.R !== 0 ? rowWithTotalValues.R.toLocaleString() : ""}</TableCell>
+                                <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.F !== 0 ? rowWithTotalValues.F.toLocaleString() : ""}</TableCell>
+                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears total`}>{rowWithTotalValues.other !== 0 ? rowWithTotalValues.other.toLocaleString() : ""}</TableCell>}
                             </TableRow>}
                         </TableBody>
                     </Table>
