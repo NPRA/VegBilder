@@ -1,7 +1,9 @@
+import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableStatisticsFromOGC';
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
 import { IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { IStatisticsFeature, IStatisticsFeatureProperties } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 import {
   getDateString,
   getFilteredImagePoints,
@@ -44,6 +46,18 @@ export const availableYearsQuery = selector({
     }
     throw new Error('Karttjenesten er for øyeblikket utilgjengelig. Prøv igjen senere.');
   },
+});
+
+export const availableStatisticsQuery = selector({
+  key: 'availableStatistics',
+  get: async () => {
+    const response = await getAvailableStatisticsFromOGC();
+    if (response.status === 200 && response.data.features) {
+        const statistics: IStatisticsFeatureProperties[] = response.data.features.map((feature: IStatisticsFeature) => feature.properties);
+        return statistics;
+    }
+    throw new Error('Statistikken er ikke tilgjengelig for øyeblikket');
+  }
 });
 
 export const vegsystemreferanseState = selector({

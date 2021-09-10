@@ -71,7 +71,6 @@ const views = {
   mapView: 'map',
   imageView: 'image',
 };
-
 const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {...props} />;
 
 const App = () => {
@@ -264,5 +263,6 @@ const App = () => {
     </ThemeProvider>
   );
 };
+
 
 export default App;
