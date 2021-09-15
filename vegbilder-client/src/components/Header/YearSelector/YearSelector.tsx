@@ -11,8 +11,9 @@ import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
-  yearQueryParameterState,
+  yearQueryParameterState
 } from 'recoil/selectors';
+import {cameraFilterState} from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
@@ -88,6 +89,7 @@ interface IYearSelectorProps {
 const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const classes = useStyles();
   const availableYears = useRecoilValue(availableYearsQuery);
+  const currentCameraType = useRecoilValue(cameraFilterState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
@@ -116,7 +118,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
         setCurrentYear(parseInt(newYear));
         if (currentImagePoint) {
           const latlng = getImagePointLatLng(currentImagePoint);
-          if (latlng) fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear));
+          if (latlng) fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear), currentCameraType);
         }
       }
     }

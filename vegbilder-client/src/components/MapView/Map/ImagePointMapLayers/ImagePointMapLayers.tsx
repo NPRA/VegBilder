@@ -34,6 +34,7 @@ const ImagePointMapLayers = () => {
       return (
         <>
           <WMSTileLayer
+            key={getMapLayer()}
             url={OGC_URL}
             attribution="<a href='https://www.vegvesen.no/'>Statens vegvesen</a>"
             layers={getMapLayer()}

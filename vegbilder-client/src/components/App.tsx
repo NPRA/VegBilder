@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, makeStyles, Snackbar, ThemeProvider, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
@@ -15,6 +15,7 @@ import {
   viewQueryParamterState,
   yearQueryParameterState,
 } from 'recoil/selectors';
+import { cameraFilterState } from 'recoil/atoms';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import PageInformation from './PageInformation/PageInformation';
@@ -79,6 +80,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
+  const currentCameraType = useRecoilValue(cameraFilterState);
 
   const searchParams = new URLSearchParams(window.location.search);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -136,7 +138,7 @@ const App = () => {
 
         if (latlng) {
           if (year) {
-            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year)).then(
+            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year), currentCameraType).then(
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
                   setCurrentCoordinates({ ...latlng, zoom: 15 });
@@ -159,6 +161,7 @@ const App = () => {
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
 
+
     if (vegsystemreferanseQuery) {
       openAppByVegsystemreferanse(vegsystemreferanseQuery, yearQuery);
     }
@@ -177,7 +180,7 @@ const App = () => {
     else if (imageIdQuery && imageIdQuery.length > 1) {
       if (latQuery && lngQuery && yearQuery && yearQuery !== 'latest') {
         const latlng = { lat: parseFloat(latQuery), lng: parseFloat(lngQuery) };
-        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery));
+        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery), currentCameraType);
       }
     }
 

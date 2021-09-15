@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { loadedImagePointsState } from 'recoil/atoms';
+import { cameraFilterState, loadedImagePointsState } from 'recoil/atoms';
 import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';
@@ -11,6 +11,7 @@ const useFetchNearestLatestImagePoint = (
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const availableYears = useRecoilValue(availableYearsQuery);
+  const currentCameraType = useRecoilValue(cameraFilterState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const fetchImagePointsByLatLongAndYear = useFetchNearestImagePoint(
     showMessage,
@@ -22,7 +23,7 @@ const useFetchNearestLatestImagePoint = (
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
-        await fetchImagePointsByLatLongAndYear(latlng, year).then((imagePoint) => {
+        await fetchImagePointsByLatLongAndYear(latlng, year, currentCameraType).then((imagePoint) => {
           if (imagePoint) {
             const year = imagePoint.properties.AAR;
             setCurrentYear(year);

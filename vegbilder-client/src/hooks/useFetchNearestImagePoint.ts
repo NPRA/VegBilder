@@ -12,7 +12,7 @@ import {
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
-import { loadedImagePointsState } from 'recoil/atoms';
+import { cameraFilterState, loadedImagePointsState } from 'recoil/atoms';
 
 type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages';
 
@@ -21,6 +21,7 @@ const useFetchNearestImagePoint = (
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
   action: action = 'default'
 ) => {
+  const cameraFilter = useRecoilValue(cameraFilterState);
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -30,7 +31,7 @@ const useFetchNearestImagePoint = (
   async function fetchImagePointsByYearAndLatLng(
     latlng: ILatlng,
     year: number,
-    cameraType = loadedImagePoints?.cameraType ?? 'planar'
+    cameraType = cameraFilter
   ) {
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =

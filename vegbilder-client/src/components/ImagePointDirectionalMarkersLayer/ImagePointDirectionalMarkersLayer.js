@@ -108,7 +108,8 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
       loadedImagePoints.bbox &&
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
-      fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea);
+      // TODO: Undersøke når denne blir kalt og legge til cameraType som siste parameter
+      fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea, cameraFilter);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createBboxForVisibleMapArea]);
@@ -183,7 +184,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
     if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
       const imagePoints = filteredImagePoints.filter((imagePoint) => {
-        if (cameraFilter.includes('panorama')) {
+        if (cameraFilter.includes('panorama')) { //TODO: Finne ut hva denne gjør
           return (
             imagePointIsWithinBbox(imagePoint, mapBbox) && imagePoint.properties.BILDETYPE === '360'
           );
