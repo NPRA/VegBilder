@@ -12,7 +12,7 @@ import {
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
-import { cameraFilterState, loadedImagePointsState } from 'recoil/atoms';
+import { loadedImagePointsState } from 'recoil/atoms';
 
 type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages';
 
@@ -21,7 +21,6 @@ const useFetchNearestImagePoint = (
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
   action: action = 'default'
 ) => {
-  const cameraFilter = useRecoilValue(cameraFilterState);
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -31,7 +30,7 @@ const useFetchNearestImagePoint = (
   async function fetchImagePointsByYearAndLatLng(
     latlng: ILatlng,
     year: number,
-    cameraType = cameraFilter
+    cameraType: cameraTypes
   ) {
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
@@ -41,7 +40,7 @@ const useFetchNearestImagePoint = (
       loadedImagePoints.cameraType !== cameraType;
     if (shouldFetchNewImagePointsFromOGC) {
       showMessage(`Leter etter bilder i ${year}...`);
-      fetchImagePointsFromOGC(year, bboxVisibleMapArea, cameraType).then((imagePoints) => {
+      fetchImagePointsFromOGC(year, bboxVisibleMapArea, cameraType).then((imagePoints: IImagePoint[] | undefined) => {
         if (imagePoints && imagePoints.length) {
           let nearestImagePoint;
           if (action === 'findByImageId') {
@@ -132,7 +131,7 @@ const useFetchNearestImagePoint = (
     }
   };
 
-  return (latlng: ILatlng, year: number, cameraType?: cameraTypes) =>
+  return (latlng: ILatlng, year: number, cameraType: cameraTypes) =>
     fetchImagePointsByYearAndLatLng(latlng, year, cameraType);
 };
 

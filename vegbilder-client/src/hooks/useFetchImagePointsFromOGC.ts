@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { cameraTypes, IBbox } from 'types';
+import { cameraTypes, IBbox, IImagePoint } from 'types';
 import { useSetRecoilState } from 'recoil';
 import { loadedImagePointsFilterState } from 'recoil/selectors';
 
@@ -29,7 +29,7 @@ const useFetchImagePointsFromOGC = () => {
         cameraType: cameraType,
       });
       setIsFetching(false);
-      return imagePoints;
+      return imagePoints as IImagePoint[];
     }
     setIsFetching(false);
   }
