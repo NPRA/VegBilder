@@ -14,7 +14,7 @@ const useFetchImagePointsFromOGC = () => {
     setIsFetching(true);
 
     let typename =
-      cameraType === '360' ? `vegbilder_1_0:Vegbilder_360_2021` : `vegbilder_1_0:Vegbilder_${year}`;
+      cameraType === '360' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`;
 
     const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
       bbox,

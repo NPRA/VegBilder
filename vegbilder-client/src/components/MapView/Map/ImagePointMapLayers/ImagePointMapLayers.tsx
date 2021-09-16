@@ -16,7 +16,7 @@ const ImagePointMapLayers = () => {
   const showNyesteKartlag = currentYear === 'Nyeste';
 
   const getMapLayer = () => {
-    if (cameraFilter === '360') return `Vegbilder_360_2021`;
+    if (cameraFilter === '360') return `Vegbilder_360_${currentYear}`;
     if (cameraFilter === 'planar') {
       if (showNyesteKartlag) {
         return 'Vegbilder_dekning';
