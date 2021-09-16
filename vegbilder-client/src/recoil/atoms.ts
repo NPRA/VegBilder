@@ -1,6 +1,7 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
 import { atom } from 'recoil';
 import { cameraTypes, IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
+import { IStatisticsFeature } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 
 const searchParams = new URLSearchParams(window.location.search);
 
@@ -13,6 +14,11 @@ export const currentYearState = atom<string | number>({
   key: 'currentYear',
   default: parseInt(searchParams.get('year')!) || 'Nyeste',
 });
+
+export const currentVegsystemreferanseState = atom<string | null>({
+  key: 'currentVegsystemreferanse',
+  default: null
+})
 
 export const currentImagePointState = atom<IImagePoint | null>({
   key: 'currentImagePoint',
@@ -53,3 +59,7 @@ export const cameraFilterState = atom<cameraTypes>({
   key: 'cameraFilter',
   default: 'planar',
 });
+export const availableStatistics = atom<IStatisticsFeature[] | null>({
+  key: 'availableStatistics',
+  default: [],
+})

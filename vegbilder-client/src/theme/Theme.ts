@@ -273,5 +273,16 @@ export default createMuiTheme({
         },
       },
     },
+    MuiTableRow: {
+     root: {
+         '&:hover': {
+           cursor: 'clicker',
+           '& .MuiTableCell-body': {
+             cursor: 'default',
+             color: orangeDark
+           }
+         }
+     } 
+    }
   },
 });

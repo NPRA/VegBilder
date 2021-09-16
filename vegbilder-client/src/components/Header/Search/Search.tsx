@@ -20,6 +20,7 @@ import {
 import useAsyncError from 'hooks/useAsyncError';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { cameraFilterState, currentYearState } from 'recoil/atoms';
+import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { ILatlng } from 'types';
@@ -141,6 +142,12 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     'Fant ingen bilder i nærheten av stedet du søkte på.'
   );
 
+  const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
+    showMessage,
+    'Fant ingen bilder i nærheten'
+  );
+
+
   const delayedStedsnavnQuery = useMemo(
     () =>
       debounce(async (trimmedSearch) => {
@@ -201,7 +208,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     if (latlng && latlng.lat && latlng.lng) {
       setCurrentCoordinates({ ...latlng, zoom: zoom });
       setResetImagePoint(true);
-      if (typeof currentYear === 'number')
+      if (typeof currentYear === 'number') {
         fetchNearestImagePoint(latlng, currentYear, currentCameraType).then((imagePoint) => {
           if (imagePoint) {
             const imagePointLatLng = getImagePointLatLng(imagePoint);
@@ -209,7 +216,14 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
           } else {
             setMapView();
           }
-        });
+        })
+      } else {
+        fetchNearestLatestImagePoint(latlng).then((imagePoint) => {
+          if (!imagePoint) {
+            setMapView();
+          };
+        })
+      };
       setSearchString('');
     }
   };

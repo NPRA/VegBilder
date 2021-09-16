@@ -54,7 +54,7 @@ export interface ILoadedImagePoints {
   availableDates?: string[];
 }
 
-export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom';
+export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse';
 
 export type viewTypes = 'map' | 'image';
 

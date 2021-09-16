@@ -1,7 +1,9 @@
+import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableStatisticsFromOGC';
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
 import { cameraTypes, IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { IStatisticsFeature, IStatisticsFeatureProperties } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 import {
   getDateString,
   getFilteredImagePoints,
@@ -15,6 +17,7 @@ import {
   filteredImagePointsState,
   loadedImagePointsState,
   playVideoState,
+  currentVegsystemreferanseState
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -45,6 +48,34 @@ export const availableYearsQuery = selector({
   },
 });
 
+export const availableStatisticsQuery = selector({
+  key: 'availableStatistics',
+  get: async () => {
+    const response = await getAvailableStatisticsFromOGC();
+    if (response.status === 200 && response.data.features) {
+        const statistics: IStatisticsFeatureProperties[] = response.data.features.map((feature: IStatisticsFeature) => feature.properties);
+        return statistics;
+    }
+    throw new Error('Statistikken er ikke tilgjengelig for øyeblikket');
+  }
+});
+
+export const vegsystemreferanseState = selector({
+  key: 'vegsystemreferanseState',
+  get: ({ get }) => {
+    return get(currentVegsystemreferanseState);
+  },
+  set: ({ get, set }, newVegsystemreferanse) => {
+    if (get(currentVegsystemreferanseState) !== newVegsystemreferanse && typeof newVegsystemreferanse === 'string') {
+      setNewQueryParamter('vegsystemreferanse', newVegsystemreferanse);
+      set(currentVegsystemreferanseState, newVegsystemreferanse);
+    } else if (newVegsystemreferanse === null) {
+      setNewQueryParamter('vegsystemreferanse', null);
+      set(currentVegsystemreferanseState, newVegsystemreferanse);
+    }
+  }
+})
+
 export const yearQueryParameterState = selector({
   key: 'yearQueryParamterState',
   get: ({ get }) => {
@@ -68,7 +99,7 @@ export const imagePointQueryParameterState = selector({
   },
   set: ({ get, set }, newImagePoint: IImagePoint | null | DefaultValue) => {
     if (!(newImagePoint instanceof DefaultValue)) {
-      const imagePointId = newImagePoint ? newImagePoint.id : '';
+      const imagePointId = newImagePoint ? newImagePoint.id : null;
       const isVideoPlaying = get(playVideoState);
       setNewQueryParamter('imageId', imagePointId, isVideoPlaying);
       if (newImagePoint) {
@@ -153,12 +184,17 @@ export const loadedImagePointsFilterState = selector({
 });
 
 // utilities
-const setNewQueryParamter = (name: queryParamterNames, value: string, isVideoPlaying = false) => {
+const setNewQueryParamter = (name: queryParamterNames, value: string | null, isVideoPlaying = false) => {
   const newSearchParams = new URLSearchParams(window.location.search);
-  newSearchParams.set(name, value);
-  if (isVideoPlaying) {
-    delayedReplaceHistory(newSearchParams);
+  if (value !== null) {
+    newSearchParams.set(name, value);
+    if (isVideoPlaying) {
+      delayedReplaceHistory(newSearchParams);
+    } else {
+      window.history.replaceState(null, '', '?' + newSearchParams.toString());
+    }
   } else {
+    newSearchParams.delete(name);
     window.history.replaceState(null, '', '?' + newSearchParams.toString());
   }
 };

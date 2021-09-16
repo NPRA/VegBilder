@@ -8,7 +8,7 @@ import Search from './Search/Search';
 import YearSelector from './YearSelector/YearSelector';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState, vegsystemreferanseState } from 'recoil/selectors';
 
 const useStyles = makeStyles({
   headerToolBar: {
@@ -52,9 +52,11 @@ const Header = ({ showMessage, setMapView, showInformation, setShowInformation }
   const classes = useStyles();
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const [, setCurrentVegsystemreferanse] = useRecoilState(vegsystemreferanseState);
 
   const resetToDefaultStates = () => {
     setCurrentImagePoint(null);
+    setCurrentVegsystemreferanse(null);
     setMapView();
     setCurrentCoordinates({ ...DEFAULT_COORDINATES, zoom: DEFAULT_ZOOM });
   };
