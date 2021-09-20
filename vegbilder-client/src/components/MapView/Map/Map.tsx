@@ -6,7 +6,7 @@ import { LeafletMouseEvent } from 'leaflet';
 import { crsUtm33N } from 'constants/crs';
 import ImagePointMapLayers from './ImagePointMapLayers/ImagePointMapLayers';
 import MapControls from './MapControls/MapControls';
-import { cameraFilterState, currentImagePointState, currentYearState } from 'recoil/atoms';
+import { currentCameraTypeState, currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
@@ -34,7 +34,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const currentYear = useRecoilValue(currentYearState);
-  const currentCameraType = useRecoilValue(cameraFilterState);
+  const currentCameraType = useRecoilValue(currentCameraTypeState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const map = useMap();

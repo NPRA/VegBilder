@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { cameraFilterState, loadedImagePointsState } from 'recoil/atoms';
+import { currentCameraTypeState, loadedImagePointsState } from 'recoil/atoms';
 import { availableYearsQuery, yearQueryParameterState } from 'recoil/selectors';
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';
@@ -11,7 +11,7 @@ const useFetchNearestLatestImagePoint = (
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const availableYears = useRecoilValue(availableYearsQuery);
-  const currentCameraType = useRecoilValue(cameraFilterState);
+  const currentCameraType = useRecoilValue(currentCameraTypeState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const fetchImagePointsByLatLongAndYear = useFetchNearestImagePoint(
     showMessage,

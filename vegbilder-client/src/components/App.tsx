@@ -16,7 +16,7 @@ import {
   yearQueryParameterState,
   vegsystemreferanseState
 } from 'recoil/selectors';
-import { cameraFilterState } from 'recoil/atoms';
+import { currentCameraTypeState } from 'recoil/atoms';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import PageInformation from './PageInformation/PageInformation';
@@ -25,7 +25,7 @@ import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { IImagePoint } from 'types';
+import { cameraTypes, IImagePoint } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -81,7 +81,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
-  const currentCameraType = useRecoilValue(cameraFilterState);
+  const currentCameraType = useRecoilValue(currentCameraTypeState);
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const searchParams = new URLSearchParams(window.location.search);
@@ -125,7 +125,7 @@ const App = () => {
 
   const openAppByVegsystemreferanse = async (
     vegsystemreferanse: string | undefined,
-    year: string | null
+    year: string | null,
   ) => {
     if (vegsystemreferanse) {
       const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
@@ -162,6 +162,7 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
+    const cameraType = searchParams.get('cameraType');
 
 
     if (vegsystemreferanseQuery) {

@@ -15,7 +15,7 @@ import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  cameraFilterState,
+  currentCameraTypeState,
   currentImagePointState,
   currentLatLngZoomState,
   loadedImagePointsState,
@@ -127,7 +127,7 @@ interface IFilterProps {
 
 const Filter = ({ showMessage }: IFilterProps) => {
   const classes = useStyles();
-  const [currentCameraType, setCameraTypeFilter] = useRecoilState(cameraFilterState);
+  const [currentCameraType, setCameraTypeFilter] = useRecoilState(currentCameraTypeState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const setLoadedImagePoits = useSetRecoilState(loadedImagePointsState);

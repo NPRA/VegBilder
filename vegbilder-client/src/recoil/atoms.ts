@@ -55,10 +55,11 @@ export const filteredImagePointsState = atom<IImagePoint[] | null>({
   default: null,
 });
 
-export const cameraFilterState = atom<cameraTypes>({
-  key: 'cameraFilter',
+export const currentCameraTypeState = atom<cameraTypes>({
+  key: 'currentCameraType',
   default: 'planar',
 });
+
 export const availableStatistics = atom<IStatisticsFeature[] | null>({
   key: 'availableStatistics',
   default: [],

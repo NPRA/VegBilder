@@ -13,7 +13,7 @@ import {
   imagePointQueryParameterState,
   yearQueryParameterState
 } from 'recoil/selectors';
-import {cameraFilterState} from 'recoil/atoms';
+import {currentCameraTypeState} from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
@@ -89,7 +89,7 @@ interface IYearSelectorProps {
 const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const classes = useStyles();
   const availableYears = useRecoilValue(availableYearsQuery);
-  const currentCameraType = useRecoilValue(cameraFilterState);
+  const currentCameraType = useRecoilValue(currentCameraTypeState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
