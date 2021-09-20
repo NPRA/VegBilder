@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
     color: theme.palette.common.grayRegular,
     width: '8rem',
     '&:hover': {
-      opacity: 0.9,
+      color: Theme.palette.common.orangeDark
     },
   },
   calendarIcon: {
