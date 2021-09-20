@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import { Toolbar, Grid, Box, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
@@ -6,6 +6,7 @@ import { useRecoilState } from 'recoil';
 
 import Search from './Search/Search';
 import YearSelector from './YearSelector/YearSelector';
+import Filter from './Filter/Filter';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState, vegsystemreferanseState } from 'recoil/selectors';
@@ -76,10 +77,13 @@ const Header = ({ showMessage, setMapView, showInformation, setShowInformation }
           <Grid item className={classes.searchContainer}>
             <Search showMessage={showMessage} setMapView={setMapView} />
           </Grid>
+          <Grid style={{paddingRight: "10px"}}>
+            <Filter showMessage={showMessage} />
+          </Grid>
           <Grid item className={classes.dateAndYearSelectorContainer}>
             <YearSelector showMessage={showMessage} />
-            <Box width={'1.125rem'} />
           </Grid>
+
           <Tooltip title="Informasjon om Vegbilder">
             <IconButton
               aria-label="Informasjon om Vegbilder"

@@ -1,11 +1,16 @@
 import {
   makeStyles,
+  WithStyles,
+  withStyles,
+  createStyles,
   FormControl,
-  FormControlLabel,
-  FormGroup,
-  Typography,
-  Radio,
+  Select,
+  ListSubheader,
+  MenuItem,
+  InputBase,
 } from '@material-ui/core';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import Theme from 'theme/Theme';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
@@ -16,6 +21,7 @@ import {
   loadedImagePointsState,
 } from 'recoil/atoms';
 import { cameraTypes } from 'types';
+import { CheckmarkIcon, FilterIcon } from "components/Icons/Icons";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -47,17 +53,81 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  cameraSelect: {
+    borderRadius: theme.shape.borderRadius,
+    border: `0.5px solid ${theme.palette.common.grayRegular}`,
+    color: theme.palette.common.grayRegular,
+    width: '8rem',
+    '&:hover': {
+      color: Theme.palette.common.orangeDark
+    },
+  },
+  calendarIcon: {
+    position: 'absolute',
+    top: '0.6875rem',
+    left: '0.75rem',
+  },
+  heading: {
+    color: theme.palette.common.grayIcons,
+    textTransform: 'uppercase',
+    padding: '0.9375rem 1.625rem',
+    fontWeight: 700,
+  },
+  item: {
+    color: theme.palette.common.grayIcons,
+    padding: '0.25rem 2.125rem',
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+    },
+    '& $checkmarkStyle': {
+      display: 'block',
+    },
+  },
+  checkmarkStyle: {
+    position: 'absolute',
+    left: '0.75rem',
+    display: 'none',
+  },
+  icon: {
+    '&:hover' : {
+      color: theme.palette.common.orangeDark
+    }
+  },
+  dropdownStyle: {
+    marginTop: '4.3rem',
+  },
 }));
 
+const iconStyles = () =>
+  createStyles({
+    selectIcon: {
+      color: '#ececec',
+    },
+  });
+
+interface Props extends WithStyles<typeof iconStyles> {
+  className: string;
+}
+
+const CustomExpandMoreIcon = withStyles(iconStyles)(({ className, classes, ...rest }: Props) => {
+  return <ExpandMoreIcon {...rest} className={`${className} ${classes.selectIcon}`} />;
+});
+
+const CustomInput = withStyles(() => ({
+  input: {
+    paddingTop: '0.8125rem',
+    paddingBottom: '0.8125rem',
+    paddingLeft: '2.3125rem',
+  },
+}))(InputBase);
+
 interface IFilterProps {
-  openMenu: boolean;
-  setOpenMenu: (openMenu: boolean) => void;
   showMessage: (message: string) => void;
 }
 
-const Filter = ({ openMenu, setOpenMenu, showMessage }: IFilterProps) => {
+const Filter = ({ showMessage }: IFilterProps) => {
   const classes = useStyles();
-  const [cameraTypeFilter, setCameraTypeFilter] = useRecoilState(cameraFilterState);
+  const [currentCameraType, setCameraTypeFilter] = useRecoilState(cameraFilterState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const setLoadedImagePoits = useSetRecoilState(loadedImagePointsState);
@@ -68,7 +138,13 @@ const Filter = ({ openMenu, setOpenMenu, showMessage }: IFilterProps) => {
 
   const [vegtyperChecked, setVegtyperChecked] = useState({ riksveger: false, fylkesveger: false });
 
-  const handleCameraTypeFilterCheck = (cameraType: cameraTypes) => {
+  const handleCameraTypeFilterCheck = (
+    event: React.ChangeEvent<{
+      name?: string | undefined;
+      value: unknown;
+    }>
+  ) => {
+    let cameraType = event.target.value as cameraTypes;
     setCameraTypeFilter(cameraType);
     if (currentImagePoint) {
       // if we already have an image preview, we need to fetch new image points and find a new image preview for that camera filter
@@ -83,64 +159,45 @@ const Filter = ({ openMenu, setOpenMenu, showMessage }: IFilterProps) => {
 
   return (
     <>
-      {openMenu && (
-        <div className={classes.menu} tabIndex={1}>
-          <FormControl component="fieldset">
-            {/* <Typography variant="h5"> Vegtyper </Typography>
-            <FormGroup>
-              <FormControlLabel
-                control={<Checkbox checked={riksveger} onChange={handleChange} name="riksveger" />}
-                label="Riksveger"
-              />
-              <FormControlLabel
-                control={
-                  <Checkbox checked={fylkesveger} onChange={handleChange} name="Fylkesveger" />
-                }
-                label="Fylkesveger"
-              />
-            </FormGroup> */}
-            <FormGroup>
-              <Typography variant="h5"> Kameratype </Typography>
-              <FormControlLabel
-                control={
-                  <Radio
-                    checked={cameraTypeFilter === '360'}
-                    onChange={() => {
-                      handleCameraTypeFilterCheck('360');
-                    }}
-                    name="360"
-                  />
-                }
-                label="360"
-              />
-              <FormControlLabel
-                control={
-                  <Radio
-                    checked={cameraTypeFilter === 'dekkekamera'}
-                    onChange={() => {
-                      handleCameraTypeFilterCheck('dekkekamera');
-                    }}
-                    name="dekkekamera"
-                  />
-                }
-                label="Dekkekamera"
-              />
-              <FormControlLabel
-                control={
-                  <Radio
-                    checked={cameraTypeFilter === 'planar'}
-                    onChange={() => {
-                      handleCameraTypeFilterCheck('planar');
-                    }}
-                    name="planar"
-                  />
-                }
-                label="Planar"
-              />
-            </FormGroup>
-          </FormControl>
+      {
+        <FormControl>
+          <Select
+          id="cameraType-select"
+          value={currentCameraType}
+          className={classes.cameraSelect}
+          input={<CustomInput/>}
+          IconComponent={CustomExpandMoreIcon}
+          onChange={(event) => handleCameraTypeFilterCheck(event)}
+          MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
+          >
+            <ListSubheader>Bildetype</ListSubheader>
+            <MenuItem
+            value={'360'}
+            className={classes.item}
+            style={{color: currentCameraType === '360' ? Theme.palette.common.orangeDark : ''}}>
+            {currentCameraType === '360' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+            {'360'}
+            </MenuItem>
+            <MenuItem
+            value={'dekkekamera'}
+            className={classes.item}
+            style={{color: currentCameraType === 'dekkekamera' ? Theme.palette.common.orangeDark : ''}}>
+            {currentCameraType === 'dekkekamera' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+            {'Dekkekamera'}
+            </MenuItem>
+            <MenuItem
+            value={'planar'}
+            className={classes.item}
+            style={{color: currentCameraType === 'planar' ? Theme.palette.common.orangeDark : ''}}>
+            {currentCameraType === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+            {'Planar'}
+            </MenuItem>
+          </Select>
+        <div className={classes.calendarIcon}>
+        <FilterIcon className={classes.icon}/>
         </div>
-      )}
+        </FormControl>
+        }
     </>
   );
 };

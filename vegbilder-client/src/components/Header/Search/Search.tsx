@@ -380,18 +380,6 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
             )}
           </div>
         )}
-        <IconButton
-          aria-label="Filter"
-          classes={{ root: classes.button }}
-          onClick={() => setOpenFilterMenu(!openFilterMenu)}
-        >
-          <FilterIcon />
-        </IconButton>
-        <Filter
-          openMenu={openFilterMenu}
-          setOpenMenu={setOpenFilterMenu}
-          showMessage={showMessage}
-        />
       </div>
     </ClickAwayListener>
   );
