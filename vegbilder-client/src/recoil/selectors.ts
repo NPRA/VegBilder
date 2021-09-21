@@ -17,7 +17,8 @@ import {
   filteredImagePointsState,
   loadedImagePointsState,
   playVideoState,
-  currentVegsystemreferanseState
+  currentVegsystemreferanseState,
+  currentCameraTypeState
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -91,6 +92,20 @@ export const yearQueryParameterState = selector({
     }
   },
 });
+
+
+export const cameraTypeQueryParameterState = selector({
+  key: 'cameraTypeQueryParameterState',
+  get: ({ get }) => {
+    return get(currentCameraTypeState);
+  },
+  set: ({ get, set }, newCameraType: cameraTypes|DefaultValue) => {
+    setNewQueryParamter('cameraType', newCameraType as string);
+    set(currentCameraTypeState, newCameraType);
+  },
+});
+
+
 
 export const imagePointQueryParameterState = selector({
   key: 'imagePointQueryParamterState',

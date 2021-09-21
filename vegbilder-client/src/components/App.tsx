@@ -14,9 +14,9 @@ import {
   latLngZoomQueryParameterState,
   viewQueryParamterState,
   yearQueryParameterState,
-  vegsystemreferanseState
+  vegsystemreferanseState,
+  cameraTypeQueryParameterState
 } from 'recoil/selectors';
-import { currentCameraTypeState } from 'recoil/atoms';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import PageInformation from './PageInformation/PageInformation';
@@ -81,7 +81,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
-  const currentCameraType = useRecoilValue(currentCameraTypeState);
+  const [currentCameraType, setCurrentCameraType] = useRecoilState(cameraTypeQueryParameterState);
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const searchParams = new URLSearchParams(window.location.search);
@@ -162,7 +162,7 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
-    const cameraType = searchParams.get('cameraType');
+    const cameraType = searchParams.get('cameraType') as string;
 
 
     if (vegsystemreferanseQuery) {
@@ -202,6 +202,9 @@ const App = () => {
       }
       if (!viewQuery) {
         setCurrentView(DEFAULT_VIEW);
+      }
+      if (!cameraType) {
+        setCurrentCameraType('planar');
       }
     }
   }, []);

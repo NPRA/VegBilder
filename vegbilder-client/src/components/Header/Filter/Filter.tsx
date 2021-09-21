@@ -15,11 +15,11 @@ import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import React, { useState } from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
-  currentCameraTypeState,
   currentImagePointState,
   currentLatLngZoomState,
   loadedImagePointsState,
 } from 'recoil/atoms';
+import {cameraTypeQueryParameterState} from 'recoil/selectors';
 import { cameraTypes } from 'types';
 import { CheckmarkIcon, FilterIcon } from "components/Icons/Icons";
 
@@ -127,7 +127,7 @@ interface IFilterProps {
 
 const Filter = ({ showMessage }: IFilterProps) => {
   const classes = useStyles();
-  const [currentCameraType, setCameraTypeFilter] = useRecoilState(currentCameraTypeState);
+  const [currentCameraType, setCurrentCameraType] = useRecoilState(cameraTypeQueryParameterState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const setLoadedImagePoits = useSetRecoilState(loadedImagePointsState);
@@ -145,7 +145,7 @@ const Filter = ({ showMessage }: IFilterProps) => {
     }>
   ) => {
     let cameraType = event.target.value as cameraTypes;
-    setCameraTypeFilter(cameraType);
+    setCurrentCameraType(cameraType);
     if (currentImagePoint) {
       // if we already have an image preview, we need to fetch new image points and find a new image preview for that camera filter
       // otherwise, we dont have to do anything besides switching map layer
