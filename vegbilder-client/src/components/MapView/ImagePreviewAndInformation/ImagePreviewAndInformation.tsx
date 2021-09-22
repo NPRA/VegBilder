@@ -93,16 +93,13 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
             </div>
           </div>
 
-          {currentImagePoint.properties.BILDETYPE === '360' ? (
-            <ThreeSixtyImage imageUrl={getImageUrl(currentImagePoint)} />
-          ) : (
             <img
               src={getImageUrl(currentImagePoint)}
               className={classes.image}
               alt="Bilde tatt langs veg"
               onClick={openImage}
             />
-          )}
+          
         </div>
         {showInformation ? (
           <ImageInfo
