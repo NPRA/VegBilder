@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Grid, makeStyles, Snackbar, ThemeProvider, Typography } from '@material-ui/core';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { DefaultValue, useRecoilState, useRecoilValue } from 'recoil';
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
@@ -162,8 +162,13 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
-    const cameraType = searchParams.get('cameraType') as string;
+    const cameraType = searchParams.get('cameraType') as cameraTypes;
 
+    if (!cameraType) {
+      setCurrentCameraType("planar");
+    } else if (cameraType !== "planar") {
+      setCurrentCameraType(cameraType);
+    }
 
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
@@ -192,7 +197,7 @@ const App = () => {
       }
     }
 
-    // Initialize year, zoom, lat, and lng when opening the app the default way
+    // Initialize year, cameraType, zoom, lat, and lng when opening the app the default way
     else {
       if (!yearQuery) {
         setCurrentYear('Nyeste');
