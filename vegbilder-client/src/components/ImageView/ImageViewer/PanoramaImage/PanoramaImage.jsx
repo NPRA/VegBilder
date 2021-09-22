@@ -1,9 +1,12 @@
-import React from 'react';
+import React, {useState} from 'react';
 import ReactPannellum from 'react-pannellum';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
 const ThreeSixtyImage = ({ imageUrl }) => {
+
+  const [currentImageUrl, setCurrentImageUrl] = useState("");
+
   const uiText = {
     bylineLabel: '',
     loadingLabel: '',
@@ -14,13 +17,15 @@ const ThreeSixtyImage = ({ imageUrl }) => {
     showZoomCtrl: false,
     showFullscreenCtrl: false,
     uiText: uiText,
+    preview: imageUrl
   };
 
-  return (
-    <>
-      <ReactPannellum
+  
+  let image360viewer =  new ReactPannellum();
+  image360viewer =
+  <ReactPannellum
         id="1"
-        sceneId="firstScene"
+        sceneId="initialScene"
         imageSource={imageUrl}
         config={config}
         style={{
@@ -29,7 +34,19 @@ const ThreeSixtyImage = ({ imageUrl }) => {
           fontFamily: '"LFT-Etica"',
           color: Theme.palette.common.grayRegular,
         }}
-      />
+/>
+
+
+if (currentImageUrl !== imageUrl) {
+  setCurrentImageUrl(imageUrl);
+  image360viewer.type.addScene("currentScene", {imageSource: currentImageUrl, preview: currentImageUrl});
+  image360viewer.type.loadScene("currentScene");
+}
+
+
+  return (
+    <>
+     {image360viewer}
     </>
   );
 };
