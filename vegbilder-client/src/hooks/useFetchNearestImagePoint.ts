@@ -58,9 +58,12 @@ const useFetchNearestImagePoint = (
             setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
           }
         } else {
+          if (currentImagePoint) {
+            setCurrentImagePoint(null);  //If an imagepoint is selected and the next call to fetch imagePoints returns undefined the imagepoint should be reset.
+          }
           showMessage(errorMessage);
         }
-      });
+      })
     } else {
       if (loadedImagePoints) {
         const nearestImagePoint = selectNearestImagePointToCoordinates(
