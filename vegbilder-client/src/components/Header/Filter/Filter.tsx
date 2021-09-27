@@ -172,6 +172,13 @@ const Filter = ({ showMessage }: IFilterProps) => {
           >
             <ListSubheader>Bildetype</ListSubheader>
             <MenuItem
+            value={'planar'}
+            className={classes.item}
+            style={{color: currentImageType === 'planar' ? Theme.palette.common.orangeDark : ''}}>
+            {currentImageType === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+            {'Planar'}
+            </MenuItem>
+            <MenuItem
             value={'360'}
             className={classes.item}
             style={{color: currentImageType === '360' ? Theme.palette.common.orangeDark : ''}}>
@@ -184,13 +191,6 @@ const Filter = ({ showMessage }: IFilterProps) => {
             style={{color: currentImageType === 'dekkekamera' ? Theme.palette.common.orangeDark : ''}}>
             {currentImageType === 'dekkekamera' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
             {'Dekkekamera'}
-            </MenuItem>
-            <MenuItem
-            value={'planar'}
-            className={classes.item}
-            style={{color: currentImageType === 'planar' ? Theme.palette.common.orangeDark : ''}}>
-            {currentImageType === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
-            {'Planar'}
             </MenuItem>
           </Select>
         <div className={classes.calendarIcon}>
