@@ -3,21 +3,21 @@ import { useMap, WMSTileLayer } from 'react-leaflet';
 import { useRecoilValue } from 'recoil';
 
 import ImagePointDirectionalMarkersLayer from 'components/ImagePointDirectionalMarkersLayer/ImagePointDirectionalMarkersLayer';
-import { currentCameraTypeState, currentImagePointState, currentYearState } from 'recoil/atoms';
+import { currentImageTypeState, currentImagePointState, currentYearState } from 'recoil/atoms';
 import { OGC_URL } from 'constants/urls';
 
 const ImagePointMapLayers = () => {
   const zoom = useMap().getZoom();
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
-  const currentCameraType = useRecoilValue(currentCameraTypeState);
+  const currentImageType = useRecoilValue(currentImageTypeState);
 
   const showImagePointsMarkers = zoom > 14 && currentYear !== 'Nyeste' && currentImagePoint;
   const showNyesteKartlag = currentYear === 'Nyeste';
 
   const getMapLayer = () => {
-    if (currentCameraType === '360') return `Vegbilder_360_${currentYear}`;
-    if (currentCameraType === 'planar') {
+    if (currentImageType === '360') return `Vegbilder_360_${currentYear}`;
+    if (currentImageType === 'planar') {
       if (showNyesteKartlag) {
         return 'Vegbilder_dekning';
       } else {

@@ -18,7 +18,7 @@ import {
   currentLatLngZoomState,
   loadedImagePointsState,
   filteredImagePointsState,
-  currentCameraTypeState,
+  currentImageTypeState,
 } from 'recoil/atoms';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/settings';
@@ -41,7 +41,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
-  const currentCameraType = useRecoilValue(currentCameraTypeState);
+  const currentImageType = useRecoilValue(currentImageTypeState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();
@@ -109,7 +109,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
       // TODO: Undersøke når denne blir kalt og legge til cameraType som siste parameter
-      fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea, currentCameraType);
+      fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea, currentImageType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createBboxForVisibleMapArea]);
@@ -184,7 +184,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
     if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
       const imagePoints = filteredImagePoints.filter((imagePoint) => {
-        if (currentCameraType.includes('panorama')) { //TODO: Finne ut hva denne gjør
+        if (currentImageType.includes('panorama')) { //TODO: Finne ut hva denne gjør
           return (
             imagePointIsWithinBbox(imagePoint, mapBbox) && imagePoint.properties.BILDETYPE === '360'
           );
@@ -194,7 +194,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
 
       setImagePointsToRender(imagePoints);
     }
-  }, [filteredImagePoints, createBboxForVisibleMapArea, currentCameraType]);
+  }, [filteredImagePoints, createBboxForVisibleMapArea, currentImageType]);
 
   const renderImagePoints = () => {
     if (imagePointsToRender) {

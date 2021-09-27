@@ -1,6 +1,6 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
 import { atom } from 'recoil';
-import { cameraTypes, IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
+import { imageType, IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
 import { IStatisticsFeature } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -55,8 +55,8 @@ export const filteredImagePointsState = atom<IImagePoint[] | null>({
   default: null,
 });
 
-export const currentCameraTypeState = atom<cameraTypes>({
-  key: 'currentCameraType',
+export const currentImageTypeState = atom<imageType>({
+  key: 'currentImageType',
   default: 'planar',
 });
 

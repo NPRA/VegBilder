@@ -49,13 +49,13 @@ export interface ILoadedImagePoints {
   imagePoints: IImagePoint[];
   bbox: IBbox;
   year: number;
-  cameraType: cameraTypes;
+  imageType: imageType;
   imagePointsGroupedBySeries?: Dictionary<Dictionary<IImagePoint[]>>;
   availableDates?: string[];
 }
 
-export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'cameraType';
+export type queryParamterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'imageType';
 
 export type viewTypes = 'map' | 'image';
 
-export type cameraTypes = 'planar' | '360' | 'dekkekamera';
+export type imageType = 'planar' | '360' | 'dekkekamera';

@@ -19,7 +19,7 @@ import {
 } from 'recoil/selectors';
 import useAsyncError from 'hooks/useAsyncError';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
-import { currentCameraTypeState, currentYearState } from 'recoil/atoms';
+import { currentImageTypeState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
@@ -133,7 +133,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
   const currentYear = useRecoilValue(currentYearState);
-  const currentCameraType = useRecoilValue(currentCameraTypeState);
+  const currentCameraType = useRecoilValue(currentImageTypeState);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const throwError = useAsyncError();

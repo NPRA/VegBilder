@@ -6,7 +6,7 @@ import { LeafletMouseEvent } from 'leaflet';
 import { crsUtm33N } from 'constants/crs';
 import ImagePointMapLayers from './ImagePointMapLayers/ImagePointMapLayers';
 import MapControls from './MapControls/MapControls';
-import { currentCameraTypeState, currentImagePointState, currentYearState } from 'recoil/atoms';
+import { currentImageTypeState, currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
@@ -34,7 +34,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const currentYear = useRecoilValue(currentYearState);
-  const currentCameraType = useRecoilValue(currentCameraTypeState);
+  const currentImageType = useRecoilValue(currentImageTypeState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const map = useMap();
@@ -58,7 +58,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
       });
     } else {
       if (!currentImagePoint || (currentCoordinates.zoom && currentCoordinates.zoom < 15)) {
-        fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number, currentCameraType).then(
+        fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number, currentImageType).then(
           (imagePoint) => {
             if (!imagePoint && currentCoordinates.zoom && currentCoordinates.zoom < 8) {
               setCurrentCoordinates({ ...userClickedLatLng, zoom: 8 }); // zoom the user more in if it didnt find images)

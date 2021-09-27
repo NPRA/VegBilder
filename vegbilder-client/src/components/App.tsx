@@ -15,7 +15,7 @@ import {
   viewQueryParamterState,
   yearQueryParameterState,
   vegsystemreferanseState,
-  cameraTypeQueryParameterState
+  imageTypeQueryParameterState
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
@@ -25,7 +25,7 @@ import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { cameraTypes, IImagePoint } from 'types';
+import { imageType, IImagePoint } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -81,7 +81,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
-  const [currentCameraType, setCurrentCameraType] = useRecoilState(cameraTypeQueryParameterState);
+  const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const searchParams = new URLSearchParams(window.location.search);
@@ -140,7 +140,7 @@ const App = () => {
 
         if (latlng) {
           if (year !== 'latest' && year !== null) {
-            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year), currentCameraType).then(
+            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year), currentImageType).then(
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
                   setCurrentCoordinates({ ...latlng, zoom: 15 });
@@ -162,12 +162,12 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
-    const cameraType = searchParams.get('cameraType') as cameraTypes;
+    const imageType = searchParams.get('imageType') as imageType;
 
-    if (!cameraType) {
-      setCurrentCameraType("planar");
-    } else if (cameraType !== "planar") {
-      setCurrentCameraType(cameraType);
+    if (!imageType) {
+      setCurrentImageType("planar");
+    } else if (imageType !== "planar") {
+      setCurrentImageType(imageType);
     }
 
     if (vegsystemreferanseQuery) {
@@ -193,11 +193,11 @@ const App = () => {
     else if (imageIdQuery && imageIdQuery.length > 1) {
       if (latQuery && lngQuery && yearQuery && yearQuery !== 'latest') {
         const latlng = { lat: parseFloat(latQuery), lng: parseFloat(lngQuery) };
-        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery), currentCameraType);
+        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery), currentImageType);
       }
     }
 
-    // Initialize year, cameraType, zoom, lat, and lng when opening the app the default way
+    // Initialize year, imageType, zoom, lat, and lng when opening the app the default way
     else {
       if (!yearQuery) {
         setCurrentYear('Nyeste');
@@ -207,9 +207,6 @@ const App = () => {
       }
       if (!viewQuery) {
         setCurrentView(DEFAULT_VIEW);
-      }
-      if (!cameraType) {
-        setCurrentCameraType('planar');
       }
     }
   }, []);

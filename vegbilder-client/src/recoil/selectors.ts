@@ -2,7 +2,7 @@ import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableSta
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { cameraTypes, IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
+import { imageType, IBbox, IImagePoint, ILatlng, queryParamterNames, viewTypes } from 'types';
 import { IStatisticsFeature, IStatisticsFeatureProperties } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 import {
   getDateString,
@@ -18,7 +18,7 @@ import {
   loadedImagePointsState,
   playVideoState,
   currentVegsystemreferanseState,
-  currentCameraTypeState
+  currentImageTypeState
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -94,14 +94,14 @@ export const yearQueryParameterState = selector({
 });
 
 
-export const cameraTypeQueryParameterState = selector({
-  key: 'cameraTypeQueryParameterState',
+export const imageTypeQueryParameterState = selector({
+  key: 'imageTypeQueryParameterState',
   get: ({ get }) => {
-    return get(currentCameraTypeState);
+    return get(currentImageTypeState);
   },
-  set: ({ get, set }, newCameraType: cameraTypes|DefaultValue) => {
-    setNewQueryParamter('cameraType', newCameraType as string);
-    set(currentCameraTypeState, newCameraType);
+  set: ({ get, set }, newImageType: imageType|DefaultValue) => {
+    setNewQueryParamter('imageType', newImageType as string);
+    set(currentImageTypeState, newImageType);
   },
 });
 
@@ -167,7 +167,7 @@ export const viewQueryParamterState = selector({
 
 type newLoadedImagePoints = { imagePoints: IImagePoint[] } & { year: number } & {
   bbox: IBbox;
-} & { cameraType: cameraTypes };
+} & { imageType: imageType };
 
 export const loadedImagePointsFilterState = selector({
   key: 'loadedImagePointsFilterState',
@@ -184,7 +184,7 @@ export const loadedImagePointsFilterState = selector({
         bbox: newLoadedImagePoints.bbox,
         imagePointsGroupedBySeries: imagePointsGroupedBySeries,
         availableDates: availableDates,
-        cameraType: newLoadedImagePoints.cameraType,
+        imageType: newLoadedImagePoints.imageType,
       };
       set(loadedImagePointsState, newLoaded);
       const currImagePoint = get(currentImagePointState);

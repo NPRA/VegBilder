@@ -3,7 +3,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { find } from 'lodash';
 
 import { settings } from 'constants/settings';
-import { ILatlng, IImagePoint, cameraTypes } from 'types';
+import { ILatlng, IImagePoint, imageType } from 'types';
 import {
   findNearestImagePoint,
   getGenericRoadReference,
@@ -30,17 +30,17 @@ const useFetchNearestImagePoint = (
   async function fetchImagePointsByYearAndLatLng(
     latlng: ILatlng,
     year: number,
-    cameraType: cameraTypes
+    imageType: imageType
   ) {
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
       loadedImagePoints.year !== year ||
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox) ||
-      loadedImagePoints.cameraType !== cameraType;
+      loadedImagePoints.imageType !== imageType;
     if (shouldFetchNewImagePointsFromOGC) {
       showMessage(`Leter etter bilder i ${year}...`);
-      fetchImagePointsFromOGC(year, bboxVisibleMapArea, cameraType).then((imagePoints: IImagePoint[] | undefined) => {
+      fetchImagePointsFromOGC(year, bboxVisibleMapArea, imageType).then((imagePoints: IImagePoint[] | undefined) => {
         if (imagePoints && imagePoints.length) {
           let nearestImagePoint;
           if (action === 'findByImageId') {
@@ -134,8 +134,8 @@ const useFetchNearestImagePoint = (
     }
   };
 
-  return (latlng: ILatlng, year: number, cameraType: cameraTypes) =>
-    fetchImagePointsByYearAndLatLng(latlng, year, cameraType);
+  return (latlng: ILatlng, year: number, imageType: imageType) =>
+    fetchImagePointsByYearAndLatLng(latlng, year, imageType);
 };
 
 export default useFetchNearestImagePoint;

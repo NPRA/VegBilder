@@ -25,7 +25,7 @@ import {
   yearQueryParameterState,
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { currentCameraTypeState, filteredImagePointsState, loadedImagePointsState } from 'recoil/atoms';
+import { currentImageTypeState, filteredImagePointsState, loadedImagePointsState } from 'recoil/atoms';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
@@ -136,7 +136,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const setFilteredImagePoints = useSetRecoilState(filteredImagePointsState);
-  const currentCameraType = useRecoilValue(currentCameraTypeState);
+  const currentImageType = useRecoilValue(currentImageTypeState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
@@ -148,7 +148,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       setCurrentYear(yearOfClickedImage);
       if (loadedImagePoints) {
         const bbox = loadedImagePoints.bbox;
-        fetchImagePointsFromOGC(yearOfClickedImage, bbox, currentCameraType);
+        fetchImagePointsFromOGC(yearOfClickedImage, bbox, currentImageType);
       }
     }
 

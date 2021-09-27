@@ -19,8 +19,8 @@ import {
   currentLatLngZoomState,
   loadedImagePointsState,
 } from 'recoil/atoms';
-import {cameraTypeQueryParameterState} from 'recoil/selectors';
-import { cameraTypes } from 'types';
+import {imageTypeQueryParameterState} from 'recoil/selectors';
+import { imageType } from 'types';
 import { CheckmarkIcon, FilterIcon } from "components/Icons/Icons";
 
 const useStyles = makeStyles((theme) => ({
@@ -127,7 +127,7 @@ interface IFilterProps {
 
 const Filter = ({ showMessage }: IFilterProps) => {
   const classes = useStyles();
-  const [currentCameraType, setCurrentCameraType] = useRecoilState(cameraTypeQueryParameterState);
+  const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const setLoadedImagePoits = useSetRecoilState(loadedImagePointsState);
@@ -144,14 +144,14 @@ const Filter = ({ showMessage }: IFilterProps) => {
       value: unknown;
     }>
   ) => {
-    let cameraType = event.target.value as cameraTypes;
-    setCurrentCameraType(cameraType);
+    let imageType = event.target.value as imageType;
+    setCurrentImageType(imageType);
     if (currentImagePoint) {
       // if we already have an image preview, we need to fetch new image points and find a new image preview for that camera filter
       // otherwise, we dont have to do anything besides switching map layer
       setLoadedImagePoits(null); // reset state
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
-      fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR, cameraType);
+      fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR, imageType);
     }
   };
 
@@ -163,7 +163,7 @@ const Filter = ({ showMessage }: IFilterProps) => {
         <FormControl>
           <Select
           id="cameraType-select"
-          value={currentCameraType}
+          value={currentImageType}
           className={classes.cameraSelect}
           input={<CustomInput/>}
           IconComponent={CustomExpandMoreIcon}
@@ -174,22 +174,22 @@ const Filter = ({ showMessage }: IFilterProps) => {
             <MenuItem
             value={'360'}
             className={classes.item}
-            style={{color: currentCameraType === '360' ? Theme.palette.common.orangeDark : ''}}>
-            {currentCameraType === '360' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+            style={{color: currentImageType === '360' ? Theme.palette.common.orangeDark : ''}}>
+            {currentImageType === '360' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
             {'360'}
             </MenuItem>
             <MenuItem
             value={'dekkekamera'}
             className={classes.item}
-            style={{color: currentCameraType === 'dekkekamera' ? Theme.palette.common.orangeDark : ''}}>
-            {currentCameraType === 'dekkekamera' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+            style={{color: currentImageType === 'dekkekamera' ? Theme.palette.common.orangeDark : ''}}>
+            {currentImageType === 'dekkekamera' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
             {'Dekkekamera'}
             </MenuItem>
             <MenuItem
             value={'planar'}
             className={classes.item}
-            style={{color: currentCameraType === 'planar' ? Theme.palette.common.orangeDark : ''}}>
-            {currentCameraType === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+            style={{color: currentImageType === 'planar' ? Theme.palette.common.orangeDark : ''}}>
+            {currentImageType === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
             {'Planar'}
             </MenuItem>
           </Select>
