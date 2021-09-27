@@ -84,10 +84,20 @@ const App = () => {
   const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
-  const searchParams = new URLSearchParams(window.location.search);
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const isMobile = useIsMobile();
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const imageTypeQuery = searchParams.get('imageType') as imageType;
+
+  //Setter imageType her og ikke i useEffect for å unngå at recoil state blir feil i oppstart av app.
+  if (!imageTypeQuery) {
+    setCurrentImageType("planar");
+  } else if (imageTypeQuery !== "planar") {
+    setCurrentImageType(imageTypeQuery);
+  }
+
 
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
@@ -162,13 +172,6 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
-    const imageType = searchParams.get('imageType') as imageType;
-
-    if (!imageType) {
-      setCurrentImageType("planar");
-    } else if (imageType !== "planar") {
-      setCurrentImageType(imageType);
-    }
 
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
@@ -193,7 +196,7 @@ const App = () => {
     else if (imageIdQuery && imageIdQuery.length > 1) {
       if (latQuery && lngQuery && yearQuery && yearQuery !== 'latest') {
         const latlng = { lat: parseFloat(latQuery), lng: parseFloat(lngQuery) };
-        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery), currentImageType);
+          fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery), imageTypeQuery);
       }
     }
 
