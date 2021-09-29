@@ -13,6 +13,8 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
   }
 };
 
+const getImageType = (imagepoint: IImagePoint) => imagepoint.properties.BILDETYPE;
+
 const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
 
 const findNearestImagePoint = (
@@ -278,6 +280,7 @@ const getFilteredImagePoints = (
 
 export {
   getImagePointLatLng,
+  getImageType,
   getImageUrl,
   findNearestImagePoint,
   getRoadReference,

@@ -33,7 +33,8 @@ import {
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import { playVideoState, currentLatLngZoomState } from 'recoil/atoms';
+import { getImageType } from 'utilities/imagePointUtilities';
+import { playVideoState, currentLatLngZoomState, currentHfovState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS } from 'constants/defaultParamters';
@@ -113,6 +114,7 @@ const ImageControlButtons = ({
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
   const [playMode, setPlayMode] = useState(false);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
+  const [currentHfov, setHfov] = useRecoilState(currentHfovState);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
@@ -121,6 +123,8 @@ const ImageControlButtons = ({
     setTimerOptionsAnchorEl(event.currentTarget);
   const handleMoreControlsClick = (event: MouseEvent) =>
     setMoreControlsAnchorEl(event.currentTarget);
+
+  const is360View = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
 
   const copyShareableUrlToClipboard = () => {
     if (currentImagePoint) {
@@ -230,8 +234,10 @@ const ImageControlButtons = ({
           aria-label="Zoom inn/ut"
           className={isHistoryMode ? classes.buttonDisabled : classes.button}
           onClick={() => {
-            setIsZoomedInImage(!isZoomedInImage);
-            if (isZoomedInImage) setMeterLineVisible(false);
+            let hfov = currentHfov;
+            setHfov(hfov - 100);
+            /*setIsZoomedInImage(!isZoomedInImage);
+            if (isZoomedInImage) setMeterLineVisible(false);*/
           }}
         >
           {isZoomedInImage ? <ZoomOutIcon /> : <ZoomInIcon />}
@@ -272,9 +278,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={meterLineVisible ? 'Deaktiver basislinje' : 'Aktiver basislinje'}>
         <IconButton
-          disabled={isZoomedInImage}
+          disabled={isZoomedInImage || is360View}
           aria-label="Deaktiver/Aktiver basislinje"
-          className={isZoomedInImage ? classes.buttonDisabled : classes.button}
+          className={isZoomedInImage || is360View ? classes.buttonDisabled : classes.button}
           onClick={() => setMeterLineVisible(!meterLineVisible)}
         >
           {meterLineVisible ? <MeasureIcon /> : <MeasureDisabledIcon />}
