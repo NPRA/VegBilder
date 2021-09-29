@@ -18,7 +18,8 @@ import {
   loadedImagePointsState,
   playVideoState,
   currentVegsystemreferanseState,
-  currentImageTypeState
+  currentImageTypeState,
+  currentHfovState
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -195,6 +196,16 @@ export const loadedImagePointsFilterState = selector({
     } else {
       set(loadedImagePointsState, null);
     }
+  },
+});
+
+export const hfovState = selector({
+  key: 'hfovState',
+  get: ({ get }) => {
+    return get(currentHfovState);
+  },
+  set: ({ set, get }, newHfov: number | DefaultValue) => {
+    set(currentHfovState, newHfov);
   },
 });
 

@@ -1,11 +1,13 @@
 import React, {useEffect, useRef, useState} from 'react';
-import ReactPannellum, {getConfig, getPitch, addScene, loadScene, getYaw, setHfov} from 'react-pannellum';
+import ReactPannellum, {getPitch, addScene, loadScene, getYaw, setHfov, getHfov} from 'react-pannellum';
 import {useRecoilValue} from 'recoil';
 import {hfovState} from '../../../../recoil/selectors';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
 const ThreeSixtyImage = ({ imageUrl }) => {
+
+  const hfov = useRecoilValue(hfovState);
 
   const uiText = {
     bylineLabel: '',
@@ -39,6 +41,10 @@ const ThreeSixtyImage = ({ imageUrl }) => {
     }, [imageUrl]);
   }
 
+  useEffect(() => {
+    setHfov(hfov);
+  }, [hfov]);
+
   useRenderViewer(imageUrl);
 
   return (
@@ -48,6 +54,7 @@ const ThreeSixtyImage = ({ imageUrl }) => {
         sceneId="initialScene"
         imageSource={imageUrl}
         config={config}
+        hfov={null}
         style={{
           objectFit: 'contain',
           margin: '0 auto',

@@ -64,3 +64,8 @@ export const availableStatistics = atom<IStatisticsFeature[] | null>({
   key: 'availableStatistics',
   default: [],
 })
+
+export const currentHfovState = atom<number>({
+  key: 'currentHfovState',
+  default: 100,
+})

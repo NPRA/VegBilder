@@ -125,6 +125,27 @@ const ImageControlButtons = ({
     setMoreControlsAnchorEl(event.currentTarget);
 
   const is360View = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
+  let [zoom, setZoom] = useState({"minZoom": false, "maxZoom": false});
+
+  type zoomType = 'zoomIn' | 'zoomOut';
+
+  const zoom360 = (zoomType: zoomType) => {
+    if (zoomType === 'zoomIn' && !zoom.maxZoom) {
+        setHfov(currentHfov - 10);
+    } else if (zoomType === 'zoomOut' && !zoom.minZoom) {
+        setHfov(currentHfov + 10);
+    }
+  }
+
+  useEffect(() => {
+    if (currentHfov === 50) {
+      setZoom({"minZoom": false, "maxZoom": true})
+    } else if (currentHfov === 120) {
+      setZoom({"minZoom": true, "maxZoom": false})
+    } else {
+      setZoom({"minZoom": false, "maxZoom": false});
+    }
+  }, [currentHfov]);
 
   const copyShareableUrlToClipboard = () => {
     if (currentImagePoint) {
@@ -234,13 +255,28 @@ const ImageControlButtons = ({
           aria-label="Zoom inn/ut"
           className={isHistoryMode ? classes.buttonDisabled : classes.button}
           onClick={() => {
-            let hfov = currentHfov;
-            setHfov(hfov - 100);
-            /*setIsZoomedInImage(!isZoomedInImage);
-            if (isZoomedInImage) setMeterLineVisible(false);*/
+          setIsZoomedInImage(!isZoomedInImage);
+            if (isZoomedInImage) setMeterLineVisible(false);
           }}
         >
           {isZoomedInImage ? <ZoomOutIcon /> : <ZoomInIcon />}
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
+  const zoomInOut360Button = (zoomType: zoomType) => {
+    return (
+      <Tooltip title={zoomType === 'zoomIn' ? 'Zoom inn' : 'Zoom ut'}>
+        <IconButton
+          disabled={isHistoryMode || (zoomType === 'zoomIn' && zoom.maxZoom) || (zoomType === 'zoomOut' && zoom.minZoom)}
+          aria-label={zoomType}
+          className={isHistoryMode || (zoomType === 'zoomIn' && zoom.maxZoom) || (zoomType === 'zoomOut' && zoom.minZoom) ? classes.buttonDisabled : classes.button}
+          onClick={() => {
+            zoom360(zoomType);
+          }}
+        >
+          {zoomType === "zoomIn" ? <ZoomInIcon/> : <ZoomOutIcon/>}
         </IconButton>
       </Tooltip>
     );
@@ -375,7 +411,9 @@ const ImageControlButtons = ({
         {!playMode && !playVideo ? (
           <>
             {/*  Render normal menu */}
-            {zoomInOutButton()}
+            {!is360View && zoomInOutButton()}
+            {is360View && zoomInOut360Button("zoomIn")}
+            {is360View && zoomInOut360Button("zoomOut")}
             {/* move backwards arrow button  */}
             <Tooltip title="Gå bakover">
               <IconButton
