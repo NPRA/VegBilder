@@ -1,11 +1,11 @@
-import React, {useState} from 'react';
-import ReactPannellum from 'react-pannellum';
+import React, {useEffect, useRef, useState} from 'react';
+import ReactPannellum, {getConfig, getPitch, addScene, loadScene, getYaw, setHfov} from 'react-pannellum';
+import {useRecoilValue} from 'recoil';
+import {hfovState} from '../../../../recoil/selectors';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
 const ThreeSixtyImage = ({ imageUrl }) => {
-
-  const [currentImageUrl, setCurrentImageUrl] = useState("");
 
   const uiText = {
     bylineLabel: '',
@@ -17,13 +17,33 @@ const ThreeSixtyImage = ({ imageUrl }) => {
     showZoomCtrl: false,
     showFullscreenCtrl: false,
     uiText: uiText,
-    preview: imageUrl
+    doubleClickZoom: true
   };
 
-  
-  let image360viewer =  new ReactPannellum();
-  image360viewer =
-  <ReactPannellum
+  const useRenderViewer = (imageUrl) => {
+    const didMountFirstUrl = useRef(false);
+
+    // Pannellum-biblioteket oppdaterer ikke komponenten automatisk ved ny prop. Må derfor legge til og laste inn nytt bilde som ny scene hver gang.
+    useEffect(() => {
+      if (didMountFirstUrl.current) {
+        let newConfig = {
+          ...config,
+          pitch: getPitch(),
+          yaw: getYaw(),
+          imageSource: imageUrl
+        }
+        addScene("newScene", newConfig, () => loadScene("newScene"));
+      } else {
+        didMountFirstUrl.current = true;
+      };
+    }, [imageUrl]);
+  }
+
+  useRenderViewer(imageUrl);
+
+  return (
+    <>
+        <ReactPannellum
         id="1"
         sceneId="initialScene"
         imageSource={imageUrl}
@@ -34,19 +54,7 @@ const ThreeSixtyImage = ({ imageUrl }) => {
           fontFamily: '"LFT-Etica"',
           color: Theme.palette.common.grayRegular,
         }}
-/>
-
-
-if (currentImageUrl !== imageUrl) {
-  setCurrentImageUrl(imageUrl);
-  image360viewer.type.addScene("currentScene", {imageSource: currentImageUrl, preview: currentImageUrl});
-  image360viewer.type.loadScene("currentScene");
-}
-
-
-  return (
-    <>
-     {image360viewer}
+        /> 
     </>
   );
 };
