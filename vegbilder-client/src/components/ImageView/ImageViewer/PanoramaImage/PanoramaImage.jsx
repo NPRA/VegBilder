@@ -1,11 +1,17 @@
 import React, {useEffect, useRef, useState} from 'react';
 import ReactPannellum, {getPitch, addScene, loadScene, getYaw, setHfov, getHfov} from 'react-pannellum';
-import {useRecoilValue} from 'recoil';
+import {useRecoilValue, useRecoilState} from 'recoil';
+import {currentViewState} from '../../../../recoil/atoms';
 import {hfovState} from '../../../../recoil/selectors';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
-const ThreeSixtyImage = ({ imageUrl }) => {
+const PanoramaImage = ({ imageUrl }) => {
+
+const [currentView, ] = useRecoilState(currentViewState);
+
+ const isPreview = currentView === 'map';
+ console.log("isPreview", isPreview);
 
   const hfov = useRecoilValue(hfovState);
 
@@ -21,6 +27,24 @@ const ThreeSixtyImage = ({ imageUrl }) => {
     uiText: uiText,
     doubleClickZoom: true
   };
+
+  const configPreview = {
+    ...config,
+    doubleClickZoom: false
+  }
+
+  const style = {
+    objectFit: 'contain',
+    margin: '0 auto',
+    fontFamily: '"LFT-Etica"',
+    color: Theme.palette.common.grayRegular,
+  }
+
+  const stylePreview = {
+    ...style,
+    height: '240px',
+    borderRadius: '0 0 10px 10px'
+  }
 
   const useRenderViewer = (imageUrl) => {
     const didMountFirstUrl = useRef(false);
@@ -53,17 +77,11 @@ const ThreeSixtyImage = ({ imageUrl }) => {
         id="1"
         sceneId="initialScene"
         imageSource={imageUrl}
-        config={config}
-        hfov={null}
-        style={{
-          objectFit: 'contain',
-          margin: '0 auto',
-          fontFamily: '"LFT-Etica"',
-          color: Theme.palette.common.grayRegular,
-        }}
+        config={isPreview ? configPreview : config}
+        style={isPreview ? stylePreview : style}
         /> 
     </>
   );
 };
 
-export default ThreeSixtyImage;
+export default PanoramaImage;

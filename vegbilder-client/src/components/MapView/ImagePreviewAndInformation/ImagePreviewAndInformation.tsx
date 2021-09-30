@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
-import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
+import { getImageUrl, getImageType, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
@@ -11,7 +11,7 @@ import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
 import { EnlargeIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
-import ThreeSixtyImage from 'components/ImageView/ImageViewer/PanoramaImage/PanoramaImage';
+import PanoramaImage from '../../ImageView/ImageViewer/PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles(() => ({
   image: {
@@ -19,6 +19,7 @@ const useStyles = makeStyles(() => ({
     borderRadius: '0px 0px 10px 10px',
     maxHeight: '28vh',
     height: 'auto',
+    width: 'auto'
   },
   enlargeButton: {
     marginRight: '0.3rem',
@@ -92,14 +93,16 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-
-            <img
+          {getImageType(currentImagePoint) === '360' ? 
+           <div className={classes.image}>
+            <PanoramaImage imageUrl={getImageUrl(currentImagePoint)} />
+          </div> : 
+          <img
               src={getImageUrl(currentImagePoint)}
               className={classes.image}
               alt="Bilde tatt langs veg"
               onClick={openImage}
-            />
-          
+            />}
         </div>
         {showInformation ? (
           <ImageInfo

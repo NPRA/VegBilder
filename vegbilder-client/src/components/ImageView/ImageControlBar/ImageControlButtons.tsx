@@ -125,25 +125,25 @@ const ImageControlButtons = ({
     setMoreControlsAnchorEl(event.currentTarget);
 
   const is360View = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
-  let [zoom, setZoom] = useState({"minZoom": false, "maxZoom": false});
+  let [isMinOrMaxZoom, setZoom] = useState({"isMinZoom": false, "isMaxZoom": false});
 
   type zoomType = 'zoomIn' | 'zoomOut';
 
   const zoom360 = (zoomType: zoomType) => {
-    if (zoomType === 'zoomIn' && !zoom.maxZoom) {
+    if (zoomType === 'zoomIn' && !isMinOrMaxZoom.isMaxZoom) {
         setHfov(currentHfov - 10);
-    } else if (zoomType === 'zoomOut' && !zoom.minZoom) {
+    } else if (zoomType === 'zoomOut' && !isMinOrMaxZoom.isMinZoom) {
         setHfov(currentHfov + 10);
     }
   }
 
   useEffect(() => {
     if (currentHfov === 50) {
-      setZoom({"minZoom": false, "maxZoom": true})
+      setZoom({"isMinZoom": false, "isMaxZoom": true})
     } else if (currentHfov === 120) {
-      setZoom({"minZoom": true, "maxZoom": false})
+      setZoom({"isMinZoom": true, "isMaxZoom": false})
     } else {
-      setZoom({"minZoom": false, "maxZoom": false});
+      setZoom({"isMinZoom": false, "isMaxZoom": false});
     }
   }, [currentHfov]);
 
@@ -269,9 +269,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={zoomType === 'zoomIn' ? 'Zoom inn' : 'Zoom ut'}>
         <IconButton
-          disabled={isHistoryMode || (zoomType === 'zoomIn' && zoom.maxZoom) || (zoomType === 'zoomOut' && zoom.minZoom)}
+          disabled={isHistoryMode || (zoomType === 'zoomIn' && isMinOrMaxZoom.isMaxZoom) || (zoomType === 'zoomOut' && isMinOrMaxZoom.isMinZoom)}
           aria-label={zoomType}
-          className={isHistoryMode || (zoomType === 'zoomIn' && zoom.maxZoom) || (zoomType === 'zoomOut' && zoom.minZoom) ? classes.buttonDisabled : classes.button}
+          className={isHistoryMode || (zoomType === 'zoomIn' && isMinOrMaxZoom.isMaxZoom) || (zoomType === 'zoomOut' && isMinOrMaxZoom.isMinZoom) ? classes.buttonDisabled : classes.button}
           onClick={() => {
             zoom360(zoomType);
           }}
