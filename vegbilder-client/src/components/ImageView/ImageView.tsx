@@ -2,13 +2,13 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
-
+import { getImageType } from 'utilities/imagePointUtilities';
 import ImageControlBar from './ImageControlBar/ImageControlBar';
 import ImageViewer from './ImageViewer/ImageViewer';
 import { currentImagePointState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
-import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
+import { DEFAULT_TIME_BETWEEN_IMAGES, DEFAULT_TIME_BETWEEN_IMAGES_360 } from 'constants/defaultParamters';
 import CloseButton from 'components/CloseButton/CloseButton';
 import SideControlBar from './SideControlBar/SideControlBar';
 
@@ -135,6 +135,14 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   };
 
   const [, dispatch] = useReducer(scrollReducer, initialScrollState);
+
+  useEffect(() => {
+    if (currentImagePoint && getImageType(currentImagePoint) === '360') {
+      setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES_360);
+    } else {
+      setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES);
+    }
+  }, [currentImagePoint])
 
   useEffect(() => {
     isZoomedInImage ? setCursor('grab') : setCursor('zoom-in');

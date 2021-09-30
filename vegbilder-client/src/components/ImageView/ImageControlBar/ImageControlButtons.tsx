@@ -37,7 +37,7 @@ import { getImageType } from 'utilities/imagePointUtilities';
 import { playVideoState, currentLatLngZoomState, currentHfovState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
-import { TIMER_OPTIONS } from 'constants/defaultParamters';
+import { TIMER_OPTIONS, TIMER_OPTIONS_360 } from 'constants/defaultParamters';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { VEGKART } from 'constants/urls';
 
@@ -115,6 +115,7 @@ const ImageControlButtons = ({
   const [playMode, setPlayMode] = useState(false);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const [currentHfov, setHfov] = useRecoilState(currentHfovState);
+  const [CURRENT_TIMER_OPTIONS, setTimerOptions] = useState(TIMER_OPTIONS);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
@@ -146,6 +147,14 @@ const ImageControlButtons = ({
       setZoom({"isMinZoom": false, "isMaxZoom": false});
     }
   }, [currentHfov]);
+
+  useEffect(() => {
+    if (currentImagePoint && getImageType(currentImagePoint) === '360') {
+      setTimerOptions(TIMER_OPTIONS_360);
+    } else {
+      setTimerOptions(TIMER_OPTIONS);
+    }
+  }, [currentImagePoint])
 
   const copyShareableUrlToClipboard = () => {
     if (currentImagePoint) {
@@ -223,7 +232,7 @@ const ImageControlButtons = ({
           }}
         >
           <ListSubheader> Hastighet </ListSubheader>
-          {TIMER_OPTIONS.map((option, i) => (
+          {CURRENT_TIMER_OPTIONS.map((option, i) => (
             <MenuItem
               key={i}
               onClick={() => {
