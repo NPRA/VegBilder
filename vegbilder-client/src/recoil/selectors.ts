@@ -19,7 +19,8 @@ import {
   playVideoState,
   currentVegsystemreferanseState,
   currentImageTypeState,
-  currentHfovState
+  currentHfovState,
+  turnedToOtherLane
 } from './atoms';
 
 export const availableYearsQuery = selector({
@@ -207,6 +208,16 @@ export const hfovState = selector({
   set: ({ set, get }, newHfov: number | DefaultValue) => {
     set(currentHfovState, newHfov);
   },
+});
+
+export const turnedToOtherLaneSelector = selector({
+  key: 'turnedToOtherLaneSelector',
+  get: ({ get }) => {
+    return get(turnedToOtherLane);
+  },
+  set: ({set }, shouldTurn: boolean | DefaultValue ) => {
+    set(turnedToOtherLane, shouldTurn);
+  }
 });
 
 // utilities

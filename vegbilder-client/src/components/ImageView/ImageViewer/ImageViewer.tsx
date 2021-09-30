@@ -16,9 +16,9 @@ import {
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneSelector } from 'recoil/selectors';
 import { debounce } from 'lodash';
-import ThreeSixtyImage from './PanoramaImage/PanoramaImage';
+import PanoramaImage from './PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -68,6 +68,7 @@ const ImageViewer = ({
   const { command, resetCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
+  const [shouldTurn, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -135,6 +136,7 @@ const ImageViewer = ({
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
         setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 15 });
+        setTurnToOtherLaneSelector(true);  //Flagg til panorama viewer for å sette riktig config. Ikke testet.
       }
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
@@ -330,7 +332,7 @@ const ImageViewer = ({
         {currentImagePoint && (
           <>
             {currentImagePoint.properties.BILDETYPE === '360' ? (
-              <ThreeSixtyImage imageUrl={getImageUrl(currentImagePoint)} />
+              <PanoramaImage imageUrl={getImageUrl(currentImagePoint)} />
             ) : (
               <>
                 <img

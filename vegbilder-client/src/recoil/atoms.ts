@@ -63,9 +63,14 @@ export const currentImageTypeState = atom<imageType>({
 export const availableStatistics = atom<IStatisticsFeature[] | null>({
   key: 'availableStatistics',
   default: [],
-})
+});
 
 export const currentHfovState = atom<number>({
   key: 'currentHfovState',
   default: 100,
-})
+});
+
+export const turnedToOtherLane = atom<boolean>({
+  key: 'turnedToOtherLane',
+  default: false
+});

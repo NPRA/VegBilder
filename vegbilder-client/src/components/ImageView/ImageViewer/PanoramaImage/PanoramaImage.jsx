@@ -1,19 +1,18 @@
 import React, {useEffect, useRef, useState} from 'react';
-import ReactPannellum, {getPitch, addScene, loadScene, getYaw, setHfov, getHfov} from 'react-pannellum';
+import ReactPannellum, {getPitch, addScene, loadScene, getYaw, setHfov} from 'react-pannellum';
 import {useRecoilValue, useRecoilState} from 'recoil';
 import {currentViewState} from '../../../../recoil/atoms';
-import {hfovState} from '../../../../recoil/selectors';
+import {hfovState, turnedToOtherLaneSelector} from '../../../../recoil/selectors';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
 const PanoramaImage = ({ imageUrl }) => {
 
-const [currentView, ] = useRecoilState(currentViewState);
-
- const isPreview = currentView === 'map';
- console.log("isPreview", isPreview);
-
+  const [currentView, ] = useRecoilState(currentViewState);
+  const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
   const hfov = useRecoilValue(hfovState);
+
+  const isPreview = currentView === 'map';
 
   const uiText = {
     bylineLabel: '',
@@ -54,15 +53,17 @@ const [currentView, ] = useRecoilState(currentViewState);
       if (didMountFirstUrl.current) {
         let newConfig = {
           ...config,
-          pitch: getPitch(),
-          yaw: getYaw(),
+          pitch: turnToOtherLane ? 0 : getPitch(),
+          yaw: turnToOtherLane ? 0 : getYaw(),
           imageSource: imageUrl
         }
         addScene("newScene", newConfig, () => loadScene("newScene"));
+        setTurnToOtherLaneSelector(false);
+
       } else {
         didMountFirstUrl.current = true;
       };
-    }, [imageUrl]);
+    }, [imageUrl, turnToOtherLane]);
   }
 
   useEffect(() => {
