@@ -338,7 +338,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
             {stedsnavnOptions.length > 0 && (
               <>
                 <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
-                {stedsnavnOptions.filter((stedsnavn) => !(stedsnavn.skrivemåtestatus.includes("internasjonal"))).map((stedsnavn, i) => (
+                {stedsnavnOptions.filter((stedsnavn) => !(stedsnavn.kommuner === null)).map((stedsnavn, i) => (
                   <MenuItem
                     key={i}
                     selected={i === selectedIndex}
