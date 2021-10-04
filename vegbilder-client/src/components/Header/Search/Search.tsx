@@ -283,7 +283,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     }
   };
 
-  //Enkelte fylker, f.eks. Troms of Finnmark, har flere navn (bla.a. på samisk) hvor alle navnene er satt sammen i en string av typen "navn - navn2 - navn3". Ettersom språket ellers er bokmål bruker vi bare dette for å få plass i lista.
+  //Enkelte fylker, f.eks. Troms of Finnmark, har flere navn (bla.a. på samisk) hvor alle navnene er satt sammen i en string av typen "navn - navn2 - navn3". Ettersom språket ellers er bokmål bruker vi bare dette for å få plass i nedtrekksmenyen.
   const formatFylkesnavn = (fylke: string) => {
     if (fylke.includes(" - ")) {
       return fylke.split(" - ")[0];
@@ -338,7 +338,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
             {stedsnavnOptions.length > 0 && (
               <>
                 <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
-                {stedsnavnOptions.map((stedsnavn, i) => (
+                {stedsnavnOptions.filter((stedsnavn) => !(stedsnavn.skrivemåtestatus.includes("internasjonal"))).map((stedsnavn, i) => (
                   <MenuItem
                     key={i}
                     selected={i === selectedIndex}

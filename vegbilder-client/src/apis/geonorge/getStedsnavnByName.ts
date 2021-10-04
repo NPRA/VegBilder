@@ -4,10 +4,8 @@ export const getStedsnavnByName = async (name: string) => {
   return await wsgeonorge
     .get('stedsnavn/v1/navn', {
       params: {
-        sok: `${name}`,
-        fuzzy: true,
-        treffPerSide: 10,
-        side: 1,
+        sok: `${name}*`,
+        treffPerSide: 40,
         utkoordsys: 4326,
       },
     })
