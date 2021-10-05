@@ -103,6 +103,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState('');
   const [stedsnavnOptions, setStedsnavnOptions] = useState<IStedsnavn[]>([]);
+  const filteredStedsnavnOptions = stedsnavnOptions.filter((stedsnavn) => !(stedsnavn.kommuner === null)); //Nytt geonorge-api kan returnere steder utenfor Norge med kommune + fylke = null. Disse filtrerer vi derfor vekk.
   const [vegSystemReferanser, setVegSystemReferanser] = useState<IVegsystemData[]>([]);
   const [openMenu, setOpenMenu] = useState(false);
   const [resetImagePoint, setResetImagePoint] = useState(false);
@@ -259,8 +260,8 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
         const referance = vegSystemReferanser[selectedIndex];
         if (referance) handleVegSystemReferanseClick(referance.geometri.wkt);
       }
-      if (stedsnavnOptions.length) {
-        const stedsnavn = stedsnavnOptions[selectedIndex];
+      if (filteredStedsnavnOptions.length) {
+        const stedsnavn = filteredStedsnavnOptions[selectedIndex];
         if (stedsnavn) {
           const zoom = getZoomByTypeOfPlace(stedsnavn.navneobjekttype);
           const latlng = { lat: stedsnavn.representasjonspunkt.nord, lng: stedsnavn.representasjonspunkt.øst };
@@ -277,7 +278,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   };
 
   const handleInputFieldFocus = () => {
-    if (searchString.length && (vegSystemReferanser.length || stedsnavnOptions.length)) {
+    if (searchString.length && (vegSystemReferanser.length || filteredStedsnavnOptions.length)) {
       setOpenMenu(true);
       setSelectedIndex(0);
     }
@@ -285,8 +286,8 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
 
   //Enkelte fylker, f.eks. Troms of Finnmark, har flere navn (bla.a. på samisk) hvor alle navnene er satt sammen i en string av typen "navn - navn2 - navn3". Ettersom språket ellers er bokmål bruker vi bare dette for å få plass i nedtrekksmenyen.
   const formatFylkesnavn = (fylke: string) => {
-    if (fylke.includes(" - ")) {
-      return fylke.split(" - ")[0];
+    if (fylke.includes("-")) {
+      return fylke.split("-")[0].trim();
     } else {
       return fylke;
     }
@@ -335,10 +336,10 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
                 ))}
               </>
             )}
-            {stedsnavnOptions.length > 0 && (
+            {filteredStedsnavnOptions.length > 0 && (
               <>
                 <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
-                {stedsnavnOptions.filter((stedsnavn) => !(stedsnavn.kommuner === null)).map((stedsnavn, i) => (
+                {filteredStedsnavnOptions.map((stedsnavn, i) => (
                   <MenuItem
                     key={i}
                     selected={i === selectedIndex}
