@@ -211,7 +211,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const getZoomByTypeOfPlace = (stedsnavn: string) => {
     let zoom;
     switch (stedsnavn) {
-      case 'Adressenavn (veg/gate)':
+      case 'Adressenavn':
         zoom = 16;
         break;
       case 'Fjellområde':
