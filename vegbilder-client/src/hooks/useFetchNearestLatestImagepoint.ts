@@ -29,7 +29,7 @@ const useFetchNearestLatestImagePoint = (
     'narrowSearch'
   )
 
-  async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng, action: action) {
+  async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
     let foundImage = false;
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
@@ -69,7 +69,7 @@ const useFetchNearestLatestImagePoint = (
     }
   }
 
-  return (latlng: ILatlng, action: action) => fetchImagePointsFromNewestYearByLatLng(latlng, action);
+  return (latlng: ILatlng) => fetchImagePointsFromNewestYearByLatLng(latlng);
 };
 
 export default useFetchNearestLatestImagePoint;

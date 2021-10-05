@@ -13,7 +13,7 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: '50rem',
     maxHeight: '95vh',
     overflowY: 'auto',
-    zIndex: 100000,
+    zIndex: 500,
     backgroundColor: theme.palette.primary.main,
     color: theme.palette.primary.contrastText,
     borderRadius: '10px',

@@ -50,7 +50,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
   const handleClick = (event: LeafletMouseEvent) => {
     const userClickedLatLng = event.latlng;
     if (currentYear === 'Nyeste') {
-      fetchNearestLatestImagePoint(userClickedLatLng, 'default').then((foundImage) => {
+      fetchNearestLatestImagePoint(userClickedLatLng).then((foundImage) => {
         if (!foundImage && currentCoordinates.zoom && currentCoordinates.zoom < 8) {
           setCurrentCoordinates({ ...userClickedLatLng, zoom: 8 }); // zoom the user more in if it didnt find images
         }

@@ -18,6 +18,7 @@ import {
 } from 'recoil/selectors';
 import useAsyncError from 'hooks/useAsyncError';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
+import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { currentYearState } from 'recoil/atoms';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
@@ -118,6 +119,12 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     'Fant ingen bilder i nærheten av stedet du søkte på.'
   );
 
+  const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
+    showMessage,
+    'Fant ingen bilder i nærheten'
+  );
+
+
   const delayedStedsnavnQuery = useMemo(
     () =>
       debounce(async (trimmedSearch) => {
@@ -178,7 +185,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     if (latlng && latlng.lat && latlng.lng) {
       setCurrentCoordinates({ ...latlng, zoom: zoom });
       setResetImagePoint(true);
-      if (typeof currentYear === 'number')
+      if (typeof currentYear === 'number') {
         fetchNearestImagePoint(latlng, currentYear).then((imagePoint) => {
           if (imagePoint) {
             const imagePointLatLng = getImagePointLatLng(imagePoint);
@@ -186,7 +193,14 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
           } else {
             setMapView();
           }
-        });
+        })
+      } else {
+        fetchNearestLatestImagePoint(latlng).then((imagePoint) => {
+          if (!imagePoint) {
+            setMapView();
+          };
+        })
+      };
       setSearchString('');
     }
   };

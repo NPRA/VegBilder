@@ -1,4 +1,8 @@
 const versionLog = {
+  'v1.3.8': [
+    'Kan sende med vegsystemreferanse i url',
+    'La til statistikk som gir en oversikt over hvor mange bilder som er tilgjengelige.'
+  ],
   'v1.3.5': ['Pakkeoppdateringer, inkludert en stor endring i kartet og diverse kodeforbedringer'],
   'v1.3.2': [
     'Uthev fokuserte elementer litt i menyene',

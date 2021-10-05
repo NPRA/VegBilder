@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
+import { StatisticsTable } from './StatisticsTable/StatisticsTable';
 
 import { versionLog } from 'constants/versions';
 import { tekniskText } from 'constants/text';
@@ -84,6 +85,9 @@ const Teknisk = () => {
             </Typography>
           </li>
         </ul>
+        <Typography variant="subtitle1"> Bilder i løsningen </Typography>
+        <Typography variant="body1" > Tabellen under gir en oversikt over hvor mange vegbilder som er tilgjengelige, sortert etter år og vegkategori. </Typography>
+        <StatisticsTable />
         <Typography variant="subtitle1"> {tekniskText.subheader2} </Typography>
         {Object.entries(versionLog).map(([versionNumber, changes]) => (
           <>
