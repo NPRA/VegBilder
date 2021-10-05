@@ -27,6 +27,8 @@ const useStyles = makeStyles(() => ({
 
 const RoadColorExplaination = () => {
   const classes = useStyles();
+  const currentImagePoint = useRecoilValue(currentImagePointState);
+  const zoomLevel = useRecoilValue(currentLatLngZoomState).zoom;
 
   const getMarkerIcon = (vegkategori: string) => {
     return `images/markers/marker-${
@@ -34,9 +36,11 @@ const RoadColorExplaination = () => {
     }-directional.svg`;
   };
 
+  const shouldShowRoadColorExplaination = currentImagePoint && zoomLevel && zoomLevel > 14;
+
   return (
     <>
-      {
+      {shouldShowRoadColorExplaination ? (
         <Paper className={classes.paperContainer}>
           <div className={classes.colorRoadRow}>
             <img
@@ -51,7 +55,7 @@ const RoadColorExplaination = () => {
             <Typography variant="body1">Riksveger</Typography>
           </div>
         </Paper>
-      }
+      ) : null}
     </>
   );
 };
