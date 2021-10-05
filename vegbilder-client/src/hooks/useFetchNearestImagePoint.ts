@@ -14,12 +14,12 @@ import { imagePointQueryParameterState, latLngZoomQueryParameterState, viewQuery
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 import { loadedImagePointsState } from 'recoil/atoms';
 
-type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'narrowSearch';
+type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'vegkart';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
-  action: action = 'default'
+  fetchMethod: fetchMethod = 'default'
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
@@ -37,11 +37,11 @@ const useFetchNearestImagePoint = (
       return fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints) => {
         if (imagePoints && imagePoints.length > 0) {
           let nearestImagePoint;
-          if (action === 'findByImageId') {
+          if (fetchMethod === 'findByImageId') {
             nearestImagePoint = findImagePointByQueryId(imagePoints);
-          } else if (currentImagePoint && action === 'findImageNearbyCurrentImagePoint') {
+          } else if (currentImagePoint && fetchMethod === 'findImageNearbyCurrentImagePoint') {
             nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
-          } else if (action === 'narrowSearch') {
+          } else if (fetchMethod === 'vegkart') {
             nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 10);
           } else {
             nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 1000);

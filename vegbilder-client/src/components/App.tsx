@@ -24,7 +24,7 @@ import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { IImagePoint } from 'types';
+import { IImagePoint, queryParamterNames } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -102,10 +102,10 @@ const App = () => {
     'Fant ingen bilder i nærheten.'
   );
 
-  const fetchNearestLatestImagePointNarrowSearch = useFetchNearestLatestImagePoint(
+  const fetchNearestLatestImagePointVegkartSearch = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
     `Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet.`,
-    'narrowSearch'
+    'vegkart'
   );
 
 
@@ -127,6 +127,12 @@ const App = () => {
       (lat === DEFAULT_COORDINATES.lat.toString() && lng === DEFAULT_COORDINATES.lng.toString())
     );
   };
+
+  const removeUrlParameter = (parameterName: queryParamterNames) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.delete(parameterName);
+      window.history.replaceState(null, '', '?' + searchParams.toString());
+  }
 
   const openAppByVegsystemreferanse = async (
     vegsystemreferanse: string | undefined,
@@ -167,6 +173,7 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
+    const requester = searchParams.get('requester');
 
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
@@ -181,8 +188,9 @@ const App = () => {
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       setCurrentCoordinates({ ...latlng, zoom: 15 });
-      if (view === "image") {
-        fetchNearestLatestImagePointNarrowSearch(currentCoordinates);
+      if (requester === 'vegkart') {
+        fetchNearestLatestImagePointVegkartSearch(currentCoordinates);
+        removeUrlParameter('requester');
       } else if (yearQuery === 'Nyeste' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
