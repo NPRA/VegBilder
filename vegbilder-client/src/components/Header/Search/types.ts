@@ -1,15 +1,44 @@
+export interface IGeonorgeResponse {
+  metadata: Metadata;
+  navn:     IStedsnavn[];
+}
+
+export interface Metadata {
+  treffPerSide:      number;
+  side:              number;
+  totaltAntallTreff: number;
+  viserFra:          number;
+  viserTil:          number;
+  sokeStreng:        string;
+}
+
 export interface IStedsnavn {
-  ssrId: string;
-  navnetype: string;
-  kommunenavn: string;
-  fylkesnavn: string;
-  stedsnavn: string;
-  aust: string;
-  nord: string;
-  skrivemaatestatus: string;
-  spraak: string;
-  skrivemaatenavn: string;
-  epsgKode: string;
+  skrivemåte:           string;
+  skrivemåtestatus:     string;
+  navnestatus:          string;
+  språk:                string;
+  navneobjekttype:      string;
+  stedsnummer:          number;
+  stedstatus:           string;
+  representasjonspunkt: IRepresentasjonspunkt;
+  fylker:               IFylker[];
+  kommuner:             IKommuner[];
+}
+
+export interface IFylker {
+  fylkesnavn:   string;
+  fylkesnummer: string;
+}
+
+export interface IKommuner {
+  kommunenummer: string;
+  kommunenavn:   string;
+}
+
+export interface IRepresentasjonspunkt {
+  øst:      number;
+  nord:     number;
+  koordsys: number;
 }
 
 export interface IVegsystemData {

@@ -23,7 +23,7 @@ import { currentYearState } from 'recoil/atoms';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { ILatlng } from 'types';
-import { IStedsnavn, IVegsystemData } from './types';
+import { IGeonorgeResponse, IStedsnavn, IVegsystemData } from './types';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -103,6 +103,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const classes = useStyles();
   const [searchString, setSearchString] = useState('');
   const [stedsnavnOptions, setStedsnavnOptions] = useState<IStedsnavn[]>([]);
+  const filteredStedsnavnOptions = stedsnavnOptions.filter((stedsnavn) => !(stedsnavn.kommuner === null)); //Nytt geonorge-api kan returnere steder utenfor Norge med kommune + fylke = null. Disse filtrerer vi derfor vekk.
   const [vegSystemReferanser, setVegSystemReferanser] = useState<IVegsystemData[]>([]);
   const [openMenu, setOpenMenu] = useState(false);
   const [resetImagePoint, setResetImagePoint] = useState(false);
@@ -133,13 +134,10 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
           throwError(response);
           return;
         }
-        const stedsnavn = response.data;
-        if (stedsnavn && stedsnavn.totaltAntallTreff !== '0') {
-          const newOptions = stedsnavn.stedsnavn[0]
-            ? [...stedsnavn.stedsnavn]
-            : [stedsnavn.stedsnavn];
-          setStedsnavnOptions(newOptions);
-        } else {
+        const stedsnavn: IGeonorgeResponse = response.data;
+        if (stedsnavn && stedsnavn.metadata.totaltAntallTreff !== 0) {
+          stedsnavn.navn[0] ? 
+          setStedsnavnOptions([...stedsnavn.navn]) :
           setStedsnavnOptions([]);
         }
       }, 300),
@@ -214,7 +212,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const getZoomByTypeOfPlace = (stedsnavn: string) => {
     let zoom;
     switch (stedsnavn) {
-      case 'Adressenavn (veg/gate)':
+      case 'Adressenavn':
         zoom = 16;
         break;
       case 'Fjellområde':
@@ -262,11 +260,11 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
         const referance = vegSystemReferanser[selectedIndex];
         if (referance) handleVegSystemReferanseClick(referance.geometri.wkt);
       }
-      if (stedsnavnOptions.length) {
-        const stedsnavn = stedsnavnOptions[selectedIndex];
+      if (filteredStedsnavnOptions.length) {
+        const stedsnavn = filteredStedsnavnOptions[selectedIndex];
         if (stedsnavn) {
-          const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
-          const latlng = { lat: parseFloat(stedsnavn.nord), lng: parseFloat(stedsnavn.aust) };
+          const zoom = getZoomByTypeOfPlace(stedsnavn.navneobjekttype);
+          const latlng = { lat: stedsnavn.representasjonspunkt.nord, lng: stedsnavn.representasjonspunkt.øst };
           handleSelectedOption(latlng, zoom);
         }
       }
@@ -280,11 +278,20 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   };
 
   const handleInputFieldFocus = () => {
-    if (searchString.length && (vegSystemReferanser.length || stedsnavnOptions.length)) {
+    if (searchString.length && (vegSystemReferanser.length || filteredStedsnavnOptions.length)) {
       setOpenMenu(true);
       setSelectedIndex(0);
     }
   };
+
+  //Enkelte fylker, f.eks. Troms of Finnmark, har flere navn (bla.a. på samisk) hvor alle navnene er satt sammen i en string av typen "navn - navn2 - navn3". Ettersom språket ellers er bokmål bruker vi bare dette for å få plass i nedtrekksmenyen.
+  const formatFylkesnavn = (fylke: string) => {
+    if (fylke.includes("-")) {
+      return fylke.split("-")[0].trim();
+    } else {
+      return fylke;
+    }
+  }
 
   return (
     <ClickAwayListener onClickAway={() => setOpenMenu(false)}>
@@ -329,27 +336,27 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
                 ))}
               </>
             )}
-            {stedsnavnOptions.length > 0 && (
+            {filteredStedsnavnOptions.length > 0 && (
               <>
                 <ListSubheader style={{ paddingTop: '0.5rem' }}> Stedsnavn </ListSubheader>
-                {stedsnavnOptions.map((stedsnavn, i) => (
+                {filteredStedsnavnOptions.map((stedsnavn, i) => (
                   <MenuItem
                     key={i}
                     selected={i === selectedIndex}
                     style={{ paddingLeft: '1.875rem' }}
                     onClick={() => {
-                      const zoom = getZoomByTypeOfPlace(stedsnavn.navnetype);
+                      const zoom = getZoomByTypeOfPlace(stedsnavn.navneobjekttype);
                       const latlng = {
-                        lat: parseFloat(stedsnavn.nord),
-                        lng: parseFloat(stedsnavn.aust),
+                        lat: stedsnavn.representasjonspunkt.nord,
+                        lng: stedsnavn.representasjonspunkt.øst,
                       };
                       handleSelectedOption(latlng, zoom);
                     }}
                   >
                     <ListItemText
                       key={`Textkey${i}`}
-                      primary={stedsnavn.stedsnavn}
-                      secondary={`${stedsnavn.navnetype}, ${stedsnavn.kommunenavn} (${stedsnavn.fylkesnavn})`}
+                      primary={stedsnavn.skrivemåte}
+                      secondary={`${stedsnavn.navneobjekttype}, ${stedsnavn.kommuner[0].kommunenavn} (${formatFylkesnavn(stedsnavn.fylker[0].fylkesnavn)})`}
                     />
                   </MenuItem>
                 ))}
