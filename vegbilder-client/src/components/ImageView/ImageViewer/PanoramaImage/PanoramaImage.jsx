@@ -1,8 +1,8 @@
-import React, {useEffect, useRef, useState} from 'react';
-import ReactPannellum, {getPitch, addScene, loadScene, getYaw, setHfov} from 'react-pannellum';
-import {useRecoilValue, useRecoilState} from 'recoil';
-import {currentViewState} from '../../../../recoil/atoms';
-import {hfovState, turnedToOtherLaneSelector} from '../../../../recoil/selectors';
+import React, {useEffect, useRef} from 'react';
+import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov} from 'react-pannellum';
+import {useRecoilState} from 'recoil';
+import {currentViewState, currentHfovState} from '../../../../recoil/atoms';
+import { turnedToOtherLaneSelector } from '../../../../recoil/selectors';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
@@ -10,7 +10,7 @@ const PanoramaImage = ({ imageUrl }) => {
 
   const [currentView, ] = useRecoilState(currentViewState);
   const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
-  const hfov = useRecoilValue(hfovState);
+  const [, setCurrentHfovRecoil] = useRecoilState(currentHfovState);
 
   const isPreview = currentView === 'map';
 
@@ -24,8 +24,13 @@ const PanoramaImage = ({ imageUrl }) => {
     showZoomCtrl: false,
     showFullscreenCtrl: false,
     uiText: uiText,
-    doubleClickZoom: true
+    doubleClickZoom: true,
+    onMouseZoomCallback: updateZoomRecoilState
   };
+
+  function updateZoomRecoilState() {
+    setCurrentHfovRecoil(getHfov());
+  }
 
   const configPreview = {
     ...config,
@@ -65,10 +70,6 @@ const PanoramaImage = ({ imageUrl }) => {
       };
     }, [imageUrl, turnToOtherLane]);
   }
-
-  useEffect(() => {
-    setHfov(hfov);
-  }, [hfov]);
 
   useRenderViewer(imageUrl);
 

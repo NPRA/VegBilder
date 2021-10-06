@@ -13,6 +13,8 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import proj4 from 'proj4';
 import clsx from 'clsx';
+// @ts-ignore
+import Pannellum, {getHfov, setHfov, getHfovBounds } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
@@ -114,7 +116,7 @@ const ImageControlButtons = ({
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
   const [playMode, setPlayMode] = useState(false);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
-  const [currentHfov, setHfov] = useRecoilState(currentHfovState);
+  const [currentHfovStateRecoil, setCurrentHfovRecoil] = useRecoilState(currentHfovState);
   const [CURRENT_TIMER_OPTIONS, setTimerOptions] = useState(TIMER_OPTIONS);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
@@ -126,27 +128,38 @@ const ImageControlButtons = ({
     setMoreControlsAnchorEl(event.currentTarget);
 
   const is360View = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
-  let [isMinOrMaxZoom, setZoom] = useState({"isMinZoom": false, "isMaxZoom": false});
+
+  const minHfovBounds = getHfovBounds()[0];
+  const maxHfovBounds = getHfovBounds()[1];
+  let [isMinOrMaxZoom, setMinAndMaxZoom] = useState({"isMinZoom": getHfov() === minHfovBounds, "isMaxZoom": getHfov === maxHfovBounds}); 
 
   type zoomType = 'zoomIn' | 'zoomOut';
 
   const zoom360 = (zoomType: zoomType) => {
     if (zoomType === 'zoomIn' && !isMinOrMaxZoom.isMaxZoom) {
-        setHfov(currentHfov - 10);
+      let newZoomIn = getHfov() - 10;
+      setHfov(newZoomIn);
+      setCurrentHfovRecoil(newZoomIn);
     } else if (zoomType === 'zoomOut' && !isMinOrMaxZoom.isMinZoom) {
-        setHfov(currentHfov + 10);
+      let newZoomOut = getHfov() + 10;
+      setHfov(newZoomOut);
+      setCurrentHfovRecoil(newZoomOut);
+    }
+  }
+
+  const updateZoomMinAndMax = () => {
+    if (currentHfovStateRecoil === minHfovBounds) {
+      setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": true})
+    } else if (currentHfovStateRecoil === maxHfovBounds) {
+      setMinAndMaxZoom({"isMinZoom": true, "isMaxZoom": false})
+    } else {
+      setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
     }
   }
 
   useEffect(() => {
-    if (currentHfov === 50) {
-      setZoom({"isMinZoom": false, "isMaxZoom": true})
-    } else if (currentHfov === 120) {
-      setZoom({"isMinZoom": true, "isMaxZoom": false})
-    } else {
-      setZoom({"isMinZoom": false, "isMaxZoom": false});
-    }
-  }, [currentHfov]);
+    updateZoomMinAndMax();
+  }, [currentHfovStateRecoil]);
 
   useEffect(() => {
     if (currentImagePoint && getImageType(currentImagePoint) === '360') {
