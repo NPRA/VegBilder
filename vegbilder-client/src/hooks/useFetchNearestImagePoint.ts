@@ -10,23 +10,22 @@ import {
   getImagePointLatLng,
 } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState, viewQueryParamterState } from 'recoil/selectors';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 import { loadedImagePointsState } from 'recoil/atoms';
 
-type action = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages';
+type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'vegkart';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
-  action: action = 'default'
+  fetchMethod: fetchMethod = 'default'
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
-
   async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
@@ -38,12 +37,14 @@ const useFetchNearestImagePoint = (
       return fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints) => {
         if (imagePoints && imagePoints.length > 0) {
           let nearestImagePoint;
-          if (action === 'findByImageId') {
+          if (fetchMethod === 'findByImageId') {
             nearestImagePoint = findImagePointByQueryId(imagePoints);
-          } else if (currentImagePoint && action === 'findImageNearbyCurrentImagePoint') {
+          } else if (currentImagePoint && fetchMethod === 'findImageNearbyCurrentImagePoint') {
             nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
+          } else if (fetchMethod === 'vegkart') {
+            nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 10);
           } else {
-            nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng);
+            nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 1000);
           }
           if (nearestImagePoint) {
             handleFoundNearestImagePoint(nearestImagePoint);
@@ -60,7 +61,8 @@ const useFetchNearestImagePoint = (
       if (loadedImagePoints) {
         const nearestImagePoint = selectNearestImagePointToCoordinates(
           loadedImagePoints.imagePoints,
-          latlng
+          latlng,
+          1000
         );
         if (nearestImagePoint) {
           handleFoundNearestImagePoint(nearestImagePoint);
@@ -81,9 +83,9 @@ const useFetchNearestImagePoint = (
     }
   };
 
-  const selectNearestImagePointToCoordinates = (imagePoints: IImagePoint[], latlng: ILatlng) => {
+  const selectNearestImagePointToCoordinates = (imagePoints: IImagePoint[], latlng: ILatlng, maxDistanceAwayInMeters: number) => {
     if (!imagePoints || !imagePoints.length) return;
-    const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, 1000);
+    const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, maxDistanceAwayInMeters);
     if (nearestImagePoint) {
       return nearestImagePoint;
     }
@@ -109,7 +111,6 @@ const useFetchNearestImagePoint = (
         }
         return true;
       });
-
       const nearestImagePoint = findNearestImagePoint(sameRoadReferenceImagePoints, latlng, 300);
 
       return nearestImagePoint;

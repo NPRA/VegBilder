@@ -24,7 +24,7 @@ import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { IImagePoint } from 'types';
+import { IImagePoint, queryParameterNames } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -99,8 +99,18 @@ const App = () => {
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten'
+    'Fant ingen bilder i nærheten.'
   );
+
+  // Vegkart (https://vegkart.atlas.vegvesen.no/) lenker til Vegbilder fra punkter på vegen.
+  // Det kan ofte skje at det ikke finnes bilder på punktet. Søk etter nærliggende punkter skal
+  // da være ganske snevert fordi brukeren er mest interessert i det punktet de valgte i vegkart.
+  const fetchNearestLatestImagePointVegkartSearch = useFetchNearestLatestImagePoint(
+    showSnackbarMessage,
+    `Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet.`,
+    'vegkart'
+  );
+
 
   const fetchNearestImagePointToYearAndCoordinatesByImageId = useFetchNearestImagePoint(
     showSnackbarMessage,
@@ -110,7 +120,7 @@ const App = () => {
 
   const fetchNearestImagePointToYearAndCoordinates = useFetchNearestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten'
+    'Fant ingen bilder i nærheten.'
   );
 
   const isDefaultCoordinates = (lat: string | null, lng: string | null) => {
@@ -120,6 +130,12 @@ const App = () => {
       (lat === DEFAULT_COORDINATES.lat.toString() && lng === DEFAULT_COORDINATES.lng.toString())
     );
   };
+
+  const removeUrlParameter = (parameterName: queryParameterNames) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.delete(parameterName);
+      window.history.replaceState(null, '', '?' + searchParams.toString());
+  }
 
   const openAppByVegsystemreferanse = async (
     vegsystemreferanse: string | undefined,
@@ -160,6 +176,7 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
+    const requester = searchParams.get('requester');
 
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
@@ -170,11 +187,14 @@ const App = () => {
       }
       setCurrentVegsystemreferanseState(null);
     }
-
+    // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       setCurrentCoordinates({ ...latlng, zoom: 15 });
-      if (yearQuery === 'latest' || !yearQuery) {
+      if (requester === 'vegkart') {
+        fetchNearestLatestImagePointVegkartSearch(currentCoordinates);
+        removeUrlParameter('requester');
+      } else if (yearQuery === 'Nyeste' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
