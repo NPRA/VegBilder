@@ -31,32 +31,23 @@ const useFetchNearestLatestImagePoint = (
 
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
     let foundImage = false;
+    let fetchFunction = (fetchMethodLatest === "vegkart"
+    ? fetchImagePointsByLatLongAndYearNarrowSearch
+    : fetchImagePointsByLatLongAndYear);
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
-        if (fetchMethodLatest === "vegkart") {
-          await fetchImagePointsByLatLongAndYearNarrowSearch(latlng, year).then((imagePoint) => {
-            if (imagePoint) {
-              const year = imagePoint.properties.AAR;
-              setCurrentYear(year);
-              showMessage(
-                `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
-              );
-              foundImage = true;
-            }
-          });
-        } else {
-          await fetchImagePointsByLatLongAndYear(latlng, year).then((imagePoint) => {
-            if (imagePoint) {
-              const year = imagePoint.properties.AAR;
-              setCurrentYear(year);
-              showMessage(
-                `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
-              );
-              foundImage = true;
-            }
-          });
-        } if (foundImage) break;
+        await fetchFunction(latlng, year).then((imagePoint) => {
+          if (imagePoint) {
+            const year = imagePoint.properties.AAR;
+            setCurrentYear(year);
+            showMessage(
+              `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
+            );
+            foundImage = true;
+          }
+        });
+        if (foundImage) break;
       }
       if (!foundImage) {
         if (fetchMethodLatest === "vegkart") {

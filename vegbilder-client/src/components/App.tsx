@@ -102,6 +102,9 @@ const App = () => {
     'Fant ingen bilder i nærheten.'
   );
 
+  // Vegkart (https://vegkart.atlas.vegvesen.no/) lenker til Vegbilder fra punkter på vegen.
+  // Det kan ofte skje at det ikke finnes bilder på punktet. Søk etter nærliggende punkter skal
+  // da være ganske snevert fordi brukeren er mest interessert i det punktet de valgte i vegkart.
   const fetchNearestLatestImagePointVegkartSearch = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
     `Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet.`,
