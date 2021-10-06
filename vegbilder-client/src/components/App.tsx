@@ -24,7 +24,7 @@ import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { IImagePoint, queryParamterNames } from 'types';
+import { IImagePoint, queryParameterNames } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -128,7 +128,7 @@ const App = () => {
     );
   };
 
-  const removeUrlParameter = (parameterName: queryParamterNames) => {
+  const removeUrlParameter = (parameterName: queryParameterNames) => {
     const searchParams = new URLSearchParams(window.location.search);
     searchParams.delete(parameterName);
       window.history.replaceState(null, '', '?' + searchParams.toString());

@@ -83,9 +83,9 @@ const useFetchNearestImagePoint = (
     }
   };
 
-  const selectNearestImagePointToCoordinates = (imagePoints: IImagePoint[], latlng: ILatlng, maxDistanceBetweenInMeters: number) => {
+  const selectNearestImagePointToCoordinates = (imagePoints: IImagePoint[], latlng: ILatlng, maxDistanceAwayInMeters: number) => {
     if (!imagePoints || !imagePoints.length) return;
-    const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, maxDistanceBetweenInMeters);
+    const nearestImagePoint = findNearestImagePoint(imagePoints, latlng, maxDistanceAwayInMeters);
     if (nearestImagePoint) {
       return nearestImagePoint;
     }
