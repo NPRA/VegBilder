@@ -1,7 +1,7 @@
 import React, {useEffect, useRef} from 'react';
 import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov} from 'react-pannellum';
 import {useRecoilState} from 'recoil';
-import {currentViewState, currentHfovState} from '../../../../recoil/atoms';
+import {currentViewState} from '../../../../recoil/atoms';
 import { turnedToOtherLaneSelector } from '../../../../recoil/selectors';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
@@ -10,7 +10,6 @@ const PanoramaImage = ({ imageUrl }) => {
 
   const [currentView, ] = useRecoilState(currentViewState);
   const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
-  const [, setCurrentHfovRecoil] = useRecoilState(currentHfovState);
 
   const isPreview = currentView === 'map';
 
@@ -25,12 +24,8 @@ const PanoramaImage = ({ imageUrl }) => {
     showFullscreenCtrl: false,
     uiText: uiText,
     doubleClickZoom: true,
-    onMouseZoomCallback: updateZoomRecoilState
   };
 
-  function updateZoomRecoilState() {
-    setCurrentHfovRecoil(getHfov());
-  }
 
   const configPreview = {
     ...config,
@@ -50,10 +45,11 @@ const PanoramaImage = ({ imageUrl }) => {
     borderRadius: '0 0 10px 10px'
   }
 
+    // Pannellum-biblioteket oppdaterer ikke komponenten automatisk ved ny prop.
+    // Må derfor legge til og laste inn nytt bilde som ny scene hver gang (unntatt første scene, derav useRef).
   const useRenderViewer = (imageUrl) => {
     const didMountFirstUrl = useRef(false);
 
-    // Pannellum-biblioteket oppdaterer ikke komponenten automatisk ved ny prop. Må derfor legge til og laste inn nytt bilde som ny scene hver gang.
     useEffect(() => {
       if (didMountFirstUrl.current) {
         let newConfig = {

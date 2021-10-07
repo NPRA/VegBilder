@@ -65,11 +65,6 @@ export const availableStatistics = atom<IStatisticsFeature[] | null>({
   default: [],
 });
 
-export const currentHfovState = atom<number>({
-  key: 'currentHfovState',
-  default: 100,
-});
-
 export const turnedToOtherLane = atom<boolean>({
   key: 'turnedToOtherLane',
   default: false

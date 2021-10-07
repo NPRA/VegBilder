@@ -13,8 +13,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import proj4 from 'proj4';
 import clsx from 'clsx';
+// En Panellum-instans er global og det er dermed mulig å kalle eks. getHfov globalt.
 // @ts-ignore
-import Pannellum, {getHfov, setHfov, getHfovBounds } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
+import { getHfov, setHfov } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
@@ -36,7 +37,7 @@ import {
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { getImageType } from 'utilities/imagePointUtilities';
-import { playVideoState, currentLatLngZoomState, currentHfovState } from 'recoil/atoms';
+import { playVideoState, currentLatLngZoomState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS, TIMER_OPTIONS_360 } from 'constants/defaultParamters';
@@ -116,7 +117,6 @@ const ImageControlButtons = ({
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
   const [playMode, setPlayMode] = useState(false);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
-  const [currentHfovStateRecoil, setCurrentHfovRecoil] = useRecoilState(currentHfovState);
   const [CURRENT_TIMER_OPTIONS, setTimerOptions] = useState(TIMER_OPTIONS);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
@@ -127,11 +127,12 @@ const ImageControlButtons = ({
   const handleMoreControlsClick = (event: MouseEvent) =>
     setMoreControlsAnchorEl(event.currentTarget);
 
-  const is360View = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
+  const is360Image = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
 
-  const minHfovBounds = getHfovBounds()[0];
-  const maxHfovBounds = getHfovBounds()[1];
-  let [isMinOrMaxZoom, setMinAndMaxZoom] = useState({"isMinZoom": getHfov() === minHfovBounds, "isMaxZoom": getHfov === maxHfovBounds}); 
+  // Disse er standard config i Panellum.
+  const minHfovBounds = 50;
+  const maxHfovBounds = 120;
+  let [isMinOrMaxZoom, setMinAndMaxZoom] = useState({"isMinZoom": false, "isMaxZoom": false}); 
 
   type zoomType = 'zoomIn' | 'zoomOut';
 
@@ -139,18 +140,32 @@ const ImageControlButtons = ({
     if (zoomType === 'zoomIn' && !isMinOrMaxZoom.isMaxZoom) {
       let newZoomIn = getHfov() - 10;
       setHfov(newZoomIn);
-      setCurrentHfovRecoil(newZoomIn);
     } else if (zoomType === 'zoomOut' && !isMinOrMaxZoom.isMinZoom) {
       let newZoomOut = getHfov() + 10;
       setHfov(newZoomOut);
-      setCurrentHfovRecoil(newZoomOut);
     }
   }
 
+  // Setter et interval for å regelmessig sjekke om zoom i Panellum er på maks eller min 
+  // for å kunne deaktivere zoom-knapper i 360-visning.
+  const [intervalId, setIntervalId] = useState(0);
+
+  useEffect(() => {
+    if (!is360Image && intervalId !== 0) {
+      clearInterval(intervalId);
+      setIntervalId(0);
+    } else {
+      const newIntervalId = window.setInterval(() => {updateZoomMinAndMax()}, 200);
+      setIntervalId(newIntervalId);
+    }
+  }, [is360Image])
+
+
+
   const updateZoomMinAndMax = () => {
-    if (currentHfovStateRecoil === minHfovBounds) {
+    if (getHfov() === minHfovBounds) {
       setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": true})
-    } else if (currentHfovStateRecoil === maxHfovBounds) {
+    } else if (getHfov() === maxHfovBounds) {
       setMinAndMaxZoom({"isMinZoom": true, "isMaxZoom": false})
     } else {
       setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
@@ -158,11 +173,7 @@ const ImageControlButtons = ({
   }
 
   useEffect(() => {
-    updateZoomMinAndMax();
-  }, [currentHfovStateRecoil]);
-
-  useEffect(() => {
-    if (currentImagePoint && getImageType(currentImagePoint) === '360') {
+    if (is360Image) {
       setTimerOptions(TIMER_OPTIONS_360);
     } else {
       setTimerOptions(TIMER_OPTIONS);
@@ -336,9 +347,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={meterLineVisible ? 'Deaktiver basislinje' : 'Aktiver basislinje'}>
         <IconButton
-          disabled={isZoomedInImage || is360View}
+          disabled={isZoomedInImage || is360Image}
           aria-label="Deaktiver/Aktiver basislinje"
-          className={isZoomedInImage || is360View ? classes.buttonDisabled : classes.button}
+          className={isZoomedInImage || is360Image ? classes.buttonDisabled : classes.button}
           onClick={() => setMeterLineVisible(!meterLineVisible)}
         >
           {meterLineVisible ? <MeasureIcon /> : <MeasureDisabledIcon />}
@@ -433,9 +444,9 @@ const ImageControlButtons = ({
         {!playMode && !playVideo ? (
           <>
             {/*  Render normal menu */}
-            {!is360View && zoomInOutButton()}
-            {is360View && zoomInOut360Button("zoomIn")}
-            {is360View && zoomInOut360Button("zoomOut")}
+            {!is360Image && zoomInOutButton()}
+            {is360Image && zoomInOut360Button("zoomIn")}
+            {is360Image && zoomInOut360Button("zoomOut")}
             {/* move backwards arrow button  */}
             <Tooltip title="Gå bakover">
               <IconButton
