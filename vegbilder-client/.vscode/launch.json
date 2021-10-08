@@ -2,11 +2,18 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "type": "chrome",
+      "type": "pwa-chrome",
       "request": "launch", 
       "name": "Launch chrome against localhost",
       "url": "http://localhost:3000",
-      "webroot": "${workspaceFolder}"
+      "webRoot": "${workspaceFolder}/src"
+    },
+    {
+      "type": "pwa-chrome",
+      "request": "attach", 
+      "port": "9222",
+      "name": "attach to chrome",
+      "webRoot": "${workspaceFolder}/src"
     }
   ]
 }

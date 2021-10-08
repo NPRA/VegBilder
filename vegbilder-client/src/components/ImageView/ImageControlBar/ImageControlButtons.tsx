@@ -37,7 +37,7 @@ import {
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { getImageType } from 'utilities/imagePointUtilities';
-import { playVideoState, currentLatLngZoomState } from 'recoil/atoms';
+import { playVideoState, currentLatLngZoomState, currentHfovState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS, TIMER_OPTIONS_360 } from 'constants/defaultParamters';
@@ -127,9 +127,10 @@ const ImageControlButtons = ({
   const handleMoreControlsClick = (event: MouseEvent) =>
     setMoreControlsAnchorEl(event.currentTarget);
 
+  const [currentHfovStateRecoil, setCurrentHfovRecoil] = useRecoilState(currentHfovState);
   const is360Image = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
 
-  // Disse er standard config i Panellum.
+  // Disse er standard config i Pannellum.
   const minHfovBounds = 50;
   const maxHfovBounds = 120;
   let [isMinOrMaxZoom, setMinAndMaxZoom] = useState({"isMinZoom": false, "isMaxZoom": false}); 
@@ -140,37 +141,27 @@ const ImageControlButtons = ({
     if (zoomType === 'zoomIn' && !isMinOrMaxZoom.isMaxZoom) {
       let newZoomIn = getHfov() - 10;
       setHfov(newZoomIn);
+      setCurrentHfovRecoil(newZoomIn);
     } else if (zoomType === 'zoomOut' && !isMinOrMaxZoom.isMinZoom) {
       let newZoomOut = getHfov() + 10;
+      setCurrentHfovRecoil(newZoomOut);
       setHfov(newZoomOut);
     }
   }
 
-  // Setter et interval for å regelmessig sjekke om zoom i Panellum er på maks eller min 
-  // for å kunne deaktivere zoom-knapper i 360-visning.
-  const [intervalId, setIntervalId] = useState(0);
-
-  useEffect(() => {
-    if (!is360Image && intervalId !== 0) {
-      clearInterval(intervalId);
-      setIntervalId(0);
-    } else {
-      const newIntervalId = window.setInterval(() => {updateZoomMinAndMax()}, 200);
-      setIntervalId(newIntervalId);
-    }
-  }, [is360Image])
-
-
-
   const updateZoomMinAndMax = () => {
-    if (getHfov() === minHfovBounds) {
+    if (currentHfovStateRecoil === minHfovBounds) {
       setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": true})
-    } else if (getHfov() === maxHfovBounds) {
+    } else if (currentHfovStateRecoil === maxHfovBounds) {
       setMinAndMaxZoom({"isMinZoom": true, "isMaxZoom": false})
     } else {
       setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
     }
   }
+
+  useEffect(() => {
+    updateZoomMinAndMax();
+  }, [currentHfovStateRecoil]);
 
   useEffect(() => {
     if (is360Image) {
