@@ -337,11 +337,11 @@ const ImageControlButtons = ({
 
   const showFullSceenButton = () => {
     return (
-      <Tooltip title={'Fullskjermvisning'}>
+      <Tooltip title={'ullskjermvisning'}>
         <IconButton
-          disabled={!is360Image}
+          disabled={isHistoryMode}
           aria-label="Aktiver fullskjermvisning"
-          className={classes.button}
+          className={isHistoryMode ? classes.buttonDisabled : classes.button}
           onClick={() => toggleFullscreen()}
         >
           {<EnlargeIcon />}
