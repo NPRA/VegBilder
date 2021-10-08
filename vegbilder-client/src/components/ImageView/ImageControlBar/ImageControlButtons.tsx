@@ -15,7 +15,7 @@ import proj4 from 'proj4';
 import clsx from 'clsx';
 // En Panellum-instans er global og det er dermed mulig å kalle eks. getHfov globalt.
 // @ts-ignore
-import { getHfov, setHfov } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
+import { getHfov, setHfov, toggleFullscreen } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
@@ -33,6 +33,7 @@ import {
   PauseIcon,
   ZoomOutIcon,
   ZoomInIcon,
+  EnlargeIcon
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
@@ -334,6 +335,22 @@ const ImageControlButtons = ({
     );
   };
 
+  const showFullSceenButton = () => {
+    return (
+      <Tooltip title={'Fullskjermvisning'}>
+        <IconButton
+          disabled={!is360Image}
+          aria-label="Aktiver fullskjermvisning"
+          className={classes.button}
+          onClick={() => toggleFullscreen()}
+        >
+          {<EnlargeIcon />}
+        </IconButton >
+      </Tooltip>
+    );
+  };
+
+
   const hideShowBasisLineButton = () => {
     return (
       <Tooltip title={meterLineVisible ? 'Deaktiver basislinje' : 'Aktiver basislinje'}>
@@ -436,6 +453,7 @@ const ImageControlButtons = ({
           <>
             {/*  Render normal menu */}
             {!is360Image && zoomInOutButton()}
+            {is360Image && showFullSceenButton()}
             {is360Image && zoomInOut360Button("zoomIn")}
             {is360Image && zoomInOut360Button("zoomOut")}
             {/* move backwards arrow button  */}
@@ -462,7 +480,7 @@ const ImageControlButtons = ({
 
             {changeDirectionButton()}
             {playIconButton('Start animasjonsmodus')}
-            {hideShowBasisLineButton()}
+            {!is360Image ? hideShowBasisLineButton() : null}
             {historyButton()}
             {moreFunctionsButton()}
           </>
