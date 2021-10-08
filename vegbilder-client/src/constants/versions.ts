@@ -1,4 +1,8 @@
 const versionLog = {
+  'v1.3.12': [
+    'Oppdatert til Geonorges nye api for stedsnavn',
+    'Snevrere søk etter bildepunkt for lenker til Vegbilder fra Vegkart'
+  ],
   'v1.3.8': [
     'Kan sende med vegsystemreferanse i url',
     'La til statistikk som gir en oversikt over hvor mange bilder som er tilgjengelige.'
