@@ -13,7 +13,10 @@ const useFetchNearestLatestImagePoint = (
   fetchMethodLatest: fetchMethodLatest = 'default'
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
-  const availableYears = useRecoilValue(availableYearsQuery);
+  const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
+  const availableYearsPlanar = availableYearsForAllImageTypes['planar'];
+  const availableYears360 = availableYearsForAllImageTypes['360'];
+  
   const currentImageType = useRecoilValue(currentImageTypeState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setView] = useRecoilState(viewQueryParamterState);
@@ -23,7 +26,7 @@ const useFetchNearestLatestImagePoint = (
     'Fant ingen bilder ved dette området. Prøv å klikke et annet sted.'
   );
 
-  const fetchImagePointsByLatLongAndYearNarrowSearch = useFetchNearestImagePoint(
+  const fetchImagePointsByLatLongAndYearVegkartSearch = useFetchNearestImagePoint(
     showMessage,
     'Fant ingen bilder på punktet du valgte. Velg et annet punkt.',
     'vegkart'
@@ -32,8 +35,11 @@ const useFetchNearestLatestImagePoint = (
   async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
     let foundImage = false;
     let fetchFunction = (fetchMethodLatest === "vegkart"
-    ? fetchImagePointsByLatLongAndYearNarrowSearch
+    ? fetchImagePointsByLatLongAndYearVegkartSearch
     : fetchImagePointsByLatLongAndYear);
+
+    let availableYears = currentImageType === '360' ? availableYears360 : availableYearsPlanar;
+
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);

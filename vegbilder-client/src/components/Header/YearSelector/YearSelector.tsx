@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -88,16 +88,34 @@ interface IYearSelectorProps {
 
 const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const classes = useStyles();
-  const availableYears = useRecoilValue(availableYearsQuery);
+  const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
   const currentImageType = useRecoilValue(currentImageTypeState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+
+  const availableYearsForCurrentImageType = currentImageType === '360' ? availableYearsForAllImageTypes['360'] : availableYearsForAllImageTypes['planar'];
+
+  const [currentSelectedYear, setCurrentSelectedYear] = useState(currentYear);
 
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
     showMessage,
     'Fant ingen bilder fra valgt år på samme punktet. Prøv å klikke et annet sted.',
     'findImageNearbyCurrentImagePoint'
   );
+
+  useEffect(() => {
+    
+  if (currentYear === "Nyeste") {
+    setCurrentSelectedYear(currentYear);
+  } else if (typeof currentYear === 'number') {
+    if (!availableYearsForCurrentImageType.includes(currentYear)) {
+      setCurrentSelectedYear("");
+      showMessage(`Det finnes ingen ${currentImageType}-bilder fra ${currentYear}. Velg en annen bildetype eller et annet år.`)
+    } else {
+      setCurrentSelectedYear(currentYear);
+    }
+  }
+}, [currentYear, currentImageType])
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -106,6 +124,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
     }>
   ) => {
     const newYear = event.target.value as string;
+
     if (newYear && newYear !== currentYear) {
       const searchParams = new URLSearchParams(window.location.search);
       const view = searchParams.get('view');
@@ -115,11 +134,11 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
           setCurrentImagePoint(null);
         }
       } else {
-        setCurrentYear(parseInt(newYear));
-        if (currentImagePoint) {
-          const latlng = getImagePointLatLng(currentImagePoint);
-          if (latlng) fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear), currentImageType);
-        }
+          setCurrentYear(parseInt(newYear));
+          if (currentImagePoint) {
+            const latlng = getImagePointLatLng(currentImagePoint);
+            if (latlng) fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear), currentImageType);
+          }
       }
     }
   };
@@ -128,14 +147,15 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
     <FormControl>
       <Select
         id="year-select"
-        value={currentYear}
+        value={currentSelectedYear}
         onChange={(event) => handleChange(event)}
         className={classes.yearSelect}
         input={<CustomInput />}
         IconComponent={CustomExpandMoreIcon}
         MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
-        <ListSubheader>Periode</ListSubheader>
+        {/*Bug i ListSubheader gir den en uønsket onClick event som må stoppes.*/}
+        <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Periode</ListSubheader>
         <MenuItem
           value={'Nyeste'}
           className={classes.item}
@@ -144,13 +164,13 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
           {currentYear === 'Nyeste' ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
           {'Nyeste'}
         </MenuItem>
-        <ListSubheader>Årstall</ListSubheader>
-        {availableYears.map((year) => (
+        <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Årstall</ListSubheader>
+        {availableYearsForCurrentImageType.map((year) => (
           <MenuItem
             key={year}
             value={year}
             className={classes.item}
-            selected={year === currentYear}
+            selected={year === currentSelectedYear}
             style={{ color: year === currentYear ? Theme.palette.common.orangeDark : '' }}
           >
             {year === currentYear ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}

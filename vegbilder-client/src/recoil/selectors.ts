@@ -23,29 +23,49 @@ import {
   currentHfovState
 } from './atoms';
 
+interface availableYears {
+  planar: number[],
+  360: number[]
+}
+
 export const availableYearsQuery = selector({
   key: 'availableYears',
   get: async () => {
     const response = await getAvailableYearsFromOGC();
     if (response.status === 200) {
-      const regexp = RegExp(/20\d{2}/);
+      const regexpPlanar = RegExp(/\b(Vegbilder[_]20\d{2})\b/);
+      const regexp360 = RegExp(/\b(Vegbilder[_]360_20\d{2})\b/);
 
-      let availableYears: number[] = [];
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(response.data, 'text/xml');
 
       const titles = xmlDoc.getElementsByTagName('Title');
 
+      let availableYearsPlanar: number[] = [];
+      let availableYears360: number[] = [];
+
       for (const item of titles) {
-        const yearMatches = item.innerHTML.match(regexp);
-        if (yearMatches) {
-          const year = parseInt(yearMatches[0]);
-          if (!availableYears.includes(year)) {
-            availableYears.push(year);
+        const yearMatchesPlanar = item.innerHTML.match(regexpPlanar);
+        const yearMatches360 = item.innerHTML.match(regexp360);
+
+        if (yearMatchesPlanar) {
+          const year = parseInt(yearMatchesPlanar[0].slice(10));
+          if (!availableYearsPlanar.includes(year)) {
+            availableYearsPlanar.push(year);
+          }
+        }
+        if (yearMatches360) {
+          const year = parseInt(yearMatches360[0].slice(14));
+          if (!availableYears360.includes(year)) {
+            availableYears360.push(year);
           }
         }
       }
-      return availableYears.slice().sort((a: number, b: number) => b - a);
+      const sortedPlanarYears = availableYearsPlanar.slice().sort((a: number, b: number) => b - a);
+      const sorted360Years = availableYears360.slice().sort((a: number, b: number) => b - a);
+      const availableYears: availableYears = {'planar': sortedPlanarYears, '360': sorted360Years};
+
+      return availableYears;
     }
     throw new Error('Karttjenesten er for øyeblikket utilgjengelig. Prøv igjen senere.');
   },
@@ -88,7 +108,11 @@ export const yearQueryParameterState = selector({
     if (newYear === 'Nyeste') {
       setNewQueryParamter('year', 'latest');
       set(currentYearState, newYear);
-    } else if (typeof newYear === 'number' && get(availableYearsQuery).includes(newYear)) {
+    } else if (typeof newYear === 'number' && (get(currentImageTypeState) === 'planar') && get(availableYearsQuery)['planar'].includes(newYear)) {
+      setNewQueryParamter('year', newYear.toString());
+      set(currentYearState, newYear);
+    }
+    else if (typeof newYear === 'number' && (get(currentImageTypeState) === '360') && get(availableYearsQuery)['360'].includes(newYear)) {
       setNewQueryParamter('year', newYear.toString());
       set(currentYearState, newYear);
     }

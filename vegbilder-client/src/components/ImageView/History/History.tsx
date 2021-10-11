@@ -215,7 +215,8 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
             east: currentCoordinates.lng, // create the smallest possible bbox area
             north: currentCoordinates.lat,
           };
-          availableYears.forEach(async (year) => {
+          //TODO: availableYears['planar'] er midlertidig. Må lage en liste med alle år med både planar og 360
+          availableYears['planar'].forEach(async (year) => {
             let typename = `vegbilder_1_0:Vegbilder_${year}`;
             await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
               const imagePoints = res.imagePoints;
