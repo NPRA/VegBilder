@@ -170,7 +170,8 @@ const Filter = ({ showMessage }: IFilterProps) => {
           onChange={(event) => handleCameraTypeFilterCheck(event)}
           MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
           >
-            <ListSubheader>Bildetype</ListSubheader>
+            {/*Bug i ListSubheader gir den en uønsket onClick event som må stoppes.*/}
+            <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Bildetype</ListSubheader>
             <MenuItem
             value={'planar'}
             className={classes.item}
@@ -185,18 +186,11 @@ const Filter = ({ showMessage }: IFilterProps) => {
             {currentImageType === '360' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
             {'360'}
             </MenuItem>
-            <MenuItem
-            value={'dekkekamera'}
-            className={classes.item}
-            style={{color: currentImageType === 'dekkekamera' ? Theme.palette.common.orangeDark : ''}}>
-            {currentImageType === 'dekkekamera' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
-            {'Dekkekamera'}
-            </MenuItem>
-          </Select>
-        <div className={classes.calendarIcon}>
-        <FilterIcon className={classes.icon}/>
-        </div>
-        </FormControl>
+        </Select>
+          <div className={classes.calendarIcon}>
+            <FilterIcon className={classes.icon}/>
+          </div>
+      </FormControl>
         }
     </>
   );
