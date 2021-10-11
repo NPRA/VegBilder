@@ -16,7 +16,7 @@ const ImagePointMapLayers = () => {
   const showNyesteKartlag = currentYear === 'Nyeste';
 
   const getMapLayer = () => {
-    if (currentImageType === '360') return `Vegbilder_360_${currentYear}`;
+    if (currentImageType === '360') return `Vegbilder_360_oversikt_${currentYear}`;
     if (currentImageType === 'planar') {
       if (showNyesteKartlag) {
         return 'Vegbilder_dekning';
