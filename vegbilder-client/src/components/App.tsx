@@ -169,6 +169,9 @@ const App = () => {
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
                   setCurrentCoordinates({ ...latlng, zoom: 15 });
+                  if (view === "image") {
+                    setView("map");
+                  }
                 }
               }
             );
@@ -211,7 +214,7 @@ const App = () => {
       if (radius) {
         fetchNearestLatestImagePointWithCustomRadius(currentCoordinates, parseInt(radius));
         removeUrlParameter('radius');
-      } else if (yearQuery === 'Nyeste' || !yearQuery) {
+      } else if (yearQuery === 'latest' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
