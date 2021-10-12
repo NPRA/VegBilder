@@ -1,5 +1,5 @@
 const versionLog = {
-  'v1.3.13': [
+  'v1.3.14': [
     'Oppdatert til Geonorges nye api for stedsnavn',
     'Mulig å legge til parameteren "radius" i url for å begrense søk etter bilder til innenfor en radius (i meter) fra et koordinat'
   ],
