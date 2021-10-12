@@ -83,12 +83,23 @@ const App = () => {
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const searchParams = new URLSearchParams(window.location.search);
+  const requester = searchParams.get('requester');
+
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const isMobile = useIsMobile();
 
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
+  
+  let snackbarFeedbackForCustomRadiusSearch: string;
+  switch(requester) {
+    case "vegkart":
+      snackbarFeedbackForCustomRadiusSearch = "Vi har dessverre ikke bilder fra punktet du valgte i Vegkart. Velg et annet punkt.";
+      break;
+    default:
+      snackbarFeedbackForCustomRadiusSearch = "Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet."
+  }
 
   const throwError = useAsyncError();
 
@@ -97,18 +108,24 @@ const App = () => {
     setSnackbarVisible(true);
   };
 
+  const removeUrlParameter = (parameterName: queryParameterNames) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.delete(parameterName);
+      window.history.replaceState(null, '', '?' + searchParams.toString());
+  }
+    
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
     'Fant ingen bilder i nærheten.'
   );
 
-  // Vegkart (https://vegkart.atlas.vegvesen.no/) lenker til Vegbilder fra punkter på vegen.
-  // Det kan ofte skje at det ikke finnes bilder på punktet. Søk etter nærliggende punkter skal
-  // da være ganske snevert fordi brukeren er mest interessert i det punktet de valgte i vegkart.
-  const fetchNearestLatestImagePointVegkartSearch = useFetchNearestLatestImagePoint(
+  // Muligheten for å leite etter bilder innenfor en brukerspesifisert radius 
+  // er ment for å gi eksterne løsninger som ønsker å lenke til Vegbilder (f.eks. https://vegkart.atlas.vegvesen.no/) 
+  // muligheten til å tilpasse "søk" via url.
+  const fetchNearestLatestImagePointWithCustomRadius = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
-    `Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet.`,
-    'vegkart'
+    snackbarFeedbackForCustomRadiusSearch,
+    'findImagePointWithCustomRadius',
   );
 
 
@@ -131,12 +148,6 @@ const App = () => {
     );
   };
 
-  const removeUrlParameter = (parameterName: queryParameterNames) => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.delete(parameterName);
-      window.history.replaceState(null, '', '?' + searchParams.toString());
-  }
-
   const openAppByVegsystemreferanse = async (
     vegsystemreferanse: string | undefined,
     year: string | null
@@ -158,6 +169,9 @@ const App = () => {
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
                   setCurrentCoordinates({ ...latlng, zoom: 15 });
+                  if (view === "image") {
+                    setView("map");
+                  }
                 }
               }
             );
@@ -176,7 +190,13 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
+    const radius = searchParams.get('radius');
     const requester = searchParams.get('requester');
+
+    // Brukes per nå kun til å gi spesifiserte tilbakemeldinger i snackbar og skal ikke bli liggende i url.
+    if (requester) {
+      removeUrlParameter('requester');
+    };
 
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
@@ -184,17 +204,17 @@ const App = () => {
         openAppByVegsystemreferanse(validVegsystemReferanse, yearQuery);
       } else {
         showSnackbarMessage(`Fant ingen treff på vegsystemreferanse "${vegsystemreferanseQuery}". Prøv igjen i søkefeltet.`);
-      }
+      };
       setCurrentVegsystemreferanseState(null);
     }
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       setCurrentCoordinates({ ...latlng, zoom: 15 });
-      if (requester === 'vegkart') {
-        fetchNearestLatestImagePointVegkartSearch(currentCoordinates);
-        removeUrlParameter('requester');
-      } else if (yearQuery === 'Nyeste' || !yearQuery) {
+      if (radius) {
+        fetchNearestLatestImagePointWithCustomRadius(currentCoordinates, parseInt(radius));
+        removeUrlParameter('radius');
+      } else if (yearQuery === 'latest' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
