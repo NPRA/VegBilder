@@ -14,19 +14,20 @@ import { imagePointQueryParameterState, latLngZoomQueryParameterState, viewQuery
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 import { loadedImagePointsState } from 'recoil/atoms';
 
-type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'vegkart';
+type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'findImagePointWithCustomRadius';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string) => void,
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
-  fetchMethod: fetchMethod = 'default'
+  fetchMethod: fetchMethod = 'default',
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
-  async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number) {
+
+  async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number, searchRadius?: number) {
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
@@ -41,8 +42,8 @@ const useFetchNearestImagePoint = (
             nearestImagePoint = findImagePointByQueryId(imagePoints);
           } else if (currentImagePoint && fetchMethod === 'findImageNearbyCurrentImagePoint') {
             nearestImagePoint = selectNearestImagePointToCurrentImagePoint(imagePoints, latlng);
-          } else if (fetchMethod === 'vegkart') {
-            nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 10);
+          } else if (fetchMethod === 'findImagePointWithCustomRadius' && searchRadius) {
+            nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, searchRadius);
           } else {
             nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 1000);
           }
@@ -127,7 +128,7 @@ const useFetchNearestImagePoint = (
     }
   };
 
-  return (latlng: ILatlng, year: number) => fetchImagePointsByYearAndLatLng(latlng, year);
+  return (latlng: ILatlng, year: number, searchRadius?: number) => fetchImagePointsByYearAndLatLng(latlng, year, searchRadius);
 };
 
 export default useFetchNearestImagePoint;

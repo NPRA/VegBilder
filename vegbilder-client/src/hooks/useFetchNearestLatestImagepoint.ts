@@ -5,12 +5,12 @@ import { availableYearsQuery, yearQueryParameterState, viewQueryParamterState, l
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';
 
-type fetchMethodLatest = 'default' | 'vegkart';
+type fetchMethodNearestLatest = 'default' | 'findImagePointWithCustomRadius';
 
 const useFetchNearestLatestImagePoint = (
   showMessage: (message: string) => void,
   notFoundMessage: string,
-  fetchMethodLatest: fetchMethodLatest = 'default'
+  fetchMethodNearestLatest: fetchMethodNearestLatest = 'default',
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const availableYears = useRecoilValue(availableYearsQuery);
@@ -23,21 +23,21 @@ const useFetchNearestLatestImagePoint = (
     'Fant ingen bilder ved dette området. Prøv å klikke et annet sted.'
   );
 
-  const fetchImagePointsByLatLongAndYearNarrowSearch = useFetchNearestImagePoint(
+  const fetchImagePointsByLatLongAndYearWithCustomRadius = useFetchNearestImagePoint(
     showMessage,
     'Fant ingen bilder på punktet du valgte. Velg et annet punkt.',
-    'vegkart'
+    'findImagePointWithCustomRadius'
   )
 
-  async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng) {
+  async function fetchImagePointsFromNewestYearByLatLng(latlng: ILatlng, radius?: number) {
     let foundImage = false;
-    let fetchFunction = (fetchMethodLatest === "vegkart"
-    ? fetchImagePointsByLatLongAndYearNarrowSearch
+    let fetchFunction = (fetchMethodNearestLatest === "findImagePointWithCustomRadius"
+    ? fetchImagePointsByLatLongAndYearWithCustomRadius
     : fetchImagePointsByLatLongAndYear);
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
-        await fetchFunction(latlng, year).then((imagePoint) => {
+        await fetchFunction(latlng, year, radius).then((imagePoint) => {
           if (imagePoint) {
             const year = imagePoint.properties.AAR;
             setCurrentYear(year);
@@ -50,7 +50,7 @@ const useFetchNearestLatestImagePoint = (
         if (foundImage) break;
       }
       if (!foundImage) {
-        if (fetchMethodLatest === "vegkart") {
+        if (fetchMethodNearestLatest === "findImagePointWithCustomRadius") {
           setView("map");
           setCurrentCoordinates({ ...currentCoordinates, zoom: 14 });
         }
@@ -60,7 +60,7 @@ const useFetchNearestLatestImagePoint = (
     }
   }
 
-  return (latlng: ILatlng) => fetchImagePointsFromNewestYearByLatLng(latlng);
+  return (latlng: ILatlng, radius?: number) => fetchImagePointsFromNewestYearByLatLng(latlng, radius);
 };
 
 export default useFetchNearestLatestImagePoint;
