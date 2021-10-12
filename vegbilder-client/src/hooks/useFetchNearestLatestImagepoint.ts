@@ -50,10 +50,8 @@ const useFetchNearestLatestImagePoint = (
         if (foundImage) break;
       }
       if (!foundImage) {
-        if (fetchMethodNearestLatest === "findImagePointWithCustomRadius") {
           setView("map");
           setCurrentCoordinates({ ...currentCoordinates, zoom: 14 });
-        }
         showMessage(notFoundMessage);
       }
       return foundImage;
