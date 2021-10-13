@@ -82,24 +82,21 @@ const App = () => {
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
-  const searchParams = new URLSearchParams(window.location.search);
-  const requester = searchParams.get('requester');
-
   const [snackbarVisible, setSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const isMobile = useIsMobile();
 
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
-  
+
+  const searchParams = new URLSearchParams(window.location.search);
+  const requester = searchParams.get('requester');
+  let capitalisedRequesterName = requester && requester.charAt(0).toUpperCase() + requester.slice(1);
+
   let snackbarFeedbackForCustomRadiusSearch: string;
-  switch(requester) {
-    case "vegkart":
-      snackbarFeedbackForCustomRadiusSearch = "Vi har dessverre ikke bilder fra punktet du valgte i Vegkart. Velg et annet punkt.";
-      break;
-    default:
-      snackbarFeedbackForCustomRadiusSearch = "Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet."
-  }
+  requester ? 
+  snackbarFeedbackForCustomRadiusSearch = `Vi fant ingen bilder fra punktet du valgte i ${capitalisedRequesterName}. Velg et annet punkt.` :
+  snackbarFeedbackForCustomRadiusSearch = "Vi fant ingen bilder fra punktet du valgte. Velg et annet punkt på kartet.";
 
   const throwError = useAsyncError();
 
