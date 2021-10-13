@@ -1,7 +1,7 @@
 const versionLog = {
-  'v1.3.12': [
+  'v1.3.16': [
     'Oppdatert til Geonorges nye api for stedsnavn',
-    'Snevrere søk etter bildepunkt for lenker til Vegbilder fra Vegkart'
+    'Mulig å legge til parameteren "radius" i url for å begrense søk etter bilder til innenfor en radius (i meter) fra et koordinat'
   ],
   'v1.3.8': [
     'Kan sende med vegsystemreferanse i url',

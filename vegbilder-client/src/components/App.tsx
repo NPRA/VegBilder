@@ -85,6 +85,7 @@ const App = () => {
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarDuration, setSnackbarDuration] = useState(4000);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const isMobile = useIsMobile();
 
@@ -102,37 +103,64 @@ const App = () => {
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
 
+
+  const requester = searchParams.get('requester');
+  let capitalisedRequesterName = requester && requester.charAt(0).toUpperCase() + requester.slice(1);
+
+  const getSnackbarMessage = (fetchType?: string) => {
+    switch(fetchType) {
+      case "findImagePointWithCustomRadius":
+        return (requester ? `Vi fant ingen bilder fra punktet du valgte i ${capitalisedRequesterName}. Velg et annet punkt.` :
+        "Vi fant ingen bilder fra punktet du valgte. Velg et annet punkt på kartet.");
+      case "findImageById":
+        return 'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.';
+      default:
+        return 'Fant ingen bilder i nærheten.';
+    }
+  }
+
   const throwError = useAsyncError();
 
-  const showSnackbarMessage = (message: string) => {
+  const showSnackbarMessage = (message: string, duration?: number) => {
     setSnackbarMessage(message);
+    if (typeof duration === "number") {
+      setSnackbarDuration(duration)
+    } else {
+      setSnackbarDuration(4000);
+    }
     setSnackbarVisible(true);
   };
 
+  const removeUrlParameter = (parameterName: queryParameterNames) => {
+    const searchParams = new URLSearchParams(window.location.search);
+    searchParams.delete(parameterName);
+      window.history.replaceState(null, '', '?' + searchParams.toString());
+  }
+    
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten.'
+    getSnackbarMessage()
   );
 
-  // Vegkart (https://vegkart.atlas.vegvesen.no/) lenker til Vegbilder fra punkter på vegen.
-  // Det kan ofte skje at det ikke finnes bilder på punktet. Søk etter nærliggende punkter skal
-  // da være ganske snevert fordi brukeren er mest interessert i det punktet de valgte i vegkart.
-  const fetchNearestLatestImagePointVegkartSearch = useFetchNearestLatestImagePoint(
+  // Muligheten for å leite etter bilder innenfor en brukerspesifisert radius 
+  // er ment for å gi eksterne løsninger som ønsker å lenke til Vegbilder (f.eks. https://vegkart.atlas.vegvesen.no/) 
+  // muligheten til å tilpasse "søk" via url.
+  const fetchNearestLatestImagePointWithCustomRadius = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
-    `Fant ingen bilder på punktet du valgte. Velg et annet punkt på kartet.`,
-    'vegkart'
+    getSnackbarMessage('findImagePointWithCustomRadius'),
+    'findImagePointWithCustomRadius',
   );
 
 
   const fetchNearestImagePointToYearAndCoordinatesByImageId = useFetchNearestImagePoint(
     showSnackbarMessage,
-    'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.',
+    getSnackbarMessage('findByImageId'),
     'findByImageId'
   );
 
   const fetchNearestImagePointToYearAndCoordinates = useFetchNearestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten.'
+    getSnackbarMessage(),
   );
 
   const isDefaultCoordinates = (lat: string | null, lng: string | null) => {
@@ -142,12 +170,6 @@ const App = () => {
       (lat === DEFAULT_COORDINATES.lat.toString() && lng === DEFAULT_COORDINATES.lng.toString())
     );
   };
-
-  const removeUrlParameter = (parameterName: queryParameterNames) => {
-    const searchParams = new URLSearchParams(window.location.search);
-    searchParams.delete(parameterName);
-      window.history.replaceState(null, '', '?' + searchParams.toString());
-  }
 
   const openAppByVegsystemreferanse = async (
     vegsystemreferanse: string | undefined,
@@ -170,6 +192,9 @@ const App = () => {
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
                   setCurrentCoordinates({ ...latlng, zoom: 15 });
+                  if (view === "image") {
+                    setView("map");
+                  }
                 }
               }
             );
@@ -188,7 +213,13 @@ const App = () => {
     const yearQuery = searchParams.get('year');
     const viewQuery = searchParams.get('view');
     const vegsystemreferanseQuery = searchParams.get('vegsystemreferanse');
+    const radius = searchParams.get('radius');
     const requester = searchParams.get('requester');
+
+    // Brukes per nå kun til å gi spesifiserte tilbakemeldinger i snackbar og skal ikke bli liggende i url.
+    if (requester) {
+      removeUrlParameter('requester');
+    };
 
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
@@ -196,17 +227,17 @@ const App = () => {
         openAppByVegsystemreferanse(validVegsystemReferanse, yearQuery);
       } else {
         showSnackbarMessage(`Fant ingen treff på vegsystemreferanse "${vegsystemreferanseQuery}". Prøv igjen i søkefeltet.`);
-      }
+      };
       setCurrentVegsystemreferanseState(null);
     }
     // if a user opens the app with only coordinates we find the nearest image from the newest year (or preset year)
     if (!isDefaultCoordinates(latQuery, lngQuery) && !imageIdQuery) {
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       setCurrentCoordinates({ ...latlng, zoom: 15 });
-      if (requester === 'vegkart') {
-        fetchNearestLatestImagePointVegkartSearch(currentCoordinates);
-        removeUrlParameter('requester');
-      } else if (yearQuery === 'Nyeste' || !yearQuery) {
+      if (radius) {
+        fetchNearestLatestImagePointWithCustomRadius(currentCoordinates, parseInt(radius));
+        removeUrlParameter('radius');
+      } else if (yearQuery === 'latest' || !yearQuery) {
         fetchNearestLatestImagePoint(currentCoordinates);
       } else {
         setCommand(commandTypes.selectNearestImagePointToCurrentCoordinates);
@@ -237,9 +268,18 @@ const App = () => {
   const handleSnackbarClose = (reason: any) => {
     if (reason && reason._reactName !== 'onClick') {
       return;
-    }
+    } 
     setSnackbarVisible(false);
   };
+
+  // For å få snackbar til å vises til den krysses vekk av bruker må autoHideDuration settes til null.
+  const deriveSnackbarDurationFromDuration = (duration: number) => {
+    if (duration === 0) {
+      return null;
+    } else {
+      return duration;
+    }
+  }
 
   const renderContent = () => {
     switch (view) {
@@ -253,6 +293,7 @@ const App = () => {
         throw Error('No valid view set');
     }
   };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -275,7 +316,7 @@ const App = () => {
           <Snackbar
             key={snackbarMessage}
             open={snackbarVisible}
-            autoHideDuration={4000}
+            autoHideDuration={deriveSnackbarDurationFromDuration(snackbarDuration)}
             onClose={(reason) => handleSnackbarClose(reason)}
             className={classes.snackbar}
           >
