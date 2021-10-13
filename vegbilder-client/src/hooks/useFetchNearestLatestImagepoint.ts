@@ -8,7 +8,7 @@ import useFetchNearestImagePoint from './useFetchNearestImagePoint';
 type fetchMethodNearestLatest = 'default' | 'findImagePointWithCustomRadius';
 
 const useFetchNearestLatestImagePoint = (
-  showMessage: (message: string) => void,
+  showMessage: (message: string, duration?: number) => void,
   notFoundMessage: string,
   fetchMethodNearestLatest: fetchMethodNearestLatest = 'default',
 ) => {
@@ -50,9 +50,13 @@ const useFetchNearestLatestImagePoint = (
         if (foundImage) break;
       }
       if (!foundImage) {
-          setView("map");
-          setCurrentCoordinates({ ...currentCoordinates, zoom: 14 });
-        showMessage(notFoundMessage);
+        setView("map");
+        setCurrentCoordinates({ ...currentCoordinates, zoom: 14 });
+        if (fetchMethodNearestLatest === "findImagePointWithCustomRadius") {
+          showMessage(notFoundMessage, 0);
+        } else {
+          showMessage(notFoundMessage);
+        }
       }
       return foundImage;
     }

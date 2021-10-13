@@ -17,7 +17,7 @@ import { loadedImagePointsState } from 'recoil/atoms';
 type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'findImagePointWithCustomRadius';
 
 const useFetchNearestImagePoint = (
-  showMessage: (message: string) => void,
+  showMessage: (message: string, duration?: number) => void,
   errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
   fetchMethod: fetchMethod = 'default',
 ) => {

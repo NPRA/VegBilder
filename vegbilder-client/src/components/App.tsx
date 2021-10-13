@@ -83,6 +83,7 @@ const App = () => {
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
+  const [snackbarDuration, setSnackbarDuration] = useState(4000);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const isMobile = useIsMobile();
 
@@ -93,15 +94,27 @@ const App = () => {
   const requester = searchParams.get('requester');
   let capitalisedRequesterName = requester && requester.charAt(0).toUpperCase() + requester.slice(1);
 
-  let snackbarFeedbackForCustomRadiusSearch: string;
-  requester ? 
-  snackbarFeedbackForCustomRadiusSearch = `Vi fant ingen bilder fra punktet du valgte i ${capitalisedRequesterName}. Velg et annet punkt.` :
-  snackbarFeedbackForCustomRadiusSearch = "Vi fant ingen bilder fra punktet du valgte. Velg et annet punkt på kartet.";
+  const getSnackbarMessage = (fetchType?: string) => {
+    switch(fetchType) {
+      case "findImagePointWithCustomRadius":
+        return (requester ? `Vi fant ingen bilder fra punktet du valgte i ${capitalisedRequesterName}. Velg et annet punkt.` :
+        "Vi fant ingen bilder fra punktet du valgte. Velg et annet punkt på kartet.");
+      case "findImageById":
+        return 'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.';
+      default:
+        return 'Fant ingen bilder i nærheten.';
+    }
+  }
 
   const throwError = useAsyncError();
 
-  const showSnackbarMessage = (message: string) => {
+  const showSnackbarMessage = (message: string, duration?: number) => {
     setSnackbarMessage(message);
+    if (typeof duration === "number") {
+      setSnackbarDuration(duration)
+    } else {
+      setSnackbarDuration(4000);
+    }
     setSnackbarVisible(true);
   };
 
@@ -113,7 +126,7 @@ const App = () => {
     
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten.'
+    getSnackbarMessage()
   );
 
   // Muligheten for å leite etter bilder innenfor en brukerspesifisert radius 
@@ -121,20 +134,20 @@ const App = () => {
   // muligheten til å tilpasse "søk" via url.
   const fetchNearestLatestImagePointWithCustomRadius = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
-    snackbarFeedbackForCustomRadiusSearch,
+    getSnackbarMessage('findImagePointWithCustomRadius'),
     'findImagePointWithCustomRadius',
   );
 
 
   const fetchNearestImagePointToYearAndCoordinatesByImageId = useFetchNearestImagePoint(
     showSnackbarMessage,
-    'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.',
+    getSnackbarMessage('findByImageId'),
     'findByImageId'
   );
 
   const fetchNearestImagePointToYearAndCoordinates = useFetchNearestImagePoint(
     showSnackbarMessage,
-    'Fant ingen bilder i nærheten.'
+    getSnackbarMessage(),
   );
 
   const isDefaultCoordinates = (lat: string | null, lng: string | null) => {
@@ -242,9 +255,18 @@ const App = () => {
   const handleSnackbarClose = (reason: any) => {
     if (reason && reason._reactName !== 'onClick') {
       return;
-    }
+    } 
     setSnackbarVisible(false);
   };
+
+  // For å få snackbar til å vises til den krysses vekk av bruker må autoHideDuration settes til null.
+  const deriveSnackbarDurationFromDuration = (duration: number) => {
+    if (duration === 0) {
+      return null;
+    } else {
+      return duration;
+    }
+  }
 
   const renderContent = () => {
     switch (view) {
@@ -258,6 +280,7 @@ const App = () => {
         throw Error('No valid view set');
     }
   };
+  
 
   return (
     <ThemeProvider theme={theme}>
@@ -280,7 +303,7 @@ const App = () => {
           <Snackbar
             key={snackbarMessage}
             open={snackbarVisible}
-            autoHideDuration={4000}
+            autoHideDuration={deriveSnackbarDurationFromDuration(snackbarDuration)}
             onClose={(reason) => handleSnackbarClose(reason)}
             className={classes.snackbar}
           >
