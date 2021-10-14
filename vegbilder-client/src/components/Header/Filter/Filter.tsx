@@ -7,7 +7,7 @@ import {
   Select,
   ListSubheader,
   MenuItem,
-  InputBase,
+  InputBase
 } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Theme from 'theme/Theme';
@@ -21,7 +21,8 @@ import {
 } from 'recoil/atoms';
 import {imageTypeQueryParameterState} from 'recoil/selectors';
 import { imageType } from 'types';
-import { CheckmarkIcon, FilterIcon } from "components/Icons/Icons";
+import { CheckmarkIcon } from "components/Icons/Icons";
+import  { CameraAlt } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -53,16 +54,23 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
-  cameraSelect: {
-    borderRadius: theme.shape.borderRadius,
-    border: `0.5px solid ${theme.palette.common.grayRegular}`,
-    color: theme.palette.common.grayRegular,
-    width: '8rem',
+  form: {
     '&:hover': {
-      color: Theme.palette.common.orangeDark
+      '& div': {
+        color: Theme.palette.common.orangeDark,
+        '& svg': {
+          color: Theme.palette.common.orangeDark,
+        },
+      },
     },
   },
-  calendarIcon: {
+  cameraSelect: {
+    borderRadius: theme.shape.borderRadius,
+    border: `0.5px solid ${theme.palette.common.grayRegularLight}`,
+    color: theme.palette.common.grayRegular,
+    width: '8rem',
+  },
+  filterTypeIcon: {
     position: 'absolute',
     top: '0.6875rem',
     left: '0.75rem',
@@ -88,11 +96,6 @@ const useStyles = makeStyles((theme) => ({
     left: '0.75rem',
     display: 'none',
   },
-  icon: {
-    '&:hover' : {
-      color: theme.palette.common.orangeDark
-    }
-  },
   dropdownStyle: {
     marginTop: '4.3rem',
   },
@@ -102,6 +105,7 @@ const iconStyles = () =>
   createStyles({
     selectIcon: {
       color: '#ececec',
+      marginRight: '5px'
     },
   });
 
@@ -117,7 +121,7 @@ const CustomInput = withStyles(() => ({
   input: {
     paddingTop: '0.8125rem',
     paddingBottom: '0.8125rem',
-    paddingLeft: '2.3125rem',
+    paddingLeft: '2.5rem',
   },
 }))(InputBase);
 
@@ -160,7 +164,7 @@ const Filter = ({ showMessage }: IFilterProps) => {
   return (
     <>
       {
-        <FormControl>
+        <FormControl className={classes.form}>
           <Select
           id="cameraType-select"
           value={currentImageType}
@@ -173,22 +177,22 @@ const Filter = ({ showMessage }: IFilterProps) => {
             {/*Bug i ListSubheader gir den en uønsket onClick event som må stoppes.*/}
             <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Bildetype</ListSubheader>
             <MenuItem
-            value={'planar'}
-            className={classes.item}
-            style={{color: currentImageType === 'planar' ? Theme.palette.common.orangeDark : ''}}>
-            {currentImageType === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
-            {'Planar'}
+              value={'planar'}
+              className={classes.item}
+              style={{color: currentImageType === 'planar' ? Theme.palette.common.orangeDark : ''}}>
+              {currentImageType === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+                {'Planar'}
             </MenuItem>
             <MenuItem
-            value={'360'}
-            className={classes.item}
-            style={{color: currentImageType === '360' ? Theme.palette.common.orangeDark : ''}}>
-            {currentImageType === '360' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
-            {'360'}
+              value={'360'}
+              className={classes.item}
+              style={{color: currentImageType === '360' ? Theme.palette.common.orangeDark : ''}}>
+              {currentImageType === '360' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+                {'360'}
             </MenuItem>
         </Select>
-          <div className={classes.calendarIcon}>
-            <FilterIcon className={classes.icon}/>
+          <div className={classes.filterTypeIcon}>
+            <CameraAlt/>
           </div>
       </FormControl>
         }

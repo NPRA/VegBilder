@@ -8,6 +8,7 @@ declare module '@material-ui/core/styles/createPalette' {
     grayDark: string;
     grayDarker: string;
     grayRegular: string;
+    grayRegularLight: string;
     grayMedium: string;
     grayIcons: string;
     grayMenuItems: string;
@@ -16,6 +17,7 @@ declare module '@material-ui/core/styles/createPalette' {
   }
 }
 
+const grayRegularLight = '#ececec80';
 const grayRegular = '#ececec';
 const grayIcons = '#c4c4c4';
 const charcoalLighter = '#646A70';
@@ -115,6 +117,7 @@ export default createMuiTheme({
       grayDark: grayDark,
       grayDarker: grayDarker,
       grayRegular: grayRegular,
+      grayRegularLight: grayRegularLight,
       grayIcons: grayIcons,
       grayMenuItems: grayMenuItems,
       charcoalLighter: charcoalLighter,

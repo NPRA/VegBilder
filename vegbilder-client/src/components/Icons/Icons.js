@@ -24,7 +24,7 @@ import { ReactComponent as DistanceToIcon } from './DistanceTo.svg';
 import { ReactComponent as MyLocationIcon } from './myLocationIcon.svg';
 import { ReactComponent as SladdetIcon } from './sladdet.svg';
 import { ReactComponent as ContractIcon } from './contract.svg';
-import { ReactComponent as FilterIcon } from './filter.svg';
+import { ReactComponent as FilterIcon } from './tuner.svg';
 
 export {
   ArrowDownIcon,

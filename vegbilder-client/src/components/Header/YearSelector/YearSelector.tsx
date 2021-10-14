@@ -3,11 +3,11 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import { InputBase, ListSubheader } from '@material-ui/core';
-import { createStyles, fade, makeStyles, WithStyles, withStyles } from '@material-ui/core/styles';
+import { createStyles,  makeStyles, WithStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { CalendarIcon, CheckmarkIcon } from 'components/Icons/Icons';
+import { CheckmarkIcon, CalendarIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
@@ -21,20 +21,28 @@ import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 const useStyles = makeStyles((theme) => ({
   yearSelect: {
     borderRadius: theme.shape.borderRadius,
-    border: `0.5px solid ${theme.palette.common.grayRegular}`,
+    border: `0.5px solid ${theme.palette.common.grayRegularLight}`,
     color: theme.palette.common.grayRegular,
-    width: '8rem',
+    width: '8rem'
+  },
+  form: {
     '&:hover': {
-      color: Theme.palette.common.orangeDark
+      '& div': {
+        color: Theme.palette.common.orangeDark,
+        '& svg': {
+          fill: Theme.palette.common.orangeDark,
+        },
+      },
     },
   },
-  calendarIcon: {
+  filterTypeIcon: {
     position: 'absolute',
     top: '0.6875rem',
     left: '0.75rem',
+    fill: theme.palette.common.grayRegular,
   },
   heading: {
-    color: theme.palette.common.grayIcons,
+    color: theme.palette.common.grayRegular,
     textTransform: 'uppercase',
     padding: '0.9375rem 1.625rem',
     fontWeight: 700,
@@ -63,7 +71,8 @@ const iconStyles = () =>
   createStyles({
     selectIcon: {
       color: '#ececec',
-    },
+      marginRight: '5px'
+    }
   });
 
 interface Props extends WithStyles<typeof iconStyles> {
@@ -144,7 +153,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   };
 
   return (
-    <FormControl>
+    <FormControl className={classes.form}>
       <Select
         id="year-select"
         value={currentSelectedYear}
@@ -178,7 +187,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
           </MenuItem>
         ))}
       </Select>
-      <div className={classes.calendarIcon}>
+      <div className={classes.filterTypeIcon}>
         <CalendarIcon />
       </div>
     </FormControl>
