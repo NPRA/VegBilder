@@ -6,6 +6,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import { Replay }  from '@material-ui/icons';
 import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
 import ExploreOutlinedIcon from '@material-ui/icons/ExploreOutlined';
@@ -15,7 +16,7 @@ import proj4 from 'proj4';
 import clsx from 'clsx';
 // En Panellum-instans er global og det er dermed mulig å kalle eks. getHfov globalt.
 // @ts-ignore
-import { getHfov, setHfov, toggleFullscreen } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
+import { getHfov, setHfov, getYaw, setYaw, getPitch, setPitch, toggleFullscreen } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
@@ -180,6 +181,14 @@ const ImageControlButtons = ({
     }
   };
 
+  const reset360View = () => {
+    if (getYaw() !== 0 || getPitch() !== 0 || getHfov() !== 100) {
+      setYaw(0);
+      setPitch(0);
+      setHfov(100);
+    };
+  };
+
   const handleHistoryButtonClick = () => {
     setIsHistoryMode(!isHistoryMode);
   };
@@ -337,7 +346,7 @@ const ImageControlButtons = ({
 
   const showFullSceenButton = () => {
     return (
-      <Tooltip title={'ullskjermvisning'}>
+      <Tooltip title={'Fullskjermvisning'}>
         <IconButton
           disabled={isHistoryMode}
           aria-label="Aktiver fullskjermvisning"
@@ -362,6 +371,21 @@ const ImageControlButtons = ({
         >
           {meterLineVisible ? <MeasureIcon /> : <MeasureDisabledIcon />}
         </IconButton>
+      </Tooltip>
+    );
+  };
+
+  const reset360ViewButton = () => {
+    return (
+      <Tooltip title={'Tilbakestill visning'}>
+        <IconButton
+          disabled={isHistoryMode}
+          aria-label="Tilbakestill visning"
+          className={isHistoryMode ? classes.buttonDisabled : classes.button}
+          onClick={() => reset360View()}
+        >
+          {<Replay />}
+        </IconButton >
       </Tooltip>
     );
   };
@@ -481,6 +505,7 @@ const ImageControlButtons = ({
             {changeDirectionButton()}
             {playIconButton('Start animasjonsmodus')}
             {!is360Image ? hideShowBasisLineButton() : null}
+            {reset360ViewButton()}
             {historyButton()}
             {moreFunctionsButton()}
           </>
