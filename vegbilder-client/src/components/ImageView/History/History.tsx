@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
-import { Dictionary } from 'lodash';
+import { Dictionary, forEach } from 'lodash';
 
 import {
   getBearingBetweenImagePoints,
@@ -220,77 +220,79 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
             east: currentCoordinates.lng, // create the smallest possible bbox area
             north: currentCoordinates.lat,
           };
-          //TODO: availableYears['planar'] er midlertidig. Må lage en liste med alle år med både planar og 360
-          availableYears['planar'].forEach(async (year) => {
-            let typename = `vegbilder_1_0:Vegbilder_${year}`;
-            await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
-              const imagePoints = res.imagePoints;
-              const uniqueDates: Set<number> = new Set();
-              const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
-                imagePoints,
-                (imagePoint: IImagePoint) => {
-                  const time = getDateObj(imagePoint).getTime();
-                  if (time !== currentImagePointTime) {
-                    uniqueDates.add(time);
-                    return time;
-                  }
-                }
-              );
 
-              [...uniqueDates].forEach((date) => {
-                const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
+          Object.entries(availableYears).forEach(([imageType, years]) => {
+            years.forEach(async (year: number) => {
+              let typename = imageType === '360' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`; 
+              await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
+                const imagePoints = res.imagePoints;
+                const uniqueDates: Set<number> = new Set();
+                const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
+                  imagePoints,
                   (imagePoint: IImagePoint) => {
-                    if (imagePoint) {
-                      if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
-                        const distanceBetween = getDistanceToBetweenImagePoints(
-                          currentImagePoint,
-                          imagePoint
-                        );
-                        if (distanceBetween && distanceBetween < maxDistance) {
-                          const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                          if (imagePointDirection && currentImagePointDirection) {
-                            if (
-                              imagePointDirection < currentImagePointDirection + 10 &&
-                              imagePointDirection > currentImagePointDirection - 10
-                            )
-                              return imagePoint;
-                          } else {
-                            const bearingBetween = getBearingBetweenImagePoints(
-                              currentImagePoint,
-                              imagePoint
-                            );
-                            if (
-                              currentImagePointBearing &&
-                              bearingBetween &&
-                              bearingBetween < currentImagePointBearing + 10 &&
-                              bearingBetween > currentImagePointBearing - 10
-                            ) {
-                              return imagePoint;
+                    const time = getDateObj(imagePoint).getTime();
+                    if (time !== currentImagePointTime) {
+                      uniqueDates.add(time);
+                      return time;
+                    }
+                  }
+                );
+                  
+                [...uniqueDates].forEach((date) => {
+                  const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
+                    (imagePoint: IImagePoint) => {
+                      if (imagePoint) {
+                        if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
+                          const distanceBetween = getDistanceToBetweenImagePoints(
+                            currentImagePoint,
+                            imagePoint
+                          );
+                          if (distanceBetween && distanceBetween < maxDistance) {
+                            const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
+                            if (imagePointDirection && currentImagePointDirection) {
+                              if (
+                                imagePointDirection < currentImagePointDirection + 10 &&
+                                imagePointDirection > currentImagePointDirection - 10
+                              )
+                                return imagePoint;
+                            } else {
+                              const bearingBetween = getBearingBetweenImagePoints(
+                                currentImagePoint,
+                                imagePoint
+                              );
+                              if (
+                                currentImagePointBearing &&
+                                bearingBetween &&
+                                bearingBetween < currentImagePointBearing + 10 &&
+                                bearingBetween > currentImagePointBearing - 10
+                              ) {
+                                return imagePoint;
+                              }
                             }
                           }
                         }
                       }
-                    }
-                    return false;
-                  }
-                );
-                if (imagePointsInSameDirection.length) {
-                  const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
-                    (prevImgpoint, currImgPoint) => {
-                      const prevDistance =
-                        getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
-                      const currDistance =
-                        getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
-                      return prevDistance < currDistance ? prevImgpoint : currImgPoint;
+                      return false;
                     }
                   );
-                  if (closestImagePointInSameDirection) {
-                    setHistoryImagePoints((prevState) => [
-                      ...prevState,
-                      closestImagePointInSameDirection,
-                    ]);
+                  if (imagePointsInSameDirection.length) {
+                    const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
+                      (prevImgpoint, currImgPoint) => {
+                        const prevDistance =
+                          getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
+                        const currDistance =
+                          getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
+                        return prevDistance < currDistance ? prevImgpoint : currImgPoint;
+                      }
+                    );
+                    if (closestImagePointInSameDirection) {
+                      setHistoryImagePoints((prevState) => [
+                        ...prevState,
+                        closestImagePointInSameDirection,
+                      ]);
+                    }
                   }
-                }
+                });
               });
             });
           });
