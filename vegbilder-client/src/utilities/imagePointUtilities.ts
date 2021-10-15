@@ -13,7 +13,13 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
   }
 };
 
-const getImageType = (imagepoint: IImagePoint) => imagepoint.properties.BILDETYPE;
+const getImageType = (imagepoint: IImagePoint) => {
+  if (!imagepoint.properties.BILDETYPE) {
+    return "planar"; 
+  } else {
+    return imagepoint.properties.BILDETYPE; 
+  } 
+};
 
 const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
 

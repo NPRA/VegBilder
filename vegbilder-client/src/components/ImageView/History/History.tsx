@@ -13,19 +13,21 @@ import {
   getDistanceToBetweenImagePoints,
   getFilteredImagePoints,
   getImagePointLatLng,
+  getImageType,
   getImageUrl,
   getRoadReference,
 } from 'utilities/imagePointUtilities';
-import { IImagePoint } from 'types';
+import { IImagePoint, imageType } from 'types';
 import { SelectIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
   latLngZoomQueryParameterState,
   yearQueryParameterState,
+  imageTypeQueryParameterState
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { currentImageTypeState, filteredImagePointsState, loadedImagePointsState } from 'recoil/atoms';
+import { filteredImagePointsState, loadedImagePointsState } from 'recoil/atoms';
 import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 import useFetchImagePointsFromOGC from 'hooks/useFetchImagePointsFromOGC';
 
@@ -136,7 +138,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const setFilteredImagePoints = useSetRecoilState(filteredImagePointsState);
-  const currentImageType = useRecoilValue(currentImageTypeState);
+  const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
@@ -148,11 +150,14 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       setCurrentYear(yearOfClickedImage);
       if (loadedImagePoints) {
         const bbox = loadedImagePoints.bbox;
-        fetchImagePointsFromOGC(yearOfClickedImage, bbox, currentImageType);
+        fetchImagePointsFromOGC(yearOfClickedImage, bbox, getImageType(imagePoint) as imageType);
       }
     }
-
     setCurrentImagePoint(imagePoint);
+    const clickedImageType = getImageType(imagePoint) as imageType;
+    if (clickedImageType !== currentImageType) {
+        setCurrentImageType(clickedImageType as imageType);
+    };
   };
 
   useEffect(() => {
