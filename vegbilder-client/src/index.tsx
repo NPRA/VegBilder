@@ -1,3 +1,4 @@
+import './wdyr.ts';
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { RecoilRoot } from 'recoil';
