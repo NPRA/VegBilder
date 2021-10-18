@@ -130,7 +130,7 @@ interface IHistoryProps {
 const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const classes = useStyles();
 
-  const availableYears = useRecoilValue(availableYearsQuery);
+  const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
 
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
@@ -221,7 +221,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
             north: currentCoordinates.lat,
           };
 
-          Object.entries(availableYears).forEach(([imageType, years]) => {
+          Object.entries(availableYearsForAllImageTypes).forEach(([imageType, years]) => {
             years.forEach(async (year: number) => {
               let typename = imageType === '360' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`; 
               await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
@@ -300,7 +300,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImagePoint, availableYears]);
+  }, [currentImagePoint, availableYearsForAllImageTypes]);
 
   return (
     <Paper className={classes.historyContent} square={true}>

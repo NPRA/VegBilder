@@ -63,9 +63,9 @@ export const availableYearsQuery = selector({
       }
       const sortedPlanarYears = availableYearsPlanar.slice().sort((a: number, b: number) => b - a);
       const sorted360Years = availableYears360.slice().sort((a: number, b: number) => b - a);
-      const availableYears: availableYears = {'planar': sortedPlanarYears, '360': sorted360Years};
+      const availableYearsForAllImageTypes: availableYears = {'planar': sortedPlanarYears, '360': sorted360Years};
 
-      return availableYears;
+      return availableYearsForAllImageTypes;
     }
     throw new Error('Karttjenesten er for øyeblikket utilgjengelig. Prøv igjen senere.');
   },
