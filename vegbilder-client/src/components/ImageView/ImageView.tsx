@@ -5,7 +5,7 @@ import { useRecoilValue } from 'recoil';
 import { getImageType } from 'utilities/imagePointUtilities';
 import ImageControlBar from './ImageControlBar/ImageControlBar';
 import ImageViewer from './ImageViewer/ImageViewer';
-import { currentImagePointState } from 'recoil/atoms';
+import { currentImagePointState, currentImageTypeState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES, DEFAULT_TIME_BETWEEN_IMAGES_360 } from 'constants/defaultParamters';
@@ -55,6 +55,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const [isHistoryMode, setIsHistoryMode] = useState(false);
   const currentImagePoint = useRecoilValue(currentImagePointState);
+  const currentImageType = useRecoilValue(currentImageTypeState);
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
   const imageContainerRef = useRef<HTMLImageElement>(null);
@@ -137,12 +138,12 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [, dispatch] = useReducer(scrollReducer, initialScrollState);
 
   useEffect(() => {
-    if (currentImagePoint && getImageType(currentImagePoint) === '360') {
+    if (currentImageType === '360') {
       setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES_360);
     } else {
       setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES);
     }
-  }, [currentImagePoint])
+  }, [currentImageType])
 
   useEffect(() => {
     isZoomedInImage ? setCursor('grab') : setCursor('zoom-in');
@@ -153,6 +154,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   }, [isZoomedInImage]);
 
   // We add mouse event handlers that lets the user drag the image to scroll. If the user only clicks we zoom in/out.
+  // Not used for 360 images.
   useEffect(() => {
     const currentImageContainerRef = imageContainerRef.current;
     if (!currentImageContainerRef) return;
@@ -221,7 +223,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
     };
-  }, [isZoomedInImage, isHistoryMode]);
+  }, [isZoomedInImage, isHistoryMode, currentImageType]);
 
   const handleZoomOut = () => {
     setIsZoomedInImage(false);
@@ -230,8 +232,9 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   return (
     <>
       <Grid item className={classes.content}>
-        {isHistoryMode ? (
-          <div className={classes.imageseries}>
+      {isHistoryMode ? 
+          (
+            <div className={classes.imageseries}>
             {' '}
             <ImageViewer
               meterLineVisible={meterLineVisible}
@@ -240,11 +243,12 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             />
             <History setIsHistoryMode={setIsHistoryMode} />
           </div>
-        ) : (
-          <div
+          ) 
+          : (
+            <div
             className={classes.imageCointainer}
             style={{ cursor: isHistoryMode ? 'initial' : cursor }}
-            ref={imageContainerRef}
+            ref={currentImageType !== "360" ? imageContainerRef : null}
           >
             <ImageViewer
               meterLineVisible={meterLineVisible}
@@ -253,7 +257,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               isZoomedInImage={isZoomedInImage}
             />
           </div>
-        )}
+          )}
+       
         <SideControlBar
           setView={setView}
           isZoomedInImage={isZoomedInImage}
@@ -282,5 +287,5 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     </>
   );
 };
-
+ImageView.whyDidYouRender = true;
 export default ImageView;
