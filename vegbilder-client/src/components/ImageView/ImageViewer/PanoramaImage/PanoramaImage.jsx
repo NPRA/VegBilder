@@ -64,11 +64,11 @@ const PanoramaImage = ({ imageUrl }) => {
           ...config,
           pitch: turnToOtherLane ? 0 : getPitch(),
           yaw: turnToOtherLane ? 0 : getYaw(),
+          hfov: turnToOtherLane ? 100 : getHfov(),
           imageSource: imageUrl
         }
         addScene("newScene", newConfig, () => loadScene("newScene"));
         setTurnToOtherLaneSelector(false);
-
       } else {
         didMountFirstUrl.current = true;
       };
