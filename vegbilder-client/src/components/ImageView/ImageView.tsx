@@ -235,7 +235,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       {isHistoryMode ? 
           (
             <div className={classes.imageseries}>
-            {' '}
             <ImageViewer
               meterLineVisible={meterLineVisible}
               timeBetweenImages={timeBetweenImages}
@@ -247,7 +246,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           : (
             <div
             className={classes.imageCointainer}
-            style={{ cursor: isHistoryMode ? 'initial' : cursor }}
+            style={{ cursor }}
             ref={currentImageType !== "360" ? imageContainerRef : null}
           >
             <ImageViewer
@@ -287,5 +286,5 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     </>
   );
 };
-ImageView.whyDidYouRender = true;
+
 export default ImageView;
