@@ -1,7 +1,8 @@
 import React, {useEffect, useRef} from 'react';
 import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov} from 'react-pannellum';
 import {useRecoilState} from 'recoil';
-import {currentViewState, currentHfovState} from '../../../../recoil/atoms';
+import { pannellumSettings } from "constants/settings";
+import {currentViewState, currentPannellumHfovState} from '../../../../recoil/atoms';
 import { turnedToOtherLaneSelector } from '../../../../recoil/selectors';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
@@ -10,7 +11,7 @@ const PanoramaImage = ({ imageUrl }) => {
 
   const [currentView, ] = useRecoilState(currentViewState);
   const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
-  const [, setCurrentHfovRecoil] = useRecoilState(currentHfovState);
+  const [, setPannellumHfovState] = useRecoilState(currentPannellumHfovState);
 
   const isPreview = currentView === 'map';
 
@@ -20,10 +21,13 @@ const PanoramaImage = ({ imageUrl }) => {
   };
 
   const updateZoomRecoilState = () => {
-    setCurrentHfovRecoil(getHfov());
+    setPannellumHfovState(getHfov());
   }
 
   const config = {
+    minHfov: pannellumSettings.minHfovBounds,
+    maxHfov: pannellumSettings.maxHfovBounds,
+    hfov: pannellumSettings.defaultHfov,
     autoLoad: true,
     showZoomCtrl: false,
     showFullscreenCtrl: false,

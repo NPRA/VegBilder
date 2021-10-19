@@ -39,12 +39,13 @@ import {
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { getImageType } from 'utilities/imagePointUtilities';
-import { playVideoState, currentLatLngZoomState, currentHfovState } from 'recoil/atoms';
+import { playVideoState, currentLatLngZoomState, currentPannellumHfovState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS, TIMER_OPTIONS_360 } from 'constants/defaultParamters';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { VEGKART } from 'constants/urls';
+import { pannellumSettings } from 'constants/settings';
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -129,32 +130,29 @@ const ImageControlButtons = ({
   const handleMoreControlsClick = (event: MouseEvent) =>
     setMoreControlsAnchorEl(event.currentTarget);
 
-  const [currentHfovStateRecoil, setCurrentHfovRecoil] = useRecoilState(currentHfovState);
+  const [pannellumHfovState, setCurrentPannellumHfovState] = useRecoilState(currentPannellumHfovState);
   const is360Image = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
 
-  // Disse er standard config i Pannellum.
-  const minHfovBounds = 50;
-  const maxHfovBounds = 120;
   let [isMinOrMaxZoom, setMinAndMaxZoom] = useState({"isMinZoom": false, "isMaxZoom": false}); 
 
   type zoomType = 'zoomIn' | 'zoomOut';
 
   const zoom360 = (zoomType: zoomType) => {
     if (zoomType === 'zoomIn' && !isMinOrMaxZoom.isMaxZoom) {
-      let newZoomIn = getHfov() - 10;
+      let newZoomIn = Math.max(getHfov() - 10, pannellumSettings.minHfovBounds);
       setHfov(newZoomIn);
-      setCurrentHfovRecoil(newZoomIn);
+      setCurrentPannellumHfovState(newZoomIn);
     } else if (zoomType === 'zoomOut' && !isMinOrMaxZoom.isMinZoom) {
-      let newZoomOut = getHfov() + 10;
-      setCurrentHfovRecoil(newZoomOut);
+      let newZoomOut = Math.min(getHfov() + 10, pannellumSettings.maxHfovBounds);
+      setCurrentPannellumHfovState(newZoomOut);
       setHfov(newZoomOut);
     }
   }
 
   const updateZoomMinAndMax = () => {
-    if (currentHfovStateRecoil === minHfovBounds) {
+    if (pannellumHfovState <= pannellumSettings.minHfovBounds) {
       setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": true})
-    } else if (currentHfovStateRecoil === maxHfovBounds) {
+    } else if (pannellumHfovState >= pannellumSettings.maxHfovBounds) {
       setMinAndMaxZoom({"isMinZoom": true, "isMaxZoom": false})
     } else {
       setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
@@ -163,7 +161,7 @@ const ImageControlButtons = ({
 
   useEffect(() => {
     updateZoomMinAndMax();
-  }, [currentHfovStateRecoil]);
+  }, [pannellumHfovState]);
 
   useEffect(() => {
     if (is360Image) {
