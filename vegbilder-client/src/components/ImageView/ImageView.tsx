@@ -2,7 +2,6 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
-import { getImageType } from 'utilities/imagePointUtilities';
 import ImageControlBar from './ImageControlBar/ImageControlBar';
 import ImageViewer from './ImageViewer/ImageViewer';
 import { currentImagePointState, currentImageTypeState } from 'recoil/atoms';
@@ -11,6 +10,8 @@ import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES, DEFAULT_TIME_BETWEEN_IMAGES_360 } from 'constants/defaultParamters';
 import CloseButton from 'components/CloseButton/CloseButton';
 import SideControlBar from './SideControlBar/SideControlBar';
+//@ts-ignore
+import { resize as resizePanorama, isLoaded as panoramaIsLoaded} from 'react-pannellum';
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -152,6 +153,12 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   useEffect(() => {
     if (isZoomedInImage) setMeterLineVisible(false);
   }, [isZoomedInImage]);
+
+  useEffect(() => {
+    if (currentImageType === '360' && panoramaIsLoaded) {
+      resizePanorama();
+    }
+  }, [isHistoryMode])
 
   // We add mouse event handlers that lets the user drag the image to scroll. If the user only clicks we zoom in/out.
   // Not used for 360 images.

@@ -23,3 +23,7 @@
 .pnlm-lbar-fill {
   display: none;
 }
+
+.pnlm-ui .pnlm-load-box {
+  display: none !important;
+}

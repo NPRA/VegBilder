@@ -35,7 +35,8 @@ const PanoramaImage = ({ imageUrl }) => {
     doubleClickZoom: true,
     displayAboutInformation: false,
     displayLoadingSpinner: false,
-    onScrollZoom: updateZoomRecoilState
+    onScrollZoom: updateZoomRecoilState,
+    compass: true
   };
 
 
@@ -49,6 +50,7 @@ const PanoramaImage = ({ imageUrl }) => {
     margin: '0 auto',
     fontFamily: '"LFT-Etica"',
     color: Theme.palette.common.grayRegular,
+    background: Theme.palette.common.grayDarker
   }
 
   const stylePreview = {
