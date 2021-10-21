@@ -36,7 +36,7 @@ const PanoramaImage = ({ imageUrl }) => {
     displayAboutInformation: false,
     displayLoadingSpinner: false,
     onScrollZoom: updateZoomRecoilState,
-    compass: true
+    compass: !isPreview
   };
 
 
