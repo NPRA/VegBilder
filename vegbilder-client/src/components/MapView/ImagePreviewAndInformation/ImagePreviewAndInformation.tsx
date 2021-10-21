@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
-import { EnlargeIcon } from 'components/Icons/Icons';
+import { EnlargeIcon, PanoramaIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
 import PanoramaImage from '../../ImageView/ImageViewer/PanoramaImage/PanoramaImage';
 
@@ -56,6 +56,12 @@ const useStyles = makeStyles(() => ({
     zIndex: 1,
     pointerEvents: 'none',
   },
+  panoramaIcon: {
+    position: 'absolute',
+    fill: Theme.palette.common.orangeDark,
+    right: '10px',
+    bottom: '50px'
+  },
   buttons: {
     marginTop: '0.5rem',
   },
@@ -96,6 +102,9 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
           {getImageType(currentImagePoint) === '360' ? 
            <div className={classes.image}>
             <PanoramaImage imageUrl={getImageUrl(currentImagePoint)} />
+            <div className={classes.panoramaIcon}>
+              <PanoramaIcon></PanoramaIcon>
+            </div>
           </div> : 
           <img
               src={getImageUrl(currentImagePoint)}

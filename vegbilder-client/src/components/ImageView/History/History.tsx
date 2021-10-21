@@ -15,10 +15,10 @@ import {
   getImagePointLatLng,
   getImageType,
   getImageUrl,
-  getRoadReference,
+  getRoadReference
 } from 'utilities/imagePointUtilities';
 import { IImagePoint, imageType } from 'types';
-import { SelectIcon } from 'components/Icons/Icons';
+import { SelectIcon, PanoramaIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
@@ -78,6 +78,12 @@ const useStyles = makeStyles((theme) => ({
     alignSelf: 'center',
     position: 'relative',
     paddingBottom: '1rem',
+  },
+  panoramaIcon: {
+    position: "absolute",
+    bottom: "25px",
+    right: "10px",
+    fill: theme.palette.common.orangeDark
   },
   image: {
     display: 'block',
@@ -325,6 +331,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
                   className={classes.image}
                   onClick={() => handleImageClick(imagePoint)}
                 />
+                {getImageType(imagePoint) === '360' ? <div className={classes.panoramaIcon}><PanoramaIcon/></div> : null}
               </div>
               <div className={classes.info}>
                 <Typography variant="h5">{getRoadReference(imagePoint).complete}</Typography>
