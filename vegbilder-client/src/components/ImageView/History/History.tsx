@@ -77,18 +77,27 @@ const useStyles = makeStyles((theme) => ({
   imageContainer: {
     alignSelf: 'center',
     position: 'relative',
-    paddingBottom: '1rem',
+    paddingBottom: '0.5rem',
+  },
+  panoramaImage: {
+    cursor: 'pointer',
+    height: '20vh',
+    minWidth: '16.375rem',
+    backgroundSize: '100vw',
+    backgroundPosition: 'center',
+    borderRadius: '4px'
   },
   panoramaIcon: {
     position: "absolute",
-    bottom: "25px",
+    bottom: "10px",
     right: "10px",
-    fill: theme.palette.common.orangeDark
+    '&.selected': {
+        fill: theme.palette.common.orangeDark
+    }
   },
   image: {
     display: 'block',
     width: '100%',
-    paddingBottom: '0.5rem',
     borderRadius: '4px',
     cursor: 'pointer',
   },
@@ -325,13 +334,26 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
                 {imagePoint.id === currentImagePoint?.id ? (
                   <SelectIcon className={classes.selectIcon} />
                 ) : null}
-                <img
+                {getImageType(imagePoint) === '360' ?
+                  <>
+                    <div 
+                    className={classes.panoramaImage} 
+                    style={{"backgroundImage" : `url(${getImageUrl(imagePoint)})`}} 
+                    role="img"
+                    aria-label="Bilde tatt langs veg"
+                    onClick={() => handleImageClick(imagePoint)}>
+                    </div>
+                    <div className={`${classes.panoramaIcon} ${imagePoint.id === currentImagePoint?.id ? 'selected' : ''}`}>
+                      <PanoramaIcon/>
+                    </div>
+                  </> :
+                  <img
                   src={getImageUrl(imagePoint)}
                   alt={imagePoint.id}
                   className={classes.image}
                   onClick={() => handleImageClick(imagePoint)}
                 />
-                {getImageType(imagePoint) === '360' ? <div className={classes.panoramaIcon}><PanoramaIcon/></div> : null}
+              }
               </div>
               <div className={classes.info}>
                 <Typography variant="h5">{getRoadReference(imagePoint).complete}</Typography>
