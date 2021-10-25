@@ -11,22 +11,31 @@ import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
 import { EnlargeIcon, PanoramaIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
-import PanoramaImage from '../../ImageView/ImageViewer/PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles(() => ({
   image: {
     cursor: 'pointer',
     borderRadius: '0px 0px 10px 10px',
-    maxHeight: '500px',
-    height: '500px',
-    objectFit: 'none',
-    transform: 'scale(1.2)'
+    maxHeight: '28vh',
+    height: 'auto',
   },
   panoramaImage: {
+    cursor: 'pointer',
     height: '25vh',
-    width: '50vw',
-    backgroundSize: '80vh 40vw',
+    width: '30vw',
+    minWidth: '16.375rem',
+    backgroundSize: '100vw',
     backgroundPosition: 'center'
+  },
+  panoramaImageContainer: {
+    width: 'auto',
+    position: 'relative'
+  },
+  panoramaIcon: {
+    position: 'absolute',
+    fill: Theme.palette.common.orangeDark,
+    right: '10px',
+    bottom: '0px',
   },
   enlargeButton: {
     marginRight: '0.3rem',
@@ -63,12 +72,6 @@ const useStyles = makeStyles(() => ({
     top: '1.1875rem',
     zIndex: 1,
     pointerEvents: 'none',
-  },
-  panoramaIcon: {
-    position: 'absolute',
-    fill: Theme.palette.common.orangeDark,
-    right: '10px',
-    bottom: '50px',
   },
   buttons: {
     marginTop: '0.5rem',
@@ -107,17 +110,26 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-          <div className={classes.panoramaImage} style={{"backgroundImage" : `url(${getImageUrl(currentImagePoint)})`}}></div>
-{/*           <img
-              src={getImageUrl(currentImagePoint)}
-              className={classes.image}
-              alt="Bilde tatt langs veg"
+          {getImageType(currentImagePoint) === '360' ? 
+            (<div className={classes.panoramaImageContainer}>
+              <div 
+              className={classes.panoramaImage} 
+              style={{"backgroundImage" : `url(${getImageUrl(currentImagePoint)})`}} 
               onClick={openImage}
-            /> */}
-            {getImageType(currentImagePoint) === '360' ?
-            <div className={classes.panoramaIcon}>
-              <PanoramaIcon/>
-            </div> : null}
+              role="img"
+              aria-label="Bilde tatt langs veg">
+              </div>
+              <div className={classes.panoramaIcon}>
+                <PanoramaIcon/>
+              </div>
+            </div>)
+            :
+            <img
+            src={getImageUrl(currentImagePoint)}
+            className={classes.image}
+            alt="Bilde tatt langs veg"
+            onClick={openImage}
+            />}
         </div>
         {showInformation ? (
           <ImageInfo
