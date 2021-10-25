@@ -1,4 +1,5 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
+import { pannellumSettings } from "constants/settings";
 import { atom } from 'recoil';
 import { imageType, IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
 import { IStatisticsFeature } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
@@ -65,9 +66,9 @@ export const availableStatistics = atom<IStatisticsFeature[] | null>({
   default: [],
 });
 
-export const currentHfovState = atom<number>({
-  key: 'currentHfovState',
-  default: 100,
+export const currentPannellumHfovState = atom<number>({
+  key: 'currentPannellumHfovState',
+  default: pannellumSettings.defaultHfov,
 });
 
 export const turnedToOtherLane = atom<boolean>({

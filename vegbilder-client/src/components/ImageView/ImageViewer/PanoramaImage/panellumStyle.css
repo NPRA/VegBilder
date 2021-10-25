@@ -23,3 +23,20 @@
 .pnlm-lbar-fill {
   display: none;
 }
+
+.pnlm-ui .pnlm-load-box {
+  display: none !important;
+}
+
+.pnlm-controls {
+  border: none;
+  background: none;
+}
+
+.pnlm-controls:hover {
+  background-color: transparent;
+}
+
+.pnlm-compass {
+  background-image: url("compass-arrow.svg");
+}

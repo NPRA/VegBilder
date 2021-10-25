@@ -20,7 +20,7 @@ import {
   currentVegsystemreferanseState,
   currentImageTypeState,
   turnedToOtherLane,
-  currentHfovState
+  currentPannellumHfovState
 } from './atoms';
 
 interface availableYears {
@@ -224,13 +224,13 @@ export const loadedImagePointsFilterState = selector({
   },
 });
 
-export const hfovState = selector({
+export const pannellumHfovState = selector({
   key: 'hfovState',
   get: ({ get }) => {
-    return get(currentHfovState);
+    return get(currentPannellumHfovState);
   },
   set: ({ set }, newHfov: number | DefaultValue) => {
-    set(currentHfovState, newHfov);
+    set(currentPannellumHfovState, newHfov);
   },
 });
 

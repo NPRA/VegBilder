@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
-import { EnlargeIcon } from 'components/Icons/Icons';
+import { EnlargeIcon, PanoramaIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
 import PanoramaImage from '../../ImageView/ImageViewer/PanoramaImage/PanoramaImage';
 
@@ -17,9 +17,16 @@ const useStyles = makeStyles(() => ({
   image: {
     cursor: 'pointer',
     borderRadius: '0px 0px 10px 10px',
-    maxHeight: '28vh',
-    height: 'auto',
-    width: 'auto'
+    maxHeight: '500px',
+    height: '500px',
+    objectFit: 'none',
+    transform: 'scale(1.2)'
+  },
+  panoramaImage: {
+    height: '25vh',
+    width: '50vw',
+    backgroundSize: '80vh 40vw',
+    backgroundPosition: 'center'
   },
   enlargeButton: {
     marginRight: '0.3rem',
@@ -37,6 +44,7 @@ const useStyles = makeStyles(() => ({
     marginBottom: '0.35rem',
     maxHeight: '25rem',
     pointerEvents: 'all',
+    overflow: 'hidden',
   },
   imageMetadata: {
     borderRadius: '10px 10px 0 0',
@@ -55,6 +63,12 @@ const useStyles = makeStyles(() => ({
     top: '1.1875rem',
     zIndex: 1,
     pointerEvents: 'none',
+  },
+  panoramaIcon: {
+    position: 'absolute',
+    fill: Theme.palette.common.orangeDark,
+    right: '10px',
+    bottom: '50px',
   },
   buttons: {
     marginTop: '0.5rem',
@@ -93,16 +107,17 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-          {getImageType(currentImagePoint) === '360' ? 
-           <div className={classes.image}>
-            <PanoramaImage imageUrl={getImageUrl(currentImagePoint)} />
-          </div> : 
-          <img
+          <div className={classes.panoramaImage} style={{"backgroundImage" : `url(${getImageUrl(currentImagePoint)})`}}></div>
+{/*           <img
               src={getImageUrl(currentImagePoint)}
               className={classes.image}
               alt="Bilde tatt langs veg"
               onClick={openImage}
-            />}
+            /> */}
+            {getImageType(currentImagePoint) === '360' ?
+            <div className={classes.panoramaIcon}>
+              <PanoramaIcon/>
+            </div> : null}
         </div>
         {showInformation ? (
           <ImageInfo
