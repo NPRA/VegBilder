@@ -34,8 +34,11 @@ const useStyles = makeStyles(() => ({
   panoramaIcon: {
     position: 'absolute',
     fill: Theme.palette.common.orangeDark,
-    right: '10px',
-    bottom: '0px',
+    right: '4px',
+    bottom: '4px',
+    '& svg': {
+      verticalAlign: 'top'
+    }
   },
   enlargeButton: {
     marginRight: '0.3rem',

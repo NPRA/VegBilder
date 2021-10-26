@@ -27,6 +27,7 @@ import { ReactComponent as ContractIcon } from './contract.svg';
 import { ReactComponent as FilterIcon } from './tuner.svg';
 import { ReactComponent as PanoramaIcon } from './360_label.svg';
 import { ReactComponent as UnselectedIcon } from './Unselected.svg';
+import { ReactComponent as PanoramaLabelIcon} from './360_visning_label.svg';
 
 export {
   ArrowDownIcon,
@@ -57,5 +58,6 @@ export {
   ContractIcon,
   FilterIcon,
   PanoramaIcon,
+  PanoramaLabelIcon,
   UnselectedIcon
 };

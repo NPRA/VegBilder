@@ -4,11 +4,24 @@ import {useRecoilState} from 'recoil';
 import { pannellumSettings } from "constants/settings";
 import {currentViewState, currentPannellumHfovState} from '../../../../recoil/atoms';
 import { turnedToOtherLaneSelector } from '../../../../recoil/selectors';
+import { makeStyles } from '@material-ui/core/styles';
+import { PanoramaLabelIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
-const PanoramaImage = ({ imageUrl }) => {
+const useStyles = makeStyles((theme) => ({
+  label: {
+    position: 'absolute',
+    bottom: '4px',
+    right: '4px',
+    '& svg' : {
+      verticalAlign: 'top'
+    }
+  }
+}))
 
+const PanoramaImage = ({ imageUrl }) => {
+  const classes = useStyles();
   const [currentView, ] = useRecoilState(currentViewState);
   const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
   const [, setPannellumHfovState] = useRecoilState(currentPannellumHfovState);
@@ -92,6 +105,9 @@ const PanoramaImage = ({ imageUrl }) => {
         config={isPreview ? configPreview : config}
         style={isPreview ? stylePreview : style}
         /> 
+        <div className={classes.label}>
+          <PanoramaLabelIcon/>
+        </div>
     </>
   );
 };

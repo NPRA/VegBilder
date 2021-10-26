@@ -22,6 +22,7 @@ import PanoramaImage from './PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
+    position:  'relative',
     height: '100%',
     minWidth: '70%',
     backgroundColor: theme.palette.primary.main,
