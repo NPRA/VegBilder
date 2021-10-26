@@ -18,7 +18,7 @@ import {
   getRoadReference
 } from 'utilities/imagePointUtilities';
 import { IImagePoint, imageType } from 'types';
-import { SelectIcon, PanoramaIcon } from 'components/Icons/Icons';
+import { SelectIcon, UnselectedIcon, PanoramaIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
@@ -77,41 +77,41 @@ const useStyles = makeStyles((theme) => ({
   imageContainer: {
     alignSelf: 'center',
     position: 'relative',
-    paddingBottom: '0.5rem',
+    paddingBottom: '1rem',
   },
   panoramaImage: {
     cursor: 'pointer',
     height: '20vh',
-    minWidth: '16.375rem',
     backgroundSize: '100vw',
     backgroundPosition: 'center',
-    borderRadius: '4px'
-  },
-  panoramaIcon: {
-    position: "absolute",
-    bottom: "10px",
-    right: "10px",
-    '&.selected': {
-        fill: theme.palette.common.orangeDark
-    }
+    borderRadius: '0px 0px 4px 4px'
   },
   image: {
     display: 'block',
     width: '100%',
-    borderRadius: '4px',
+    borderRadius: '0px 0px 4px 4px',
     cursor: 'pointer',
   },
-  selectIcon: {
-    position: 'absolute',
-    top: '0.2rem',
-    right: '0.2rem',
+  infoIcons: {
+    display: 'flex',
+    flexDirection: 'row',
+    columnGap: '10px',
+    alignItems: 'center',
+    '@media (max-width:780px) and (orientation: portrait)': {
+      alignItems: 'flex-end',
+      flexDirection: 'column'
+    }
   },
   info: {
     display: 'flex',
-    justifyContent: 'space-evenly',
+    flexFlow: 'row no-wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     margin: 0,
-    paddingBottom: '1rem',
-  },
+    padding: '8px 12px',
+    borderRadius: '4px 4px 0px 0px',
+    backgroundColor: theme.palette.common.grayDarker
+  }
 }));
 
 const getDateObj = (imagePoint: IImagePoint) => {
@@ -330,10 +330,18 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       {currentImagePoint
         ? sortImagePointsByDate(historyImagePoints)?.map((imagePoint) => (
             <div key={imagePoint.id}>
+              <div className={classes.info}>
+                <div>
+                  <Typography variant="h5">{getRoadReference(imagePoint).complete}</Typography>
+                  <Typography variant="body1">{getDateAndTimeString(imagePoint)}</Typography>
+                </div>
+                <div className={classes.infoIcons}>
+                  {getImageType(imagePoint) === '360' ? <PanoramaIcon/> : null}
+                  {imagePoint.id === currentImagePoint?.id ?
+                    <SelectIcon /> : <UnselectedIcon />}
+                </div>
+              </div>
               <div className={classes.imageContainer}>
-                {imagePoint.id === currentImagePoint?.id ? (
-                  <SelectIcon className={classes.selectIcon} />
-                ) : null}
                 {getImageType(imagePoint) === '360' ?
                   <>
                     <div 
@@ -343,9 +351,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
                     aria-label="Bilde tatt langs veg"
                     onClick={() => handleImageClick(imagePoint)}>
                     </div>
-                    <div className={`${classes.panoramaIcon} ${imagePoint.id === currentImagePoint?.id ? 'selected' : ''}`}>
-                      <PanoramaIcon/>
-                    </div>
                   </> :
                   <img
                   src={getImageUrl(imagePoint)}
@@ -354,10 +359,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
                   onClick={() => handleImageClick(imagePoint)}
                 />
               }
-              </div>
-              <div className={classes.info}>
-                <Typography variant="h5">{getRoadReference(imagePoint).complete}</Typography>
-                <Typography variant="body1">{getDateAndTimeString(imagePoint)}</Typography>
               </div>
             </div>
           ))

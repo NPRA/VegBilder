@@ -25,7 +25,8 @@ import { ReactComponent as MyLocationIcon } from './myLocationIcon.svg';
 import { ReactComponent as SladdetIcon } from './sladdet.svg';
 import { ReactComponent as ContractIcon } from './contract.svg';
 import { ReactComponent as FilterIcon } from './tuner.svg';
-import { ReactComponent as PanoramaIcon } from './360.svg';
+import { ReactComponent as PanoramaIcon } from './360_label.svg';
+import { ReactComponent as UnselectedIcon } from './Unselected.svg';
 
 export {
   ArrowDownIcon,
@@ -55,5 +56,6 @@ export {
   SladdetIcon,
   ContractIcon,
   FilterIcon,
-  PanoramaIcon
+  PanoramaIcon,
+  UnselectedIcon
 };
