@@ -47,15 +47,25 @@ import { imagePointQueryParameterState } from 'recoil/selectors';
 import { VEGKART } from 'constants/urls';
 import { pannellumSettings } from 'constants/settings';
 
-const useStyles = makeStyles((theme) => ({
+interface StyleProps {
+  is360Image: boolean;
+}
+
+const useStyles = makeStyles<typeof Theme, StyleProps>((theme) => ({
   button: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
+    '@media (max-width:780px) and (orientation: portrait)': {
+      margin: props => props.is360Image ? '0.75rem' : '1rem',
+    }
   },
   buttonDisabled: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
     opacity: '30%',
+    '@media (max-width:780px) and (orientation: portrait)': {
+      margin: '0.75rem'
+    }
   },
   activeButton: {
     backgroundColor: 'transparent',
@@ -109,7 +119,6 @@ const ImageControlButtons = ({
   isHistoryMode,
   setIsHistoryMode,
 }: IImageControlButtonsProps) => {
-  const classes = useStyles();
   const { setCommand } = useCommand();
   const currentImagePoint = useRecoilValue(imagePointQueryParameterState);
 
@@ -132,6 +141,8 @@ const ImageControlButtons = ({
 
   const [pannellumHfovState, setCurrentPannellumHfovState] = useRecoilState(currentPannellumHfovState);
   const is360Image = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
+
+  const classes = useStyles({is360Image});
 
   let [isMinOrMaxZoom, setMinAndMaxZoom] = useState({"isMinZoom": false, "isMaxZoom": false}); 
 

@@ -293,5 +293,5 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
     </>
   );
 };
-ImageView.whyDidYouRender = true;
+
 export default ImageView;

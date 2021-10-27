@@ -23,7 +23,10 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: theme.shape.borderRadius,
     border: `0.5px solid ${theme.palette.common.grayRegularLight}`,
     color: theme.palette.common.grayRegular,
-    width: '8rem'
+    width: '8rem',
+    '@media (max-width:780px) and (orientation: portrait)': {
+      width: '5rem'
+    }
   },
   form: {
     '&:hover': {
@@ -40,6 +43,9 @@ const useStyles = makeStyles((theme) => ({
     top: '0.6875rem',
     left: '0.75rem',
     fill: theme.palette.common.grayRegular,
+    '@media (max-width:780px) and (orientation: portrait)': {
+      display: 'none'
+    }
   },
   heading: {
     color: theme.palette.common.grayRegular,
@@ -87,7 +93,10 @@ const CustomInput = withStyles(() => ({
   input: {
     paddingTop: '0.8125rem',
     paddingBottom: '0.8125rem',
-    paddingLeft: '2.3125rem',
+    paddingLeft: '2.5rem',
+    '@media (max-width:780px) and (orientation: portrait)': {
+      paddingLeft: '1rem'
+    }
   },
 }))(InputBase);
 
@@ -140,7 +149,6 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
       if (newYear === 'Nyeste') {
         if (view !== 'image') {
           setCurrentYear('Nyeste');
-          setCurrentImagePoint(null);
         }
       } else {
           setCurrentYear(parseInt(newYear));
