@@ -12,6 +12,7 @@ import './panellumStyle.css';
 const useStyles = makeStyles((theme) => ({
   label: {
     position: 'absolute',
+    cursor: 'default',
     bottom: '4px',
     right: '4px',
     '& svg' : {
