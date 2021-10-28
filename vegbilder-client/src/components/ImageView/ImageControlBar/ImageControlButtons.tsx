@@ -120,7 +120,7 @@ const ImageControlButtons = ({
   setIsHistoryMode,
 }: IImageControlButtonsProps) => {
   const { setCommand } = useCommand();
-  const currentImagePoint = useRecoilValue(imagePointQueryParameterState);
+  const currentImagePoint = useRecoilValue(imagePointQueryParameterState); 
 
   const { copyToClipboard } = useCopyToClipboard();
 
@@ -170,9 +170,12 @@ const ImageControlButtons = ({
     }
   }
 
+  //Denne useEffecten er kun brukt til å lese Pannellums interne hfov state når denne endres
+  //pga skroll-zoom for så å sjekke om den nye staten er min eller maks. (pannellumHfovState er et recoil
+  //duplikat av Pannellums interne hfov state). Tilhørende "missing dependency" advarsel kan derfor ignoreres.
   useEffect(() => {
     updateZoomMinAndMax();
-  }, [pannellumHfovState]);
+  }, [pannellumHfovState]); 
 
   useEffect(() => {
     if (is360Image) {
@@ -180,7 +183,7 @@ const ImageControlButtons = ({
     } else {
       setTimerOptions(TIMER_OPTIONS);
     }
-  }, [currentImagePoint])
+  }, [is360Image])
 
   const copyShareableUrlToClipboard = () => {
     if (currentImagePoint) {
