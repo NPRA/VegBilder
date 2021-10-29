@@ -158,7 +158,6 @@ const Filter = ({ showMessage }: IFilterProps) => {
     }>
   ) => {
     let imageType = event.target.value as imageType;
-    setCurrentImageType(imageType);
     if (currentImagePoint) {
       // if we already have an image preview, we need to fetch new image points and find a new image preview for that camera filter
       // otherwise, we dont have to do anything besides switching map layer

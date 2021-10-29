@@ -117,12 +117,11 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
 
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder fra valgt år på samme punktet. Prøv å klikke et annet sted.',
+    'Fant ingen bilder fra valgt år for punktet du er i. Velg et annet år eller et annet punkt.',
     'findImageNearbyCurrentImagePoint'
   );
 
   useEffect(() => {
-    
   if (currentYear === "Nyeste") {
     setCurrentSelectedYear(currentYear);
   } else if (typeof currentYear === 'number') {
@@ -151,10 +150,11 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
           setCurrentYear('Nyeste');
         }
       } else {
-          setCurrentYear(parseInt(newYear));
           if (currentImagePoint) {
             const latlng = getImagePointLatLng(currentImagePoint);
             if (latlng) fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear), currentImageType);
+          } else {
+            setCurrentYear(newYear);
           }
       }
     }
