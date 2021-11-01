@@ -28,16 +28,16 @@
   display: none !important;
 }
 
-.pnlm-controls {
+.pnlm-ui .pnlm-controls {
   border: none;
-  background: none;
-}
-
-.pnlm-controls:hover {
   background-color: transparent;
 }
 
-.pnlm-compass {
+.pnlm-ui .pnlm-controls:hover {
+  background-color: transparent;
+}
+
+.pnlm-ui .pnlm-compass {
   background-image: url("compass-arrow.svg");
   bottom: 32px;
 }
