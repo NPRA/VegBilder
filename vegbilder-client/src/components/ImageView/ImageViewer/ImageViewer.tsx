@@ -16,9 +16,11 @@ import {
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneSelector } from 'recoil/selectors';
+import { imagePointQueryParameterState, imageTypeQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneSelector } from 'recoil/selectors';
 import { debounce } from 'lodash';
 import PanoramaImage from './PanoramaImage/PanoramaImage';
+//@ts-ignore
+import {isLoaded as isPannellumLoaded, destroy as destroyPannellum} from 'react-pannellum';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -65,6 +67,7 @@ const ImageViewer = ({
 }: IImageViewerProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const [currentImageType, ] = useRecoilState(imageTypeQueryParameterState);
   const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const { command, resetCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -309,6 +312,12 @@ const ImageViewer = ({
   };
 
   useEffect(() => {
+    if (currentImageType === "planar" && isPannellumLoaded) {
+      destroyPannellum();
+    }
+  }, [currentImageType])
+
+  useEffect(() => {
     if (autoPlay) {
       if (nextImagePoint) {
         new Image().src = getImageUrl(nextImagePoint);
@@ -332,7 +341,7 @@ const ImageViewer = ({
       <div className={classes.imageArea}>
         {currentImagePoint && (
           <>
-            {currentImagePoint.properties.BILDETYPE === '360' ? (
+            {currentImageType === '360' ? (
               <PanoramaImage imageUrl={getImageUrl(currentImagePoint)} />
             ) : (
               <>
