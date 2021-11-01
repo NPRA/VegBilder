@@ -38,7 +38,7 @@ const PanoramaImage = ({ imageUrl }) => {
     setPannellumHfovState(getHfov());
   }
 
-  const config = {
+  const pannellumConfig = {
     minHfov: pannellumSettings.minHfovBounds,
     maxHfov: pannellumSettings.maxHfovBounds,
     hfov: pannellumSettings.defaultHfov,
@@ -53,24 +53,12 @@ const PanoramaImage = ({ imageUrl }) => {
     compass: !isPreview
   };
 
-
-  const configPreview = {
-    ...config,
-    doubleClickZoom: false
-  }
-
-  const style = {
+  const pannellumStyle = {
     objectFit: 'contain',
     margin: '0 auto',
     fontFamily: '"LFT-Etica"',
     color: Theme.palette.common.grayRegular,
     background: Theme.palette.common.grayDarker
-  }
-
-  const stylePreview = {
-    ...style,
-    height: '240px',
-    borderRadius: '0 0 10px 10px'
   }
 
     // Pannellum-biblioteket oppdaterer ikke komponenten automatisk ved ny prop.
@@ -81,7 +69,7 @@ const PanoramaImage = ({ imageUrl }) => {
     useEffect(() => {
       if (didMountFirstUrl.current) {
         let newConfig = {
-          ...config,
+          ...pannellumConfig,
           pitch: turnToOtherLane ? 0 : getPitch(),
           yaw: turnToOtherLane ? 0 : getYaw(),
           hfov: turnToOtherLane ? 100 : getHfov(),
@@ -103,8 +91,8 @@ const PanoramaImage = ({ imageUrl }) => {
         id="1"
         sceneId="initialScene"
         imageSource={imageUrl}
-        config={isPreview ? configPreview : config}
-        style={isPreview ? stylePreview : style}
+        config={pannellumConfig}
+        style={pannellumStyle}
         /> 
         <div className={classes.label}>
           <PanoramaLabelIcon/>
