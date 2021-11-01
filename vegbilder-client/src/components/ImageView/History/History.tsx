@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
-import { Dictionary, forEach } from 'lodash';
+import { Dictionary } from 'lodash';
 
 import {
   getBearingBetweenImagePoints,

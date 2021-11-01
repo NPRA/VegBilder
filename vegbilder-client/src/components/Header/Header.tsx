@@ -1,6 +1,6 @@
-import React, {useState} from 'react';
+import React from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import { Toolbar, Grid, Box, IconButton, Tooltip } from '@material-ui/core';
+import { Toolbar, Grid, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilState } from 'recoil';
 

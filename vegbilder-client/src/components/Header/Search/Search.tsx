@@ -4,14 +4,13 @@ import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ClickAwayListener, ListSubheader } from '@material-ui/core';
-import IconButton from '@material-ui/core/IconButton';
 import { debounce } from 'lodash';
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
 import { getStedsnavnByName } from 'apis/geonorge/getStedsnavnByName';
-import { FilterIcon, MagnifyingGlassIcon } from 'components/Icons/Icons';
+import { MagnifyingGlassIcon } from 'components/Icons/Icons';
 import {
   imagePointQueryParameterState,
   latLngZoomQueryParameterState,
@@ -129,7 +128,6 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const [openMenu, setOpenMenu] = useState(false);
   const [resetImagePoint, setResetImagePoint] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [openFilterMenu, setOpenFilterMenu] = useState(false);
 
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);

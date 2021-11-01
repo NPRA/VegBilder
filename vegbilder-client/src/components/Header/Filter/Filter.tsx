@@ -12,7 +12,7 @@ import {
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import Theme from 'theme/Theme';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
-import React, { useState } from 'react';
+import React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   currentImagePointState,
