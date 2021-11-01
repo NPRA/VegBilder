@@ -19,7 +19,7 @@ import {
   currentLatLngZoomState,
   loadedImagePointsState,
 } from 'recoil/atoms';
-import {imageTypeQueryParameterState} from 'recoil/selectors';
+import {imageTypeQueryParameterState, viewQueryParamterState} from 'recoil/selectors';
 import { imageType } from 'types';
 import { CheckmarkIcon } from "components/Icons/Icons";
 import  { CameraAlt } from "@material-ui/icons";
@@ -143,13 +143,12 @@ const Filter = ({ showMessage }: IFilterProps) => {
   const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
+  const [currentView, ] = useRecoilState(viewQueryParamterState);
   const setLoadedImagePoits = useSetRecoilState(loadedImagePointsState);
   const fetchNearestImagePoint = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder i nærheten med det kamerafilteret.'
+    'Fant ingen bilder av den valgte bildetypen i nærheten av det valgte punktet.'
   );
-
-  const [vegtyperChecked, setVegtyperChecked] = useState({ riksveger: false, fylkesveger: false });
 
   const handleCameraTypeFilterCheck = (
     event: React.ChangeEvent<{
@@ -158,7 +157,12 @@ const Filter = ({ showMessage }: IFilterProps) => {
     }>
   ) => {
     let imageType = event.target.value as imageType;
-    setCurrentImageType(imageType);
+
+    //If there is no currently chosen imagePoint in map view, we can change imagetype immediately.
+    if (currentView === 'map' && !currentImagePoint) {
+      setCurrentImageType(imageType);      
+    }
+
     if (currentImagePoint) {
       // if we already have an image preview, we need to fetch new image points and find a new image preview for that camera filter
       // otherwise, we dont have to do anything besides switching map layer
@@ -168,7 +172,6 @@ const Filter = ({ showMessage }: IFilterProps) => {
     }
   };
 
-  const { riksveger, fylkesveger } = vegtyperChecked;
 
   return (
     <>

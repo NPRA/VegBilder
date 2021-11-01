@@ -11,6 +11,7 @@ import { CheckmarkIcon, CalendarIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
+  viewQueryParamterState,
   yearQueryParameterState
 } from 'recoil/selectors';
 import {currentImageTypeState} from 'recoil/atoms';
@@ -109,31 +110,27 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
   const currentImageType = useRecoilValue(currentImageTypeState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
+  const [currentView, ] = useRecoilState(viewQueryParamterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const availableYearsForCurrentImageType = currentImageType === '360' ? availableYearsForAllImageTypes['360'] : availableYearsForAllImageTypes['planar'];
 
-  const [currentSelectedYear, setCurrentSelectedYear] = useState(currentYear);
-
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder fra valgt år på samme punktet. Prøv å klikke et annet sted.',
+    'Fant ingen bilder fra valgt år for punktet du er i. Velg et annet år eller et annet punkt.',
     'findImageNearbyCurrentImagePoint'
   );
 
   useEffect(() => {
-    
-  if (currentYear === "Nyeste") {
-    setCurrentSelectedYear(currentYear);
-  } else if (typeof currentYear === 'number') {
-    if (!availableYearsForCurrentImageType.includes(currentYear)) {
-      setCurrentSelectedYear("");
-      showMessage(`Det finnes ingen ${currentImageType}-bilder fra ${currentYear}. Velg en annen bildetype eller et annet år.`)
-    } else {
-      setCurrentSelectedYear(currentYear);
+    if (typeof currentYear === 'number') {
+      if (!availableYearsForCurrentImageType.includes(currentYear)) {
+        setCurrentYear("");
+        showMessage(`Det fins ingen ${currentImageType}-bilder fra ${currentYear}. Velg en annen bildetype eller et annet år.`)
+      } else {
+        setCurrentYear(currentYear);
+      }
     }
-  }
-}, [currentYear, currentImageType])
+  }, [currentImageType])
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -144,17 +141,19 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
     const newYear = event.target.value as string;
 
     if (newYear && newYear !== currentYear) {
-      const searchParams = new URLSearchParams(window.location.search);
-      const view = searchParams.get('view');
       if (newYear === 'Nyeste') {
-        if (view !== 'image') {
+        if (currentView !== 'image') {
           setCurrentYear('Nyeste');
+          setCurrentImagePoint(null);
         }
       } else {
-          setCurrentYear(parseInt(newYear));
           if (currentImagePoint) {
             const latlng = getImagePointLatLng(currentImagePoint);
-            if (latlng) fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear), currentImageType);
+            if (latlng) {
+              fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear), currentImageType);
+            };
+          } else {
+            setCurrentYear(newYear);
           }
       }
     }
@@ -164,7 +163,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
     <FormControl className={classes.form}>
       <Select
         id="year-select"
-        value={currentSelectedYear}
+        value={currentYear}
         onChange={(event) => handleChange(event)}
         className={classes.yearSelect}
         input={<CustomInput />}
@@ -187,7 +186,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
             key={year}
             value={year}
             className={classes.item}
-            selected={year === currentSelectedYear}
+            selected={year === currentYear}
             style={{ color: year === currentYear ? Theme.palette.common.orangeDark : '' }}
           >
             {year === currentYear ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}

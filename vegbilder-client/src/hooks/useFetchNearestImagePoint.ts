@@ -10,7 +10,7 @@ import {
   getImagePointLatLng,
 } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState, viewQueryParamterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState, yearQueryParameterState, imageTypeQueryParameterState } from 'recoil/selectors';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 import { loadedImagePointsState } from 'recoil/atoms';
 
@@ -24,6 +24,8 @@ const useFetchNearestImagePoint = (
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
+  const [, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
+  const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
@@ -34,6 +36,7 @@ const useFetchNearestImagePoint = (
       loadedImagePoints.year !== year ||
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox) ||
       loadedImagePoints.imageType !== imageType;
+
     if (shouldFetchNewImagePointsFromOGC) {
       showMessage(`Leter etter bilder i ${year}...`);
       fetchImagePointsFromOGC(year, bboxVisibleMapArea, imageType).then((imagePoints: IImagePoint[] | undefined) => {
@@ -49,16 +52,12 @@ const useFetchNearestImagePoint = (
             nearestImagePoint = selectNearestImagePointToCoordinates(imagePoints, latlng, 1000);
           }
           if (nearestImagePoint) {
-            handleFoundNearestImagePoint(nearestImagePoint);
+            handleFoundNearestImagePoint(nearestImagePoint, year, imageType);
             return nearestImagePoint;
           } else {
             showMessage(errorMessage);
-            setCurrentImagePoint(null); // if the user switch year and there are no images from that year, image point should be unset.
           }
         } else {
-          if (currentImagePoint) {
-            setCurrentImagePoint(null);  //If an imagepoint is selected and the next call to fetch imagePoints returns undefined the imagepoint should be reset.
-          }
           showMessage(errorMessage);
         }
       })
@@ -70,15 +69,17 @@ const useFetchNearestImagePoint = (
           1000
         );
         if (nearestImagePoint) {
-          handleFoundNearestImagePoint(nearestImagePoint);
+          handleFoundNearestImagePoint(nearestImagePoint, year, imageType);
           return nearestImagePoint;
         }
       }
     }
   }
 
-  const handleFoundNearestImagePoint = (nearestImagePoint: IImagePoint) => {
+  const handleFoundNearestImagePoint = (nearestImagePoint: IImagePoint, currentYear: number, imageType: imageType) => {
     setCurrentImagePoint(nearestImagePoint);
+    setCurrentYear(currentYear);
+    setCurrentImageType(imageType);
     const imagePointCoordinates = getImagePointLatLng(nearestImagePoint);
     if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
       if (imagePointCoordinates) {

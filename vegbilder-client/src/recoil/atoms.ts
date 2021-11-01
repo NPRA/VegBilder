@@ -13,7 +13,7 @@ export const playVideoState = atom<boolean>({
 
 export const currentYearState = atom<string | number>({
   key: 'currentYear',
-  default: parseInt(searchParams.get('year')!) || 'Nyeste',
+  default: parseInt(searchParams.get('year')!) || 'Nyeste' || '',
 });
 
 export const currentVegsystemreferanseState = atom<string | null>({
