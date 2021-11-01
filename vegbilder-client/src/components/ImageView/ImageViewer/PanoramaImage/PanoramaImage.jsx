@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov} from 'react-pannellum';
+import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, destroy} from 'react-pannellum';
 import {useRecoilState} from 'recoil';
 import { pannellumSettings } from "constants/settings";
 import {currentViewState, currentPannellumHfovState} from '../../../../recoil/atoms';
@@ -84,6 +84,13 @@ const PanoramaImage = ({ imageUrl }) => {
   }
 
   useRenderPannellumViewer(imageUrl);
+
+  //Destroy Pannellum when component is unmounting to avoid creating unnecessary WebGL contexts.
+  useEffect(() => {
+    return () => {
+      destroy();
+    }
+  }, []);
 
   return (
     <>

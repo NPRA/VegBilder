@@ -19,8 +19,6 @@ import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, imageTypeQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneSelector } from 'recoil/selectors';
 import { debounce } from 'lodash';
 import PanoramaImage from './PanoramaImage/PanoramaImage';
-//@ts-ignore
-import {isLoaded as isPannellumLoaded, destroy as destroyPannellum} from 'react-pannellum';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -310,12 +308,6 @@ const ImageViewer = ({
       return null;
     }
   };
-
-  useEffect(() => {
-    if (currentImageType === "planar" && isPannellumLoaded) {
-      destroyPannellum();
-    }
-  }, [currentImageType])
 
   useEffect(() => {
     if (autoPlay) {
