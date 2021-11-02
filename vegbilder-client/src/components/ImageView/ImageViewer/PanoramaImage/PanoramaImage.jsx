@@ -1,5 +1,5 @@
 import React, {useEffect, useRef} from 'react';
-import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, destroy} from 'react-pannellum';
+import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize} from 'react-pannellum';
 import {useRecoilState} from 'recoil';
 import { pannellumSettings } from "constants/settings";
 import {currentViewState, currentPannellumHfovState} from '../../../../recoil/atoms';
@@ -21,7 +21,7 @@ const useStyles = makeStyles((theme) => ({
   }
 }))
 
-const PanoramaImage = ({ imageUrl }) => {
+const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
   const classes = useStyles();
   const [currentView, ] = useRecoilState(currentViewState);
   const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
@@ -83,14 +83,23 @@ const PanoramaImage = ({ imageUrl }) => {
     }, [imageUrl, turnToOtherLane]);
   }
 
-  useRenderPannellumViewer(imageUrl);
 
-  //Destroy Pannellum when component is unmounting to avoid creating unnecessary WebGL contexts.
-  useEffect(() => {
-    return () => {
-      destroy();
-    }
-  }, []);
+  const useResizePanoramaForHistoryMode = (isHistoryMode) => {
+
+    //We don't need to call resize on first render. Only when opening and closing history.
+    const hasMounted = useRef(false);
+    useEffect(() => {
+      if (hasMounted.current) {
+        resize();
+      } else {
+        hasMounted.current = true;
+      }
+    }, [isHistoryMode])
+  }
+
+  useRenderPannellumViewer(imageUrl);
+  useResizePanoramaForHistoryMode(isHistoryMode);
+
 
   return (
     <>
