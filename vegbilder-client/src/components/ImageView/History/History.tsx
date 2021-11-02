@@ -160,17 +160,22 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const handleImageClick = (imagePoint: IImagePoint) => {
     const latlng = getImagePointLatLng(imagePoint);
     if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
+    setCurrentImagePoint(imagePoint);
+
     const yearOfClickedImage = imagePoint.properties.AAR;
+    const clickedImageType = getImageType(imagePoint) as imageType;
+
     if (yearOfClickedImage !== currentYear) {
       setCurrentYear(yearOfClickedImage);
       if (loadedImagePoints) {
         const bbox = loadedImagePoints.bbox;
-        fetchImagePointsFromOGC(yearOfClickedImage, bbox, getImageType(imagePoint) as imageType);
+        fetchImagePointsFromOGC(yearOfClickedImage, bbox, currentImageType);
       }
     }
-    setCurrentImagePoint(imagePoint);
-    const clickedImageType = getImageType(imagePoint) as imageType;
-    if (clickedImageType !== currentImageType) {
+
+    if (clickedImageType !== currentImageType && loadedImagePoints) {
+        const bbox = loadedImagePoints.bbox;
+        fetchImagePointsFromOGC(currentYear as number, bbox, getImageType(imagePoint) as imageType);
         setCurrentImageType(clickedImageType as imageType);
     };
   };
@@ -252,7 +257,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
                     }
                   }
                 );
-                  
                 [...uniqueDates].forEach((date) => {
                   const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
                     (imagePoint: IImagePoint) => {

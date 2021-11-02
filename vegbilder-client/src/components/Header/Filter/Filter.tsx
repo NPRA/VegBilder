@@ -144,7 +144,7 @@ const Filter = ({ showMessage }: IFilterProps) => {
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentView, ] = useRecoilState(viewQueryParamterState);
-  const setLoadedImagePoits = useSetRecoilState(loadedImagePointsState);
+  const setLoadedImagePoints = useSetRecoilState(loadedImagePointsState);
   const fetchNearestImagePoint = useFetchNearestImagePoint(
     showMessage,
     'Fant ingen bilder av den valgte bildetypen i nærheten av det valgte punktet.'
@@ -166,7 +166,7 @@ const Filter = ({ showMessage }: IFilterProps) => {
     if (currentImagePoint) {
       // if we already have an image preview, we need to fetch new image points and find a new image preview for that camera filter
       // otherwise, we dont have to do anything besides switching map layer
-      setLoadedImagePoits(null); // reset state
+      setLoadedImagePoints(null); // reset state
       const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
       fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR, imageType);
     }
