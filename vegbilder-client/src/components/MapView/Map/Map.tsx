@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TileLayer, MapContainer, useMapEvents, useMap } from 'react-leaflet';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
@@ -22,11 +22,14 @@ interface IMapContainerEventHandlerProps {
   setCursor: (cursor: string) => void;
 }
 
+//This "component" is only used to get a reference to the map and update the view in certain situations (e.g. click to zoom).
 const ChangeMapView = ({ center, zoom }: { center: ILatlng; zoom: number | undefined }) => {
   const map = useMap();
-  if (center && zoom) {
-    map.setView(center, zoom);
-  }
+  useEffect(() => {
+    if (center && zoom) {
+      map.setView(center, zoom);
+    }
+  }, [center, zoom, map]);
   return null;
 };
 
