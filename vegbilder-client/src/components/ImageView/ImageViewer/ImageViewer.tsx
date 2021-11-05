@@ -16,7 +16,7 @@ import {
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
-import { imagePointQueryParameterState, imageTypeQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneSelector } from 'recoil/selectors';
+import { imagePointQueryParameterState, imageTypeQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneState } from 'recoil/selectors';
 import { debounce } from 'lodash';
 import PanoramaImage from './PanoramaImage/PanoramaImage';
 
@@ -72,7 +72,7 @@ const ImageViewer = ({
   const { command, resetCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
-  const [shouldTurn, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
+  const [shouldTurn, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);

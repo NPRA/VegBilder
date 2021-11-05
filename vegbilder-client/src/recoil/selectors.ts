@@ -29,7 +29,7 @@ interface availableYears {
 }
 
 export const availableYearsQuery = selector({
-  key: 'availableYears',
+  key: 'availableYearsQuery',
   get: async () => {
     const response = await getAvailableYearsFromOGC();
     if (response.status === 200) {
@@ -72,7 +72,7 @@ export const availableYearsQuery = selector({
 });
 
 export const availableStatisticsQuery = selector({
-  key: 'availableStatistics',
+  key: 'availableStatisticsQuery',
   get: async () => {
     const response = await getAvailableStatisticsFromOGC();
     if (response.status === 200 && response.data.features) {
@@ -234,8 +234,8 @@ export const pannellumHfovState = selector({
   },
 });
 
-export const turnedToOtherLaneSelector = selector({
-  key: 'turnedToOtherLaneSelector',
+export const turnedToOtherLaneState = selector({
+  key: 'turnedToOtherLaneState',
   get: ({ get }) => {
     return get(turnedToOtherLane);
   },

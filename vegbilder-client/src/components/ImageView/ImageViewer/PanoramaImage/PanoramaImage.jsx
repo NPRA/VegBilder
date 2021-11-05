@@ -3,7 +3,7 @@ import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize} 
 import {useRecoilState} from 'recoil';
 import { pannellumSettings } from "constants/settings";
 import {currentViewState, currentPannellumHfovState} from '../../../../recoil/atoms';
-import { turnedToOtherLaneSelector } from '../../../../recoil/selectors';
+import { turnedToOtherLaneState } from '../../../../recoil/selectors';
 import { makeStyles } from '@material-ui/core/styles';
 import { PanoramaLabelIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
@@ -24,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
 const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
   const classes = useStyles();
   const [currentView, ] = useRecoilState(currentViewState);
-  const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneSelector);
+  const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneState);
   const [, setPannellumHfovState] = useRecoilState(currentPannellumHfovState);
 
   const isPreview = currentView === 'map';
