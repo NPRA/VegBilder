@@ -17,14 +17,15 @@ import {
   getImageUrl,
   getRoadReference
 } from 'utilities/imagePointUtilities';
-import { IImagePoint, imageType } from 'types';
+import { IImagePoint, ILoadedImagePoints, imageType } from 'types';
 import { SelectIcon, UnselectedIcon, PanoramaIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
   latLngZoomQueryParameterState,
   yearQueryParameterState,
-  imageTypeQueryParameterState
+  imageTypeQueryParameterState,
+  availableYears
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { filteredImagePointsState, loadedImagePointsState } from 'recoil/atoms';
@@ -142,11 +143,119 @@ interface IHistoryProps {
   setIsHistoryMode: (isHistoryMode: boolean) => void;
 }
 
+async function findHistoryImagePoints(
+    currentImagePoint: IImagePoint | null, 
+   loadedImagePoints: ILoadedImagePoints | null, 
+   historyImagePoints: IImagePoint[], setHistoryImagePoints: React.Dispatch<React.SetStateAction<IImagePoint[]>>, 
+   getCurrentImagePointBearing: (imagePoints: IImagePoint[], currentImagePoint: IImagePoint) => number | undefined, 
+   availableYearsForAllImageTypes: availableYears) 
+   {
+    if (currentImagePoint && loadedImagePoints) {
+    const shouldNotRecalcualteHistoryImages = historyImagePoints.includes(currentImagePoint);
+      if (!shouldNotRecalcualteHistoryImages) {
+      setHistoryImagePoints([]);
+      const currentCoordinates = getImagePointLatLng(currentImagePoint);
+      const currentImagePointTime = getDateObj(currentImagePoint).getTime();
+      const currentImagePointBearing = getCurrentImagePointBearing(
+        loadedImagePoints.imagePoints,
+        currentImagePoint
+      );
+      const currentImagePointDirection = currentImagePoint.properties.RETNING;
+
+      const maxDistance = 50; // meters (avoid getting a picture on a totally different road)
+
+      setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
+
+      if (currentCoordinates) {
+        const bbox = {
+          west: currentCoordinates.lng,
+          south: currentCoordinates.lat,
+          east: currentCoordinates.lng, // create the smallest possible bbox area
+          north: currentCoordinates.lat,
+        };
+
+        for (const [imageType, years] of Object.entries(availableYearsForAllImageTypes)) {
+          for (const year of years) {
+            let typename = imageType === '360' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`;
+            await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
+              const imagePoints = res.imagePoints;
+              const uniqueDatesInOtherYears: Set<number> = new Set();
+              const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
+                imagePoints,
+                (imagePoint: IImagePoint) => {
+                  const time = getDateObj(imagePoint).getTime();
+                  if (time !== currentImagePointTime) {
+                    uniqueDatesInOtherYears.add(time);
+                  }
+                  return time;
+                }
+              );
+
+              for (const uniqueDate of uniqueDatesInOtherYears) {
+                const imagePointsInSameDirection = imagePointsGroupedByTime[uniqueDate].filter(
+                  (imagePoint: IImagePoint) => {
+                    if (imagePoint) {
+                      if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
+                        const distanceBetween = getDistanceToBetweenImagePoints(
+                          currentImagePoint,
+                          imagePoint
+                        );
+
+                        if (typeof(distanceBetween) !== 'undefined' && distanceBetween < maxDistance) {
+                          const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
+                          if (imagePointDirection && currentImagePointDirection) {
+                            if (imagePointDirection < currentImagePointDirection + 10 &&
+                              imagePointDirection > currentImagePointDirection - 10)
+                              return imagePoint;
+                          } else {
+                            const bearingBetween = getBearingBetweenImagePoints(
+                              currentImagePoint,
+                              imagePoint
+                            );
+                            if (
+                              currentImagePointBearing &&
+                              bearingBetween &&
+                              bearingBetween < currentImagePointBearing + 10 &&
+                              bearingBetween > currentImagePointBearing - 10) 
+                              {
+                              return imagePoint;
+                            }
+                          }
+                        }
+                      }
+                    }
+                    return false;
+                  }
+                );
+                if (imagePointsInSameDirection.length) {
+                  const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
+                    (prevImgpoint, currImgPoint) => {
+                      const prevDistance = getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
+                      const currDistance = getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
+                      return prevDistance < currDistance ? prevImgpoint : currImgPoint;
+                    }
+                  );
+                  if (closestImagePointInSameDirection) {
+                    setHistoryImagePoints((prevState) => [
+                      ...prevState,
+                      closestImagePointInSameDirection,
+                    ]);
+                  }
+                }
+              }
+            });
+          }
+        }
+      }
+    }
+  }
+}
+
+
 const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const classes = useStyles();
 
   const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
-
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
@@ -217,107 +326,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
   // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
-    if (currentImagePoint && loadedImagePoints) {
-      const shouldNotRecalcualteHistoryImages = historyImagePoints.includes(currentImagePoint);
-      if (!shouldNotRecalcualteHistoryImages) {
-        setHistoryImagePoints([]);
-        const currentCoordinates = getImagePointLatLng(currentImagePoint);
-        const currentImagePointTime = getDateObj(currentImagePoint).getTime();
-        const currentImagePointBearing = getCurrentImagePointBearing(
-          loadedImagePoints.imagePoints,
-          currentImagePoint
-        );
-        const currentImagePointDirection = currentImagePoint.properties.RETNING;
-
-        const maxDistance = 50; // meters (avoid getting a picture on a totally different road)
-
-        setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
-
-        if (currentCoordinates) {
-          const bbox = {
-            west: currentCoordinates.lng,
-            south: currentCoordinates.lat,
-            east: currentCoordinates.lng, // create the smallest possible bbox area
-            north: currentCoordinates.lat,
-          };
-
-          Object.entries(availableYearsForAllImageTypes).forEach(([imageType, years]) => {
-            years.forEach(async (year: number) => {
-              let typename = imageType === '360' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`; 
-              await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
-                const imagePoints = res.imagePoints;
-                const uniqueDates: Set<number> = new Set();
-                const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
-                  imagePoints,
-                  (imagePoint: IImagePoint) => {
-                    const time = getDateObj(imagePoint).getTime();
-                    if (time !== currentImagePointTime) {
-                      uniqueDates.add(time);
-                      return time;
-                    }
-                  }
-                );
-                [...uniqueDates].forEach((date) => {
-                  const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
-                    (imagePoint: IImagePoint) => {
-                      if (imagePoint) {
-                        if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
-                          const distanceBetween = getDistanceToBetweenImagePoints(
-                            currentImagePoint,
-                            imagePoint
-                          );
-                          if (distanceBetween && distanceBetween < maxDistance) {
-                            const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                            if (imagePointDirection && currentImagePointDirection) {
-                              if (
-                                imagePointDirection < currentImagePointDirection + 10 &&
-                                imagePointDirection > currentImagePointDirection - 10
-                              )
-                                return imagePoint;
-                            } else {
-                              const bearingBetween = getBearingBetweenImagePoints(
-                                currentImagePoint,
-                                imagePoint
-                              );
-                              if (
-                                currentImagePointBearing &&
-                                bearingBetween &&
-                                bearingBetween < currentImagePointBearing + 10 &&
-                                bearingBetween > currentImagePointBearing - 10
-                              ) {
-                                return imagePoint;
-                              }
-                            }
-                          }
-                        }
-                      }
-                      return false;
-                    }
-                  );
-                  if (imagePointsInSameDirection.length) {
-                    const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
-                      (prevImgpoint, currImgPoint) => {
-                        const prevDistance =
-                          getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
-                        const currDistance =
-                          getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
-                        return prevDistance < currDistance ? prevImgpoint : currImgPoint;
-                      }
-                    );
-                    if (closestImagePointInSameDirection) {
-                      setHistoryImagePoints((prevState) => [
-                        ...prevState,
-                        closestImagePointInSameDirection,
-                      ]);
-                    }
-                  }
-                });
-              });
-            });
-          });
-        }
-      }
-    }
+    findHistoryImagePoints(currentImagePoint, loadedImagePoints, historyImagePoints, setHistoryImagePoints, getCurrentImagePointBearing, availableYearsForAllImageTypes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImagePoint, availableYearsForAllImageTypes]);
 

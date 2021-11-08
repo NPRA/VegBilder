@@ -23,10 +23,7 @@ import {
   currentPannellumHfovState
 } from './atoms';
 
-interface availableYears {
-  planar: number[],
-  360: number[]
-}
+export type availableYears = Record<string, number[]>;
 
 export const availableYearsQuery = selector({
   key: 'availableYearsQuery',
