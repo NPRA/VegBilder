@@ -160,20 +160,16 @@ const ImageControlButtons = ({
     }
   }
 
-  const updateZoomMinAndMax = () => {
-    if (pannellumHfovState <= pannellumSettings.minHfovBounds) {
-      setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": true})
-    } else if (pannellumHfovState >= pannellumSettings.maxHfovBounds) {
-      setMinAndMaxZoom({"isMinZoom": true, "isMaxZoom": false})
-    } else {
-      setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
-    }
-  }
-
-  //Denne useEffecten er kun brukt til å lese Pannellums interne hfov state når denne endres
-  //pga skroll-zoom for så å sjekke om den nye staten er min eller maks. (pannellumHfovState er et recoil
-  //duplikat av Pannellums interne hfov state). Tilhørende "missing dependency" advarsel kan derfor ignoreres.
   useEffect(() => {
+    const updateZoomMinAndMax = () => {
+      if (pannellumHfovState <= pannellumSettings.minHfovBounds) {
+        setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": true})
+      } else if (pannellumHfovState >= pannellumSettings.maxHfovBounds) {
+        setMinAndMaxZoom({"isMinZoom": true, "isMaxZoom": false})
+      } else {
+        setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
+      }
+    }
     updateZoomMinAndMax();
   }, [pannellumHfovState]); 
 
