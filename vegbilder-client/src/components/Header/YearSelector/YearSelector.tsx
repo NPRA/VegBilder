@@ -130,7 +130,8 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
         setCurrentYear(currentYear);
       }
     }
-  }, [currentImageType])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentImageType, availableYearsForCurrentImageType])
 
   const handleChange = (
     event: React.ChangeEvent<{

@@ -291,6 +291,7 @@ const ImageInfo = ({
         setDistanceToNordkapp(kmToNordkapp);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imagePoint]);
 
   interface IItemGroupContainerProps {
