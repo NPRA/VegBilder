@@ -170,6 +170,10 @@ const areOnSameOrConsecutiveRoadParts = (imagePoint1: IImagePoint, imagePoint2: 
   }
 };
 
+const areOnSameVegkategori = (imagePointA: IImagePoint, imagePointB: IImagePoint) => {
+  return imagePointA.properties.VEGKATEGORI === imagePointB.properties.VEGKATEGORI;
+};
+
 const areOnSameOrConsecutiveHovedparsells = (
   imagePoint1: IImagePoint,
   imagePoint2: IImagePoint
@@ -284,6 +288,87 @@ const getFilteredImagePoints = (
   return null;
 };
 
+const getImagePointDateObjWithTime = (imagePoint: IImagePoint) => {
+  const dateString = imagePoint.properties.TIDSPUNKT; // format: 2020-08-20T09:30:19Z
+  return new Date(dateString);
+};
+
+const getCurrentImagePointBearing = (
+  imagePoints: IImagePoint[],
+  currentImagePoint: IImagePoint
+) => {
+  const currentImagePointDateWithTime = getImagePointDateObjWithTime(currentImagePoint).getTime();
+
+  // find an image point within 30 seconds from currentImagePoint (which is then most likely on the same line)
+  const imagePointCloseToCurrent = imagePoints.find(
+    (imagePoint) =>
+      getImagePointDateObjWithTime(imagePoint).getTime() < currentImagePointDateWithTime + 30000 &&
+      getImagePointDateObjWithTime(imagePoint).getTime() > currentImagePointDateWithTime - 30000
+  );
+
+  if (imagePointCloseToCurrent) {
+    return getBearingBetweenImagePoints(currentImagePoint, imagePointCloseToCurrent);
+  }
+};
+
+const getImagePointsInSameDirectionOfImagePoint = (imagePoints: IImagePoint[], currentImagePoint: IImagePoint) => {
+  const currentImagePointDirection = currentImagePoint.properties.RETNING;
+  const maxDistance = 50; // meters (avoid getting a picture on a totally different road)
+  const currentImagePointBearing = getCurrentImagePointBearing(
+    imagePoints,
+    currentImagePoint
+  );
+  const imagePointsInSameDirection = imagePoints.filter(
+    (imagePoint: IImagePoint) => {
+      if (imagePoint && currentImagePoint) {
+        if (areOnSameVegkategori(currentImagePoint, imagePoint)) {
+          const distanceBetween = getDistanceToBetweenImagePoints(
+            currentImagePoint,
+            imagePoint
+          );
+          if (typeof(distanceBetween) !== 'undefined' && distanceBetween < maxDistance) {
+            const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
+            if (imagePointDirection && currentImagePointDirection) {
+              if (imagePointDirection < currentImagePointDirection + 10 &&
+                imagePointDirection > currentImagePointDirection - 10)
+                return imagePoint;
+            } else {
+              const bearingBetween = getBearingBetweenImagePoints(
+                currentImagePoint,
+                imagePoint
+              );
+              if (
+                currentImagePointBearing &&
+                bearingBetween &&
+                bearingBetween < currentImagePointBearing + 10 &&
+                bearingBetween > currentImagePointBearing - 10) 
+                {
+                return imagePoint;
+              }
+            }
+          }
+        }
+      }
+      return false;
+    }
+  );
+  return imagePointsInSameDirection;
+}
+
+const getNearestImagePointInSameDirectionOfImagePoint = (imagePoints: IImagePoint[], imagePoint: IImagePoint) => {
+  const imagePointsInSameDirection = getImagePointsInSameDirectionOfImagePoint(imagePoints, imagePoint);
+  if (imagePointsInSameDirection.length) {
+    const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
+      (prevImgpoint, currImgPoint) => {
+        const prevDistance = getDistanceToBetweenImagePoints(imagePoint, prevImgpoint) ?? 10000;
+        const currDistance = getDistanceToBetweenImagePoints(imagePoint, currImgPoint) ?? 10000;
+        return prevDistance < currDistance ? prevImgpoint : currImgPoint;
+      }
+    );
+    return closestImagePointInSameDirection;
+  }
+}
+
 export {
   getImagePointLatLng,
   getImageType,
@@ -295,9 +380,12 @@ export {
   getDateString,
   groupBySeries,
   areOnSameOrConsecutiveRoadParts,
+  areOnSameVegkategori,
   getFormattedDateString,
+  getImagePointDateObjWithTime,
   getDistanceToBetweenImagePoints,
   getBearingBetweenImagePoints,
   shouldIncludeImagePoint,
   getFilteredImagePoints,
+  getNearestImagePointInSameDirectionOfImagePoint
 };

@@ -8,13 +8,12 @@ import groupBy from 'lodash/groupBy';
 import { Dictionary } from 'lodash';
 
 import {
-  getBearingBetweenImagePoints,
   getDateString,
-  getDistanceToBetweenImagePoints,
   getFilteredImagePoints,
   getImagePointLatLng,
   getImageType,
   getImageUrl,
+  getNearestImagePointInSameDirectionOfImagePoint,
   getRoadReference
 } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILoadedImagePoints, imageType } from 'types';
@@ -120,11 +119,6 @@ const getDateObj = (imagePoint: IImagePoint) => {
   return new Date(dateString);
 };
 
-const getDateObjWithTime = (imagePoint: IImagePoint) => {
-  const dateString = imagePoint.properties.TIDSPUNKT; // format: 2020-08-20T09:30:19Z
-  return new Date(dateString);
-};
-
 const sortImagePointsByDate = (imagePoints: IImagePoint[]) => {
   return imagePoints.sort((a, b) => getDateObj(b).getTime() - getDateObj(a).getTime());
 };
@@ -135,10 +129,6 @@ const getDateAndTimeString = (imagePoint: IImagePoint) => {
   return `${dateTime?.date} kl. ${dateTime?.time}`;
 };
 
-const imagePointsAreOnSameVegkategori = (imagePointA: IImagePoint, imagePointB: IImagePoint) => {
-  return imagePointA.properties.VEGKATEGORI === imagePointB.properties.VEGKATEGORI;
-};
-
 interface IHistoryProps {
   setIsHistoryMode: (isHistoryMode: boolean) => void;
 }
@@ -147,7 +137,6 @@ async function findHistoryImagePoints(
     currentImagePoint: IImagePoint | null, 
    loadedImagePoints: ILoadedImagePoints | null, 
    historyImagePoints: IImagePoint[], setHistoryImagePoints: React.Dispatch<React.SetStateAction<IImagePoint[]>>, 
-   getCurrentImagePointBearing: (imagePoints: IImagePoint[], currentImagePoint: IImagePoint) => number | undefined, 
    availableYearsForAllImageTypes: availableYears) 
    {
     if (currentImagePoint && loadedImagePoints) {
@@ -156,13 +145,6 @@ async function findHistoryImagePoints(
       setHistoryImagePoints([]);
       const currentCoordinates = getImagePointLatLng(currentImagePoint);
       const currentImagePointTime = getDateObj(currentImagePoint).getTime();
-      const currentImagePointBearing = getCurrentImagePointBearing(
-        loadedImagePoints.imagePoints,
-        currentImagePoint
-      );
-      const currentImagePointDirection = currentImagePoint.properties.RETNING;
-
-      const maxDistance = 50; // meters (avoid getting a picture on a totally different road)
 
       setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
 
@@ -190,59 +172,15 @@ async function findHistoryImagePoints(
                   return time;
                 }
               );
-
               for (const uniqueDate of uniqueDatesInOtherYears) {
-                const imagePointsInSameDirection = imagePointsGroupedByTime[uniqueDate].filter(
-                  (imagePoint: IImagePoint) => {
-                    if (imagePoint) {
-                      if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
-                        const distanceBetween = getDistanceToBetweenImagePoints(
-                          currentImagePoint,
-                          imagePoint
-                        );
-
-                        if (typeof(distanceBetween) !== 'undefined' && distanceBetween < maxDistance) {
-                          const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                          if (imagePointDirection && currentImagePointDirection) {
-                            if (imagePointDirection < currentImagePointDirection + 10 &&
-                              imagePointDirection > currentImagePointDirection - 10)
-                              return imagePoint;
-                          } else {
-                            const bearingBetween = getBearingBetweenImagePoints(
-                              currentImagePoint,
-                              imagePoint
-                            );
-                            if (
-                              currentImagePointBearing &&
-                              bearingBetween &&
-                              bearingBetween < currentImagePointBearing + 10 &&
-                              bearingBetween > currentImagePointBearing - 10) 
-                              {
-                              return imagePoint;
-                            }
-                          }
-                        }
-                      }
-                    }
-                    return false;
-                  }
-                );
-                if (imagePointsInSameDirection.length) {
-                  const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
-                    (prevImgpoint, currImgPoint) => {
-                      const prevDistance = getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
-                      const currDistance = getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
-                      return prevDistance < currDistance ? prevImgpoint : currImgPoint;
-                    }
-                  );
-                  if (closestImagePointInSameDirection) {
+                const nearestImagePointInSameDirection = getNearestImagePointInSameDirectionOfImagePoint(imagePointsGroupedByTime[uniqueDate], currentImagePoint);
+                  if (nearestImagePointInSameDirection) {
                     setHistoryImagePoints((prevState) => [
                       ...prevState,
-                      closestImagePointInSameDirection,
+                      nearestImagePointInSameDirection,
                     ]);
                   }
                 }
-              }
             });
           }
         }
@@ -301,24 +239,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
     setIsHistoryMode(false);
   };
 
-  const getCurrentImagePointBearing = (
-    imagePoints: IImagePoint[],
-    currentImagePoint: IImagePoint
-  ) => {
-    const currentImagePointDateWithTime = getDateObjWithTime(currentImagePoint).getTime();
-
-    // find an image point within 30 seconds from currentImagePoint (which is then most likely on the same line)
-    const imagePointCloseToCurrent = imagePoints.find(
-      (imagePoint) =>
-        getDateObjWithTime(imagePoint).getTime() < currentImagePointDateWithTime + 30000 &&
-        getDateObjWithTime(imagePoint).getTime() > currentImagePointDateWithTime - 30000
-    );
-
-    if (imagePointCloseToCurrent) {
-      return getBearingBetweenImagePoints(currentImagePoint, imagePointCloseToCurrent);
-    }
-  };
-
   // I useEffekt'en finner vi bilder som er nærmest current image point innen hver tilgjengelige dato.
   // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
   // For å finne retningen av bildet så har vi to muligheter: se på retning (som ikke alle bilder har), eller regne ut bearing.
@@ -326,7 +246,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
   // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
-    findHistoryImagePoints(currentImagePoint, loadedImagePoints, historyImagePoints, setHistoryImagePoints, getCurrentImagePointBearing, availableYearsForAllImageTypes);
+    findHistoryImagePoints(currentImagePoint, loadedImagePoints, historyImagePoints, setHistoryImagePoints, availableYearsForAllImageTypes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImagePoint, availableYearsForAllImageTypes]);
 
