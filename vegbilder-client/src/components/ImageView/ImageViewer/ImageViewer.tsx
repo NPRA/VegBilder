@@ -72,7 +72,7 @@ const ImageViewer = ({
   const { command, resetCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
-  const [shouldTurn, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneState);
+  const [, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -139,7 +139,7 @@ const ImageViewer = ({
       );
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
-        setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 15 });
+        setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 16 });
         setTurnToOtherLaneSelector(true);  //Flagg til panorama viewer for å sette riktig config. Ikke testet.
       }
     } else {
