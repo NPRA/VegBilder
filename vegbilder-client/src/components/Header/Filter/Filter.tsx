@@ -16,13 +16,13 @@ import React from 'react';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import {
   currentImagePointState,
-  currentLatLngZoomState,
   loadedImagePointsState,
 } from 'recoil/atoms';
-import {imageTypeQueryParameterState, viewQueryParamterState} from 'recoil/selectors';
+import {imageTypeQueryParameterState, latLngZoomQueryParameterState, viewQueryParamterState} from 'recoil/selectors';
 import { imageType } from 'types';
 import { CheckmarkIcon } from "components/Icons/Icons";
 import  { CameraAlt } from "@material-ui/icons";
+import { getImagePointLatLng } from "utilities/imagePointUtilities";
 
 const useStyles = makeStyles((theme) => ({
   menu: {
@@ -141,7 +141,7 @@ interface IFilterProps {
 const Filter = ({ showMessage }: IFilterProps) => {
   const classes = useStyles();
   const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
-  const currentCoordinates = useRecoilValue(currentLatLngZoomState);
+  const [currentZoomAndCoordinates, ] = useRecoilState(latLngZoomQueryParameterState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentView, ] = useRecoilState(viewQueryParamterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsState);
@@ -164,11 +164,15 @@ const Filter = ({ showMessage }: IFilterProps) => {
     }
 
     if (currentImagePoint) {
-      // if we already have an image preview, we need to fetch new image points and find a new image preview for that camera filter
-      // otherwise, we dont have to do anything besides switching map layer
+      // When in map view: clicking on imagePoints does not update latlng in url. Normally this is fine, because opening
+      // an imagePoint in imageview will then update the url with the correct latlng for that image. However, when 
+      // we change the imgatype while an imagePoint is selected, we need to use the latlng of the selected
+      // imagepoint insteda of the coordinates in the url to look for a new image.
+      const latlng = currentView === 'map' ? getImagePointLatLng(currentImagePoint) : { lat: currentZoomAndCoordinates.lat, lng: currentZoomAndCoordinates.lng };
       setLoadedImagePoints(null); // reset state
-      const latlng = { lat: currentCoordinates.lat, lng: currentCoordinates.lng };
-      fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR, imageType);
+      if (latlng) {
+        fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR, imageType);
+      };      
     }
   };
 

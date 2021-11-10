@@ -12,7 +12,7 @@ import {
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState, yearQueryParameterState, imageTypeQueryParameterState } from 'recoil/selectors';
 import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
-import { loadedImagePointsState } from 'recoil/atoms';
+import { loadedImagePointsState, currentViewState } from 'recoil/atoms';
 
 type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'findImagePointWithCustomRadius';
 
@@ -26,11 +26,13 @@ const useFetchNearestImagePoint = (
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
+  const currentView = useRecoilValue(currentViewState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
   async function fetchImagePointsByYearAndLatLng(latlng: ILatlng, year: number, imageType: imageType, searchRadius?: number) {
     const bboxVisibleMapArea = createSquareBboxAroundPoint(latlng, settings.targetBboxSize);
+
     const shouldFetchNewImagePointsFromOGC =
       !loadedImagePoints ||
       loadedImagePoints.year !== year ||
@@ -81,11 +83,15 @@ const useFetchNearestImagePoint = (
     setCurrentYear(currentYear);
     setCurrentImageType(imageType);
     const imagePointCoordinates = getImagePointLatLng(nearestImagePoint);
-    if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
-      if (imagePointCoordinates) {
-        const newCoordinates = { ...imagePointCoordinates, zoom: 15 };
-        setCurrentCoordinates(newCoordinates);
-      } // center map on the image we found
+    if (imagePointCoordinates) {
+      let newCoordinates = {...imagePointCoordinates, zoom: 15};
+      if (!currentCoordinates.zoom || currentCoordinates.zoom < 15) {
+        newCoordinates = { ...imagePointCoordinates, zoom: 15 };
+      } 
+      if (currentView === 'image') {
+        newCoordinates = { ...imagePointCoordinates, zoom: 16 };
+      }
+      setCurrentCoordinates(newCoordinates);
     }
   };
 
