@@ -30,8 +30,8 @@ export const availableYearsQuery = selector({
   get: async () => {
     const response = await getAvailableYearsFromOGC();
     if (response.status === 200) {
-      const regexpPlanar = RegExp(/\b(Vegbilder[_]20\d{2})\b/);
-      const regexp360 = RegExp(/\b(Vegbilder[_]360_20\d{2})\b/);
+      const regexpPlanar = RegExp(/\b(Vegbilder[_]oversikt[_]20\d{2})\b/);
+      const regexp360 = RegExp(/\b(Vegbilder[_]360[_]oversikt[_]20\d{2})\b/);
 
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(response.data, 'text/xml');
@@ -46,13 +46,13 @@ export const availableYearsQuery = selector({
         const yearMatches360 = item.innerHTML.match(regexp360);
 
         if (yearMatchesPlanar) {
-          const year = parseInt(yearMatchesPlanar[0].slice(10));
+          const year = parseInt(yearMatchesPlanar[0].slice(19));
           if (!availableYearsPlanar.includes(year)) {
             availableYearsPlanar.push(year);
           }
         }
         if (yearMatches360) {
-          const year = parseInt(yearMatches360[0].slice(14));
+          const year = parseInt(yearMatches360[0].slice(23));
           if (!availableYears360.includes(year)) {
             availableYears360.push(year);
           }
