@@ -18,7 +18,7 @@ import {
   currentImagePointState,
   loadedImagePointsState,
 } from 'recoil/atoms';
-import {imageTypeQueryParameterState, latLngZoomQueryParameterState, viewQueryParamterState} from 'recoil/selectors';
+import {imageTypeQueryParameterState, latLngZoomQueryParameterState, viewQueryParamterState, availableYearsQuery} from 'recoil/selectors';
 import { imageType } from 'types';
 import { CheckmarkIcon } from "components/Icons/Icons";
 import  { CameraAlt } from "@material-ui/icons";
@@ -144,6 +144,7 @@ const Filter = ({ showMessage }: IFilterProps) => {
   const [currentZoomAndCoordinates, ] = useRecoilState(latLngZoomQueryParameterState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentView, ] = useRecoilState(viewQueryParamterState);
+  const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsState);
   const fetchNearestImagePoint = useFetchNearestImagePoint(
     showMessage,
@@ -158,8 +159,11 @@ const Filter = ({ showMessage }: IFilterProps) => {
   ) => {
     let imageType = event.target.value as imageType;
 
-    //If there is no currently chosen imagePoint in map view, we can change imagetype immediately.
-    if (currentView === 'map' && !currentImagePoint) {
+    // If we know the selected imagetype exists on the backend, and there is no currently chosen imagePoint in map view, 
+    // we can change imagetype immediately.
+    if (availableYearsForAllImageTypes[imageType].length === 0) {
+      showMessage(`Vi finner dessverre ingen bilder av typen ${imageType} i løsningen.`);
+    } else if (currentView === 'map' && !currentImagePoint) {
       setCurrentImageType(imageType);      
     }
 
