@@ -169,7 +169,6 @@ const Filter = ({ showMessage }: IFilterProps) => {
       // we change the imgatype while an imagePoint is selected, we need to use the latlng of the selected
       // imagepoint insteda of the coordinates in the url to look for a new image.
       const latlng = currentView === 'map' ? getImagePointLatLng(currentImagePoint) : { lat: currentZoomAndCoordinates.lat, lng: currentZoomAndCoordinates.lng };
-      setLoadedImagePoints(null); // reset state
       if (latlng) {
         fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR, imageType);
       };      
