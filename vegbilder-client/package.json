@@ -19,6 +19,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-leaflet": "^3.2.0",
+    "react-pannellum": "git://github.com/theresmf/react-pannellum.git#vegbilder-modifications",
     "react-responsive": "^8.2.0",
     "react-scripts": "^4.0.3",
     "recoil": "^0.3.1",
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@types/lodash": "^4.14.168",
     "@types/react-leaflet": "^2.8.1",
-    "@types/react-responsive": "^8.0.2"
+    "@types/react-responsive": "^8.0.2",
+    "@welldone-software/why-did-you-render": "^6.2.1"
   }
 }

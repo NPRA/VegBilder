@@ -9,6 +9,7 @@ export interface IImagePoint {
   };
   geometry_name: string;
   properties: {
+    BILDETYPE: string;
     AAR: number;
     TIDSPUNKT: string;
     FYLKENUMMER: string;
@@ -48,10 +49,13 @@ export interface ILoadedImagePoints {
   imagePoints: IImagePoint[];
   bbox: IBbox;
   year: number;
+  imageType: imageType;
   imagePointsGroupedBySeries?: Dictionary<Dictionary<IImagePoint[]>>;
   availableDates?: string[];
 }
 
-export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'radius' | 'requester';
+export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'radius' | 'requester' | 'imageType';
 
 export type viewTypes = 'map' | 'image';
+
+export type imageType = 'planar' | '360' | 'dekkekamera';

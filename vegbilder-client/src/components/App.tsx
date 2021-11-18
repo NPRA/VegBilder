@@ -14,7 +14,8 @@ import {
   latLngZoomQueryParameterState,
   viewQueryParamterState,
   yearQueryParameterState,
-  vegsystemreferanseState
+  vegsystemreferanseState,
+  imageTypeQueryParameterState
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
@@ -24,7 +25,7 @@ import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { IImagePoint, queryParameterNames } from 'types';
+import { imageType, IImagePoint, queryParameterNames } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -80,6 +81,7 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
+  const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -87,10 +89,21 @@ const App = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const isMobile = useIsMobile();
 
+  const searchParams = new URLSearchParams(window.location.search);
+  const imageTypeQuery = searchParams.get('imageType') as imageType;
+
+  //Setter imageType her og ikke i useEffect for å unngå at recoil state blir feil i oppstart av app.
+  if (!imageTypeQuery) {
+    setCurrentImageType("planar");
+  } else if (imageTypeQuery !== "planar") {
+    setCurrentImageType(imageTypeQuery);
+  }
+
+
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
 
-  const searchParams = new URLSearchParams(window.location.search);
+
   const requester = searchParams.get('requester');
   let capitalisedRequesterName = requester && requester.charAt(0).toUpperCase() + requester.slice(1);
 
@@ -160,7 +173,7 @@ const App = () => {
 
   const openAppByVegsystemreferanse = async (
     vegsystemreferanse: string | undefined,
-    year: string | null
+    year: string | null,
   ) => {
     if (vegsystemreferanse) {
       const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
@@ -175,7 +188,7 @@ const App = () => {
 
         if (latlng) {
           if (year !== 'latest' && year !== null) {
-            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year)).then(
+            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year), currentImageType).then(
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
                   setCurrentCoordinates({ ...latlng, zoom: 15 });
@@ -234,11 +247,11 @@ const App = () => {
     else if (imageIdQuery && imageIdQuery.length > 1) {
       if (latQuery && lngQuery && yearQuery && yearQuery !== 'latest') {
         const latlng = { lat: parseFloat(latQuery), lng: parseFloat(lngQuery) };
-        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery));
+          fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery), imageTypeQuery);
       }
     }
 
-    // Initialize year, zoom, lat, and lng when opening the app the default way
+    // Initialize year, imageType, zoom, lat, and lng when opening the app the default way
     else {
       if (!yearQuery) {
         setCurrentYear('Nyeste');
@@ -250,6 +263,7 @@ const App = () => {
         setCurrentView(DEFAULT_VIEW);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSnackbarClose = (reason: any) => {

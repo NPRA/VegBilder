@@ -18,6 +18,7 @@ import {
   currentLatLngZoomState,
   loadedImagePointsState,
   filteredImagePointsState,
+  currentImageTypeState,
 } from 'recoil/atoms';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { settings } from 'constants/settings';
@@ -40,6 +41,7 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   const currentYear = useRecoilValue(currentYearState);
   const { command, resetCommand } = useCommand();
   const playVideo = useRecoilValue(playVideoState);
+  const currentImageType = useRecoilValue(currentImageTypeState);
   const [imagePointsToRender, setImagePointsToRender] = useState([]);
 
   const fetchImagePointsByYearAndLatLng = useFetchImagePointsFromOGC();
@@ -106,7 +108,8 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
       loadedImagePoints.bbox &&
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
     ) {
-      fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea);
+      // TODO: Undersøke når denne blir kalt og legge til cameraType som siste parameter
+      fetchImagePointsByYearAndLatLng(currentYear, bboxVisibleMapArea, currentImageType);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [createBboxForVisibleMapArea]);
@@ -180,12 +183,18 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   useEffect(() => {
     if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
-      const imagePoints = filteredImagePoints.filter((imagePoint) =>
-        imagePointIsWithinBbox(imagePoint, mapBbox)
-      );
+      const imagePoints = filteredImagePoints.filter((imagePoint) => {
+        if (currentImageType.includes('panorama')) { //TODO: Finne ut hva denne gjør
+          return (
+            imagePointIsWithinBbox(imagePoint, mapBbox) && imagePoint.properties.BILDETYPE === '360'
+          );
+        }
+        return imagePointIsWithinBbox(imagePoint, mapBbox);
+      });
+
       setImagePointsToRender(imagePoints);
     }
-  }, [filteredImagePoints, createBboxForVisibleMapArea]);
+  }, [filteredImagePoints, createBboxForVisibleMapArea, currentImageType]);
 
   const renderImagePoints = () => {
     if (imagePointsToRender) {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState, KeyboardEvent, useMemo } from 'react';
 import InputBase from '@material-ui/core/InputBase';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ClickAwayListener, ListSubheader } from '@material-ui/core';
@@ -18,12 +18,13 @@ import {
 } from 'recoil/selectors';
 import useAsyncError from 'hooks/useAsyncError';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
+import { currentImageTypeState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
-import { currentYearState } from 'recoil/atoms';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { ILatlng } from 'types';
 import { IGeonorgeResponse, IStedsnavn, IVegsystemData } from './types';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,10 +32,13 @@ const useStyles = makeStyles((theme) => ({
   },
   search: {
     position: 'relative',
+    alignItems: 'center',
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.secondary.main, 0.8),
+    backgroundColor: theme.palette.common.grayDark,
+    minWidth: '44ch',
+    maxWidth: '70ch',
     '&:hover': {
-      backgroundColor: fade(theme.palette.secondary.main, 1.0),
+      backgroundColor: theme.palette.common.grayMedium,
     },
     marginLeft: 0,
     width: '100%',
@@ -53,6 +57,7 @@ const useStyles = makeStyles((theme) => ({
   },
   inputRoot: {
     color: 'inherit',
+    width: '90%',
   },
   inputInput: {
     padding: theme.spacing(1.1, 1.1, 1.1, 0),
@@ -60,7 +65,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: '50ch',
       height: '3ch',
     },
   },
@@ -92,6 +96,22 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  button: {
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+      backgroundColor: theme.palette.common.grayDark,
+      '& span': {
+        '& svg': {
+          '& path': {
+            stroke: theme.palette.common.orangeDark,
+          },
+          '& circle': {
+            stroke: theme.palette.common.orangeDark,
+          },
+        },
+      },
+    },
+  },
 }));
 
 interface ISearchProps {
@@ -112,6 +132,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
   const currentYear = useRecoilValue(currentYearState);
+  const currentCameraType = useRecoilValue(currentImageTypeState);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const throwError = useAsyncError();
@@ -184,7 +205,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
       setCurrentCoordinates({ ...latlng, zoom: zoom });
       setResetImagePoint(true);
       if (typeof currentYear === 'number') {
-        fetchNearestImagePoint(latlng, currentYear).then((imagePoint) => {
+        fetchNearestImagePoint(latlng, currentYear, currentCameraType).then((imagePoint) => {
           if (imagePoint) {
             const imagePointLatLng = getImagePointLatLng(imagePoint);
             if (imagePointLatLng) setCurrentCoordinates({ ...imagePointLatLng, zoom: zoom });

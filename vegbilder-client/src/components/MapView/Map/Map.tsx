@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TileLayer, MapContainer, useMapEvents, useMap } from 'react-leaflet';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
@@ -6,7 +6,7 @@ import { LeafletMouseEvent } from 'leaflet';
 import { crsUtm33N } from 'constants/crs';
 import ImagePointMapLayers from './ImagePointMapLayers/ImagePointMapLayers';
 import MapControls from './MapControls/MapControls';
-import { currentImagePointState, currentYearState } from 'recoil/atoms';
+import { currentImageTypeState, currentImagePointState, currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
@@ -22,11 +22,14 @@ interface IMapContainerEventHandlerProps {
   setCursor: (cursor: string) => void;
 }
 
+//This "component" is only used to get a reference to the map and update the view in certain situations (e.g. click to zoom).
 const ChangeMapView = ({ center, zoom }: { center: ILatlng; zoom: number | undefined }) => {
   const map = useMap();
-  if (center && zoom) {
-    map.setView(center, zoom);
-  }
+  useEffect(() => {
+    if (center && zoom) {
+      map.setView(center, zoom);
+    }
+  }, [center, zoom, map]);
   return null;
 };
 
@@ -34,6 +37,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const currentYear = useRecoilValue(currentYearState);
+  const currentImageType = useRecoilValue(currentImageTypeState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const map = useMap();
@@ -57,7 +61,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
       });
     } else {
       if (!currentImagePoint || (currentCoordinates.zoom && currentCoordinates.zoom < 15)) {
-        fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number).then(
+        fetchNearestImagePointByYearAndLatLng(userClickedLatLng, currentYear as number, currentImageType).then(
           (imagePoint) => {
             if (!imagePoint && currentCoordinates.zoom && currentCoordinates.zoom < 8) {
               setCurrentCoordinates({ ...userClickedLatLng, zoom: 8 }); // zoom the user more in if it didnt find images)

@@ -1,6 +1,7 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
+import { pannellumSettings } from "constants/settings";
 import { atom } from 'recoil';
-import { IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
+import { imageType, IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
 import { IStatisticsFeature } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -12,7 +13,7 @@ export const playVideoState = atom<boolean>({
 
 export const currentYearState = atom<string | number>({
   key: 'currentYear',
-  default: parseInt(searchParams.get('year')!) || 'Nyeste',
+  default: parseInt(searchParams.get('year')!) || 'Nyeste' || '',
 });
 
 export const currentVegsystemreferanseState = atom<string | null>({
@@ -55,7 +56,22 @@ export const filteredImagePointsState = atom<IImagePoint[] | null>({
   default: null,
 });
 
+export const currentImageTypeState = atom<imageType>({
+  key: 'currentImageType',
+  default: 'planar',
+});
+
 export const availableStatistics = atom<IStatisticsFeature[] | null>({
   key: 'availableStatistics',
   default: [],
-})
+});
+
+export const currentPannellumHfovState = atom<number>({
+  key: 'currentPannellumHfovState',
+  default: pannellumSettings.defaultHfov,
+});
+
+export const turnedToOtherLane = atom<boolean>({
+  key: 'turnedToOtherLane',
+  default: false
+});

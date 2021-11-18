@@ -2,7 +2,7 @@ import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableSta
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { IBbox, IImagePoint, ILatlng, queryParameterNames, viewTypes } from 'types';
+import { imageType, IBbox, IImagePoint, ILatlng, queryParameterNames, viewTypes } from 'types';
 import { IStatisticsFeature, IStatisticsFeatureProperties } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 import {
   getDateString,
@@ -17,39 +17,59 @@ import {
   filteredImagePointsState,
   loadedImagePointsState,
   playVideoState,
-  currentVegsystemreferanseState
+  currentVegsystemreferanseState,
+  currentImageTypeState,
+  turnedToOtherLane,
+  currentPannellumHfovState
 } from './atoms';
 
+export type availableYears = Record<string, number[]>;
+
 export const availableYearsQuery = selector({
-  key: 'availableYears',
+  key: 'availableYearsQuery',
   get: async () => {
     const response = await getAvailableYearsFromOGC();
     if (response.status === 200) {
-      const regexp = RegExp(/20\d{2}/);
+      const regexpPlanar = RegExp(/\b(Vegbilder[_]oversikt[_]20\d{2})\b/);
+      const regexp360 = RegExp(/\b(Vegbilder[_]360[_]oversikt[_]20\d{2})\b/);
 
-      let availableYears: number[] = [];
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(response.data, 'text/xml');
 
       const titles = xmlDoc.getElementsByTagName('Title');
 
+      let availableYearsPlanar: number[] = [];
+      let availableYears360: number[] = [];
+
       for (const item of titles) {
-        const yearMatches = item.innerHTML.match(regexp);
-        if (yearMatches) {
-          const year = parseInt(yearMatches[0]);
-          if (!availableYears.includes(year)) {
-            availableYears.push(year);
+        const yearMatchesPlanar = item.innerHTML.match(regexpPlanar);
+        const yearMatches360 = item.innerHTML.match(regexp360);
+
+        if (yearMatchesPlanar) {
+          const year = parseInt(yearMatchesPlanar[0].slice(19));
+          if (!availableYearsPlanar.includes(year)) {
+            availableYearsPlanar.push(year);
+          }
+        }
+        if (yearMatches360) {
+          const year = parseInt(yearMatches360[0].slice(23));
+          if (!availableYears360.includes(year)) {
+            availableYears360.push(year);
           }
         }
       }
-      return availableYears.slice().sort((a: number, b: number) => b - a);
+      const sortedPlanarYears = availableYearsPlanar.slice().sort((a: number, b: number) => b - a);
+      const sorted360Years = availableYears360.slice().sort((a: number, b: number) => b - a);
+      const availableYearsForAllImageTypes: availableYears = {'planar': sortedPlanarYears, '360': sorted360Years};
+
+      return availableYearsForAllImageTypes;
     }
     throw new Error('Karttjenesten er for øyeblikket utilgjengelig. Prøv igjen senere.');
   },
 });
 
 export const availableStatisticsQuery = selector({
-  key: 'availableStatistics',
+  key: 'availableStatisticsQuery',
   get: async () => {
     const response = await getAvailableStatisticsFromOGC();
     if (response.status === 200 && response.data.features) {
@@ -85,12 +105,30 @@ export const yearQueryParameterState = selector({
     if (newYear === 'Nyeste') {
       setNewQueryParamter('year', 'latest');
       set(currentYearState, newYear);
-    } else if (typeof newYear === 'number' && get(availableYearsQuery).includes(newYear)) {
+    } else if (typeof newYear === 'number' && (get(currentImageTypeState) === 'planar') && get(availableYearsQuery)['planar'].includes(newYear)) {
+      setNewQueryParamter('year', newYear.toString());
+      set(currentYearState, newYear);
+    }
+    else if (typeof newYear === 'number' && (get(currentImageTypeState) === '360') && get(availableYearsQuery)['360'].includes(newYear)) {
       setNewQueryParamter('year', newYear.toString());
       set(currentYearState, newYear);
     }
   },
 });
+
+
+export const imageTypeQueryParameterState = selector({
+  key: 'imageTypeQueryParameterState',
+  get: ({ get }) => {
+    return get(currentImageTypeState);
+  },
+  set: ({ get, set }, newImageType: imageType|DefaultValue) => {
+    setNewQueryParamter('imageType', newImageType as string);
+    set(currentImageTypeState, newImageType);
+  },
+});
+
+
 
 export const imagePointQueryParameterState = selector({
   key: 'imagePointQueryParamterState',
@@ -150,18 +188,16 @@ export const viewQueryParamterState = selector({
   },
 });
 
+type newLoadedImagePoints = { imagePoints: IImagePoint[] } & { year: number } & {
+  bbox: IBbox;
+} & { imageType: imageType };
+
 export const loadedImagePointsFilterState = selector({
   key: 'loadedImagePointsFilterState',
   get: ({ get }) => {
     return get(loadedImagePointsState);
   },
-  set: (
-    { get, set },
-    newLoadedImagePoints:
-      | ({ imagePoints: IImagePoint[] } & { year: number } & { bbox: IBbox })
-      | DefaultValue
-      | null
-  ) => {
+  set: ({ get, set }, newLoadedImagePoints: newLoadedImagePoints | DefaultValue | null) => {
     if (!(newLoadedImagePoints instanceof DefaultValue) && newLoadedImagePoints) {
       const imagePointsGroupedBySeries = groupBySeries(newLoadedImagePoints.imagePoints);
       const availableDates = getAvailableDates(newLoadedImagePoints.imagePoints);
@@ -171,6 +207,7 @@ export const loadedImagePointsFilterState = selector({
         bbox: newLoadedImagePoints.bbox,
         imagePointsGroupedBySeries: imagePointsGroupedBySeries,
         availableDates: availableDates,
+        imageType: newLoadedImagePoints.imageType,
       };
       set(loadedImagePointsState, newLoaded);
       const currImagePoint = get(currentImagePointState);
@@ -182,6 +219,26 @@ export const loadedImagePointsFilterState = selector({
       set(loadedImagePointsState, null);
     }
   },
+});
+
+export const pannellumHfovState = selector({
+  key: 'hfovState',
+  get: ({ get }) => {
+    return get(currentPannellumHfovState);
+  },
+  set: ({ set }, newHfov: number | DefaultValue) => {
+    set(currentPannellumHfovState, newHfov);
+  },
+});
+
+export const turnedToOtherLaneState = selector({
+  key: 'turnedToOtherLaneState',
+  get: ({ get }) => {
+    return get(turnedToOtherLane);
+  },
+  set: ({set }, shouldTurn: boolean | DefaultValue ) => {
+    set(turnedToOtherLane, shouldTurn);
+  }
 });
 
 // utilities

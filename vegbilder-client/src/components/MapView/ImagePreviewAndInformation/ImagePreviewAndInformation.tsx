@@ -2,15 +2,15 @@ import React, { useState } from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
-import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
+import { getImageUrl, getImageType, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
-import Theme from 'theme/Theme';
 import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
-import { EnlargeIcon } from 'components/Icons/Icons';
+import { EnlargeIcon, PanoramaIcon } from 'components/Icons/Icons';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
   image: {
@@ -19,8 +19,30 @@ const useStyles = makeStyles(() => ({
     maxHeight: '28vh',
     height: 'auto',
   },
+  panoramaImage: {
+    cursor: 'pointer',
+    height: '25vh',
+    width: '30vw',
+    minWidth: '16.375rem',
+    backgroundSize: '100vw',
+    backgroundPosition: 'center'
+  },
+  panoramaImageContainer: {
+    width: 'auto',
+    position: 'relative'
+  },
+  panoramaIcon: {
+    position: 'absolute',
+    fill: Theme.palette.common.orangeDark,
+    right: '4px',
+    bottom: '4px',
+    '& svg': {
+      verticalAlign: 'top'
+    }
+  },
   enlargeButton: {
     marginRight: '0.3rem',
+    backgroundColor: Theme.palette.common.grayDark,
   },
   infoButton: {
     margin: '0.4rem',
@@ -34,6 +56,7 @@ const useStyles = makeStyles(() => ({
     marginBottom: '0.35rem',
     maxHeight: '25rem',
     pointerEvents: 'all',
+    overflow: 'hidden',
   },
   imageMetadata: {
     borderRadius: '10px 10px 0 0',
@@ -90,12 +113,26 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-          <img
+          {getImageType(currentImagePoint) === '360' ? 
+            (<div className={classes.panoramaImageContainer}>
+              <div 
+              className={classes.panoramaImage} 
+              style={{"backgroundImage" : `url(${getImageUrl(currentImagePoint)})`}} 
+              onClick={openImage}
+              role="img"
+              aria-label="Bilde tatt langs veg">
+              </div>
+              <div className={classes.panoramaIcon}>
+                <PanoramaIcon/>
+              </div>
+            </div>)
+            :
+            <img
             src={getImageUrl(currentImagePoint)}
             className={classes.image}
             alt="Bilde tatt langs veg"
             onClick={openImage}
-          />
+            />}
         </div>
         {showInformation ? (
           <ImageInfo

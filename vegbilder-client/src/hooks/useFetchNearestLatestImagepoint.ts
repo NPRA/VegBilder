@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { loadedImagePointsState } from 'recoil/atoms';
+import { currentImageTypeState, loadedImagePointsState } from 'recoil/atoms';
 import { availableYearsQuery, yearQueryParameterState, viewQueryParamterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';
@@ -13,8 +13,11 @@ const useFetchNearestLatestImagePoint = (
   fetchMethodNearestLatest: fetchMethodNearestLatest = 'default',
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
-  const availableYears = useRecoilValue(availableYearsQuery);
-
+  const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
+  const availableYearsPlanar = availableYearsForAllImageTypes['planar'];
+  const availableYears360 = availableYearsForAllImageTypes['360'];
+  
+  const currentImageType = useRecoilValue(currentImageTypeState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setView] = useRecoilState(viewQueryParamterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -34,10 +37,13 @@ const useFetchNearestLatestImagePoint = (
     let fetchFunction = (fetchMethodNearestLatest === "findImagePointWithCustomRadius"
     ? fetchImagePointsByLatLongAndYearWithCustomRadius
     : fetchImagePointsByLatLongAndYear);
+
+    let availableYears = currentImageType === '360' ? availableYears360 : availableYearsPlanar;
+
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
-        await fetchFunction(latlng, year, radius).then((imagePoint) => {
+        await fetchFunction(latlng, year, currentImageType, radius).then((imagePoint) => {
           if (imagePoint) {
             const year = imagePoint.properties.AAR;
             setCurrentYear(year);

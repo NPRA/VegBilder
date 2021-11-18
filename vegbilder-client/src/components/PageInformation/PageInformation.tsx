@@ -56,6 +56,7 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
         <div className={classes.tabs}>
           {tabs.map((tab) => (
             <Button
+              key={tab}
               style={{ color: tab === selectedTab ? Theme.palette.common.orangeDark : '' }}
               onClick={() => setSelectedTab(tab)}
             >

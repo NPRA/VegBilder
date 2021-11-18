@@ -16,11 +16,13 @@ import {
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
+import { imagePointQueryParameterState, imageTypeQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneState } from 'recoil/selectors';
 import { debounce } from 'lodash';
+import PanoramaImage from './PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
+    position:  'relative',
     height: '100%',
     minWidth: '70%',
     backgroundColor: theme.palette.primary.main,
@@ -53,6 +55,7 @@ interface IImageViewerProps {
   isZoomedInImage?: boolean;
   timeBetweenImages: number;
   meterLineVisible: boolean;
+  isHistoryMode: boolean;
 }
 
 const ImageViewer = ({
@@ -60,13 +63,16 @@ const ImageViewer = ({
   isZoomedInImage,
   timeBetweenImages,
   meterLineVisible,
+  isHistoryMode
 }: IImageViewerProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
+  const [currentImageType, ] = useRecoilState(imageTypeQueryParameterState);
   const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const { command, resetCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
+  const [, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -133,7 +139,8 @@ const ImageViewer = ({
       );
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
-        setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 15 });
+        setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 16 });
+        setTurnToOtherLaneSelector(true);  //Flagg til panorama viewer for å sette riktig config. Ikke testet.
       }
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
@@ -328,15 +335,23 @@ const ImageViewer = ({
       <div className={classes.imageArea}>
         {currentImagePoint && (
           <>
-            <img
-              id="vegbilde"
-              src={getImageUrl(currentImagePoint)}
-              alt="vegbilde"
-              className={isZoomedInImage ? classes.enlargedImage : classes.image}
-              ref={imgRef}
-              onLoad={onImageLoaded}
-            />
-            {renderMeterLine()}
+            {currentImageType === '360' ? (
+              <PanoramaImage 
+              imageUrl={getImageUrl(currentImagePoint)} 
+              isHistoryMode={isHistoryMode}/>
+            ) : (
+              <>
+                <img
+                  id="vegbilde"
+                  src={getImageUrl(currentImagePoint)}
+                  alt="vegbilde"
+                  className={isZoomedInImage ? classes.enlargedImage : classes.image}
+                  ref={imgRef}
+                  onLoad={onImageLoaded}
+                />
+                {renderMeterLine()}
+              </>
+            )}
           </>
         )}
       </div>
