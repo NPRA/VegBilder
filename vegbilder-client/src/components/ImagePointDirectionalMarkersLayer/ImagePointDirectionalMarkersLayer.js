@@ -90,7 +90,6 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
       const currentRoadRef = getGenericRoadReference(currentImagePoint);
       return roadRef === currentRoadRef;
     });
-
     const nearestImagePoint = findNearestImagePoint(
       sameRoadReferenceImagePoints,
       getImagePointLatLng(currentImagePoint)
@@ -181,19 +180,10 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   };
 
 
-
-
-  // He vil jeg at filteredImagePoints skal reflektere den bildeserien man har havnet i. Altså, det skal kun vises
-  // planar ELLER 360.
   useEffect(() => {
     if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
       const imagePoints = filteredImagePoints.filter((imagePoint) => {
-        if (currentImageType.includes('panorama')) { //TODO: Finne ut hva denne gjør
-          return (
-            imagePointIsWithinBbox(imagePoint, mapBbox) && imagePoint.properties.BILDETYPE === '360'
-          );
-        }
         return imagePointIsWithinBbox(imagePoint, mapBbox);
       });
 
