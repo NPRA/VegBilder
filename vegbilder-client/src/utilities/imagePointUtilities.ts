@@ -2,7 +2,7 @@ import groupBy from 'lodash/groupBy';
 
 import { getBearingBetween, getDistanceInMetersBetween } from './latlngUtilities';
 import { splitDateTimeString } from './dateTimeUtilities';
-import { IImagePoint, ILatlng, ILoadedImagePoints } from 'types';
+import { IImagePoint, IGroupedByDateAndImageType, IGroupedByImageType, ILatlng, ILoadedImagePoints } from 'types';
 import { Dictionary } from 'lodash';
 
 const getImagePointLatLng = (imagePoint: IImagePoint) => {
@@ -138,21 +138,27 @@ const getFormattedDateString = (imageSeriesDate: string) => {
  * hovedparsell
  *
  * The returned object contains a key for each road reference, and the value for each key is a
- * new object, under which each key is a date. The value for each of those is an array of image
- * points.
+ * new object, under which each key is a date. The value for each date is another dictionary where 
+ * the keys are image types and the value is an array with imagepoints.
  */
 
-//TODO: gjøre om values i groupedByDate til et object med {imageType: "", imagePoints: []};
 const groupBySeries = (imagePoints: IImagePoint[]) => {
-  let groupedByReferenceAndDate: Dictionary<Dictionary<IImagePoint[]>> = {};
+  let groupedByReferenceDateAndImageType: Dictionary<Dictionary<Dictionary<IImagePoint[]>>> = {};
   const groupedByRoadReference = groupBy(imagePoints, (ip) => getRoadReference(ip).withoutMeter);
   for (const [roadReference, imagePointsForRoadReference] of Object.entries(
     groupedByRoadReference
   )) {
     const groupedByDate = groupBy(imagePointsForRoadReference, getDateString);
-    groupedByReferenceAndDate[roadReference] = groupedByDate;
+    let groupedByDateAndImageType: IGroupedByDateAndImageType = {};
+    for (const [date, imagePointsForDate] of Object.entries(groupedByDate)) {
+      let groupedByAllAvailableImageTypes: IGroupedByImageType = {};
+      const groupedByImageType = groupBy(imagePointsForDate, getImageType);
+      groupedByAllAvailableImageTypes = {...groupedByAllAvailableImageTypes, ...groupedByImageType};
+      groupedByDateAndImageType[date] = groupedByAllAvailableImageTypes;
+    }
+    groupedByReferenceDateAndImageType[roadReference] = groupedByDateAndImageType;
   }
-  return groupedByReferenceAndDate;
+  return groupedByReferenceDateAndImageType;
 };
 
 /* Check if two image points are on the same road part or consecutive road parts,
@@ -254,15 +260,32 @@ const shouldIncludeImagePoint = (imagePoint: IImagePoint, currentImagePoint: IIm
   return true;
 };
 
-const findLatestImageSeries = (availableImageSeries: Dictionary<IImagePoint[]>) => {
+const findLatestImageSeries = (availableImageSeries: IGroupedByDateAndImageType) => {
   let latest = '0001-01-01';
-  for (const imageSeriesDate of Object.getOwnPropertyNames(availableImageSeries)) {
-    if (imageSeriesDate > latest) {
-      latest = imageSeriesDate;
+  let imageType = '';
+  let latestImageSeries: IImagePoint[] = [];
+  for (const dateOfImageSeries of Object.getOwnPropertyNames(availableImageSeries)) {
+    for (const imageTypeSeriesOfDate of Object.getOwnPropertyNames(dateOfImageSeries)) {
+      if (dateOfImageSeries > latest) {
+        latest = dateOfImageSeries;
+        imageType = imageTypeSeriesOfDate;
+      }
     }
   }
-  return availableImageSeries[latest];
+  // If the latest date has a 360 image series, the default is to choose.
+   if (Object.getOwnPropertyNames(availableImageSeries[latest]).includes('360')) {
+    latestImageSeries = availableImageSeries[latest]['360'];
+   } else {
+    latestImageSeries = availableImageSeries[latest][imageType];
+   }
+  return latestImageSeries;
 };
+
+
+// Returns an array used to show markes on the map and used to further filter imagePoints e.g. in either directions.
+// The array is a list with all imagePoints that (1) either are on the same road reference and have the same imagetype and 
+// datestamp as the selected imagePoint (2) for each road reference that does not correspond to the selected imagePoint's:
+// contains the most recent images for that road reference.
 
 const getFilteredImagePoints = (
   loadedImagePoints: ILoadedImagePoints,
@@ -275,20 +298,15 @@ const getFilteredImagePoints = (
       imageType: getImageType(currentImagePoint)
     };
     let filteredImagePoints: IImagePoint[] = [];
-    //TODO: imageType må sjekkes og brukes på en eller annen måte her.
     for (const [roadReference, availableImageSeriesForRoadReference] of Object.entries(
       loadedImagePoints.imagePointsGroupedBySeries
     )) {
-      // Sjekk bildetypen til det valgte bilde og finn bildeserien som bildet tilhører.
-      if (currentImageSeries.imageType === getImageType(availableImageSeriesForRoadReference[currentImageSeries.date]?.[0])) {
-          const imagePointsForRoadReference =
-          roadReference === currentImageSeries?.roadReference
-            ? availableImageSeriesForRoadReference[currentImageSeries.date]
-            : findLatestImageSeries(availableImageSeriesForRoadReference);
+        const imagePointsForRoadReference = roadReference === currentImageSeries?.roadReference
+          ? availableImageSeriesForRoadReference[currentImageSeries.date][currentImageSeries.imageType]
+          : findLatestImageSeries(availableImageSeriesForRoadReference);
         if (imagePointsForRoadReference) {
           filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
         }
-      }
     }
     return filteredImagePoints;
   }

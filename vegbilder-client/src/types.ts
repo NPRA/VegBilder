@@ -45,16 +45,28 @@ export interface IBbox {
   south: number;
 }
 
+export interface IGroupedByImageType {
+  [key: string]: IImagePoint[];
+}
+
+export interface IGroupedByDateAndImageType {
+  [key: string]: IGroupedByImageType;
+}
+
+export interface IGroupedByRoadReferenceDateAndImageType {
+  [key: string]: IGroupedByDateAndImageType;
+}
+
 export interface ILoadedImagePoints {
   imagePoints: IImagePoint[];
   bbox: IBbox;
   year: number;
-  imagePointsGroupedBySeries?: Dictionary<Dictionary<IImagePoint[]>>;
+  imagePointsGroupedBySeries?: IGroupedByRoadReferenceDateAndImageType;
   availableDates?: string[];
 }
 
-export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'radius' | 'requester' | 'imageType';
+export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'radius' | 'requester';
 
 export type viewTypes = 'map' | 'image';
 
-export type imageType = 'planar' | '360' | 'dekkekamera' | 'all';
+export type imageType = 'planar' | '360' | 'dekkekamera';
