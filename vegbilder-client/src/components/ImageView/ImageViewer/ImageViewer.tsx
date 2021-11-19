@@ -12,11 +12,12 @@ import {
   usesOldVegreferanse,
   areOnSameOrConsecutiveRoadParts,
   shouldIncludeImagePoint,
+  getImageType,
 } from 'utilities/imagePointUtilities';
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { debounce } from 'lodash';
 //import PanoramaImage from './PanoramaImage/PanoramaImage';
 
@@ -71,7 +72,6 @@ const ImageViewer = ({
   const { command, resetCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
-  const [, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -112,6 +112,7 @@ const ImageViewer = ({
         ip.properties.KRYSSDEL === currentImagePoint.properties.KRYSSDEL &&
         ip.properties.SIDEANLEGGSDEL === currentImagePoint.properties.SIDEANLEGGSDEL &&
         ip.properties.ANKERPUNKT === currentImagePoint.properties.ANKERPUNKT &&
+        ip.properties.BILDETYPE === currentImagePoint.properties.BILDETYPE &&
         hasOppositeParity(ip.properties.FELTKODE, currentImagePoint.properties.FELTKODE)
     );
 
@@ -139,7 +140,6 @@ const ImageViewer = ({
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
         setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 16 });
-        setTurnToOtherLaneSelector(true);  //Flagg til panorama viewer for å sette riktig config. Ikke testet.
       }
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
@@ -167,17 +167,20 @@ const ImageViewer = ({
         const currentLaneImagePoints = filteredImagePoints.filter((ip: IImagePoint) =>
           shouldIncludeImagePoint(ip, currentImagePoint)
         );
+        const currentLaneImagePointsOfSameImageType = currentLaneImagePoints.filter((ip: IImagePoint) => (
+          getImageType(ip) === getImageType(currentImagePoint)
+        ))
         const primaryFeltkode = parseInt(currentImagePoint.properties.FELTKODE[0], 10);
         const sortOrder = isEvenNumber(primaryFeltkode) ? 'desc' : 'asc'; // Feltkode is odd in the metering direction and even in the opposite direction
         if (usesOldVegreferanse(currentImagePoint)) {
           return orderBy(
-            currentLaneImagePoints,
+            currentLaneImagePointsOfSameImageType,
             ['properties.HP', 'properties.METER'],
             [sortOrder, sortOrder]
           );
         } else {
           return orderBy(
-            currentLaneImagePoints,
+            currentLaneImagePointsOfSameImageType,
             ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'],
             [sortOrder, sortOrder, sortOrder]
           );
