@@ -21,6 +21,10 @@ const getImageType = (imagepoint: IImagePoint) => {
   } 
 };
 
+const hasSameImageType = (imagepoint1: IImagePoint, imagepoint2: IImagePoint) => {
+  return getImageType(imagepoint1) === getImageType(imagepoint2);
+}
+
 const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
 
 const findNearestImagePoint = (
@@ -37,8 +41,11 @@ const findNearestImagePoint = (
       if (distance < maxDistance) {
         maxDistance = distance;
         imagePoint_ = imagePoint;
-      }
-    }
+      } // If two imagepoints have the same distance but different imagetypes, the 360 image should be chosen.
+      else if (maxDistance === distance && !hasSameImageType(imagePoint_, imagePoint)) {
+        imagePoint_ = getImageType(imagePoint) === '360' ? imagePoint : imagePoint_;
+      };
+    };
   });
   if (imagePoint_ && maxDistance < maxDistanceBetweenInMeters) {
     return imagePoint_;
@@ -265,7 +272,7 @@ const findLatestImageSeries = (availableImageSeries: IGroupedByDateAndImageType)
   let imageType = '';
   let latestImageSeries: IImagePoint[] = [];
   for (const dateOfImageSeries of Object.getOwnPropertyNames(availableImageSeries)) {
-    for (const imageTypeSeriesOfDate of Object.getOwnPropertyNames(dateOfImageSeries)) {
+    for (const imageTypeSeriesOfDate of Object.getOwnPropertyNames(availableImageSeries[dateOfImageSeries])) {
       if (dateOfImageSeries > latest) {
         latest = dateOfImageSeries;
         imageType = imageTypeSeriesOfDate;
