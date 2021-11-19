@@ -14,8 +14,7 @@ import {
   latLngZoomQueryParameterState,
   viewQueryParamterState,
   yearQueryParameterState,
-  vegsystemreferanseState,
-  imageTypeQueryParameterState
+  vegsystemreferanseState
 } from 'recoil/selectors';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { DEFAULT_COORDINATES, DEFAULT_VIEW, DEFAULT_ZOOM } from 'constants/defaultParamters';
@@ -25,7 +24,7 @@ import MobileLandingPage from './MobileLandingPage/MobileLandingPage';
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
-import { imageType, IImagePoint, queryParameterNames } from 'types';
+import { IImagePoint, queryParameterNames } from 'types';
 import useAsyncError from 'hooks/useAsyncError';
 
 const useStyles = makeStyles({
@@ -81,7 +80,6 @@ const App = () => {
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setCurrentView] = useRecoilState(viewQueryParamterState);
-  const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
   const [, setCurrentVegsystemreferanseState] = useRecoilState(vegsystemreferanseState);
 
   const [snackbarVisible, setSnackbarVisible] = useState(false);
@@ -90,14 +88,14 @@ const App = () => {
   const isMobile = useIsMobile();
 
   const searchParams = new URLSearchParams(window.location.search);
-  const imageTypeQuery = searchParams.get('imageType') as imageType;
 
   //Setter imageType her og ikke i useEffect for å unngå at recoil state blir feil i oppstart av app.
+  /*
   if (!imageTypeQuery) {
     setCurrentImageType("planar");
   } else if (imageTypeQuery !== "planar") {
     setCurrentImageType(imageTypeQuery);
-  }
+  }*/
 
 
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
@@ -188,7 +186,7 @@ const App = () => {
 
         if (latlng) {
           if (year !== 'latest' && year !== null) {
-            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year), currentImageType).then(
+            fetchNearestImagePointToYearAndCoordinates(latlng, parseInt(year)).then(
               (imagePoint: IImagePoint | undefined) => {
                 if (!imagePoint) {
                   setCurrentCoordinates({ ...latlng, zoom: 15 });
@@ -247,7 +245,7 @@ const App = () => {
     else if (imageIdQuery && imageIdQuery.length > 1) {
       if (latQuery && lngQuery && yearQuery && yearQuery !== 'latest') {
         const latlng = { lat: parseFloat(latQuery), lng: parseFloat(lngQuery) };
-          fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery), imageTypeQuery);
+          fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery));
       }
     }
 

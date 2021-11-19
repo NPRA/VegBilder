@@ -43,7 +43,7 @@ const useFetchNearestLatestImagePoint = (
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
         showMessage(`Leter etter bilder i ${year}...`);
-        await fetchFunction(latlng, year, currentImageType, radius).then((imagePoint) => {
+        await fetchFunction(latlng, year, radius).then((imagePoint) => {
           if (imagePoint) {
             const year = imagePoint.properties.AAR;
             setCurrentYear(year);

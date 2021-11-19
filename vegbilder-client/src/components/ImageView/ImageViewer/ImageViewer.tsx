@@ -16,9 +16,9 @@ import {
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
-import { imagePointQueryParameterState, imageTypeQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneState } from 'recoil/selectors';
 import { debounce } from 'lodash';
-import PanoramaImage from './PanoramaImage/PanoramaImage';
+//import PanoramaImage from './PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -67,7 +67,6 @@ const ImageViewer = ({
 }: IImageViewerProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
-  const [currentImageType, ] = useRecoilState(imageTypeQueryParameterState);
   const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const { command, resetCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -335,11 +334,7 @@ const ImageViewer = ({
       <div className={classes.imageArea}>
         {currentImagePoint && (
           <>
-            {currentImageType === '360' ? (
-              <PanoramaImage 
-              imageUrl={getImageUrl(currentImagePoint)} 
-              isHistoryMode={isHistoryMode}/>
-            ) : (
+            {(
               <>
                 <img
                   id="vegbilde"

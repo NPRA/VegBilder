@@ -2,7 +2,7 @@ import { getAvailableStatisticsFromOGC } from 'apis/VegbilderOGC/getAvailableSta
 import { getAvailableYearsFromOGC } from 'apis/VegbilderOGC/getAvailableYearsFromOGC';
 import { debounce, groupBy } from 'lodash';
 import { DefaultValue, selector } from 'recoil';
-import { imageType, IBbox, IImagePoint, ILatlng, queryParameterNames, viewTypes } from 'types';
+import { IBbox, IImagePoint, ILatlng, queryParameterNames, viewTypes } from 'types';
 import { IStatisticsFeature, IStatisticsFeatureProperties } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 import {
   getDateString,
@@ -60,7 +60,8 @@ export const availableYearsQuery = selector({
       }
       const sortedPlanarYears = availableYearsPlanar.slice().sort((a: number, b: number) => b - a);
       const sorted360Years = availableYears360.slice().sort((a: number, b: number) => b - a);
-      const availableYearsForAllImageTypes: availableYears = {'planar': sortedPlanarYears, '360': sorted360Years};
+      const sortedAllImageTypesYears = [...new Set([...sortedPlanarYears, ...sorted360Years])];
+      const availableYearsForAllImageTypes: availableYears = {'planar': sortedPlanarYears, '360': sorted360Years, 'all': sortedAllImageTypesYears};
 
       return availableYearsForAllImageTypes;
     }
@@ -115,19 +116,6 @@ export const yearQueryParameterState = selector({
     }
   },
 });
-
-
-export const imageTypeQueryParameterState = selector({
-  key: 'imageTypeQueryParameterState',
-  get: ({ get }) => {
-    return get(currentImageTypeState);
-  },
-  set: ({ get, set }, newImageType: imageType|DefaultValue) => {
-    setNewQueryParamter('imageType', newImageType as string);
-    set(currentImageTypeState, newImageType);
-  },
-});
-
 
 
 export const imagePointQueryParameterState = selector({
@@ -190,7 +178,7 @@ export const viewQueryParamterState = selector({
 
 type newLoadedImagePoints = { imagePoints: IImagePoint[] } & { year: number } & {
   bbox: IBbox;
-} & { imageType: imageType };
+};
 
 export const loadedImagePointsFilterState = selector({
   key: 'loadedImagePointsFilterState',
@@ -207,7 +195,6 @@ export const loadedImagePointsFilterState = selector({
         bbox: newLoadedImagePoints.bbox,
         imagePointsGroupedBySeries: imagePointsGroupedBySeries,
         availableDates: availableDates,
-        imageType: newLoadedImagePoints.imageType,
       };
       set(loadedImagePointsState, newLoaded);
       const currImagePoint = get(currentImagePointState);

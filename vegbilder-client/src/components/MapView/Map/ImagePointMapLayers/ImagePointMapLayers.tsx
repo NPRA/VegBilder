@@ -3,32 +3,42 @@ import { useMap, WMSTileLayer } from 'react-leaflet';
 import { useRecoilValue } from 'recoil';
 
 import ImagePointDirectionalMarkersLayer from 'components/ImagePointDirectionalMarkersLayer/ImagePointDirectionalMarkersLayer';
-import { currentImageTypeState, currentImagePointState, currentYearState } from 'recoil/atoms';
+import { currentImagePointState, currentYearState } from 'recoil/atoms';
+import { availableYearsQuery } from 'recoil/selectors';
 import { OGC_URL } from 'constants/urls';
 
 const ImagePointMapLayers = () => {
   const zoom = useMap().getZoom();
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
-  const currentImageType = useRecoilValue(currentImageTypeState);
+ // const currentImageType = useRecoilValue(currentImageTypeState);
+  const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
 
   const showImagePointsMarkers = zoom > 14 && currentYear !== 'Nyeste' && currentImagePoint;
   const showNyesteKartlag = currentYear === 'Nyeste';
 
+  const imageTypeHasImagesForYear = (imageType: string, year: number) => {
+    return availableYearsForAllImageTypes[imageType].includes(year);
+  };
+
   const getMapLayer = () => {
-    if (showNyesteKartlag) {
-      if (currentImageType === '360') return 'Vegbilder_360_dekning';
-      if (currentImageType === 'planar') return 'Vegbilder_dekning';
-      //if (currentImageType === 'dekkekamera') return '';
-      //if (currentImageType === 'all') return 'Vegbilder_dekning'; //TODO: Bytte til et kartlag som viser nyeste for alle.
-    } else {
-      if (currentImageType === '360') return `Vegbilder_360_oversikt_${currentYear}`;
-      if (currentImageType === 'planar') return `Vegbilder_oversikt_${currentYear}`;
-      //if (currentImageType === 'dekkekamera') return ''; //TODO: under arbeid
-      //if (currentImageType === 'all') return ''; //TODO: under arbeid
-    }
+
+    //There will be instances where not all imageTypes have images in the selected year.
+    //To avoid errors from the api, we therefore select the imageType we know has images.
+      if (showNyesteKartlag) { 
+        return `vegbilder_1_0:Vegbilder_dekning, vegbilder_1_0:Vegbilder_360_dekning`; 
+      } else if (typeof currentYear === 'number') {
+        if (imageTypeHasImagesForYear('360', currentYear) && imageTypeHasImagesForYear('planar', currentYear)) {
+          return `vegbilder_1_0:Vegbilder_oversikt_${currentYear}, vegbilder_1_0:Vegbilder_360_oversikt_${currentYear}`;
+        } else if (!imageTypeHasImagesForYear('360', currentYear) && imageTypeHasImagesForYear('planar', currentYear)) {
+          return `vegbilder_1_0:Vegbilder_oversikt_${currentYear}`;
+        } else if (imageTypeHasImagesForYear('360', currentYear) && !imageTypeHasImagesForYear('planar', currentYear)) {
+          return `vegbilder_1_0:Vegbilder_360_oversikt_${currentYear}`;
+        }
+      } 
     return '';
   };
+
 
   const renderImagePointsLayer = () => {
     if (showImagePointsMarkers) {
@@ -45,7 +55,6 @@ const ImagePointMapLayers = () => {
             transparent={true}
             opacity={0.6}
           />
-          )
         </>
       );
     }

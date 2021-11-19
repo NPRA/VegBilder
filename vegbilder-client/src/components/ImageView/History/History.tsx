@@ -16,14 +16,13 @@ import {
   getNearestImagePointInSameDirectionOfImagePoint,
   getRoadReference
 } from 'utilities/imagePointUtilities';
-import { IImagePoint, ILoadedImagePoints, imageType } from 'types';
+import { IImagePoint, ILoadedImagePoints } from 'types';
 import { SelectIcon, UnselectedIcon, PanoramaIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
   latLngZoomQueryParameterState,
   yearQueryParameterState,
-  imageTypeQueryParameterState,
   availableYears
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
@@ -200,7 +199,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const [historyImagePoints, setHistoryImagePoints] = useState<IImagePoint[]>([]);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const setFilteredImagePoints = useSetRecoilState(filteredImagePointsState);
-  const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
 
   const fetchImagePointsFromOGC = useFetchImagePointsFromOGC();
 
@@ -210,21 +208,14 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
     setCurrentImagePoint(imagePoint);
 
     const yearOfClickedImage = imagePoint.properties.AAR;
-    const clickedImageType = getImageType(imagePoint) as imageType;
 
     if (yearOfClickedImage !== currentYear) {
       setCurrentYear(yearOfClickedImage);
       if (loadedImagePoints) {
         const bbox = loadedImagePoints.bbox;
-        fetchImagePointsFromOGC(yearOfClickedImage, bbox, currentImageType);
+        fetchImagePointsFromOGC(yearOfClickedImage, bbox);
       }
     }
-
-    if (clickedImageType !== currentImageType && loadedImagePoints) {
-        const bbox = loadedImagePoints.bbox;
-        fetchImagePointsFromOGC(currentYear as number, bbox, getImageType(imagePoint) as imageType);
-        setCurrentImageType(clickedImageType as imageType);
-    };
   };
 
   useEffect(() => {

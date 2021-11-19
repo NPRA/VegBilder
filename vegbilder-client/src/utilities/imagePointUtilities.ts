@@ -141,6 +141,8 @@ const getFormattedDateString = (imageSeriesDate: string) => {
  * new object, under which each key is a date. The value for each of those is an array of image
  * points.
  */
+
+//TODO: gjøre om values i groupedByDate til et object med {imageType: "", imagePoints: []};
 const groupBySeries = (imagePoints: IImagePoint[]) => {
   let groupedByReferenceAndDate: Dictionary<Dictionary<IImagePoint[]>> = {};
   const groupedByRoadReference = groupBy(imagePoints, (ip) => getRoadReference(ip).withoutMeter);
@@ -270,17 +272,22 @@ const getFilteredImagePoints = (
     const currentImageSeries = {
       roadReference: getRoadReference(currentImagePoint).withoutMeter,
       date: getDateString(currentImagePoint),
+      imageType: getImageType(currentImagePoint)
     };
     let filteredImagePoints: IImagePoint[] = [];
+    //TODO: imageType må sjekkes og brukes på en eller annen måte her.
     for (const [roadReference, availableImageSeriesForRoadReference] of Object.entries(
       loadedImagePoints.imagePointsGroupedBySeries
     )) {
-      const imagePointsForRoadReference =
-        roadReference === currentImageSeries?.roadReference
-          ? availableImageSeriesForRoadReference[currentImageSeries.date]
-          : findLatestImageSeries(availableImageSeriesForRoadReference);
-      if (imagePointsForRoadReference) {
-        filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
+      // Sjekk bildetypen til det valgte bilde og finn bildeserien som bildet tilhører.
+      if (currentImageSeries.imageType === getImageType(availableImageSeriesForRoadReference[currentImageSeries.date]?.[0])) {
+          const imagePointsForRoadReference =
+          roadReference === currentImageSeries?.roadReference
+            ? availableImageSeriesForRoadReference[currentImageSeries.date]
+            : findLatestImageSeries(availableImageSeriesForRoadReference);
+        if (imagePointsForRoadReference) {
+          filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
+        }
       }
     }
     return filteredImagePoints;

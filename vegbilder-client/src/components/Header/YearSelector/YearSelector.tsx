@@ -151,7 +151,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
           if (currentImagePoint) {
             const latlng = getImagePointLatLng(currentImagePoint);
             if (latlng) {
-              fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear), currentImageType);
+              fetchNearestImagePointByYearAndLatLng(latlng, parseInt(newYear));
             };
           } else {
             setCurrentYear(newYear);

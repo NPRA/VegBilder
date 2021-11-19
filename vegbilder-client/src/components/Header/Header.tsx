@@ -6,7 +6,6 @@ import { useRecoilState } from 'recoil';
 
 import Search from './Search/Search';
 import YearSelector from './YearSelector/YearSelector';
-import Filter from './Filter/Filter';
 import { CircledHelpIcon } from 'components/Icons/Icons';
 import { DEFAULT_COORDINATES, DEFAULT_ZOOM } from 'constants/defaultParamters';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState, vegsystemreferanseState } from 'recoil/selectors';
@@ -76,9 +75,6 @@ const Header = ({ showMessage, setMapView, showInformation, setShowInformation }
           </Grid>
           <Grid item className={classes.searchContainer}>
             <Search showMessage={showMessage} setMapView={setMapView} />
-          </Grid>
-          <Grid style={{paddingRight: "10px"}}>
-            <Filter showMessage={showMessage} />
           </Grid>
           <Grid item className={classes.dateAndYearSelectorContainer}>
             <YearSelector showMessage={showMessage} />

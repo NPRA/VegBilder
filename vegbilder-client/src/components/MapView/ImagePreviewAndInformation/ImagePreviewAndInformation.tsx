@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 
-import { getImageUrl, getImageType, getImagePointLatLng } from 'utilities/imagePointUtilities';
+import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
@@ -113,7 +113,7 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-          {getImageType(currentImagePoint) === '360' ? 
+          {/*getImageType(currentImagePoint) === '360' ? 
             (<div className={classes.panoramaImageContainer}>
               <div 
               className={classes.panoramaImage} 
@@ -126,7 +126,7 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
                 <PanoramaIcon/>
               </div>
             </div>)
-            :
+            :*/
             <img
             src={getImageUrl(currentImagePoint)}
             className={classes.image}

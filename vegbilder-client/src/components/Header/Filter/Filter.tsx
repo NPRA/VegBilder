@@ -18,8 +18,7 @@ import {
   currentImagePointState,
   loadedImagePointsState,
 } from 'recoil/atoms';
-import {imageTypeQueryParameterState, latLngZoomQueryParameterState, viewQueryParamterState} from 'recoil/selectors';
-import { imageType } from 'types';
+import { latLngZoomQueryParameterState, viewQueryParamterState} from 'recoil/selectors';
 import { CheckmarkIcon } from "components/Icons/Icons";
 import  { CameraAlt } from "@material-ui/icons";
 import { getImagePointLatLng } from "utilities/imagePointUtilities";
@@ -140,7 +139,10 @@ interface IFilterProps {
 
 const Filter = ({ showMessage }: IFilterProps) => {
   const classes = useStyles();
-  const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
+  //const [currentImageType, setCurrentImageType] = useRecoilState(imageTypeQueryParameterState);
+  const currentImageTypePlanar = 'planar';
+  const currentImageType360 = '360';
+  const currentImageTypeAll = 'all';
   const [currentZoomAndCoordinates, ] = useRecoilState(latLngZoomQueryParameterState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentView, ] = useRecoilState(viewQueryParamterState);
@@ -156,12 +158,13 @@ const Filter = ({ showMessage }: IFilterProps) => {
       value: unknown;
     }>
   ) => {
-    let imageType = event.target.value as imageType;
+    //let imageType = event.target.value as imageType;
 
     //If there is no currently chosen imagePoint in map view, we can change imagetype immediately.
+    /*
     if (currentView === 'map' && !currentImagePoint) {
       setCurrentImageType(imageType);      
-    }
+    }*/
 
     if (currentImagePoint) {
       // When in map view: clicking on imagePoints does not update latlng in url. Normally this is fine, because opening
@@ -171,7 +174,7 @@ const Filter = ({ showMessage }: IFilterProps) => {
       const latlng = currentView === 'map' ? getImagePointLatLng(currentImagePoint) : { lat: currentZoomAndCoordinates.lat, lng: currentZoomAndCoordinates.lng };
       setLoadedImagePoints(null); // reset state
       if (latlng) {
-        fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR, imageType);
+        fetchNearestImagePoint(latlng, currentImagePoint.properties.AAR);
       };      
     }
   };
@@ -183,7 +186,7 @@ const Filter = ({ showMessage }: IFilterProps) => {
         <FormControl className={classes.form}>
           <Select
           id="cameraType-select"
-          value={currentImageType}
+          value={currentImageTypeAll}
           className={classes.cameraSelect}
           input={<CustomInput/>}
           IconComponent={CustomExpandMoreIcon}
@@ -193,17 +196,24 @@ const Filter = ({ showMessage }: IFilterProps) => {
             {/*Bug i ListSubheader gir den en uønsket onClick event som må stoppes.*/}
             <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Bildetype</ListSubheader>
             <MenuItem
+              value={'all'}
+              className={classes.item}
+              style={{color: currentImageTypeAll === 'all' ? Theme.palette.common.orangeDark : ''}}>
+              {currentImageTypeAll === 'all' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+                {'Planar og 360'}
+            </MenuItem>
+            <MenuItem
               value={'planar'}
               className={classes.item}
-              style={{color: currentImageType === 'planar' ? Theme.palette.common.orangeDark : ''}}>
-              {currentImageType === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+              style={{color: currentImageTypePlanar === 'planar' ? Theme.palette.common.orangeDark : ''}}>
+              {currentImageTypePlanar === 'planar' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
                 {'Planar'}
             </MenuItem>
             <MenuItem
               value={'360'}
               className={classes.item}
-              style={{color: currentImageType === '360' ? Theme.palette.common.orangeDark : ''}}>
-              {currentImageType === '360' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
+              style={{color: currentImageType360 === '360' ? Theme.palette.common.orangeDark : ''}}>
+              {currentImageType360 === '360' ? <CheckmarkIcon className={classes.checkmarkStyle}/> : null}
                 {'360'}
             </MenuItem>
         </Select>
@@ -215,5 +225,3 @@ const Filter = ({ showMessage }: IFilterProps) => {
     </>
   );
 };
-
-export default Filter;

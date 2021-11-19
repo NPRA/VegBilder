@@ -18,7 +18,7 @@ import {
 } from 'recoil/selectors';
 import useAsyncError from 'hooks/useAsyncError';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
-import { currentImageTypeState, currentYearState } from 'recoil/atoms';
+import { currentYearState } from 'recoil/atoms';
 import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
@@ -132,7 +132,6 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
   const setLoadedImagePoints = useSetRecoilState(loadedImagePointsFilterState);
   const currentYear = useRecoilValue(currentYearState);
-  const currentCameraType = useRecoilValue(currentImageTypeState);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
   const throwError = useAsyncError();
@@ -205,7 +204,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
       setCurrentCoordinates({ ...latlng, zoom: zoom });
       setResetImagePoint(true);
       if (typeof currentYear === 'number') {
-        fetchNearestImagePoint(latlng, currentYear, currentCameraType).then((imagePoint) => {
+        fetchNearestImagePoint(latlng, currentYear).then((imagePoint) => {
           if (imagePoint) {
             const imagePointLatLng = getImagePointLatLng(imagePoint);
             if (imagePointLatLng) setCurrentCoordinates({ ...imagePointLatLng, zoom: zoom });

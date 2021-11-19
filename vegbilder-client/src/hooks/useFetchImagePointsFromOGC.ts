@@ -1,9 +1,9 @@
 import { useState } from 'react';
 
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
-import { imageType, IBbox, IImagePoint } from 'types';
+import { IBbox, IImagePoint } from 'types';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { loadedImagePointsFilterState } from 'recoil/selectors';
+import { loadedImagePointsFilterState, availableYearsQuery } from 'recoil/selectors';
 import { currentImagePointState } from 'recoil/atoms';
 import { getNearestImagePointInSameDirectionOfImagePoint } from 'utilities/imagePointUtilities';
 
@@ -11,19 +11,40 @@ const useFetchImagePointsFromOGC = () => {
   const [isFetching, setIsFetching] = useState(false);
   const [loadedImagePoints, setLoadedImagePoints] = useRecoilState(loadedImagePointsFilterState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
+  const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
 
-  async function fetchImagePointsByYearAndBbox(year: number, bbox: IBbox, imageType: imageType) {
+  const imageTypeHasImagesForYear = (imageType: string, year: number) => {
+    return availableYearsForAllImageTypes[imageType].includes(year);
+  }
+
+
+  async function fetchImagePointsByYearAndBbox(year: number, bbox: IBbox) {
     if (isFetching) return;
     setIsFetching(true);
 
-    let typename =
-    imageType === '360' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`;
 
-    const { imagePoints, expandedBbox } = await getImagePointsInTilesOverlappingBbox(
-      bbox,
-      typename
-    );
-    console.info('Antall bildepunkter returnert fra ogc: ' + imagePoints.length);
+    let imagePointsAll: IImagePoint[] = [];
+    let imagePointsPlanar: IImagePoint[] = [];
+    let imagePointsPanorama: IImagePoint[] = [];
+    let expandedBbox: any = {};
+
+      let resPlanar: any = {};
+      let res360: any = {};
+
+      if (imageTypeHasImagesForYear('planar', year)) {
+        resPlanar = await getImagePointsInTilesOverlappingBbox(bbox, `vegbilder_1_0:Vegbilder_${year}`);
+      }
+      if (imageTypeHasImagesForYear('360', year)) {
+        res360 = await getImagePointsInTilesOverlappingBbox(bbox, `vegbilder_1_0:Vegbilder_360_${year}`);
+      }
+
+      imagePointsPlanar = resPlanar.imagePoints ?? [];
+      imagePointsPanorama = res360.imagePoints ?? [];
+      imagePointsAll = [...imagePointsPlanar, ...imagePointsPanorama];
+
+      expandedBbox = res360.expandedBbox ?? resPlanar.expandedBbox; //expandedBbox is identical for both results.
+
+      console.info('Antall bildepunkter returnert fra ogc: ' + imagePointsAll.length);
 
     // If we have selected an imagepoint (currentImagePoint) and change imageType or year in filter, 
     // we want to remain in the imagePoint regardless of whether the current Bbox + new filter selection returns imagePoints
@@ -35,41 +56,39 @@ const useFetchImagePointsFromOGC = () => {
     // we have selected an imagePoint but click elsewhere on the map, we want to be able to search a wider area.
 
     const shouldFirstCheckForNearest = () => {
-      if (loadedImagePoints && (loadedImagePoints.year !== year || loadedImagePoints.imageType !== imageType)) {
+      if (loadedImagePoints && (loadedImagePoints.year !== year)) {
         return true;
       } else {
         return false;
       }
     }
-    if (imagePoints && imagePoints.length > 0) {
+    if (imagePointsAll && imagePointsAll.length > 0) {
       if (currentImagePoint && shouldFirstCheckForNearest()) {
-        const nearestImagePointInSameDirection = getNearestImagePointInSameDirectionOfImagePoint(imagePoints, currentImagePoint);
+        const nearestImagePointInSameDirection = getNearestImagePointInSameDirectionOfImagePoint(imagePointsAll, currentImagePoint);
           if (nearestImagePointInSameDirection) {
             setLoadedImagePoints({
-              imagePoints: imagePoints,
+              imagePoints: imagePointsAll,
               bbox: expandedBbox,
               year: year,
-              imageType: imageType,
             });
             setIsFetching(false);
-            return imagePoints as IImagePoint[];
+            return imagePointsAll as IImagePoint[];
           }
       } else {
         setLoadedImagePoints({
-          imagePoints: imagePoints,
+          imagePoints: imagePointsAll,
           bbox: expandedBbox,
           year: year,
-          imageType: imageType,
         });
         setIsFetching(false);
-        return imagePoints as IImagePoint[];
+        return imagePointsAll as IImagePoint[];
       }
     }
     setIsFetching(false);
   }
 
-  return (year: number, bbox: IBbox, imageType: imageType) =>
-    fetchImagePointsByYearAndBbox(year, bbox, imageType);
+  return (year: number, bbox: IBbox) =>
+    fetchImagePointsByYearAndBbox(year, bbox);
 };
 
   export default useFetchImagePointsFromOGC;

@@ -49,7 +49,6 @@ export interface ILoadedImagePoints {
   imagePoints: IImagePoint[];
   bbox: IBbox;
   year: number;
-  imageType: imageType;
   imagePointsGroupedBySeries?: Dictionary<Dictionary<IImagePoint[]>>;
   availableDates?: string[];
 }
@@ -58,4 +57,4 @@ export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 
 
 export type viewTypes = 'map' | 'image';
 
-export type imageType = 'planar' | '360' | 'dekkekamera';
+export type imageType = 'planar' | '360' | 'dekkekamera' | 'all';
