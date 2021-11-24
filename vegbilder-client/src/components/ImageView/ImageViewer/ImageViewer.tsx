@@ -12,13 +12,14 @@ import {
   usesOldVegreferanse,
   areOnSameOrConsecutiveRoadParts,
   shouldIncludeImagePoint,
+  getImageType,
 } from 'utilities/imagePointUtilities';
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneState } from 'recoil/selectors';
 import { debounce } from 'lodash';
-//import PanoramaImage from './PanoramaImage/PanoramaImage';
+import PanoramaImage from './PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
@@ -79,6 +80,11 @@ const ImageViewer = ({
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
 
   const imgRef = useRef<HTMLImageElement>(null);
+
+  let currentImageType;
+  if (currentImagePoint) {
+    currentImageType = getImageType(currentImagePoint);
+  }
 
   const hasOppositeParity = (feltkode1: string, feltkode2: string) => {
     if (!feltkode1 || !feltkode2) return null;
@@ -333,19 +339,23 @@ const ImageViewer = ({
     <>
       <div className={classes.imageArea}>
         {currentImagePoint && (
-          <>
-            {(
-              <>
-                <img
-                  id="vegbilde"
-                  src={getImageUrl(currentImagePoint)}
-                  alt="vegbilde"
-                  className={isZoomedInImage ? classes.enlargedImage : classes.image}
-                  ref={imgRef}
-                  onLoad={onImageLoaded}
-                />
-                {renderMeterLine()}
-              </>
+           <>
+           {currentImageType === '360' ? (
+             <PanoramaImage 
+             imageUrl={getImageUrl(currentImagePoint)} 
+             isHistoryMode={isHistoryMode}/>
+           ) : (
+             <>
+               <img
+                 id="vegbilde"
+                 src={getImageUrl(currentImagePoint)}
+                 alt="vegbilde"
+                 className={isZoomedInImage ? classes.enlargedImage : classes.image}
+                 ref={imgRef}
+                 onLoad={onImageLoaded}
+               />
+               {renderMeterLine()}
+             </>
             )}
           </>
         )}
