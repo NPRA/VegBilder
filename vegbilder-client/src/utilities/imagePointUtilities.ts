@@ -142,7 +142,7 @@ const getFormattedDateString = (imageSeriesDate: string) => {
  * points.
  */
 
-//TODO: gjøre om values i groupedByDate til et object med {imageType: "", imagePoints: []};
+
 const groupBySeries = (imagePoints: IImagePoint[]) => {
   let groupedByReferenceAndDate: Dictionary<Dictionary<IImagePoint[]>> = {};
   const groupedByRoadReference = groupBy(imagePoints, (ip) => getRoadReference(ip).withoutMeter);
@@ -279,16 +279,13 @@ const getFilteredImagePoints = (
     for (const [roadReference, availableImageSeriesForRoadReference] of Object.entries(
       loadedImagePoints.imagePointsGroupedBySeries
     )) {
-      // Sjekk bildetypen til det valgte bilde og finn bildeserien som bildet tilhører.
-      if (currentImageSeries.imageType === getImageType(availableImageSeriesForRoadReference[currentImageSeries.date]?.[0])) {
-          const imagePointsForRoadReference =
-          roadReference === currentImageSeries?.roadReference
-            ? availableImageSeriesForRoadReference[currentImageSeries.date]
-            : findLatestImageSeries(availableImageSeriesForRoadReference);
-        if (imagePointsForRoadReference) {
-          filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
-        }
-      }
+      const imagePointsForRoadReference =
+      roadReference === currentImageSeries?.roadReference
+        ? availableImageSeriesForRoadReference[currentImageSeries.date]
+        : findLatestImageSeries(availableImageSeriesForRoadReference);
+    if (imagePointsForRoadReference) {
+      filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
+    }
     }
     return filteredImagePoints;
   }
