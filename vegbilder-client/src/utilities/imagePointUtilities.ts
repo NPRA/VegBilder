@@ -21,7 +21,13 @@ const getImageType = (imagepoint: IImagePoint) => {
   } 
 };
 
-const getImageUrl = (imagepoint: IImagePoint) => imagepoint.properties.URL;
+const getImageUrl = (imagepoint: IImagePoint) => {
+  if (imagepoint.properties.URLPREVIEW) {
+    return imagepoint.properties.URLPREVIEW;
+  } else {
+    return imagepoint.properties.URL;
+  }
+};
 
 const findNearestImagePoint = (
   imagePoints: IImagePoint[],

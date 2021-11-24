@@ -28,6 +28,7 @@ export interface IImagePoint {
     REFLINKPOSISJON: number;
     RETNING: number;
     URL: string;
+    URLPREVIEW: string;
     BASELINEINFO: string;
     DETEKTERTEOBJEKTER: string | null;
   };
