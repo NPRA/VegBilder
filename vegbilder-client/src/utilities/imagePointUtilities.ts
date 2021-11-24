@@ -14,7 +14,7 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
 };
 
 const getImageType = (imagepoint: IImagePoint) => {
-  if (!imagepoint.properties.BILDETYPE) {
+  if (!imagepoint.properties.BILDETYPE || imagepoint.properties.BILDETYPE === 'planar') {
     return "planar"; 
   } else {
     return imagepoint.properties.BILDETYPE; 
