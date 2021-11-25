@@ -283,6 +283,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           isHistoryMode={isHistoryMode}
           setIsHistoryMode={setIsHistoryMode}
           panoramaIsActive={panoramaIsActive}
+          setPanoramaIsActive={setPanoramaIsActive}
         />
       </Grid>
       {showReportErrorsScheme ? (

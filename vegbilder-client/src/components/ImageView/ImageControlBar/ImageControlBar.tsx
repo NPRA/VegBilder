@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { SetStateAction } from 'react';
 import { AppBar, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     flex: '0 1 20rem',
   },
   rightItem: {
+    display: 'relative',
     flex: '0 1 20rem',
   },
   icon: {
@@ -26,6 +27,10 @@ const useStyles = makeStyles((theme) => ({
     height: '3.5rem',
     marginRight: '1rem',
   },
+  panoramaToggle: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  }
 }));
 
 interface IImageControlBarProps {
@@ -40,6 +45,7 @@ interface IImageControlBarProps {
   isHistoryMode: boolean;
   setIsHistoryMode: (isHistoryMode: boolean) => void;
   panoramaIsActive: boolean;
+  setPanoramaIsActive: (status: SetStateAction<boolean>) => void;
 }
 
 const ImageControlBar = ({
@@ -53,9 +59,15 @@ const ImageControlBar = ({
   setIsZoomedInImage,
   isHistoryMode,
   setIsHistoryMode,
-  panoramaIsActive
+  panoramaIsActive,
+  setPanoramaIsActive,
 }: IImageControlBarProps) => {
   const classes = useStyles();
+
+  const togglePanoramaView = () => {
+    setPanoramaIsActive(!panoramaIsActive);
+  };
+
 
   return (
     <AppBar position="relative" className={classes.appbar}>
@@ -78,7 +90,11 @@ const ImageControlBar = ({
             panoramaIsActive={panoramaIsActive}
           />
         </Grid>
-        <Grid item className={classes.rightItem} />
+        <Grid item className={classes.rightItem}>
+          <div className={classes.panoramaToggle}>
+          <button onClick={togglePanoramaView}>Skru på/av 360</button>
+          </div>
+        </Grid>
       </Grid>
     </AppBar>
   );
