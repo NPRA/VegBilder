@@ -156,6 +156,9 @@ async function findHistoryImagePoints(
         };
 
         for (const [imageType, years] of Object.entries(availableYearsForAllImageTypes)) {
+          if (imageType === 'all') {
+            return;
+          }
           for (const year of years) {
             let typename = imageType === 'panorama' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`;
             await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
