@@ -37,7 +37,6 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const currentYear = useRecoilValue(currentYearState);
- // const currentImageType = useRecoilValue(currentImageTypeState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const map = useMap();

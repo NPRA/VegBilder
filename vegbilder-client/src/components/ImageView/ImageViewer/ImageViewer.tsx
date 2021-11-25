@@ -83,11 +83,6 @@ const ImageViewer = ({
 
   const imgRef = useRef<HTMLImageElement>(null);
 
-  let currentImageType;
-  if (currentImagePoint) {
-    currentImageType = getImageType(currentImagePoint);
-  }
-
   const hasOppositeParity = (feltkode1: string, feltkode2: string) => {
     if (!feltkode1 || !feltkode2) return null;
     const primaryFeltkode1 = parseInt(feltkode1[0], 10);

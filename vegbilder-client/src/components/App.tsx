@@ -89,15 +89,6 @@ const App = () => {
 
   const searchParams = new URLSearchParams(window.location.search);
 
-  //Setter imageType her og ikke i useEffect for å unngå at recoil state blir feil i oppstart av app.
-  /*
-  if (!imageTypeQuery) {
-    setCurrentImageType("planar");
-  } else if (imageTypeQuery !== "planar") {
-    setCurrentImageType(imageTypeQuery);
-  }*/
-
-
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
 

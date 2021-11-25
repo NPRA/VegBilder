@@ -1,6 +1,6 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
 
-import { currentImageTypeState, loadedImagePointsState } from 'recoil/atoms';
+import { loadedImagePointsState } from 'recoil/atoms';
 import { availableYearsQuery, yearQueryParameterState, viewQueryParamterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { ILatlng } from 'types';
 import useFetchNearestImagePoint from './useFetchNearestImagePoint';
@@ -14,10 +14,6 @@ const useFetchNearestLatestImagePoint = (
 ) => {
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
-  const availableYearsPlanar = availableYearsForAllImageTypes['planar'];
-  const availableYears360 = availableYearsForAllImageTypes['360'];
-  
-  const currentImageType = useRecoilValue(currentImageTypeState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [, setView] = useRecoilState(viewQueryParamterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -38,7 +34,7 @@ const useFetchNearestLatestImagePoint = (
     ? fetchImagePointsByLatLongAndYearWithCustomRadius
     : fetchImagePointsByLatLongAndYear);
 
-    let availableYears = currentImageType === 'panorama' ? availableYears360 : availableYearsPlanar;
+    const availableYears = availableYearsForAllImageTypes['all'];
 
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {

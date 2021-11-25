@@ -5,7 +5,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import ImageControlButtons from './ImageControlButtons';
 import { IImagePoint, imageType } from "types";
-import { getImageType } from "utilities/imagePointUtilities";
+import { getImageType } from 'utilities/imagePointUtilities';
+import PanoramaToggleButton from './PanoramaToggleButton';
 
 const useStyles = makeStyles((theme) => ({
   appbar: {
@@ -68,11 +69,6 @@ const ImageControlBar = ({
   const classes = useStyles();
   const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
 
-  const togglePanoramaView = () => {
-    setPanoramaIsActive(!panoramaIsActive);
-  };
-
-
   return (
     <AppBar position="relative" className={classes.appbar}>
       <Grid container direction="row" justify="space-between" alignItems="center" wrap="nowrap">
@@ -96,7 +92,8 @@ const ImageControlBar = ({
         </Grid>
         <Grid item className={classes.rightItem}>
             <div className={classes.panoramaToggle}>
-              <button onClick={togglePanoramaView} disabled={currentImageType !== 'panorama'}>Skru på/av 360</button>
+              <PanoramaToggleButton panoramaIsActive={panoramaIsActive} setPanoramaIsActive={setPanoramaIsActive} currentImagePoint={currentImagePoint} />
+              {/* <button onClick={togglePanoramaView} disabled={currentImageType !== 'panorama'}>Skru på/av 360</button> */}
             </div> 
         </Grid>
       </Grid>

@@ -1,7 +1,7 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
 import { pannellumSettings } from "constants/settings";
 import { atom } from 'recoil';
-import { imageType, IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
+import { IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
 import { IStatisticsFeature } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
 
 const searchParams = new URLSearchParams(window.location.search);
@@ -54,11 +54,6 @@ export const loadedImagePointsState = atom<ILoadedImagePoints | null>({
 export const filteredImagePointsState = atom<IImagePoint[] | null>({
   key: 'filteredImagePoints',
   default: null,
-});
-
-export const currentImageTypeState = atom<imageType>({
-  key: 'currentImageType',
-  default: 'planar',
 });
 
 export const availableStatistics = atom<IStatisticsFeature[] | null>({

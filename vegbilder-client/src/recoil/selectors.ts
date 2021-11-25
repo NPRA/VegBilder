@@ -7,7 +7,7 @@ import { IStatisticsFeature, IStatisticsFeatureProperties } from "components/Pag
 import {
   getDateString,
   getFilteredImagePoints,
-  groupBySeries,
+  groupBySeries
 } from 'utilities/imagePointUtilities';
 import {
   currentImagePointState,
@@ -18,7 +18,6 @@ import {
   loadedImagePointsState,
   playVideoState,
   currentVegsystemreferanseState,
-  currentImageTypeState,
   turnedToOtherLane,
   currentPannellumHfovState
 } from './atoms';
@@ -106,11 +105,7 @@ export const yearQueryParameterState = selector({
     if (newYear === 'Nyeste') {
       setNewQueryParamter('year', 'latest');
       set(currentYearState, newYear);
-    } else if (typeof newYear === 'number' && (get(currentImageTypeState) === 'planar') && get(availableYearsQuery)['planar'].includes(newYear)) {
-      setNewQueryParamter('year', newYear.toString());
-      set(currentYearState, newYear);
-    }
-    else if (typeof newYear === 'number' && (get(currentImageTypeState) === 'panorama') && get(availableYearsQuery)['panorama'].includes(newYear)) {
+    } else if (typeof newYear === 'number'&& get(availableYearsQuery)['all'].includes(newYear)) {
       setNewQueryParamter('year', newYear.toString());
       set(currentYearState, newYear);
     }

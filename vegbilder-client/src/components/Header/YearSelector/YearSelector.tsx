@@ -14,7 +14,6 @@ import {
   viewQueryParamterState,
   yearQueryParameterState
 } from 'recoil/selectors';
-import {currentImageTypeState} from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
@@ -108,7 +107,6 @@ interface IYearSelectorProps {
 const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const classes = useStyles();
   const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
-  const currentImageType = useRecoilValue(currentImageTypeState);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [currentView, ] = useRecoilState(viewQueryParamterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
@@ -120,21 +118,6 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
     'Fant ingen bilder fra valgt år for punktet du er i. Velg et annet år eller et annet punkt.',
     'findImageNearbyCurrentImagePoint'
   );
-/*
-  const availableYearsForCurrentImageType = currentImageType === 'panorama' ? availableYearsForAllImageTypes['panorama'] : availableYearsForAllImageTypes['panorama'];
-
-  useEffect(() => {
-    if (typeof currentYear === 'number') {
-      if (!availableYearsForCurrentImageType.includes(currentYear)) {
-        setCurrentYear("");
-        showMessage(`Det fins ingen ${currentImageType}-bilder fra ${currentYear}. Velg en annen bildetype eller et annet år.`)
-      } else {
-        setCurrentYear(currentYear);
-      }
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImageType, availableYearsForCurrentImageType])
-  */
 
   const handleChange = (
     event: React.ChangeEvent<{

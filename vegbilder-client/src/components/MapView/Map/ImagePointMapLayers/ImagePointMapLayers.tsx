@@ -11,7 +11,6 @@ const ImagePointMapLayers = () => {
   const zoom = useMap().getZoom();
   const currentYear = useRecoilValue(currentYearState);
   const currentImagePoint = useRecoilValue(currentImagePointState);
- // const currentImageType = useRecoilValue(currentImageTypeState);
   const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
 
   const showImagePointsMarkers = zoom > 14 && currentYear !== 'Nyeste' && currentImagePoint;

@@ -4,12 +4,13 @@ import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
 import ImageControlBar from './ImageControlBar/ImageControlBar';
 import ImageViewer from './ImageViewer/ImageViewer';
-import { currentImagePointState, currentImageTypeState } from 'recoil/atoms';
+import { currentImagePointState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
 import { DEFAULT_TIME_BETWEEN_IMAGES, DEFAULT_TIME_BETWEEN_IMAGES_360 } from 'constants/defaultParamters';
 import CloseButton from 'components/CloseButton/CloseButton';
 import SideControlBar from './SideControlBar/SideControlBar';
+import { getImageType } from "utilities/imagePointUtilities";
 
 
 const useStyles = makeStyles(() => ({
@@ -55,7 +56,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const [isHistoryMode, setIsHistoryMode] = useState(false);
   const currentImagePoint = useRecoilValue(currentImagePointState);
-  const currentImageType = useRecoilValue(currentImageTypeState);
+  const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
   const imageContainerRef = useRef<HTMLImageElement>(null);
