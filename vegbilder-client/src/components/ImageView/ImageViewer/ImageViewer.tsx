@@ -57,6 +57,7 @@ interface IImageViewerProps {
   timeBetweenImages: number;
   meterLineVisible: boolean;
   isHistoryMode: boolean;
+  panoramaIsActive: boolean;
 }
 
 const ImageViewer = ({
@@ -64,7 +65,8 @@ const ImageViewer = ({
   isZoomedInImage,
   timeBetweenImages,
   meterLineVisible,
-  isHistoryMode
+  isHistoryMode,
+  panoramaIsActive
 }: IImageViewerProps) => {
   const classes = useStyles();
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
@@ -340,7 +342,7 @@ const ImageViewer = ({
       <div className={classes.imageArea}>
         {currentImagePoint && (
            <>
-           {currentImageType === '360' ? (
+           {panoramaIsActive ? (
              <PanoramaImage 
              imageUrl={getImageUrl(currentImagePoint)} 
              isHistoryMode={isHistoryMode}/>

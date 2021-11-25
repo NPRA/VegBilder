@@ -61,6 +61,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const imageContainerRef = useRef<HTMLImageElement>(null);
   const [cursor, setCursor] = useState('zoom-in');
   const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
+  const [panoramaIsActive, setPanoramaIsActive] = useState(false);
 
   const [meterLineVisible, setMeterLineVisible] = useState(false);
 
@@ -240,6 +241,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               timeBetweenImages={timeBetweenImages}
               isHistoryMode={isHistoryMode}
               showMessage={showSnackbarMessage}
+              panoramaIsActive={panoramaIsActive}
             />
             <History setIsHistoryMode={setIsHistoryMode} />
           </div>
@@ -248,7 +250,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             <div
             className={classes.imageCointainer}
             style={{ cursor }}
-            ref={currentImageType !== "panorama" ? imageContainerRef : null}
+            ref={!panoramaIsActive ? imageContainerRef : null}
           >
             <ImageViewer
               meterLineVisible={meterLineVisible}
@@ -256,6 +258,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               isHistoryMode={isHistoryMode}
               showMessage={showSnackbarMessage}
               isZoomedInImage={isZoomedInImage}
+              panoramaIsActive={panoramaIsActive}
             />
           </div>
           )}
@@ -279,6 +282,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           setIsZoomedInImage={setIsZoomedInImage}
           isHistoryMode={isHistoryMode}
           setIsHistoryMode={setIsHistoryMode}
+          panoramaIsActive={panoramaIsActive}
         />
       </Grid>
       {showReportErrorsScheme ? (

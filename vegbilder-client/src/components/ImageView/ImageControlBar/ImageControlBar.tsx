@@ -39,6 +39,7 @@ interface IImageControlBarProps {
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
   isHistoryMode: boolean;
   setIsHistoryMode: (isHistoryMode: boolean) => void;
+  panoramaIsActive: boolean;
 }
 
 const ImageControlBar = ({
@@ -52,6 +53,7 @@ const ImageControlBar = ({
   setIsZoomedInImage,
   isHistoryMode,
   setIsHistoryMode,
+  panoramaIsActive
 }: IImageControlBarProps) => {
   const classes = useStyles();
 
@@ -73,6 +75,7 @@ const ImageControlBar = ({
             setIsZoomedInImage={setIsZoomedInImage}
             isHistoryMode={isHistoryMode}
             setIsHistoryMode={setIsHistoryMode}
+            panoramaIsActive={panoramaIsActive}
           />
         </Grid>
         <Grid item className={classes.rightItem} />

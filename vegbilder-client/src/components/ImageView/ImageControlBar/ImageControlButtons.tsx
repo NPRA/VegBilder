@@ -105,6 +105,7 @@ interface IImageControlButtonsProps {
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
   isHistoryMode: boolean;
   setIsHistoryMode: (isHistoryMode: boolean) => void;
+  panoramaIsActive: boolean;
 }
 
 const ImageControlButtons = ({
@@ -118,6 +119,7 @@ const ImageControlButtons = ({
   setIsZoomedInImage,
   isHistoryMode,
   setIsHistoryMode,
+  panoramaIsActive
 }: IImageControlButtonsProps) => {
   const { setCommand } = useCommand();
   const currentImagePoint = useRecoilValue(imagePointQueryParameterState); 
@@ -174,12 +176,12 @@ const ImageControlButtons = ({
   }, [pannellumHfovState]); 
 
   useEffect(() => {
-    if (is360Image) {
+    if (panoramaIsActive) {
       setTimerOptions(TIMER_OPTIONS_360);
     } else {
       setTimerOptions(TIMER_OPTIONS);
     }
-  }, [is360Image])
+  }, [panoramaIsActive])
 
   const copyShareableUrlToClipboard = () => {
     if (currentImagePoint) {
@@ -484,10 +486,10 @@ const ImageControlButtons = ({
         {!playMode && !playVideo ? (
           <>
             {/*  Render normal menu */}
-            {!is360Image && zoomInOutButton()}
-            {is360Image && showFullSceenButton()}
-            {is360Image && zoomInOut360Button("zoomIn")}
-            {is360Image && zoomInOut360Button("zoomOut")}
+            {!panoramaIsActive && zoomInOutButton()}
+            {panoramaIsActive && showFullSceenButton()}
+            {panoramaIsActive && zoomInOut360Button("zoomIn")}
+            {panoramaIsActive && zoomInOut360Button("zoomOut")}
             {/* move backwards arrow button  */}
             <Tooltip title="Gå bakover">
               <IconButton
