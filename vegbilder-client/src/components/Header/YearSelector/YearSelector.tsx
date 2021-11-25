@@ -113,13 +113,15 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const [currentView, ] = useRecoilState(viewQueryParamterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
-  const availableYearsForCurrentImageType = currentImageType === 'panorama' ? availableYearsForAllImageTypes['panorama'] : availableYearsForAllImageTypes['panorama'];
+
 
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
     showMessage,
     'Fant ingen bilder fra valgt år for punktet du er i. Velg et annet år eller et annet punkt.',
     'findImageNearbyCurrentImagePoint'
   );
+/*
+  const availableYearsForCurrentImageType = currentImageType === 'panorama' ? availableYearsForAllImageTypes['panorama'] : availableYearsForAllImageTypes['panorama'];
 
   useEffect(() => {
     if (typeof currentYear === 'number') {
@@ -132,6 +134,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImageType, availableYearsForCurrentImageType])
+  */
 
   const handleChange = (
     event: React.ChangeEvent<{
@@ -182,7 +185,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
           {'Nyeste'}
         </MenuItem>
         <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Årstall</ListSubheader>
-        {availableYearsForCurrentImageType.map((year) => (
+        {availableYearsForAllImageTypes['all'].map((year) => (
           <MenuItem
             key={year}
             value={year}
