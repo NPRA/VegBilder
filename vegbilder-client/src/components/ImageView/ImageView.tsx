@@ -63,7 +63,6 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [cursor, setCursor] = useState('zoom-in');
   const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
   const [panoramaIsActive, setPanoramaIsActive] = useState(false);
-
   const [meterLineVisible, setMeterLineVisible] = useState(false);
 
   const maxScrollHeight =
@@ -144,7 +143,10 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES_360);
     } else {
       setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES);
-    }
+    };
+    if (currentImageType !== 'panorama') {
+      setPanoramaIsActive(false);
+    };
   }, [currentImageType])
 
   useEffect(() => {
