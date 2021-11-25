@@ -3,7 +3,6 @@ import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize} 
 import {useRecoilState} from 'recoil';
 import { pannellumSettings } from "constants/settings";
 import {currentViewState, currentPannellumHfovState} from '../../../../recoil/atoms';
-import { turnedToOtherLaneState } from '../../../../recoil/selectors';
 import { makeStyles } from '@material-ui/core/styles';
 import { PanoramaLabelIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
@@ -24,7 +23,6 @@ const useStyles = makeStyles((theme) => ({
 const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
   const classes = useStyles();
   const [currentView, ] = useRecoilState(currentViewState);
-  const [turnToOtherLane, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneState);
   const [, setPannellumHfovState] = useRecoilState(currentPannellumHfovState);
 
   const isPreview = currentView === 'map';
@@ -70,17 +68,16 @@ const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
       if (didMountFirstUrl.current) {
         let newConfig = {
           ...pannellumConfig,
-          pitch: turnToOtherLane ? 0 : getPitch(),
-          yaw: turnToOtherLane ? 0 : getYaw(),
-          hfov: turnToOtherLane ? 100 : getHfov(),
+          pitch: getPitch(),
+          yaw: getYaw(),
+          hfov: getHfov(),
           imageSource: imageUrl
         }
         addScene("newScene", newConfig, () => loadScene("newScene"));
-        setTurnToOtherLaneSelector(false);
       } else {
         didMountFirstUrl.current = true;
       };
-    }, [imageUrl, turnToOtherLane]);
+    }, [imageUrl]);
   }
 
 

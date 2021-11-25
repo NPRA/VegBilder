@@ -11,8 +11,7 @@ import {
   findNearestImagePoint,
   usesOldVegreferanse,
   areOnSameOrConsecutiveRoadParts,
-  shouldIncludeImagePoint,
-  getImageType,
+  shouldIncludeImagePoint
 } from 'utilities/imagePointUtilities';
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
@@ -74,7 +73,6 @@ const ImageViewer = ({
   const { command, resetCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [autoPlay, setAutoPlay] = useRecoilState(playVideoState);
-  const [, setTurnToOtherLaneSelector] = useRecoilState(turnedToOtherLaneState);
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
@@ -142,7 +140,6 @@ const ImageViewer = ({
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
         setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 16 });
-        setTurnToOtherLaneSelector(true);  //Flagg til panorama viewer for å sette riktig config. Ikke testet.
       }
     } else {
       showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
