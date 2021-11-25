@@ -177,11 +177,6 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
     });
   };
 
-
-
-
-  // He vil jeg at filteredImagePoints skal reflektere den bildeserien man har havnet i. Altså, det skal kun vises
-  // planar ELLER 360.
   useEffect(() => {
     if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
