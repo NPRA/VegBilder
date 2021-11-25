@@ -16,9 +16,11 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
 const getImageType = (imagepoint: IImagePoint) => {
   if (!imagepoint.properties.BILDETYPE || imagepoint.properties.BILDETYPE === 'planar') {
     return "planar"; 
-  } else {
-    return imagepoint.properties.BILDETYPE; 
-  } 
+  } else if (imagepoint.properties.BILDETYPE === '360') {
+    return 'panorama'; 
+  } else { 
+    return imagepoint.properties.BILDETYPE;
+  }
 };
 
 const getImageUrl = (imagepoint: IImagePoint) => {

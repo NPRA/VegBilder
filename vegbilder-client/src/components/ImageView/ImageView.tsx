@@ -284,6 +284,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           setIsHistoryMode={setIsHistoryMode}
           panoramaIsActive={panoramaIsActive}
           setPanoramaIsActive={setPanoramaIsActive}
+          currentImagePoint={currentImagePoint}
         />
       </Grid>
       {showReportErrorsScheme ? (
