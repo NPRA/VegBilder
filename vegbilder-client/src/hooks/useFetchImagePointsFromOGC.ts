@@ -34,7 +34,7 @@ const useFetchImagePointsFromOGC = () => {
       if (imageTypeHasImagesForYear('planar', year)) {
         resPlanar = await getImagePointsInTilesOverlappingBbox(bbox, `vegbilder_1_0:Vegbilder_${year}`);
       }
-      if (imageTypeHasImagesForYear('360', year)) {
+      if (imageTypeHasImagesForYear('panorama', year)) {
         res360 = await getImagePointsInTilesOverlappingBbox(bbox, `vegbilder_1_0:Vegbilder_360_${year}`);
       }
 

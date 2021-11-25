@@ -140,7 +140,7 @@ const ImageControlButtons = ({
     setMoreControlsAnchorEl(event.currentTarget);
 
   const [pannellumHfovState, setCurrentPannellumHfovState] = useRecoilState(currentPannellumHfovState);
-  const is360Image = currentImagePoint && getImageType(currentImagePoint) === '360' ? true : false;
+  const is360Image = currentImagePoint && getImageType(currentImagePoint) === 'panorama' ? true : false;
 
   const classes = useStyles({is360Image});
 

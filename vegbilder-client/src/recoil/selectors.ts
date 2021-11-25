@@ -61,7 +61,7 @@ export const availableYearsQuery = selector({
       const sortedPlanarYears = availableYearsPlanar.slice().sort((a: number, b: number) => b - a);
       const sorted360Years = availableYears360.slice().sort((a: number, b: number) => b - a);
       const sortedAllImageTypesYears = [...new Set([...sortedPlanarYears, ...sorted360Years])];
-      const availableYearsForAllImageTypes: availableYears = {'planar': sortedPlanarYears, '360': sorted360Years, 'all': sortedAllImageTypesYears};
+      const availableYearsForAllImageTypes: availableYears = {'planar': sortedPlanarYears, 'panorama': sorted360Years, 'all': sortedAllImageTypesYears};
 
       return availableYearsForAllImageTypes;
     }
@@ -110,7 +110,7 @@ export const yearQueryParameterState = selector({
       setNewQueryParamter('year', newYear.toString());
       set(currentYearState, newYear);
     }
-    else if (typeof newYear === 'number' && (get(currentImageTypeState) === '360') && get(availableYearsQuery)['360'].includes(newYear)) {
+    else if (typeof newYear === 'number' && (get(currentImageTypeState) === 'panorama') && get(availableYearsQuery)['panorama'].includes(newYear)) {
       setNewQueryParamter('year', newYear.toString());
       set(currentYearState, newYear);
     }

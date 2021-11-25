@@ -38,7 +38,7 @@ const useFetchNearestLatestImagePoint = (
     ? fetchImagePointsByLatLongAndYearWithCustomRadius
     : fetchImagePointsByLatLongAndYear);
 
-    let availableYears = currentImageType === '360' ? availableYears360 : availableYearsPlanar;
+    let availableYears = currentImageType === 'panorama' ? availableYears360 : availableYearsPlanar;
 
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {

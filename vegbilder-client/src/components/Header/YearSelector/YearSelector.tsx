@@ -113,7 +113,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const [currentView, ] = useRecoilState(viewQueryParamterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
 
-  const availableYearsForCurrentImageType = currentImageType === '360' ? availableYearsForAllImageTypes['360'] : availableYearsForAllImageTypes['planar'];
+  const availableYearsForCurrentImageType = currentImageType === 'panorama' ? availableYearsForAllImageTypes['panorama'] : availableYearsForAllImageTypes['panorama'];
 
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
     showMessage,

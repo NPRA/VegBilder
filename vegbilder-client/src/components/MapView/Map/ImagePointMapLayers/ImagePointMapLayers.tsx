@@ -28,11 +28,11 @@ const ImagePointMapLayers = () => {
       if (showNyesteKartlag) { 
         return `vegbilder_1_0:Vegbilder_dekning, vegbilder_1_0:Vegbilder_360_dekning`; 
       } else if (typeof currentYear === 'number') {
-        if (imageTypeHasImagesForYear('360', currentYear) && imageTypeHasImagesForYear('planar', currentYear)) {
+        if (imageTypeHasImagesForYear('panorama', currentYear) && imageTypeHasImagesForYear('planar', currentYear)) {
           return `vegbilder_1_0:Vegbilder_oversikt_${currentYear}, vegbilder_1_0:Vegbilder_360_oversikt_${currentYear}`;
-        } else if (!imageTypeHasImagesForYear('360', currentYear) && imageTypeHasImagesForYear('planar', currentYear)) {
+        } else if (!imageTypeHasImagesForYear('panorama', currentYear) && imageTypeHasImagesForYear('planar', currentYear)) {
           return `vegbilder_1_0:Vegbilder_oversikt_${currentYear}`;
-        } else if (imageTypeHasImagesForYear('360', currentYear) && !imageTypeHasImagesForYear('planar', currentYear)) {
+        } else if (imageTypeHasImagesForYear('panorama', currentYear) && !imageTypeHasImagesForYear('planar', currentYear)) {
           return `vegbilder_1_0:Vegbilder_360_oversikt_${currentYear}`;
         }
       } 

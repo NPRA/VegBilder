@@ -157,7 +157,7 @@ async function findHistoryImagePoints(
 
         for (const [imageType, years] of Object.entries(availableYearsForAllImageTypes)) {
           for (const year of years) {
-            let typename = imageType === '360' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`;
+            let typename = imageType === 'panorama' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`;
             await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
               const imagePoints = res.imagePoints;
               const uniqueDatesInOtherYears: Set<number> = new Set();
@@ -260,13 +260,13 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
                   <Typography variant="body1">{getDateAndTimeString(imagePoint)}</Typography>
                 </div>
                 <div className={classes.infoIcons}>
-                  {getImageType(imagePoint) === '360' ? <PanoramaIcon/> : null}
+                  {getImageType(imagePoint) === 'panorama' ? <PanoramaIcon/> : null}
                   {imagePoint.id === currentImagePoint?.id ?
                     <SelectIcon /> : <UnselectedIcon />}
                 </div>
               </div>
               <div className={classes.imageContainer}>
-                {getImageType(imagePoint) === '360' ?
+                {getImageType(imagePoint) === 'panorama' ?
                   <>
                     <div 
                     className={classes.panoramaImage} 

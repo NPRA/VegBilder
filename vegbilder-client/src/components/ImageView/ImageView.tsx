@@ -138,7 +138,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [, dispatch] = useReducer(scrollReducer, initialScrollState);
 
   useEffect(() => {
-    if (currentImageType === '360') {
+    if (currentImageType === 'panorama') {
       setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES_360);
     } else {
       setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES);
@@ -248,7 +248,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             <div
             className={classes.imageCointainer}
             style={{ cursor }}
-            ref={currentImageType !== "360" ? imageContainerRef : null}
+            ref={currentImageType !== "panorama" ? imageContainerRef : null}
           >
             <ImageViewer
               meterLineVisible={meterLineVisible}
