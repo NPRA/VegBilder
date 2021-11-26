@@ -3,25 +3,10 @@ import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize} 
 import {useRecoilState} from 'recoil';
 import { pannellumSettings } from "constants/settings";
 import {currentViewState, currentPannellumHfovState} from '../../../../recoil/atoms';
-import { makeStyles } from '@material-ui/core/styles';
-import { PanoramaLabelIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
-const useStyles = makeStyles((theme) => ({
-  label: {
-    position: 'absolute',
-    cursor: 'default',
-    bottom: '4px',
-    right: '4px',
-    '& svg' : {
-      verticalAlign: 'top'
-    }
-  }
-}))
-
 const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
-  const classes = useStyles();
   const [currentView, ] = useRecoilState(currentViewState);
   const [, setPannellumHfovState] = useRecoilState(currentPannellumHfovState);
 
@@ -107,9 +92,6 @@ const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
         config={pannellumConfig}
         style={pannellumStyle}
         /> 
-        <div className={classes.label}>
-          <PanoramaLabelIcon/>
-        </div>
     </>
   );
 };
