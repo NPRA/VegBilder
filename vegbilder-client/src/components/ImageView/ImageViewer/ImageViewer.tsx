@@ -16,9 +16,10 @@ import {
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
-import { imagePointQueryParameterState, latLngZoomQueryParameterState, turnedToOtherLaneState } from 'recoil/selectors';
+import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { debounce } from 'lodash';
 import PanoramaImage from './PanoramaImage/PanoramaImage';
+//import utsnitt from './utsnitt.jpg';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
