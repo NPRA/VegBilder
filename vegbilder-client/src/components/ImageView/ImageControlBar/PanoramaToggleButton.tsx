@@ -1,5 +1,5 @@
 import React from 'react';
-import { FormGroup, FormControlLabel} from '@material-ui/core';
+import { FormGroup, FormControlLabel, Tooltip } from '@material-ui/core';
 import { Switch } from '@material-ui/core';
 import { IImagePoint } from "types";
 import { getImageType } from "utilities/imagePointUtilities";
@@ -19,11 +19,13 @@ const PanoramaToggleButton = ({panoramaIsActive, setPanoramaIsActive, currentIma
 
   return (
     <FormGroup>
-      <FormControlLabel
-        control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaIsActive} onChange={handleChange} name="360-toggle" />}
-        label="360-visning"
-        labelPlacement="top"
-      />
+      <Tooltip title={currentImageType !== 'panorama' ? 'Dette bildet har ikke 360-modus' : ''}>
+        <FormControlLabel
+          control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaIsActive} onChange={handleChange} name="360-toggle" />}
+          label="360-visning"
+          labelPlacement="top"
+        />
+      </Tooltip>
     </FormGroup>
   )
 };
