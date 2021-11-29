@@ -5,6 +5,7 @@ import LFTEticaSemiBoldWoff from 'fonts/LFT_Etica_Semibold.woff';
 
 declare module '@material-ui/core/styles/createPalette' {
   interface CommonColors {
+    grayLight: string;
     grayDark: string;
     grayDarker: string;
     grayRegular: string;
@@ -17,6 +18,7 @@ declare module '@material-ui/core/styles/createPalette' {
   }
 }
 
+const grayLight = '#f5f5f5';
 const grayRegularLight = '#ececec80';
 const grayRegular = '#ececec';
 const grayIcons = '#c4c4c4';
@@ -275,6 +277,66 @@ export default createMuiTheme({
           backgroundColor: grayDarker,
         },
       },
+    },
+    MuiFormControlLabel: {
+      label: {
+        '&$disabled': {
+          color: grayRegular,
+          opacity: '40%',
+        }
+      },
+      disabled: {},
+    },
+    MuiSwitch: {
+      root: {
+        width: 30,
+        height: 15,
+        padding: 0,
+        margin: 1,
+      },
+      switchBase: {
+        height: 15,
+        width: 15,
+        padding: 0,
+        color: grayLight,
+        '&$checked': {
+          transform: 'translateX(15px)',
+          '& + $track': {
+            opacity: 1,
+            border: 'none',
+          },
+        },
+        '&:hover': {
+          backgroundColor: 'transparent',
+        },
+        '&:focusVisible $thumb': {
+          color: 'orangeDark',
+          border: '6px solid #fff',
+        },
+      },
+      colorSecondary: {
+        '&$checked': {
+          color: grayLight
+        },
+        '&$disabled': {
+          opacity: '40%'
+        }
+      },
+      thumb: {
+        width: 15,
+        height: 15,
+      },
+      track: {
+        borderRadius: 26 / 2,
+        border: `none`,
+        backgroundColor: grayRegularLight,
+        opacity: 1,
+        '$checked$checked + &': {
+          backgroundColor: orangeDark
+        }
+      },
+      checked: {},
+      disabled: {}
     },
     MuiTableRow: {
      root: {
