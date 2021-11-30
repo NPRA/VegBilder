@@ -39,5 +39,6 @@
 
 .pnlm-ui .pnlm-compass {
   background-image: url("compass-arrow.svg");
-  bottom: 4px;
+  bottom: 0.5rem;
+  right: 3.7rem;
 }
