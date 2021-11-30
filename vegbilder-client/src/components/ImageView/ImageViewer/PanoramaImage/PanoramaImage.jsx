@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize} from 'react-pannellum';
 import {useRecoilState} from 'recoil';
 import { pannellumSettings } from "constants/settings";
-import {currentViewState, currentPannellumHfovState} from '../../../../recoil/atoms';
+import {currentViewState, currentPannellumHfovState} from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 

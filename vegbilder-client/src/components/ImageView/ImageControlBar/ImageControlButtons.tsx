@@ -361,7 +361,7 @@ const ImageControlButtons = ({
           disabled={isHistoryMode}
           aria-label="Aktiver fullskjermvisning"
           className={isHistoryMode ? classes.buttonDisabled : classes.button}
-          onClick={() => toggleFullscreen()}
+          onClick={toggleFullscreen}
         >
           {<EnlargeIcon />}
         </IconButton >
@@ -392,7 +392,7 @@ const ImageControlButtons = ({
           disabled={isHistoryMode}
           aria-label="Tilbakestill visning"
           className={isHistoryMode ? classes.buttonDisabled : classes.button}
-          onClick={() => reset360View()}
+          onClick={reset360View}
         >
           {<Replay />}
         </IconButton >

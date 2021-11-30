@@ -9,7 +9,7 @@ import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
-import { EnlargeIcon, PanoramaIcon } from 'components/Icons/Icons';
+import { EnlargeIcon } from 'components/Icons/Icons';
 import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
@@ -113,26 +113,12 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-          {/*getImageType(currentImagePoint) === '360' ? 
-            (<div className={classes.panoramaImageContainer}>
-              <div 
-              className={classes.panoramaImage} 
-              style={{"backgroundImage" : `url(${getImageUrl(currentImagePoint)})`}} 
-              onClick={openImage}
-              role="img"
-              aria-label="Bilde tatt langs veg">
-              </div>
-              <div className={classes.panoramaIcon}>
-                <PanoramaIcon/>
-              </div>
-            </div>)
-            :*/
             <img
             src={getImageUrl(currentImagePoint)}
             className={classes.image}
             alt="Bilde tatt langs veg"
             onClick={openImage}
-            />}
+            />
         </div>
         {showInformation ? (
           <ImageInfo
