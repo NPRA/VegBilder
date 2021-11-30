@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useRecoilValue } from 'recoil';
-import { makeStyles, IconButton} from '@material-ui/core';
+import { makeStyles, IconButton, Typography} from '@material-ui/core';
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from '@material-ui/core';
 import { visuallyHidden } from '@material-ui/utils';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
@@ -40,7 +40,6 @@ const useStyles = makeStyles((theme) => ({
         display: "flex",
         flexDirection: "column",
     },
-
     headerCell: {
         width: "25%",
         textAlign: "left",
@@ -81,10 +80,12 @@ const useStyles = makeStyles((theme) => ({
             '&.year': {
                 textAlign: "left",
                 paddingRight: "5px"
-            },
+                },
+            }
         }
-        }
-
+    },
+    percentage: {
+        fontStyle: 'italic'
     },
     buttonContainer: {
         display: "flex",
@@ -127,10 +128,8 @@ const createTableRowsFromStatistics = (statistics: IStatisticsFeatureProperties[
     if (!tableRows.some(row => row.year === currentYear)) {
         tableRows.push({year: currentYear, E: 0, R: 0, F: 0, other: 0});
     };
-    
     return tableRows;
 }
-
 
 const sortTableRowsBasedOnYear = (tableRows: IStatisticsRow[]) => {
     return tableRows.sort((rowA, rowB) => (rowA.year < rowB.year) ? 1 : -1);
@@ -153,6 +152,24 @@ const createTotalRowExcludingCurrentYear = (sortedTableRowsWithoutCurrentYear: I
     return totalRow;
 }
 
+const getImagesTotalForYear = (rowForCurrentYear: IStatisticsRow) => {
+    let imagesTotalForYear = 0;
+    for (const [key, value] of Object.entries(rowForCurrentYear)) {
+        if (key !== 'year') {
+            imagesTotalForYear += value;
+        };
+    }
+    return imagesTotalForYear;
+}
+
+const getFormattedPercentageOfTotal = (numOfImg: number, total: number) => {
+    if (typeof total === 'number' && total === 0) {
+        return '';
+    } else {
+        return `${(numOfImg * 100/total).toLocaleString('no-NO', {maximumFractionDigits: 1, minimumFractionDigits: 1})}%`;
+    }
+};
+
 export const StatisticsTable = () => {
     const classes = useStyles();
     const availableStatistics: IStatisticsFeatureProperties[] = useRecoilValue(availableStatisticsQuery);
@@ -161,6 +178,7 @@ export const StatisticsTable = () => {
     const rowForCurrentYear = sortedTableRows[0];
     const sortedTableRowsWithoutCurrentYear = sortedTableRows.slice(1);
     const rowWithTotalValues = createTotalRowExcludingCurrentYear(sortedTableRowsWithoutCurrentYear);
+    const imagesTotalForCurrentYear = getImagesTotalForYear(rowForCurrentYear);
     const [showExtendedTable, setShowExtendedTable] = useState(false);
     const showOvrigeColumn = rowWithTotalValues.other !== 0 ? true : false;
 
@@ -186,18 +204,31 @@ export const StatisticsTable = () => {
                         < TableBody >
                             <TableRow>
                                 <TableCell className={`${classes.contentCell} currentYear year`} component="th" scope="row">{rowForCurrentYear.year}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.E)}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.R)}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.F)}</TableCell>
-                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.other)}</TableCell>}
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>
+                                    <Typography>{`${formatTableCell(rowForCurrentYear.E)}`}</Typography>
+                                    <Typography className={classes.percentage}>{`${getFormattedPercentageOfTotal(rowForCurrentYear.E, imagesTotalForCurrentYear)}`}</Typography>
+                                </TableCell>
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>
+                                    <Typography>{formatTableCell(rowForCurrentYear.R)}</Typography>
+                                    <Typography className={classes.percentage}>{`${getFormattedPercentageOfTotal(rowForCurrentYear.R, imagesTotalForCurrentYear)}`}</Typography>
+                                </TableCell>
+                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>
+                                    <Typography>{formatTableCell(rowForCurrentYear.F)}</Typography>
+                                    <Typography className={classes.percentage}>{`${getFormattedPercentageOfTotal(rowForCurrentYear.F, imagesTotalForCurrentYear)}`}</Typography>
+                                </TableCell>
+                                    {showOvrigeColumn && 
+                                    <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>
+                                         <Typography>{formatTableCell(rowForCurrentYear.other)}</Typography>
+                                         <Typography className={classes.percentage}>{`${getFormattedPercentageOfTotal(rowForCurrentYear.other, imagesTotalForCurrentYear)}`}</Typography>
+                                    </TableCell>}
                             </TableRow>
                             {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                                 return (
                                     <TableRow>
                                         <TableCell className={`${classes.contentCell} previousYears year`} component="th" scope="row">{row.year}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {formatTableCell(row.E)}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {formatTableCell(row.R)}</TableCell>
-                                        <TableCell className={`${classes.contentCell} previousYears`}> {formatTableCell(row.F)}</TableCell>
+                                        <TableCell className={`${classes.contentCell} previousYears`}>{formatTableCell(row.E)}</TableCell>
+                                        <TableCell className={`${classes.contentCell} previousYears`}>{formatTableCell(row.R)}</TableCell>
+                                        <TableCell className={`${classes.contentCell} previousYears`}>{formatTableCell(row.F)}</TableCell>
                                         {showOvrigeColumn && <TableCell className={`${classes.contentCell} previousYears`}> {formatTableCell(row.other)}</TableCell>}
                                     </TableRow>
                                 )
