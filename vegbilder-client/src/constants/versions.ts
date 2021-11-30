@@ -1,4 +1,7 @@
 const versionLog = {
+  'v.1.3.27': [
+    'Oppdatert statistikk: lagt til prosentandelen bilder tatt på hver vegtype av totalen for det inneværende året'
+  ],
   'v1.3.16': [
     'Oppdatert til Geonorges nye api for stedsnavn',
     'Mulig å legge til parameteren "radius" i url for å begrense søk etter bilder til innenfor en radius (i meter) fra et koordinat'
