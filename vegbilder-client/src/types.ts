@@ -1,5 +1,9 @@
 import { Dictionary } from 'lodash';
 
+/*
+  URL: Url to the original, unedited image (only blurred)
+  URLPREVIEW: Url to an edited version of the original image (e.g. a smaller or cropped version suitable for preview)
+*/
 export interface IImagePoint {
   type: string;
   id: string;

@@ -8,6 +8,7 @@ import { isEvenNumber } from 'utilities/mathUtilities';
 import {
   getImagePointLatLng,
   getImageUrl,
+  getImageUrlOfOriginalImage,
   findNearestImagePoint,
   usesOldVegreferanse,
   areOnSameOrConsecutiveRoadParts,
@@ -337,7 +338,7 @@ const ImageViewer = ({
            <>
            {panoramaIsActive ? (
              <PanoramaImage 
-             imageUrl={getImageUrl(currentImagePoint)} 
+             imageUrl={getImageUrlOfOriginalImage(currentImagePoint)} 
              isHistoryMode={isHistoryMode}/>
            ) : (
              <>

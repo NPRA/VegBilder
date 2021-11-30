@@ -31,6 +31,10 @@ const getImageUrl = (imagepoint: IImagePoint) => {
   }
 };
 
+const getImageUrlOfOriginalImage = (imagePoint: IImagePoint) => {
+  return imagePoint.properties.URL;
+}
+
 const findNearestImagePoint = (
   imagePoints: IImagePoint[],
   latlng: ILatlng,
@@ -385,6 +389,7 @@ export {
   getImagePointLatLng,
   getImageType,
   getImageUrl,
+  getImageUrlOfOriginalImage,
   findNearestImagePoint,
   getRoadReference,
   getGenericRoadReference,
