@@ -269,23 +269,12 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
                 </div>
               </div>
               <div className={classes.imageContainer}>
-                {getImageType(imagePoint) === 'panorama' ?
-                  <>
-                    <div 
-                    className={classes.panoramaImage} 
-                    style={{"backgroundImage" : `url(${getImageUrl(imagePoint)})`}} 
-                    role="img"
-                    aria-label="Bilde tatt langs veg"
-                    onClick={() => handleImageClick(imagePoint)}>
-                    </div>
-                  </> :
                   <img
                   src={getImageUrl(imagePoint)}
                   alt={imagePoint.id}
                   className={classes.image}
                   onClick={() => handleImageClick(imagePoint)}
                 />
-              }
               </div>
             </div>
           ))

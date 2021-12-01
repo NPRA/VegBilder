@@ -18,7 +18,6 @@ import {
   loadedImagePointsState,
   playVideoState,
   currentVegsystemreferanseState,
-  turnedToOtherLane,
   currentPannellumHfovState
 } from './atoms';
 
@@ -211,16 +210,6 @@ export const pannellumHfovState = selector({
   set: ({ set }, newHfov: number | DefaultValue) => {
     set(currentPannellumHfovState, newHfov);
   },
-});
-
-export const turnedToOtherLaneState = selector({
-  key: 'turnedToOtherLaneState',
-  get: ({ get }) => {
-    return get(turnedToOtherLane);
-  },
-  set: ({set }, shouldTurn: boolean | DefaultValue ) => {
-    set(turnedToOtherLane, shouldTurn);
-  }
 });
 
 // utilities

@@ -65,8 +65,3 @@ export const currentPannellumHfovState = atom<number>({
   key: 'currentPannellumHfovState',
   default: pannellumSettings.defaultHfov,
 });
-
-export const turnedToOtherLane = atom<boolean>({
-  key: 'turnedToOtherLane',
-  default: false
-});

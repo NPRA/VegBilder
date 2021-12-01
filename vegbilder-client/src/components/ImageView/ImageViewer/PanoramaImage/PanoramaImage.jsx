@@ -2,15 +2,12 @@ import React, {useEffect, useRef} from 'react';
 import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize} from 'react-pannellum';
 import {useRecoilState} from 'recoil';
 import { pannellumSettings } from "constants/settings";
-import {currentViewState, currentPannellumHfovState} from 'recoil/atoms';
+import { currentPannellumHfovState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
 const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
-  const [currentView, ] = useRecoilState(currentViewState);
   const [, setPannellumHfovState] = useRecoilState(currentPannellumHfovState);
-
-  const isPreview = currentView === 'map';
 
   const uiText = {
     bylineLabel: '',
@@ -33,7 +30,7 @@ const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
     displayAboutInformation: false,
     displayLoadingSpinner: false,
     onScrollZoom: updateZoomRecoilState,
-    compass: !isPreview
+    compass: true
   };
 
   const pannellumStyle = {
