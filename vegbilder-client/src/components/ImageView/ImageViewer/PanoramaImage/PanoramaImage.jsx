@@ -108,7 +108,7 @@ const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
         style={pannellumStyle}
         >
           {panoramaFullscreenIsOn && 
-          <CloseButton onClick={deactivatePanoramaFullscreen} positionToTop={'1rem'} positionToRight={'1rem'} zIndex={2} />}
+          <CloseButton onClick={deactivatePanoramaFullscreen} positionToTop={'0.5rem'} positionToRight={'0.5rem'} zIndex={2} />}
         </ReactPannellum> 
     </>
   );
