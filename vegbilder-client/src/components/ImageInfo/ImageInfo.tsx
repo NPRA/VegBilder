@@ -342,7 +342,7 @@ const ImageInfo = ({
             {broNavn.length ? (
               <>
                 {broNavn.map((broNavn) => (
-                  <Typography variant="body1" className={classes.lines}>
+                  <Typography key={broNavn} variant="body1" className={classes.lines}>
                     {`${broNavn} (bru)`}
                   </Typography>
                 ))}
@@ -366,15 +366,15 @@ const ImageInfo = ({
           </ItemGroupContainer>
           {fartsgrense.length ? (
             <ItemGroupContainer headline="Fartsgrense" Icon={SpeedOutlined}>
-              {fartsgrense.map((fart) => (
-                <Typography variant="body1" className={classes.lines}>{`${fart}km/h`}</Typography>
+              {fartsgrense.map((fart, index) => (
+                <Typography key={index} variant="body1" className={classes.lines}>{`${fart}km/h`}</Typography>
               ))}
             </ItemGroupContainer>
           ) : null}
           {trafikkMengde.length ? (
             <ItemGroupContainer headline="Trafikkmengde" Icon={CommuteOutlined}>
               {trafikkMengde.map((trafikkMengdeItem) => (
-                <Typography variant="body1" className={classes.lines}>
+                <Typography key={trafikkMengdeItem} variant="body1" className={classes.lines}>
                   {trafikkMengdeItem}
                 </Typography>
               ))}
@@ -387,7 +387,7 @@ const ImageInfo = ({
             >
               <div className={classes.detectedObjects}>
                 {Object.keys(getDetectedObjectsJson(imagePoint)).map((item) => (
-                  <div className={classes.detectedObjectFrame}>
+                  <div key={item} className={classes.detectedObjectFrame}>
                     {' '}
                     <Typography variant="body1" className={classes.lines}>
                       {item}
@@ -399,8 +399,9 @@ const ImageInfo = ({
           ) : null}
           {kontraktsområder.length ? (
             <ItemGroupContainer headline="Kontraktsområder" Icon={ContractIcon}>
-              {kontraktsområder.map((kontraktsområde) => (
+              {kontraktsområder.map((kontraktsområde, index) => (
                 <Typography
+                  key={index}
                   variant="body1"
                   className={classes.lines}
                 >{`${kontraktsområde}`}</Typography>
