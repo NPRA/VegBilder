@@ -208,6 +208,9 @@ const ImageControlButtons = ({
 
   const handleHistoryButtonClick = () => {
     setIsHistoryMode(!isHistoryMode);
+    if (isZoomedInImage) {
+      setIsZoomedInImage(!isZoomedInImage);
+    };
   };
 
   const getLinkToVegkart = () => {
