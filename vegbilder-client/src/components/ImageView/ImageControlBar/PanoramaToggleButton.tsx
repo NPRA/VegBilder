@@ -30,7 +30,7 @@ const PanoramaToggleButton = ({
 
   return (
     <FormGroup>
-      <Tooltip title={currentImageType !== 'panorama' ? 'Dette bildet har ikke 360-modus' : ''}>
+      <Tooltip title={currentImageType !== 'panorama' ? 'Dette bildet har ikke 360-visning' : ''}>
         <FormControlLabel
           control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaModeIsActive} onChange={switchPanoramaMode} name="Panorama-toggle" />}
           label="360-visning"
