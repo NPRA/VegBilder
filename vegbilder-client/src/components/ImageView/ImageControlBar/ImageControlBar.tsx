@@ -45,8 +45,8 @@ interface IImageControlBarProps {
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
   isHistoryMode: boolean;
   setIsHistoryMode: (isHistoryMode: boolean) => void;
-  panoramaIsActive: boolean;
-  setPanoramaIsActive: (status: SetStateAction<boolean>) => void;
+  panoramaModeIsActive: boolean;
+  setPanoramaModeIsActive: (status: SetStateAction<boolean>) => void;
   currentImagePoint: IImagePoint | null;
 }
 
@@ -61,8 +61,8 @@ const ImageControlBar = ({
   setIsZoomedInImage,
   isHistoryMode,
   setIsHistoryMode,
-  panoramaIsActive,
-  setPanoramaIsActive,
+  panoramaModeIsActive,
+  setPanoramaModeIsActive,
   currentImagePoint
 }: IImageControlBarProps) => {
   const classes = useStyles();
@@ -85,12 +85,17 @@ const ImageControlBar = ({
             setIsZoomedInImage={setIsZoomedInImage}
             isHistoryMode={isHistoryMode}
             setIsHistoryMode={setIsHistoryMode}
-            panoramaIsActive={panoramaIsActive}
+            panoramaModeIsActive={panoramaModeIsActive}
           />
         </Grid>
         <Grid item className={classes.rightItem}>
             <div className={classes.panoramaToggle}>
-              <PanoramaToggleButton panoramaIsActive={panoramaIsActive} setPanoramaIsActive={setPanoramaIsActive} currentImagePoint={currentImagePoint} />
+              <PanoramaToggleButton 
+                panoramaModeIsActive={panoramaModeIsActive} 
+                setPanoramaModeIsActive={setPanoramaModeIsActive} 
+                isZoomedInImage={isZoomedInImage}
+                setIsZoomedInImage={setIsZoomedInImage}
+                currentImagePoint={currentImagePoint} />
             </div> 
         </Grid>
       </Grid>
