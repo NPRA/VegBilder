@@ -7,7 +7,8 @@ export const settings = {
 export const pannellumSettings = {
   minHfovBounds: 50,
   maxHfovBounds: 120,
-  defaultHfov: 100
+  defaultHfov: 100,
+  defaultMinOrMaxZoom: {isMinZoom: false, isMaxZoom: false}
 }
 
 

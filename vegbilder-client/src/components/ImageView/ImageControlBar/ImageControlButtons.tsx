@@ -11,7 +11,7 @@ import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
 import ExploreOutlinedIcon from '@material-ui/icons/ExploreOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import proj4 from 'proj4';
 import clsx from 'clsx';
 // En Panellum-instans er global og det er dermed mulig å kalle eks. getHfov globalt.
@@ -38,7 +38,7 @@ import {
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { getImageType } from 'utilities/imagePointUtilities';
-import { playVideoState, currentLatLngZoomState, currentPannellumHfovState, panoramaFullscreenIsOnState } from 'recoil/atoms';
+import { playVideoState, currentLatLngZoomState, currentPannellumHfovState, panoramaFullscreenIsOnState, isPanoramaMinOrMaxZoomState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS, TIMER_OPTIONS_360 } from 'constants/defaultParamters';
@@ -142,20 +142,20 @@ const ImageControlButtons = ({
     setMoreControlsAnchorEl(event.currentTarget);
 
   const [pannellumHfovState, setCurrentPannellumHfovState] = useRecoilState(currentPannellumHfovState);
+  const [isPanoramaMinOrMaxZoom, setIsPanoramaMinOrMaxZoom] = useRecoilState(isPanoramaMinOrMaxZoomState);
+  const resetPanoramaMinOrMaxZoom = useResetRecoilState(isPanoramaMinOrMaxZoomState);
   const isImageWith360Capabilities = currentImagePoint && getImageType(currentImagePoint) === 'panorama' ? true : false;
 
   const classes = useStyles({is360Image: isImageWith360Capabilities});
 
-  let [isMinOrMaxZoom, setMinAndMaxZoom] = useState({"isMinZoom": false, "isMaxZoom": false}); 
-
   type zoomType = 'zoomIn' | 'zoomOut';
 
   const zoom360 = (zoomType: zoomType) => {
-    if (zoomType === 'zoomIn' && !isMinOrMaxZoom.isMaxZoom) {
+    if (zoomType === 'zoomIn' && !isPanoramaMinOrMaxZoom.isMaxZoom) {
       let newZoomIn = Math.max(getHfov() - 10, pannellumSettings.minHfovBounds);
       setHfov(newZoomIn);
       setCurrentPannellumHfovState(newZoomIn);
-    } else if (zoomType === 'zoomOut' && !isMinOrMaxZoom.isMinZoom) {
+    } else if (zoomType === 'zoomOut' && !isPanoramaMinOrMaxZoom.isMinZoom) {
       let newZoomOut = Math.min(getHfov() + 10, pannellumSettings.maxHfovBounds);
       setCurrentPannellumHfovState(newZoomOut);
       setHfov(newZoomOut);
@@ -171,15 +171,15 @@ const ImageControlButtons = ({
   useEffect(() => {
     const updateZoomMinAndMax = () => {
       if (pannellumHfovState <= pannellumSettings.minHfovBounds) {
-        setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": true})
+        setIsPanoramaMinOrMaxZoom({"isMinZoom": false, "isMaxZoom": true})
       } else if (pannellumHfovState >= pannellumSettings.maxHfovBounds) {
-        setMinAndMaxZoom({"isMinZoom": true, "isMaxZoom": false})
+        setIsPanoramaMinOrMaxZoom({"isMinZoom": true, "isMaxZoom": false})
       } else {
-        setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
+        setIsPanoramaMinOrMaxZoom({"isMinZoom": false, "isMaxZoom": false});
       }
     }
     updateZoomMinAndMax();
-  }, [pannellumHfovState]); 
+  }, [pannellumHfovState, setIsPanoramaMinOrMaxZoom]); 
 
   useEffect(() => {
     if (panoramaIsActive) {
@@ -202,7 +202,7 @@ const ImageControlButtons = ({
       setYaw(0);
       setPitch(0);
       setHfov(100);
-      setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
+      resetPanoramaMinOrMaxZoom();
     };
   };
 
@@ -320,9 +320,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={zoomType === 'zoomIn' ? 'Zoom inn' : 'Zoom ut'}>
         <IconButton
-          disabled={isHistoryMode || (zoomType === 'zoomIn' && isMinOrMaxZoom.isMaxZoom) || (zoomType === 'zoomOut' && isMinOrMaxZoom.isMinZoom)}
+          disabled={isHistoryMode || (zoomType === 'zoomIn' && isPanoramaMinOrMaxZoom.isMaxZoom) || (zoomType === 'zoomOut' && isPanoramaMinOrMaxZoom.isMinZoom)}
           aria-label={zoomType}
-          className={isHistoryMode || (zoomType === 'zoomIn' && isMinOrMaxZoom.isMaxZoom) || (zoomType === 'zoomOut' && isMinOrMaxZoom.isMinZoom) ? classes.buttonDisabled : classes.button}
+          className={isHistoryMode || (zoomType === 'zoomIn' && isPanoramaMinOrMaxZoom.isMaxZoom) || (zoomType === 'zoomOut' && isPanoramaMinOrMaxZoom.isMinZoom) ? classes.buttonDisabled : classes.button}
           onClick={() => {
             zoom360(zoomType);
           }}

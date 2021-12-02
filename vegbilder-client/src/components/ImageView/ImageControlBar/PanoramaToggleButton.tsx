@@ -2,6 +2,8 @@ import React from 'react';
 import { FormGroup, FormControlLabel, Tooltip } from '@material-ui/core';
 import { Switch } from '@material-ui/core';
 import { IImagePoint } from "types";
+import { useResetRecoilState } from 'recoil';
+import { isPanoramaMinOrMaxZoomState } from 'recoil/atoms';
 import { getImageType } from "utilities/imagePointUtilities";
 
 interface IPanoramaToggleButton {
@@ -20,9 +22,11 @@ const PanoramaToggleButton = ({
   currentImagePoint}: IPanoramaToggleButton) => {
 
   const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
+  const resetPanoramaMinOrMaxZoom = useResetRecoilState(isPanoramaMinOrMaxZoomState);
 
   const switchPanoramaMode = () => {
     setPanoramaModeIsActive(!panoramaModeIsActive);
+    resetPanoramaMinOrMaxZoom();
     if (isZoomedInImage) { /* Reset zoom in planar-view, if active */
       setIsZoomedInImage(!isZoomedInImage);
     };

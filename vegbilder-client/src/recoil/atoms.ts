@@ -70,3 +70,8 @@ export const panoramaFullscreenIsOnState = atom<boolean>({
   key: 'panoramaFullscreenIsOnState',
   default: false,
 });
+
+export const isPanoramaMinOrMaxZoomState = atom<{isMinZoom: boolean, isMaxZoom: boolean}>({
+  key: 'isPanoramaMinOrMaxZoomState',
+  default: pannellumSettings.defaultMinOrMaxZoom,
+})
