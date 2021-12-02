@@ -12,7 +12,6 @@ import CloseButton from 'components/CloseButton/CloseButton';
 import SideControlBar from './SideControlBar/SideControlBar';
 import { getImageType } from "utilities/imagePointUtilities";
 
-
 const useStyles = makeStyles(() => ({
   content: {
     flex: '1 1 auto', // Allow the grid item containing the main content to grow and shrink to fill the available height.
@@ -62,7 +61,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const imageContainerRef = useRef<HTMLImageElement>(null);
   const [cursor, setCursor] = useState('zoom-in');
   const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
-  const [panoramaIsActive, setPanoramaIsActive] = useState(false);
+  const [panoramaModeIsActive, setPanoramaModeIsActive] = useState(false);
   const [meterLineVisible, setMeterLineVisible] = useState(false);
 
   const maxScrollHeight =
@@ -145,7 +144,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES);
     };
     if (currentImageType !== 'panorama') {
-      setPanoramaIsActive(false);
+      setPanoramaModeIsActive(false);
     };
   }, [currentImageType])
 
@@ -158,7 +157,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   }, [isZoomedInImage]);
 
   // We add mouse event handlers that lets the user drag the image to scroll. If the user only clicks we zoom in/out.
-  // Not used for 360 images.
+  // Not used while in panorama mode.
   useEffect(() => {
     const currentImageContainerRef = imageContainerRef.current;
     if (!currentImageContainerRef) return;
@@ -175,7 +174,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
     const onMouseUp = (event: MouseEvent) => {
       shouldScroll = false;
-      if (!mouseMoved && !isHistoryMode) {
+      if (!mouseMoved && !isHistoryMode && !panoramaModeIsActive) {
         const isCurrentlyZoomedInImage = isZoomedInImage;
         if (isCurrentlyZoomedInImage) {
           // zoom out and reset state
@@ -227,7 +226,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
     };
-  }, [isZoomedInImage, isHistoryMode, currentImageType]);
+  }, [isZoomedInImage, isHistoryMode, panoramaModeIsActive]);
 
   const handleZoomOut = () => {
     setIsZoomedInImage(false);
@@ -244,7 +243,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               timeBetweenImages={timeBetweenImages}
               isHistoryMode={isHistoryMode}
               showMessage={showSnackbarMessage}
-              panoramaIsActive={panoramaIsActive}
+              panoramaModeIsActive={panoramaModeIsActive}
             />
             <History setIsHistoryMode={setIsHistoryMode} />
           </div>
@@ -253,7 +252,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
             <div
             className={classes.imageCointainer}
             style={{ cursor }}
-            ref={!panoramaIsActive ? imageContainerRef : null}
+            ref={!panoramaModeIsActive ? imageContainerRef : null}
           >
             <ImageViewer
               meterLineVisible={meterLineVisible}
@@ -261,7 +260,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
               isHistoryMode={isHistoryMode}
               showMessage={showSnackbarMessage}
               isZoomedInImage={isZoomedInImage}
-              panoramaIsActive={panoramaIsActive}
+              panoramaModeIsActive={panoramaModeIsActive}
             />
           </div>
           )}
@@ -285,8 +284,8 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           setIsZoomedInImage={setIsZoomedInImage}
           isHistoryMode={isHistoryMode}
           setIsHistoryMode={setIsHistoryMode}
-          panoramaIsActive={panoramaIsActive}
-          setPanoramaIsActive={setPanoramaIsActive}
+          panoramaModeIsActive={panoramaModeIsActive}
+          setPanoramaModeIsActive={setPanoramaModeIsActive}
           currentImagePoint={currentImagePoint}
         />
       </Grid>
