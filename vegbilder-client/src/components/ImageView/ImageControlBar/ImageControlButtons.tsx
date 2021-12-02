@@ -518,7 +518,7 @@ const ImageControlButtons = ({
             {panoramaIsActive && zoomInOut360Button("zoomOut")}
             {panoramaIsActive && reset360ViewButton()}
             {/* move backwards arrow button  */}
-            <Tooltip title="Gå bakover">
+            <Tooltip title="Gå mot kjøreretning">
               <IconButton
                 aria-label="Gå bakover"
                 className={classes.button}
@@ -529,7 +529,7 @@ const ImageControlButtons = ({
             </Tooltip>
 
             {/* move forwards arrow button  */}
-            <Tooltip title="Gå fremover">
+            <Tooltip title="Gå i kjøreretning">
               <IconButton
                 aria-label="Gå fremover"
                 className={classes.button}
