@@ -26,7 +26,6 @@ import {
   DotsHorizontalIcon,
   HistoryIcon,
   MeasureIcon,
-  MeasureDisabledIcon,
   PlayIcon,
   StopIcon,
   TimerIcon,
@@ -379,16 +378,35 @@ const ImageControlButtons = ({
 
 
   const hideShowBasisLineButton = () => {
+    let title = '';
+    let styleClass = '';
+    if (isImageWith360Capabilities) {
+      title = 'Bildet har ingen basislinje';
+      styleClass = classes.buttonDisabled;
+    } else if (isZoomedInImage) {
+      title = '';
+      styleClass = classes.buttonDisabled;
+    } 
+    else if (!meterLineVisible) {
+      title = 'Aktiver basislinje';
+      styleClass = classes.button;
+    } else {
+      title = 'Deaktiver basislinje';
+      styleClass = classes.activeButton;
+    };
+    
     return (
-      <Tooltip title={meterLineVisible ? 'Deaktiver basislinje' : 'Aktiver basislinje'}>
+      <Tooltip title={title}>
+        <span>
         <IconButton
           disabled={isZoomedInImage || isImageWith360Capabilities}
           aria-label="Deaktiver/Aktiver basislinje"
-          className={isZoomedInImage || isImageWith360Capabilities ? classes.buttonDisabled : classes.button}
+          className={styleClass}
           onClick={() => setMeterLineVisible(!meterLineVisible)}
         >
-          {meterLineVisible ? <MeasureIcon /> : <MeasureDisabledIcon />}
+          {<MeasureIcon />}
         </IconButton>
+        </span>
       </Tooltip>
     );
   };
@@ -522,7 +540,7 @@ const ImageControlButtons = ({
 
             {changeDirectionButton()}
             {playIconButton('Start animasjonsmodus')}
-            {!isImageWith360Capabilities ? hideShowBasisLineButton() : null}
+            {!panoramaIsActive && hideShowBasisLineButton()}
             {panoramaIsActive && reset360ViewButton()}
             {historyButton()}
             {moreFunctionsButton()}
