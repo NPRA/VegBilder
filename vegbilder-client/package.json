@@ -19,7 +19,7 @@
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-leaflet": "^3.2.0",
-    "react-pannellum": "git://github.com/theresmf/react-pannellum.git#vegbilder-modifications",
+    "react-pannellum": "git://github.com/NPRA/react-pannellum.git#vegbilder-modifications",
     "react-responsive": "^8.2.0",
     "react-scripts": "^4.0.3",
     "recoil": "^0.3.1",

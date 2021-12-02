@@ -16,7 +16,7 @@ import proj4 from 'proj4';
 import clsx from 'clsx';
 // En Panellum-instans er global og det er dermed mulig å kalle eks. getHfov globalt.
 // @ts-ignore
-import { getHfov, setHfov, getYaw, setYaw, getPitch, setPitch, toggleFullscreen } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
+import { getHfov, setHfov, getYaw, setYaw, getPitch, setPitch, toggleFullscreen as togglePanoramaFullscreen } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
@@ -39,7 +39,7 @@ import {
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
 import { getImageType } from 'utilities/imagePointUtilities';
-import { playVideoState, currentLatLngZoomState, currentPannellumHfovState } from 'recoil/atoms';
+import { playVideoState, currentLatLngZoomState, currentPannellumHfovState, panoramaFullscreenIsOnState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS, TIMER_OPTIONS_360 } from 'constants/defaultParamters';
@@ -105,7 +105,7 @@ interface IImageControlButtonsProps {
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
   isHistoryMode: boolean;
   setIsHistoryMode: (isHistoryMode: boolean) => void;
-  panoramaIsActive: boolean;
+  panoramaModeIsActive: boolean;
 }
 
 const ImageControlButtons = ({
@@ -119,7 +119,7 @@ const ImageControlButtons = ({
   setIsZoomedInImage,
   isHistoryMode,
   setIsHistoryMode,
-  panoramaIsActive
+  panoramaModeIsActive: panoramaIsActive
 }: IImageControlButtonsProps) => {
   const { setCommand } = useCommand();
   const currentImagePoint = useRecoilValue(imagePointQueryParameterState); 
@@ -132,6 +132,7 @@ const ImageControlButtons = ({
   const [playMode, setPlayMode] = useState(false);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
   const [CURRENT_TIMER_OPTIONS, setTimerOptions] = useState(TIMER_OPTIONS);
+  const [panoramaFullscreenIsOn, ] = useRecoilState(panoramaFullscreenIsOnState);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
@@ -142,9 +143,9 @@ const ImageControlButtons = ({
     setMoreControlsAnchorEl(event.currentTarget);
 
   const [pannellumHfovState, setCurrentPannellumHfovState] = useRecoilState(currentPannellumHfovState);
-  const is360Image = currentImagePoint && getImageType(currentImagePoint) === 'panorama' ? true : false;
+  const isImageWith360Capabilities = currentImagePoint && getImageType(currentImagePoint) === 'panorama' ? true : false;
 
-  const classes = useStyles({is360Image});
+  const classes = useStyles({is360Image: isImageWith360Capabilities});
 
   let [isMinOrMaxZoom, setMinAndMaxZoom] = useState({"isMinZoom": false, "isMaxZoom": false}); 
 
@@ -161,6 +162,12 @@ const ImageControlButtons = ({
       setHfov(newZoomOut);
     }
   }
+
+  const activatePanoramaFullscreen = () => {
+    if (!panoramaFullscreenIsOn) {
+      togglePanoramaFullscreen();
+    };
+  };
 
   useEffect(() => {
     const updateZoomMinAndMax = () => {
@@ -354,14 +361,14 @@ const ImageControlButtons = ({
     );
   };
 
-  const showFullSceenButton = () => {
+  const panoramaFullscreenButton = () => {
     return (
       <Tooltip title={'Fullskjermvisning'}>
         <IconButton
           disabled={isHistoryMode}
           aria-label="Aktiver fullskjermvisning"
           className={isHistoryMode ? classes.buttonDisabled : classes.button}
-          onClick={toggleFullscreen}
+          onClick={activatePanoramaFullscreen}
         >
           {<EnlargeIcon />}
         </IconButton >
@@ -374,9 +381,9 @@ const ImageControlButtons = ({
     return (
       <Tooltip title={meterLineVisible ? 'Deaktiver basislinje' : 'Aktiver basislinje'}>
         <IconButton
-          disabled={isZoomedInImage || is360Image}
+          disabled={isZoomedInImage || isImageWith360Capabilities}
           aria-label="Deaktiver/Aktiver basislinje"
-          className={isZoomedInImage || is360Image ? classes.buttonDisabled : classes.button}
+          className={isZoomedInImage || isImageWith360Capabilities ? classes.buttonDisabled : classes.button}
           onClick={() => setMeterLineVisible(!meterLineVisible)}
         >
           {meterLineVisible ? <MeasureIcon /> : <MeasureDisabledIcon />}
@@ -487,7 +494,7 @@ const ImageControlButtons = ({
           <>
             {/*  Render normal menu */}
             {!panoramaIsActive && zoomInOutButton()}
-            {panoramaIsActive && showFullSceenButton()}
+            {panoramaIsActive && panoramaFullscreenButton()}
             {panoramaIsActive && zoomInOut360Button("zoomIn")}
             {panoramaIsActive && zoomInOut360Button("zoomOut")}
             {/* move backwards arrow button  */}
@@ -514,8 +521,8 @@ const ImageControlButtons = ({
 
             {changeDirectionButton()}
             {playIconButton('Start animasjonsmodus')}
-            {!is360Image ? hideShowBasisLineButton() : null}
-            {reset360ViewButton()}
+            {!isImageWith360Capabilities ? hideShowBasisLineButton() : null}
+            {panoramaIsActive && reset360ViewButton()}
             {historyButton()}
             {moreFunctionsButton()}
           </>

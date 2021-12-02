@@ -65,3 +65,8 @@ export const currentPannellumHfovState = atom<number>({
   key: 'currentPannellumHfovState',
   default: pannellumSettings.defaultHfov,
 });
+
+export const panoramaFullscreenIsOnState = atom<boolean>({
+  key: 'panoramaFullscreenIsOnState',
+  default: false,
+});

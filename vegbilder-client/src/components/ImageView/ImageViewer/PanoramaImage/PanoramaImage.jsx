@@ -1,21 +1,29 @@
 import React, {useEffect, useRef} from 'react';
-import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize} from 'react-pannellum';
-import {useRecoilState} from 'recoil';
+import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize, toggleFullscreen } from 'react-pannellum';
+import CloseButton from 'components/CloseButton/CloseButton';
+import { useRecoilState } from 'recoil';
 import { pannellumSettings } from "constants/settings";
-import { currentPannellumHfovState } from 'recoil/atoms';
+import { currentPannellumHfovState, panoramaFullscreenIsOnState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
 
 const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
   const [, setPannellumHfovState] = useRecoilState(currentPannellumHfovState);
+  const [panoramaFullscreenIsOn, setPanoramaFullscreenIsOn] = useRecoilState(panoramaFullscreenIsOnState);
 
   const uiText = {
     bylineLabel: '',
     loadingLabel: '',
   };
 
+  // These are needed for other react components to be able to "subscribe" to changes in
+  // pannellum's internal zoom and fullscreen state. 
   const updateZoomRecoilState = () => {
     setPannellumHfovState(getHfov());
+  };
+
+  const updateFullscreenRecoilState = (newState) => {
+    setPanoramaFullscreenIsOn(newState);
   }
 
   const pannellumConfig = {
@@ -30,6 +38,7 @@ const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
     displayAboutInformation: false,
     displayLoadingSpinner: false,
     onScrollZoom: updateZoomRecoilState,
+    onFullscreenToggle: updateFullscreenRecoilState,
     compass: true
   };
 
@@ -41,8 +50,17 @@ const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
     background: Theme.palette.common.grayDarker
   }
 
-    // Pannellum-biblioteket oppdaterer ikke komponenten automatisk ved ny prop.
-    // Må derfor legge til og laste inn nytt bilde som ny scene hver gang (unntatt første scene, derav useRef).
+  const deactivatePanoramaFullscreen = () => {
+    if (panoramaFullscreenIsOn) {
+      toggleFullscreen();
+    }
+  }
+
+    /*  
+      Image source changes does not cause a re-render of Pannellum.
+      We therefore need to force Pannellum to update with a new image using add and load scene
+      whenever imageUrl is changed (except for first render).
+    */
   const useRenderPannellumViewer = (imageUrl) => {
     const didMountFirstUrl = useRef(false);
 
@@ -88,7 +106,10 @@ const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
         imageSource={imageUrl}
         config={pannellumConfig}
         style={pannellumStyle}
-        /> 
+        >
+          {panoramaFullscreenIsOn && 
+          <CloseButton onClick={deactivatePanoramaFullscreen} positionToTop={'1rem'} positionToRight={'1rem'} zIndex={2} />}
+        </ReactPannellum> 
     </>
   );
 };
