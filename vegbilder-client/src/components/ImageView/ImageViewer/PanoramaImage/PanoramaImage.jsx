@@ -2,7 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import ReactPannellum, {getPitch, addScene, loadScene, getYaw, getHfov, resize, toggleFullscreen } from 'react-pannellum';
 import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
-import { pannellumSettings } from "constants/settings";
+import { defaultPannellumSettings } from "constants/settings";
 import { currentPannellumHfovState, panoramaFullscreenIsOnState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import './panellumStyle.css';
@@ -27,9 +27,9 @@ const PanoramaImage = ({ imageUrl, isHistoryMode }) => {
   }
 
   const pannellumConfig = {
-    minHfov: pannellumSettings.minHfovBounds,
-    maxHfov: pannellumSettings.maxHfovBounds,
-    hfov: pannellumSettings.defaultHfov,
+    minHfov: defaultPannellumSettings.minHfovBounds,
+    maxHfov: defaultPannellumSettings.maxHfovBounds,
+    hfov: defaultPannellumSettings.defaultHfov,
     autoLoad: true,
     showZoomCtrl: false,
     showFullscreenCtrl: false,

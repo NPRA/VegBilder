@@ -44,7 +44,7 @@ import { Link, ListSubheader } from '@material-ui/core';
 import { TIMER_OPTIONS, TIMER_OPTIONS_360 } from 'constants/defaultParamters';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { VEGKART } from 'constants/urls';
-import { pannellumSettings } from 'constants/settings';
+import { defaultPannellumSettings } from 'constants/settings';
 
 interface StyleProps {
   is360Image: boolean;
@@ -152,11 +152,11 @@ const ImageControlButtons = ({
 
   const zoom360 = (zoomType: zoomType) => {
     if (zoomType === 'zoomIn' && !isPanoramaMinOrMaxZoom.isMaxZoom) {
-      let newZoomIn = Math.max(getHfov() - 10, pannellumSettings.minHfovBounds);
+      let newZoomIn = Math.max(getHfov() - 10, defaultPannellumSettings.minHfovBounds);
       setHfov(newZoomIn);
       setCurrentPannellumHfovState(newZoomIn);
     } else if (zoomType === 'zoomOut' && !isPanoramaMinOrMaxZoom.isMinZoom) {
-      let newZoomOut = Math.min(getHfov() + 10, pannellumSettings.maxHfovBounds);
+      let newZoomOut = Math.min(getHfov() + 10, defaultPannellumSettings.maxHfovBounds);
       setCurrentPannellumHfovState(newZoomOut);
       setHfov(newZoomOut);
     }
@@ -170,9 +170,9 @@ const ImageControlButtons = ({
 
   useEffect(() => {
     const updateZoomMinAndMax = () => {
-      if (pannellumHfovState <= pannellumSettings.minHfovBounds) {
+      if (pannellumHfovState <= defaultPannellumSettings.minHfovBounds) {
         setIsPanoramaMinOrMaxZoom({"isMinZoom": false, "isMaxZoom": true})
-      } else if (pannellumHfovState >= pannellumSettings.maxHfovBounds) {
+      } else if (pannellumHfovState >= defaultPannellumSettings.maxHfovBounds) {
         setIsPanoramaMinOrMaxZoom({"isMinZoom": true, "isMaxZoom": false})
       } else {
         setIsPanoramaMinOrMaxZoom({"isMinZoom": false, "isMaxZoom": false});
@@ -516,6 +516,7 @@ const ImageControlButtons = ({
             {panoramaIsActive && panoramaFullscreenButton()}
             {panoramaIsActive && zoomInOut360Button("zoomIn")}
             {panoramaIsActive && zoomInOut360Button("zoomOut")}
+            {panoramaIsActive && reset360ViewButton()}
             {/* move backwards arrow button  */}
             <Tooltip title="Gå bakover">
               <IconButton
@@ -541,7 +542,6 @@ const ImageControlButtons = ({
             {changeDirectionButton()}
             {playIconButton('Start animasjonsmodus')}
             {!panoramaIsActive && hideShowBasisLineButton()}
-            {panoramaIsActive && reset360ViewButton()}
             {historyButton()}
             {moreFunctionsButton()}
           </>

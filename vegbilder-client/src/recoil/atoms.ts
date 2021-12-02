@@ -1,5 +1,5 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
-import { pannellumSettings } from "constants/settings";
+import { defaultPannellumSettings } from "constants/settings";
 import { atom } from 'recoil';
 import { IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
 import { IStatisticsFeature } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
@@ -63,7 +63,7 @@ export const availableStatistics = atom<IStatisticsFeature[] | null>({
 
 export const currentPannellumHfovState = atom<number>({
   key: 'currentPannellumHfovState',
-  default: pannellumSettings.defaultHfov,
+  default: defaultPannellumSettings.defaultHfov,
 });
 
 export const panoramaFullscreenIsOnState = atom<boolean>({
@@ -73,5 +73,5 @@ export const panoramaFullscreenIsOnState = atom<boolean>({
 
 export const isPanoramaMinOrMaxZoomState = atom<{isMinZoom: boolean, isMaxZoom: boolean}>({
   key: 'isPanoramaMinOrMaxZoomState',
-  default: pannellumSettings.defaultMinOrMaxZoom,
+  default: defaultPannellumSettings.minOrMaxZoom,
 })

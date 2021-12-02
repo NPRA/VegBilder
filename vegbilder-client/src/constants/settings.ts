@@ -4,11 +4,11 @@ export const settings = {
   productionMode: false,
 };
 
-export const pannellumSettings = {
+export const defaultPannellumSettings = {
   minHfovBounds: 50,
   maxHfovBounds: 120,
   defaultHfov: 100,
-  defaultMinOrMaxZoom: {isMinZoom: false, isMaxZoom: false}
+  minOrMaxZoom: {isMinZoom: false, isMaxZoom: false}
 }
 
 
