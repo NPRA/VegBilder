@@ -203,6 +203,7 @@ const ImageControlButtons = ({
       setYaw(0);
       setPitch(0);
       setHfov(100);
+      setMinAndMaxZoom({"isMinZoom": false, "isMaxZoom": false});
     };
   };
 
