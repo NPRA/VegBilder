@@ -5,23 +5,34 @@ import { IImagePoint } from "types";
 import { getImageType } from "utilities/imagePointUtilities";
 
 interface IPanoramaToggleButton {
-  panoramaIsActive: boolean;
-  setPanoramaIsActive: (status: boolean) => void;
+  panoramaModeIsActive: boolean;
+  setPanoramaModeIsActive: (status: boolean) => void;
+  isZoomedInImage: boolean;
+  setIsZoomedInImage: (status: boolean) => void;
   currentImagePoint: IImagePoint | null;
 }
 
-const PanoramaToggleButton = ({panoramaIsActive, setPanoramaIsActive, currentImagePoint}:IPanoramaToggleButton) => {
+const PanoramaToggleButton = ({
+  panoramaModeIsActive, 
+  setPanoramaModeIsActive, 
+  isZoomedInImage, 
+  setIsZoomedInImage, 
+  currentImagePoint}: IPanoramaToggleButton) => {
+
   const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
 
-  const handleChange = () => {
-    setPanoramaIsActive(!panoramaIsActive);
+  const switchPanoramaMode = () => {
+    setPanoramaModeIsActive(!panoramaModeIsActive);
+    if (isZoomedInImage) { /* Reset zoom in planar-view, if active */
+      setIsZoomedInImage(!isZoomedInImage);
+    };
   };
 
   return (
     <FormGroup>
       <Tooltip title={currentImageType !== 'panorama' ? 'Dette bildet har ikke 360-modus' : ''}>
         <FormControlLabel
-          control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaIsActive} onChange={handleChange} name="360-toggle" />}
+          control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaModeIsActive} onChange={switchPanoramaMode} name="Panorama-toggle" />}
           label="360-visning"
           labelPlacement="top"
         />
