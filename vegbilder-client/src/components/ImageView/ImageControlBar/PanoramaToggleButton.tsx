@@ -41,7 +41,7 @@ const PanoramaToggleButton = ({
     if (!hidePopoverIsSet && currentImageType === 'panorama') {
       setTimeout(() => {
         setShowPopover(true);
-      }, 5000);
+      }, 2000);
     }
   }, [hidePopoverIsSet, currentImagePoint]);
 
@@ -106,6 +106,9 @@ const PanoramaToggleButton = ({
     if (isZoomedInImage) { /* Reset zoom in planar-view, if active */
       setIsZoomedInImage(!isZoomedInImage);
     };
+    if (!hidePopoverIsSet) {
+      handlePopoverRemoval();
+    }
   };
 
   return (
