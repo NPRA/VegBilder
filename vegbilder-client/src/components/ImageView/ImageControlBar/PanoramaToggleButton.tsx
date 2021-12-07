@@ -30,14 +30,19 @@ const PanoramaToggleButton = ({
   const sizes = useRect(elementRef);
   const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
   const resetPanoramaMinOrMaxZoom = useResetRecoilState(isPanoramaMinOrMaxZoomState);
-  const [isOpen, setIsOpen] = useState(false);
+
+  const HIDE_POPOVER = 'HidePopover';
+  const hidePopoverIsSet = localStorage.getItem(HIDE_POPOVER) === 'true';
+  const [showPopover, setShowPopover] = useState(false);
 
 
   useEffect(() => {
-    setTimeout(() => {
-      setIsOpen(true);
-    }, 5000);
-  }, []);
+    if (!hidePopoverIsSet) {
+      setTimeout(() => {
+        setShowPopover(true);
+      }, 5000);
+    }
+  }, [hidePopoverIsSet]);
 
   // Parameteres position, verticalAlign and horizontalAlign come from the reactour Popover.
   function createPopopArrow(position: any, verticalAlign: any, horizontalAlign: any) {
@@ -89,6 +94,10 @@ const PanoramaToggleButton = ({
     }
   }
 
+  const handlePopoverRemoval = () => {
+    localStorage.setItem(HIDE_POPOVER, 'true');
+    setShowPopover(false);
+  }
 
   const switchPanoramaMode = () => {
     setPanoramaModeIsActive(!panoramaModeIsActive);
@@ -110,7 +119,7 @@ const PanoramaToggleButton = ({
       </Tooltip>
     </FormGroup>
     <AnimatePresence>
-    {isOpen ? 
+    {showPopover ? 
       <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -121,7 +130,7 @@ const PanoramaToggleButton = ({
         sizes={sizes}
         styles={{maskWrapper: base => ({...base, zIndex: 99999})}}
         onClick={() => {
-          setIsOpen(false);
+          handlePopoverRemoval();
         }}
       />
         <Popover sizes={sizes} position="top" styles={popoverStyles}>
