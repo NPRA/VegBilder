@@ -57,7 +57,7 @@ const PanoramaToggleButton = ({
     const width = 16;
     const height = 12;
     const isVertical = position === 'top' || position === 'bottom';
-    const spaceFromSide = 50;
+    const spaceFromSide = 57;
     const styleObj = {
       [isVertical ? 'borderLeft' : 'borderTop']: `${width /
         2}px solid transparent`, // CSS Triangle width
@@ -136,7 +136,7 @@ const PanoramaToggleButton = ({
         onClick={handlePopoverRemoval}
       />
         <Popover sizes={sizes} position="top" styles={popoverStyles}>
-          <Typography>Skru av og på 360-visning</Typography>
+          <Typography>Her kan du skru av og på 360-visning</Typography>
         </Popover>
       </motion.div>
     : null}
