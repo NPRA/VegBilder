@@ -37,12 +37,13 @@ const PanoramaToggleButton = ({
 
 
   useEffect(() => {
-    if (!hidePopoverIsSet) {
+    const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
+    if (!hidePopoverIsSet && currentImageType === 'panorama') {
       setTimeout(() => {
         setShowPopover(true);
       }, 5000);
     }
-  }, [hidePopoverIsSet]);
+  }, [hidePopoverIsSet, currentImagePoint]);
 
   // Parameteres position, verticalAlign and horizontalAlign come from the reactour Popover.
   function createPopopArrow(position: any, verticalAlign: any, horizontalAlign: any) {
