@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FormGroup, FormControlLabel, Tooltip, Typography } from '@material-ui/core';
+import { FormGroup, FormControlLabel, Tooltip, Typography, makeStyles } from '@material-ui/core';
 import { Switch } from '@material-ui/core';
 import { useRect } from '@reactour/utils';
 import { Mask } from '@reactour/mask';
@@ -10,6 +10,11 @@ import { useResetRecoilState } from 'recoil';
 import { isPanoramaMinOrMaxZoomState } from 'recoil/atoms';
 import { getImageType } from "utilities/imagePointUtilities";
 
+const useStyles = makeStyles(() => ({
+  panoramaLabel: {
+    textAlign: 'center'  //Used to center text 
+  }
+}));
 interface IPanoramaToggleButton {
   panoramaModeIsActive: boolean;
   setPanoramaModeIsActive: (status: boolean) => void;
@@ -28,6 +33,7 @@ const PanoramaToggleButton = ({
   const elementRef = useRef(null);
   const wrapperRef = useRef(null);
   const sizes = useRect(elementRef);
+
   const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
   const resetPanoramaMinOrMaxZoom = useResetRecoilState(isPanoramaMinOrMaxZoomState);
 
@@ -35,6 +41,7 @@ const PanoramaToggleButton = ({
   const hidePopoverIsSet = localStorage.getItem(HIDE_POPOVER) === 'true';
   const [showPopover, setShowPopover] = useState(false);
 
+  const classes = useStyles();
 
   useEffect(() => {
     const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
@@ -119,6 +126,7 @@ const PanoramaToggleButton = ({
           control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaModeIsActive} onChange={switchPanoramaMode} name="Panorama-toggle" />}
           label="360-visning"
           labelPlacement="top"
+          className={classes.panoramaLabel}
         />
       </Tooltip>
     </FormGroup>
