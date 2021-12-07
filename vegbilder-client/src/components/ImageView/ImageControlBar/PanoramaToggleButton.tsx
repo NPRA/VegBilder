@@ -130,9 +130,7 @@ const PanoramaToggleButton = ({
         <Mask 
         sizes={sizes}
         styles={{maskWrapper: base => ({...base, zIndex: 99999})}}
-        onClick={() => {
-          handlePopoverRemoval();
-        }}
+        onClick={handlePopoverRemoval}
       />
         <Popover sizes={sizes} position="top" styles={popoverStyles}>
           <Typography>Skru av og på 360-visning</Typography>
