@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
-import { Dictionary } from 'lodash';
+import { Dictionary, NumericDictionary } from 'lodash';
 
 import {
   getDateString,
@@ -163,16 +163,12 @@ async function findAndSetHistoryImagePoints(
             let typename = imageType === 'panorama' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`;
             await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
               const imagePoints = res.imagePoints;
-              const uniqueDatesInOtherYears: Set<number> = new Set();
-              const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
+              const imagePointsGroupedByTime: NumericDictionary<IImagePoint[]> = groupBy(
                 imagePoints,
-                (imagePoint: IImagePoint) => {
-                  const time = getDateObj(imagePoint).getTime();
-                  if (time !== currentImagePointTime) {
-                    uniqueDatesInOtherYears.add(time);
-                  }
-                  return time;
-                }
+                (imagePoint: IImagePoint) => getDateObj(imagePoint).getTime()
+              );
+              const uniqueDatesInOtherYears: Set<number> = new Set(
+                Object.keys(imagePointsGroupedByTime).map((time) => Number(time)).filter((time) => time !== currentImagePointTime)
               );
               for (const uniqueDate of uniqueDatesInOtherYears) {
                 const nearestImagePointInSameDirection = getNearestImagePointInSameDirectionOfImagePoint(imagePointsGroupedByTime[uniqueDate], currentImagePoint);
