@@ -157,7 +157,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
         IconComponent={CustomExpandMoreIcon}
         MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
-        {/*Bug i ListSubheader gir den en uønsket onClick event som må stoppes.*/}
+        {/*A bug in ListSubheader fires an unforseen onClick event which needs to be stopped.*/}
         <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Periode</ListSubheader>
         <MenuItem
           value={'Nyeste'}

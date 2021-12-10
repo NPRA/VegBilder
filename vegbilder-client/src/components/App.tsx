@@ -131,9 +131,9 @@ const App = () => {
     getSnackbarMessage()
   );
 
-  // Muligheten for å leite etter bilder innenfor en brukerspesifisert radius 
-  // er ment for å gi eksterne løsninger som ønsker å lenke til Vegbilder (f.eks. https://vegkart.atlas.vegvesen.no/) 
-  // muligheten til å tilpasse "søk" via url.
+ 
+  // This variant is meant to give external solutions, such as Vegkart (https://vegkart.atlas.vegvesen.no/) 
+  // the opportunity to customise their "search "for an image by adding the parameter "radius" to the url.
   const fetchNearestLatestImagePointWithCustomRadius = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
     getSnackbarMessage('findImagePointWithCustomRadius'),
@@ -205,7 +205,8 @@ const App = () => {
     const radius = searchParams.get('radius');
     const requester = searchParams.get('requester');
 
-    // Brukes per nå kun til å gi spesifiserte tilbakemeldinger i snackbar og skal ikke bli liggende i url.
+    // This parameter is only used to formulate the snackbar message and is therefore
+    // removed from the url.
     if (requester) {
       removeUrlParameter('requester');
     };
@@ -262,7 +263,8 @@ const App = () => {
     setSnackbarVisible(false);
   };
 
-  // For å få snackbar til å vises til den krysses vekk av bruker må autoHideDuration settes til null.
+  // To make the snackbar visible until the user clicks it away, we need to set the autoHideDuration property of
+  // the snackbar to null (not 0). Other numbers work fine.
   const deriveSnackbarDurationFromDuration = (duration: number) => {
     if (duration === 0) {
       return null;
