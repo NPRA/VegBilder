@@ -132,7 +132,7 @@ interface IHistoryProps {
   setIsHistoryMode: (isHistoryMode: boolean) => void;
 }
 
-async function findHistoryImagePoints(
+async function findAndSetHistoryImagePoints(
     currentImagePoint: IImagePoint | null, 
    loadedImagePoints: ILoadedImagePoints | null, 
    historyImagePoints: IImagePoint[], setHistoryImagePoints: React.Dispatch<React.SetStateAction<IImagePoint[]>>, 
@@ -240,7 +240,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
   // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
-    findHistoryImagePoints(currentImagePoint, loadedImagePoints, historyImagePoints, setHistoryImagePoints, availableYearsForAllImageTypes);
+    findAndSetHistoryImagePoints(currentImagePoint, loadedImagePoints, historyImagePoints, setHistoryImagePoints, availableYearsForAllImageTypes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentImagePoint, availableYearsForAllImageTypes]);
 
