@@ -22,10 +22,17 @@ const ImagePointMapLayers = () => {
 
   const getMapLayer = () => {
 
-    //There will be instances where not all imageTypes have images in the selected year.
-    //To avoid errors from the api, we therefore select the imageType we know has images.
+    // There will be years which don't contain images of all image types.
+    // To avoid errors by trying to access a map layer which doesn't exist, we therefore only 
+    // include layers we know contain images.
       if (showNyesteKartlag) { 
-        return `vegbilder_1_0:Vegbilder_dekning, vegbilder_1_0:Vegbilder_360_dekning`; 
+        if (availableYearsForAllImageTypes['planar'].length !== 0 && availableYearsForAllImageTypes['panorama'].length !== 0) {
+          return `vegbilder_1_0:Vegbilder_dekning, vegbilder_1_0:Vegbilder_360_dekning`; 
+        } else if (availableYearsForAllImageTypes['planar'].length !== 0 && availableYearsForAllImageTypes['panorama'].length === 0) {
+          return `vegbilder_1_0:Vegbilder_dekning`;
+        } else if (availableYearsForAllImageTypes['planar'].length === 0 && availableYearsForAllImageTypes['panorama'].length !== 0) {
+          return `vegbilder_1_0:Vegbilder_360_dekning`;
+        }
       } else if (typeof currentYear === 'number') {
         if (imageTypeHasImagesForYear('panorama', currentYear) && imageTypeHasImagesForYear('planar', currentYear)) {
           return `vegbilder_1_0:Vegbilder_oversikt_${currentYear}, vegbilder_1_0:Vegbilder_360_oversikt_${currentYear}`;
