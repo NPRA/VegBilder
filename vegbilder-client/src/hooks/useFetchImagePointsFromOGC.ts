@@ -22,27 +22,19 @@ const useFetchImagePointsFromOGC = () => {
     if (isFetching) return;
     setIsFetching(true);
 
+      const resPlanar: any = imageTypeHasImagesForYear('planar', year) 
+        ? await getImagePointsInTilesOverlappingBbox(bbox, `vegbilder_1_0:Vegbilder_${year}`) 
+        : {};
 
-    let imagePointsAll: IImagePoint[] = [];
-    let imagePointsPlanar: IImagePoint[] = [];
-    let imagePointsPanorama: IImagePoint[] = [];
-    let expandedBbox: any = {};
+      const res360: any = imageTypeHasImagesForYear('panorama', year) 
+        ? await getImagePointsInTilesOverlappingBbox(bbox, `vegbilder_1_0:Vegbilder_360_${year}`) 
+        : {};
 
-      let resPlanar: any = {};
-      let res360: any = {};
+      const imagePointsPlanar = resPlanar.imagePoints ?? [];
+      const imagePointsPanorama = res360.imagePoints ?? [];
+      const imagePointsAll: IImagePoint[] = [...imagePointsPlanar, ...imagePointsPanorama];
 
-      if (imageTypeHasImagesForYear('planar', year)) {
-        resPlanar = await getImagePointsInTilesOverlappingBbox(bbox, `vegbilder_1_0:Vegbilder_${year}`);
-      }
-      if (imageTypeHasImagesForYear('panorama', year)) {
-        res360 = await getImagePointsInTilesOverlappingBbox(bbox, `vegbilder_1_0:Vegbilder_360_${year}`);
-      }
-
-      imagePointsPlanar = resPlanar.imagePoints ?? [];
-      imagePointsPanorama = res360.imagePoints ?? [];
-      imagePointsAll = [...imagePointsPlanar, ...imagePointsPanorama];
-
-      expandedBbox = res360.expandedBbox ?? resPlanar.expandedBbox; //expandedBbox is identical for both results.
+      const expandedBbox = res360.expandedBbox ?? resPlanar.expandedBbox; //expandedBbox is identical for both results.
 
       console.info('Antall bildepunkter returnert fra ogc: ' + imagePointsAll.length);
 
