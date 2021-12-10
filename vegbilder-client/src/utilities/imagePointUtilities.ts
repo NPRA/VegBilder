@@ -335,8 +335,7 @@ const getImagePointsInSameDirectionOfImagePoint = (imagePoints: IImagePoint[], c
   );
   const imagePointsInSameDirection = imagePoints.filter(
     (imagePoint: IImagePoint) => {
-      if (imagePoint && currentImagePoint) {
-        if (areOnSameVegkategori(currentImagePoint, imagePoint)) {
+      if (imagePoint && currentImagePoint && areOnSameVegkategori(currentImagePoint, imagePoint)) {
           const distanceBetween = getDistanceToBetweenImagePoints(
             currentImagePoint,
             imagePoint
@@ -362,7 +361,6 @@ const getImagePointsInSameDirectionOfImagePoint = (imagePoints: IImagePoint[], c
               }
             }
           }
-        }
       }
       return false;
     }
