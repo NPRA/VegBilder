@@ -135,7 +135,8 @@ interface IHistoryProps {
 async function findHistoryImagePoints(
     currentImagePoint: IImagePoint | null, 
    loadedImagePoints: ILoadedImagePoints | null, 
-   historyImagePoints: IImagePoint[], setHistoryImagePoints: React.Dispatch<React.SetStateAction<IImagePoint[]>>, 
+   historyImagePoints: IImagePoint[],
+   setHistoryImagePoints: React.Dispatch<React.SetStateAction<IImagePoint[]>>, 
    availableYearsForAllImageTypes: availableYears) 
    {
     if (currentImagePoint && loadedImagePoints) {
