@@ -287,7 +287,6 @@ const getFilteredImagePoints = (
       imageType: getImageType(currentImagePoint)
     };
     let filteredImagePoints: IImagePoint[] = [];
-    //TODO: imageType må sjekkes og brukes på en eller annen måte her.
     for (const [roadReference, availableImageSeriesForRoadReference] of Object.entries(
       loadedImagePoints.imagePointsGroupedBySeries
     )) {
