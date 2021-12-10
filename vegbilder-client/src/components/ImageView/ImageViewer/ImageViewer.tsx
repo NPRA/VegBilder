@@ -20,7 +20,6 @@ import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { debounce } from 'lodash';
 import PanoramaImage from './PanoramaImage/PanoramaImage';
-//import utsnitt from './utsnitt.jpg';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
