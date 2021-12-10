@@ -12,7 +12,7 @@ import { getImageType } from "utilities/imagePointUtilities";
 
 const useStyles = makeStyles(() => ({
   panoramaLabel: {
-    textAlign: 'center'  //Used to center text 
+    textAlign: 'center'  //Used to make sure text is centered when resizing window
   }
 }));
 interface IPanoramaToggleButton {

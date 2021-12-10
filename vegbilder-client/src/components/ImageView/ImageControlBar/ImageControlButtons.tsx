@@ -14,9 +14,9 @@ import Tooltip from '@material-ui/core/Tooltip';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import proj4 from 'proj4';
 import clsx from 'clsx';
-// En Panellum-instans er global og det er dermed mulig å kalle eks. getHfov globalt.
+// A Pannellum instance is global, which makes it possible to call its methods, e.g. getHfov, from any component.
 // @ts-ignore
-import { getHfov, setHfov, getYaw, setYaw, getPitch, setPitch, toggleFullscreen as togglePanoramaFullscreen } from 'react-pannellum'; //Ingorert for testing TODO: Opprett d.ts fil for Panellum
+import { getHfov, setHfov, getYaw, setYaw, getPitch, setPitch, toggleFullscreen as togglePanoramaFullscreen } from 'react-pannellum';
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
