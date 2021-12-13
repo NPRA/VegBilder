@@ -23,6 +23,7 @@ const getImageType = (imagepoint: IImagePoint) => {
   }
 };
 
+// TODO: Beskrive hvorfor dette er nødvendig.
 const getImageUrl = (imagepoint: IImagePoint) => {
   if (imagepoint.properties.URLPREVIEW) {
     return imagepoint.properties.URLPREVIEW;
@@ -326,6 +327,33 @@ const getCurrentImagePointBearing = (
   }
 };
 
+
+/* Various methods for retrieving imagePoints */
+
+const getNearestImagePointToCurrentImagePoint = (imagePoints: IImagePoint[], currentImagePoint?: IImagePoint, latlng?: ILatlng) => {
+    /* Here we want to find the nearest image point in the road reference of the current image point
+     * (The actually nearest image point may be in the opposite lane, for example.)
+     *
+     * Note the use of a generic (year independent) road reference. This is sufficient here;
+     * we are looking for a nearby image (by coordinates) on the same road, in the same lane.
+     * (Strekning/hovedparsell does not really matter.) Note that even the generic road reference
+     * is not necessarily stable from year to year, So we may not be able to find an image point
+     * this way, or we may end up finding an image point in the opposite lane because the metering
+     * direction of the road was changed, thus also changing the FELTKODE.
+     */
+    const currentLatlng = currentImagePoint ? getImagePointLatLng(currentImagePoint) : latlng;
+    const sameRoadReferenceImagePoints = imagePoints.filter((imagePoint: IImagePoint) => {
+      if (currentImagePoint) {
+        const roadRef = getGenericRoadReference(imagePoint);
+        const currentRoadRef = getGenericRoadReference(currentImagePoint);
+        return roadRef === currentRoadRef;
+      }
+      return true;
+    });
+    const nearestImagePoint = currentLatlng ? findNearestImagePoint(sameRoadReferenceImagePoints, currentLatlng, 300) : null;
+    return nearestImagePoint;
+  };
+
 const getImagePointsInSameDirectionOfImagePoint = (imagePoints: IImagePoint[], currentImagePoint: IImagePoint) => {
   const currentImagePointDirection = currentImagePoint.properties.RETNING;
   const maxDistance = 50; // meters (avoid getting a picture on a totally different road)
@@ -401,5 +429,6 @@ export {
   getBearingBetweenImagePoints,
   shouldIncludeImagePoint,
   getFilteredImagePoints,
-  getNearestImagePointInSameDirectionOfImagePoint
+  getNearestImagePointInSameDirectionOfImagePoint,
+  getNearestImagePointToCurrentImagePoint
 };
