@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import CloseIcon from '@material-ui/icons/Close';
 import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
-import { Dictionary, NumericDictionary } from 'lodash';
+import { NumericDictionary } from 'lodash';
 
 import {
   getDateString,
@@ -132,6 +132,8 @@ interface IHistoryProps {
   setIsHistoryMode: (isHistoryMode: boolean) => void;
 }
 
+// Her finner vi bilder, av alle tilgjengelige bildetyper, som er nærmest current image point innen hver tilgjengelige dato.
+// Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
 async function findAndSetHistoryImagePoints(
     currentImagePoint: IImagePoint | null, 
    loadedImagePoints: ILoadedImagePoints | null, 
@@ -157,7 +159,7 @@ async function findAndSetHistoryImagePoints(
         };
 
         for (const [imageType, years] of Object.entries(availableYearsForAllImageTypes)) {
-          if (imageType === 'all') {
+          if (imageType === 'all' || !years.length) {
             return;
           }
           for (const year of years) {
@@ -230,12 +232,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
     setIsHistoryMode(false);
   };
 
-  // I useEffekt'en finner vi bilder som er nærmest current image point innen hver tilgjengelige dato.
-  // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
-  // For å finne retningen av bildet så har vi to muligheter: se på retning (som ikke alle bilder har), eller regne ut bearing.
-  // I de tilfellene vi må regne ut bearing (når bildet ikke har retning) så finner vi først bearing mellom currentImagePoint og et nærliggende bilde (et bilde tatt
-  // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
-  // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
     findAndSetHistoryImagePoints(currentImagePoint, loadedImagePoints, historyImagePoints, setHistoryImagePoints, availableYearsForAllImageTypes);
     // eslint-disable-next-line react-hooks/exhaustive-deps

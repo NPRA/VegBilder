@@ -15,6 +15,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import proj4 from 'proj4';
 import clsx from 'clsx';
 // A Pannellum instance is global, which makes it possible to call its methods, e.g. getHfov, from any component.
+// The pannellum library does not provide a .d.ts file for Typescript.
 // @ts-ignore
 import { getHfov, setHfov, getYaw, setYaw, getPitch, setPitch, toggleFullscreen as togglePanoramaFullscreen } from 'react-pannellum';
 

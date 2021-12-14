@@ -1,14 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useResetRecoilState } from 'recoil';
+
 import { FormGroup, FormControlLabel, Tooltip, Typography, makeStyles } from '@material-ui/core';
 import { Switch } from '@material-ui/core';
 import { useRect } from '@reactour/utils';
 import { Mask } from '@reactour/mask';
 import { Popover } from "@reactour/popover";
 import { AnimatePresence, motion } from 'framer-motion';
-import { IImagePoint } from "types";
-import { useResetRecoilState } from 'recoil';
+
 import { isPanoramaMinOrMaxZoomState } from 'recoil/atoms';
 import { getImageType } from "utilities/imagePointUtilities";
+import { IImagePoint } from "types";
 
 const useStyles = makeStyles(() => ({
   panoramaLabel: {
@@ -30,16 +32,16 @@ const PanoramaToggleButton = ({
   setIsZoomedInImage, 
   currentImagePoint}: IPanoramaToggleButton) => {
 
+  // Used by popover (reactour)
   const elementRef = useRef(null);
   const wrapperRef = useRef(null);
   const sizes = useRect(elementRef);
-
-  const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
-  const resetPanoramaMinOrMaxZoom = useResetRecoilState(isPanoramaMinOrMaxZoomState);
-
   const HIDE_POPOVER = 'HidePopover';
   const hidePopoverIsSet = localStorage.getItem(HIDE_POPOVER) === 'true';
   const [showPopover, setShowPopover] = useState(false);
+
+  const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
+  const resetPanoramaMinOrMaxZoom = useResetRecoilState(isPanoramaMinOrMaxZoomState);
 
   const classes = useStyles();
 
@@ -120,34 +122,34 @@ const PanoramaToggleButton = ({
 
   return (
     <div ref={wrapperRef}>
-    <FormGroup>
-      <Tooltip ref={elementRef} title={currentImageType !== 'panorama' ? 'Dette bildet har ikke 360-visning' : ''}>
-        <FormControlLabel
-          control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaModeIsActive} onChange={switchPanoramaMode} name="Panorama-toggle" />}
-          label="360-visning"
-          labelPlacement="top"
-          className={classes.panoramaLabel}
-        />
-      </Tooltip>
-    </FormGroup>
-    <AnimatePresence>
-    {showPopover ? 
-      <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      style={{ position: 'relative', zIndex: 99999 }}
-    >
-        <Mask 
-        sizes={sizes}
-        styles={{maskWrapper: base => ({...base, zIndex: 99999})}}
-        onClick={handlePopoverRemoval}
-      />
-        <Popover sizes={sizes} position="top" styles={popoverStyles}>
-          <Typography>Her kan du skru av og på 360-visning</Typography>
-        </Popover>
-      </motion.div>
-    : null}
+      <FormGroup>
+        <Tooltip ref={elementRef} title={currentImageType !== 'panorama' ? 'Dette bildet har ikke 360-visning' : ''}>
+          <FormControlLabel
+            control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaModeIsActive} onChange={switchPanoramaMode} name="Panorama-toggle" />}
+            label="360-visning"
+            labelPlacement="top"
+            className={classes.panoramaLabel}
+          />
+        </Tooltip>
+      </FormGroup>
+      <AnimatePresence> {/* + motion.div: Adds animation when the popover is removed */}
+        {showPopover ? 
+          <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          style={{ position: 'relative', zIndex: 99999 }}
+        >
+          <Mask 
+          sizes={sizes}
+          styles={{maskWrapper: base => ({...base, zIndex: 99999})}}
+          onClick={handlePopoverRemoval}
+          />
+            <Popover sizes={sizes} position="top" styles={popoverStyles}>
+              <Typography>Her kan du skru av og på 360-visning</Typography>
+            </Popover>
+          </motion.div>
+        : null}
       </AnimatePresence>
     </div>
   )

@@ -1,8 +1,8 @@
 import { Dictionary } from 'lodash';
 
 /*
-  URL: Url to the original, unedited image (only blurred)
-  URLPREVIEW: Url to an edited version of the original image (e.g. a smaller or cropped version suitable for preview)
+  URL: Url to the original image (only blurred)
+  URLPREVIEW: Url to an optimised version of the original image more suitable for preview
 */
 export interface IImagePoint {
   type: string;
@@ -58,8 +58,8 @@ export interface ILoadedImagePoints {
   availableDates?: string[];
 }
 
-export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'radius' | 'requester' | 'imageType';
+export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'radius' | 'requester';
 
 export type viewTypes = 'map' | 'image';
 
-export type imageType = 'planar' | 'panorama' | 'dekkekamera' | 'all';
+export type imageType = 'planar' | 'panorama' | 'all';

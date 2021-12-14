@@ -11,10 +11,17 @@ import {
 } from 'utilities/imagePointUtilities';
 import { createSquareBboxAroundPoint, isBboxWithinContainingBbox } from 'utilities/latlngUtilities';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState, yearQueryParameterState } from 'recoil/selectors';
-import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 import { loadedImagePointsState, currentViewState } from 'recoil/atoms';
+import useFetchImagePointsFromOGC from './useFetchImagePointsFromOGC';
 
-type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'zoomInOnImages' | 'findImagePointWithCustomRadius';
+// FETCH METHODS:
+// Default = Find and return the nearest image point within a 1000m radius.
+// findByImageId = Find and return an image point based on imageID (imageID in url).
+// findImageNearbyCurrentImagePoint = Find and return the nearest image point with the same road reference (inluding Felt) within 300m.
+// findImagePointWithCustomRadius = Find and return the nearest image point within a custom radius. Used to give external services
+//                                  the ability to customize their search (e.g. Vegkart).
+
+type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoint' | 'findImagePointWithCustomRadius';
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string, duration?: number) => void,

@@ -13,6 +13,7 @@ const getImagePointLatLng = (imagePoint: IImagePoint) => {
   }
 };
 
+// Old planar images does not have the property BILDETYPE.
 const getImageType = (imagepoint: IImagePoint) => {
   if (!imagepoint.properties.BILDETYPE || imagepoint.properties.BILDETYPE === 'planar') {
     return "planar"; 
@@ -23,7 +24,9 @@ const getImageType = (imagepoint: IImagePoint) => {
   }
 };
 
-// TODO: Beskrive hvorfor dette er nødvendig.
+// URLPREVIEW is an optimised version of the original URL-image and is the preferred image to use.
+// (e.g. for panorama images, URLPREVIEW contains a snapshot of the original image that can be used as a preview)
+// Note that currently (Dec 2021) only panorama images have a preview.
 const getImageUrl = (imagepoint: IImagePoint) => {
   if (imagepoint.properties.URLPREVIEW) {
     return imagepoint.properties.URLPREVIEW;
@@ -32,6 +35,7 @@ const getImageUrl = (imagepoint: IImagePoint) => {
   }
 };
 
+// URL: The original image without any optimisation. Will always contain a url. 
 const getImageUrlOfOriginalImage = (imagePoint: IImagePoint) => {
   return imagePoint.properties.URL;
 }
@@ -154,7 +158,6 @@ const getFormattedDateString = (imageSeriesDate: string) => {
  * new object, under which each key is a date. The value for each of those is an array of image
  * points.
  */
-
 
 const groupBySeries = (imagePoints: IImagePoint[]) => {
   let groupedByReferenceAndDate: Dictionary<Dictionary<IImagePoint[]>> = {};
@@ -328,7 +331,7 @@ const getCurrentImagePointBearing = (
 };
 
 
-/* Various methods for retrieving imagePoints */
+// ========= Various methods for retrieving imagePoints ======== 
 
 const getNearestImagePointToCurrentImagePoint = (imagePoints: IImagePoint[], currentImagePoint?: IImagePoint, latlng?: ILatlng) => {
     /* Here we want to find the nearest image point in the road reference of the current image point
@@ -354,6 +357,11 @@ const getNearestImagePointToCurrentImagePoint = (imagePoints: IImagePoint[], cur
     return nearestImagePoint;
   };
 
+
+  // For å finne retningen av bildet så har vi to muligheter: se på retning (som ikke alle bilder har), eller regne ut bearing.
+  // I de tilfellene vi må regne ut bearing (når bildet ikke har retning) så finner vi først bearing mellom currentImagePoint og et nærliggende bilde (et bilde tatt
+  // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
+  
 const getImagePointsInSameDirectionOfImagePoint = (imagePoints: IImagePoint[], currentImagePoint: IImagePoint) => {
   const currentImagePointDirection = currentImagePoint.properties.RETNING;
   const maxDistance = 50; // meters (avoid getting a picture on a totally different road)
