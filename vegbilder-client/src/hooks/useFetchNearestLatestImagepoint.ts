@@ -42,7 +42,6 @@ const useFetchNearestLatestImagePoint = (
         await fetchFunction(latlng, year, radius).then((imagePoint) => {
           if (imagePoint) {
             const year = imagePoint.properties.AAR;
-            setCurrentYear(year);
             showMessage(
               `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
             );
