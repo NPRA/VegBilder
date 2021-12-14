@@ -46,7 +46,7 @@ const useFetchNearestImagePoint = (
 
     if (shouldFetchNewImagePointsFromOGC) {
       showMessage(`Leter etter bilder i ${year}...`);
-      fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints: IImagePoint[] | undefined) => {
+      return fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints: IImagePoint[] | undefined) => {
         if (imagePoints && imagePoints.length) {
           let nearestImagePoint;
           if (fetchMethod === 'findByImageId') {
