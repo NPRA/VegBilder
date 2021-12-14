@@ -56,10 +56,11 @@ export const availableYearsQuery = selector({
           }
         }
       }
-      const sortedPlanarYears = availableYearsPlanar.slice().sort((a: number, b: number) => b - a);
-      const sorted360Years = availableYears360.slice().sort((a: number, b: number) => b - a);
-      const sortedAllImageTypesYears = [...new Set([...sortedPlanarYears, ...sorted360Years])];
-      const availableYearsForAllImageTypes: availableYears = {'planar': sortedPlanarYears, 'panorama': sorted360Years, 'all': sortedAllImageTypesYears};
+      const availableYearsPlanarSorted = availableYearsPlanar.slice().sort((a: number, b: number) => b - a);
+      const availableYears360Sorted = availableYears360.slice().sort((a: number, b: number) => b - a);
+      const availableYearsAllSorted = [...new Set([...availableYearsPlanarSorted, ...availableYears360Sorted])].slice().sort((a: number, b: number) => b - a);
+      
+      const availableYearsForAllImageTypes: availableYears = {'planar': availableYearsPlanarSorted, 'panorama': availableYears360Sorted, 'all': availableYearsAllSorted};
 
       return availableYearsForAllImageTypes;
     }
