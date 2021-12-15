@@ -81,10 +81,9 @@ const useStyles = makeStyles((theme) => ({
             '&.year': {
                 textAlign: "left",
                 paddingRight: "5px"
-            },
+                },
+            }
         }
-        }
-
     },
     buttonContainer: {
         display: "flex",
@@ -180,16 +179,16 @@ export const StatisticsTable = () => {
                                 <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">EV</TableCell>
                                 <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">RV</TableCell>
                                 <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">FV</TableCell>
-                                {showOvrigeColumn && <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`}>Øvrige</TableCell>}
+                                {showOvrigeColumn && <TableCell className={`${classes.headerCell} ovrige right`}>Øvrige</TableCell>}
                             </TableRow>
                         </TableHead>
                         < TableBody >
                             <TableRow>
                                 <TableCell className={`${classes.contentCell} currentYear year`} component="th" scope="row">{rowForCurrentYear.year}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.E)}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.R)}</TableCell>
-                                <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.F)}</TableCell>
-                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} currentYear ${showOvrigeColumn ? `ovrige` : ""}`}>{formatTableCell(rowForCurrentYear.other)}</TableCell>}
+                                <TableCell className={`${classes.contentCell} currentYear`}>{formatTableCell(rowForCurrentYear.E)}</TableCell>
+                                <TableCell className={`${classes.contentCell} currentYear`}>{formatTableCell(rowForCurrentYear.R)}</TableCell>
+                                <TableCell className={`${classes.contentCell} currentYear`}>{formatTableCell(rowForCurrentYear.F)}</TableCell>
+                                {showOvrigeColumn && <TableCell className={`${classes.contentCell} currentYear`}>{formatTableCell(rowForCurrentYear.other)}</TableCell>}
                             </TableRow>
                             {showExtendedTable && sortedTableRowsWithoutCurrentYear.map((row) => {
                                 return (
