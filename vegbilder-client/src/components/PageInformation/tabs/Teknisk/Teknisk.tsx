@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { StatisticsTable } from './StatisticsTable/StatisticsTable';
 
@@ -87,7 +87,11 @@ const Teknisk = () => {
         </ul>
         <Typography variant="subtitle1"> Bilder i løsningen </Typography>
         <Typography variant="body1" > Tabellen under gir en oversikt over hvor mange vegbilder som er tilgjengelige, sortert etter år og vegkategori. </Typography>
-        <StatisticsTable />
+        {/* We have to use suspense here, or else the Suspense surrounding the entire app would kick in while loading the statistics (with recoil), 
+              briefly showing a white screen with a spinner */}
+        <Suspense fallback={<Typography variant="body1" style={{ textAlign: 'center', paddingTop: '10px', zIndex: 10 }}>Henter statistikk ...</Typography>}>
+          <StatisticsTable />
+        </Suspense>
         <Typography variant="subtitle1"> {tekniskText.subheader2} </Typography>
         {Object.entries(versionLog).map(([versionNumber, changes]) => (
           <>
