@@ -32,23 +32,31 @@ interface ICloseButtonProps {
     | 'sticky'
     | undefined;
   zIndex?: number;
+  customStyle?: {};
+  iconSize?: 
+  | 'default'
+  | 'inherit'
+  | 'large'
+  | 'small'
 }
 
-const CloseButton = ({ onClick, transparent, positionToTop, positionToRight: positionRight, position, zIndex }: ICloseButtonProps) => {
+const CloseButton = ({ onClick, transparent, positionToTop, positionToRight, position, zIndex, customStyle, iconSize }: ICloseButtonProps) => {
   const classes = useStyles();
+  const fontSize = iconSize ? iconSize : "default";
   return (
     <IconButton
       className={classes.closeButton}
-      style={{
+      style={customStyle ? customStyle 
+        : {
         background: transparent ? 'transparent' : `${Theme.palette.common.grayDark}`,
         top: positionToTop ?? '0.3125rem',
-        right: positionRight ?? '0.3125rem',
+        right: positionToRight ?? '0.3125rem',
         position: position ? position : 'absolute',
         zIndex: zIndex ?? 'auto'
       }}
       onClick={onClick}
     >
-      <CloseIcon />
+      <CloseIcon fontSize={fontSize} />
     </IconButton>
   );
 };

@@ -5,9 +5,9 @@ import { FormGroup, FormControlLabel, Tooltip, Typography, makeStyles } from '@m
 import { Switch } from '@material-ui/core';
 import { useRect } from '@reactour/utils';
 import { Mask } from '@reactour/mask';
-import { Popover } from "@reactour/popover";
-import { AnimatePresence, motion } from 'framer-motion';
+import { Popover as ReactourPopover } from "@reactour/popover";
 
+import CloseButton from 'components/CloseButton/CloseButton';
 import { isPanoramaMinOrMaxZoomState } from 'recoil/atoms';
 import { getImageType } from "utilities/imagePointUtilities";
 import { IImagePoint } from "types";
@@ -132,25 +132,18 @@ const PanoramaToggleButton = ({
           />
         </Tooltip>
       </FormGroup>
-      <AnimatePresence> {/* + motion.div: Adds animation when the popover is removed */}
         {showPopover ? 
-          <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          style={{ position: 'relative', zIndex: 99999 }}
-        >
+        <div>
           <Mask 
           sizes={sizes}
           styles={{maskWrapper: base => ({...base, zIndex: 99999})}}
-          onClick={handlePopoverRemoval}
           />
-            <Popover sizes={sizes} position="top" styles={popoverStyles}>
+            <ReactourPopover sizes={sizes} position="top" styles={popoverStyles}>
+              <CloseButton onClick={handlePopoverRemoval} customStyle={{height: '1.5rem', width: '1.5rem'}} iconSize='small'/>
               <Typography>Her kan du skru av og på 360-visning</Typography>
-            </Popover>
-          </motion.div>
+            </ReactourPopover>
+            </div>
         : null}
-      </AnimatePresence>
     </div>
   )
 };
