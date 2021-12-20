@@ -1,0 +1,15 @@
+{
+  "buttons": {
+    "moreInfo": "Mer informasjon",
+    "hideInfo": "Skjul informasjon"
+  },
+  "imageInfo": {
+    "header": "DAGSAKTUELL INFORMASJON",
+    "location": "PLASSERING",
+    "speed": "FARTSGRENSER",
+    "traffic": "TRAFIKKMENGDE",
+    "maskedObjects": "MASKERTE OBJEKTER",
+    "contracts": "KONTRAKTSOMRÅDER",
+    "nordkapp": "NORDKAPP"
+  }
+}

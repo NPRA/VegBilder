@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSetRecoilState } from 'recoil';
 import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
+import { useTranslation } from "react-i18next";
 
 import { MyLocationIcon } from 'components/Icons/Icons';
 import { latLngZoomQueryParameterState } from 'recoil/selectors';
@@ -22,7 +23,9 @@ interface IMyLocationControlProps {
 
 const MyLocationControl = ({ showMessage }: IMyLocationControlProps) => {
   const classes = useStyles();
+  const { t } = useTranslation(['mapView', 'snackbar']);
   const setCurrentCoordinates = useSetRecoilState(latLngZoomQueryParameterState);
+  const tooltipTitle = t('mapView:buttons.position');
 
   const getLocation = () => {
     navigator.geolocation.getCurrentPosition(
@@ -34,7 +37,7 @@ const MyLocationControl = ({ showMessage }: IMyLocationControlProps) => {
         });
       },
       (err) => {
-        showMessage('Fant ikke posisjonen din.');
+        showMessage(t('snackbar:fetchMessage.locationError'));
         console.warn(err);
       }
     );
@@ -42,7 +45,7 @@ const MyLocationControl = ({ showMessage }: IMyLocationControlProps) => {
 
   return (
     <div className={classes.zoomControl}>
-      <Tooltip title="Finn min posisjon">
+      <Tooltip title={tooltipTitle}>
         <IconButton onClick={getLocation}>
           <MyLocationIcon id="my-location" />
         </IconButton>

@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { TileLayer, MapContainer, useMapEvents, useMap } from 'react-leaflet';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
+import { useTranslation } from "react-i18next";
+
 
 import { crsUtm33N } from 'constants/crs';
 import ImagePointMapLayers from './ImagePointMapLayers/ImagePointMapLayers';
@@ -34,6 +36,7 @@ const ChangeMapView = ({ center, zoom }: { center: ILatlng; zoom: number | undef
 };
 
 const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEventHandlerProps) => {
+  const { t } = useTranslation('snackbar', {keyPrefix: "fetchMessage"});
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const currentYear = useRecoilValue(currentYearState);
@@ -43,7 +46,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
-    'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
+    t('error1')
   );
 
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(showMessage);

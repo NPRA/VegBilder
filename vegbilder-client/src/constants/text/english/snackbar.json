@@ -1,0 +1,23 @@
+{
+  "fetchMessage": {
+    "searching": "Looking for images from {{year}} ...",
+    "error1": "Couldn't find any images nearby the point you selected. Try clicking somewhere else.",
+    "error2": "Couldn't find any images in this area. Try clicking somewhere else.",
+    "error3": "Couldn't find any images in the point you selected. Choose another image point.",
+    "error4": "Couldn't find any images at the location you searched for.",
+    "error5": "Couldn't find any images nearby.",
+    "error6": "Couldn't find any images at the current image point from the selcted year. Choose another year or another image point.",
+    "error7": "Couldn't find image point. Try clicking instead",
+    "errorERF": "Not a valid ERF road",
+    "locationError": "Couldn't find your position",
+    "vegrefError": "Couldn't find an image point with the road reference {{vegsystemreferanse}}. Try again in the search field.",
+    "requesterError": "Couldn't find any images at the point you selected in {{requester}}. Choose another point on the map.",
+    "imageFound": "Showing images from the year {{year}}, which is the most recent images in the area."
+  },
+  "navigation": {
+    "error1": "Can't find nearby images in the opposite direction.",
+    "lastImage": "This is the last image in the series. Choose a new image point in the minimap.",
+    "firstImage": "This is the first image in the series. Choose a new image point in the minimap.",
+    "animationLastImage": "Stopping animation. This is the last image in the series. Choose a new image point in the minimap to continue."
+  }
+}

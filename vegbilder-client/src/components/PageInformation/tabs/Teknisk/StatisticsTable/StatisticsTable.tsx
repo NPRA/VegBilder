@@ -6,6 +6,7 @@ import { visuallyHidden } from '@material-ui/utils';
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@material-ui/icons/KeyboardArrowUp';
 import {groupBy} from "lodash";
+import {useTranslation} from "react-i18next";
 
 import {IStatisticsFeatureProperties, IStatisticsRow } from './types';
 import {
@@ -141,7 +142,7 @@ const createTotalRowExcludingCurrentYear = (sortedTableRowsWithoutCurrentYear: I
 
     const onlyExistingValuesReducer = (prev: IStatisticsRow, cur: IStatisticsRow) => {
         return {
-            year: `${previousYear} og eldre`,
+            year: `${previousYear}`,
             E: prev.E + cur.E,
             R: prev.R + cur.R,
             F: prev.F + cur.F,
@@ -154,6 +155,7 @@ const createTotalRowExcludingCurrentYear = (sortedTableRowsWithoutCurrentYear: I
 
 export const StatisticsTable = () => {
     const classes = useStyles();
+    const { t } = useTranslation('pageInformation', {keyPrefix: "teknisk.statistics"});
     const availableStatistics: IStatisticsFeatureProperties[] = useRecoilValue(availableStatisticsQuery);
     const tableRows = createTableRowsFromStatistics(availableStatistics);
     const sortedTableRows = sortTableRowsBasedOnYear(tableRows);
@@ -172,14 +174,14 @@ export const StatisticsTable = () => {
             <div className={classes.scrollContainer}>
                 <TableContainer>
                     <Table>
-                        <caption style={visuallyHidden}>En tabell som gir en oversikt over hvor mange vegbilder som er tilgjengelige, kategorisert etter år og vegkategori.</caption>
+                        <caption style={visuallyHidden}>{t('caption')}</caption>
                         <TableHead>
                             <TableRow>
-                                <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""}`} scope="col">År</TableCell>
-                                <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">EV</TableCell>
-                                <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">RV</TableCell>
-                                <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">FV</TableCell>
-                                {showOvrigeColumn && <TableCell className={`${classes.headerCell} ovrige right`}>Øvrige</TableCell>}
+                                <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""}`} scope="col">{t('column1')}</TableCell>
+                                <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">{t('column2')}</TableCell>
+                                <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">{t('column3')}</TableCell>
+                                <TableCell className={`${classes.headerCell} ${showOvrigeColumn ? `ovrige` : ""} right`} scope="col">{t('column4')}</TableCell>
+                                {showOvrigeColumn && <TableCell className={`${classes.headerCell} ovrige right`}>{t('column5')}</TableCell>}
                             </TableRow>
                         </TableHead>
                         < TableBody >
@@ -203,7 +205,7 @@ export const StatisticsTable = () => {
                             }
                             )}
                             {!showExtendedTable && <TableRow>
-                                <TableCell className={`${classes.contentCell} previousYears total year`} component="th" scope="row">{rowWithTotalValues.year}</TableCell>
+                                <TableCell className={`${classes.contentCell} previousYears total year`} component="th" scope="row">{rowWithTotalValues.year + t('earlierYears')}</TableCell>
                                 <TableCell className={`${classes.contentCell} previousYears total`}>{formatTableCell(rowWithTotalValues.E)}</TableCell>
                                 <TableCell className={`${classes.contentCell} previousYears total`}>{formatTableCell(rowWithTotalValues.R)}</TableCell>
                                 <TableCell className={`${classes.contentCell} previousYears total`}>{formatTableCell(rowWithTotalValues.F)}</TableCell>
@@ -214,7 +216,7 @@ export const StatisticsTable = () => {
                 </TableContainer >
             </div>
             <div className={classes.buttonContainer}>
-                    <IconButton onClick={handleOpenExtendedTable} className={classes.button} aria-label="Vis og skjul flere år.">
+                    <IconButton onClick={handleOpenExtendedTable} className={classes.button} aria-label={t('buttonLabel')}>
                         {showExtendedTable ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
                     </IconButton>
             </div>

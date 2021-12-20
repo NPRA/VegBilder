@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { makeStyles, Typography } from '@material-ui/core';
+import { Button, makeStyles, Typography } from '@material-ui/core';
 
-import { informationText } from 'constants/text';
+import {useTranslation} from "react-i18next";
 import CheckBox from 'components/CheckBox/CheckBox';
 
 const useStyles = makeStyles((theme) => ({
@@ -40,6 +40,7 @@ const useStyles = makeStyles((theme) => ({
 
 const About = () => {
   const classes = useStyles();
+  const { t, i18n } = useTranslation('pageInformation', {keyPrefix: 'omVegbilder'});
 
   const HIDE_SPLASH_ON_STARTUP = 'HideSplashOnStartup';
 
@@ -53,9 +54,14 @@ const About = () => {
     setHideOnStartup(!hideOnStartup);
   };
 
+  const changeLanguage = (lng: string) => {
+    i18n.changeLanguage(lng);
+    document.documentElement.setAttribute('lang', lng);
+  }
+
   return (
     <>
-      <Typography variant="h4"> {informationText.header}</Typography>
+      <Typography variant="h4"> {t('header')}</Typography>
       <img
         src={`${process.env.PUBLIC_URL}/images/E6-Dovrefjell-Snohetta-lower.jpg`}
         alt="Bilde av E6 ved Dovrefjell Snøhetta"
@@ -65,27 +71,34 @@ const About = () => {
       <div className={classes.rightLeftText}>
         <Typography variant="body1" className={classes.paragraphs}>
           {' '}
-          {informationText.photoDescription}{' '}
+          {t('image_description')}{' '}
         </Typography>
         <Typography variant="body1" className={classes.paragraphs}>
           {' '}
-          {informationText.photoBy}{' '}
+          {t('image_credits')}{' '}
         </Typography>
       </div>
       <Typography variant="body1" className={classes.paragraphs}>
         {' '}
-        {informationText.text1}{' '}
+        {t('text1')}{' '}
       </Typography>
       <Typography variant="body1" className={classes.paragraphs}>
         {' '}
-        {informationText.text2}{' '}
+        {t('text2')}{' '}
       </Typography>
-      <div>
+      <div style={{display: 'flex', justifyContent: 'space-between'}}>
         <CheckBox
           handleChange={handleStartupChange}
-          label={'Ikke vis ved oppstart'}
+          label={t('checkboxLabel')}
           checked={hideWasSet}
         />
+        <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: '16.5rem'}}>
+          <Typography>{t('lng')} </Typography>
+          <div style={{display: "flex", justifyContent: "flex-end"}}>
+            <Button onClick={() => changeLanguage('no')} style={{color: i18n.resolvedLanguage === 'no' ? '#F67F00' : '', padding: '0px'}}>Norsk (nb)</Button>
+            <Button onClick={() => changeLanguage('en')} style={{color: i18n.resolvedLanguage === 'en' ? '#F67F00' : '', padding: '0px'}}>English</Button>
+          </div>
+        </div>
       </div>
     </>
   );

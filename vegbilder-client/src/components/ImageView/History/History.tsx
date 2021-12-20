@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import CloseIcon from '@material-ui/icons/Close';
+import { useTranslation } from "react-i18next";
 import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
 import { NumericDictionary } from 'lodash';
+
+import CloseIcon from '@material-ui/icons/Close';
 
 import {
   getDateString,
@@ -193,6 +195,7 @@ async function findAndSetHistoryImagePoints(
 
 const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('imageView', {keyPrefix: "history"});
 
   const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -241,7 +244,7 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
     <Paper className={classes.historyContent} square={true}>
       <div className={classes.historyHeader}>
         <Typography variant="h3" className={classes.headerText}>
-          Samme lokasjon og kjøreretning
+          {t('header')}
         </Typography>
         <IconButton onClick={onClose} className={classes.closeButton}>
           <CloseIcon />

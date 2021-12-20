@@ -1,0 +1,50 @@
+{
+  "sidebar": {
+    "back": "Tilbake til hovedkart",
+    "minmapShow": "Vis kart",
+    "minimapHide": "Skjul kart",
+    "minimapAria": "Vis/skjul kart"
+  },
+  "controlBar": {
+    "zoomIn": "Vis bilde i 1:1 størrelse",
+    "zoomOut": "Vis skalert bilde",
+    "zoomAria": "Zoom inn/ut",
+    "zoomIn360": "Zoom inn",
+    "zoomOut360": "Zoom ut",
+    "fullscreen360": "Fullskjermvisning",
+    "fullscreen360aria": "Aktiver fullskjermvisning",
+    "reset360View": "Tilbakestill visning",
+    "goBackwards": "Gå mot kjøreretning",
+    "goForwards": "Gå i kjøreretning",
+    "turn": "Bytt kjøreretning",
+    "animationStart": "Start animasjonsmodus",
+    "animationExit": "Gå ut av animasjonsmodus",
+    "animationOn": "Spill av animasjon",
+    "animationPause": "Pause avspilling",
+    "animationSpeed": "Bytt hastighet på avspilling",
+    "animationSpeedMenu": {
+      "header": "HASTIGHET",
+      "seconds": " sekunder"
+    },
+    "baselineActivate": "Vis basislinje",
+    "baselineDeactivate": "Skjul basislinje",
+    "noBaseline": "Bildet har ingen basislinje",
+    "baselineAria": "Aktiver/Deaktiver basislinje",
+    "history": "Bilder fra andre datoer",
+    "more": "Flere funksjoner",
+    "moreMenu": {
+      "error": "Meld feil",
+      "share": "Del",
+      "vegkart": "Gå til Vegkart"
+    },
+    "linkCopied": "Lenke kopiert til utklippstavle"
+  },
+  "panorama": {
+    "label": "360-visning",
+    "noPanorama": "Dette bildet har ikke 360-visning",
+    "popover": "Her kan du skru av og på 360-visning"
+  },
+  "history": {
+    "header": "Samme lokasjon og kjøreretning"
+  }
+}
