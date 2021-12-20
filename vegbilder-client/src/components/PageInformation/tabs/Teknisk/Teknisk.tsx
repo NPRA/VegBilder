@@ -2,8 +2,8 @@ import React, { Suspense } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
 import { StatisticsTable } from './StatisticsTable/StatisticsTable';
 
+import { useTranslation } from "react-i18next";
 import { versionLog } from 'constants/versions';
-import { tekniskText } from 'constants/text';
 
 const useStyles = makeStyles((theme) => ({
   bullets: {
@@ -45,20 +45,21 @@ const useStyles = makeStyles((theme) => ({
 
 const Teknisk = () => {
   const classes = useStyles();
+  const { t } = useTranslation('pageInformation');
 
   return (
     <>
       <Typography variant="h4" className={classes.paragraphs}>
-        {tekniskText.header}
+      {t('teknisk.header')}
       </Typography>
 
       <div className={classes.scrollContainer}>
-        <Typography variant="subtitle1"> {tekniskText.subheader1} </Typography>
+        <Typography variant="subtitle1"> {t('teknisk.subheader1')} </Typography>
         <ul className={classes.bullets}>
           <li>
             <Typography variant="body1">
               {' '}
-              {tekniskText.text1}
+              {t('teknisk.text1')}
               <a
                 target="_blank"
                 className={classes.link}
@@ -72,7 +73,7 @@ const Teknisk = () => {
           </li>
           <li>
             <Typography variant="body1" className={classes.paragraphs}>
-              {tekniskText.text2}
+            {t('teknisk.text2')}
               <a
                 target="_blank"
                 className={classes.link}
@@ -85,15 +86,15 @@ const Teknisk = () => {
             </Typography>
           </li>
         </ul>
-        <Typography variant="subtitle1"> Bilder i løsningen </Typography>
-        <Typography variant="body1" > Tabellen under gir en oversikt over hvor mange vegbilder som er tilgjengelige, sortert etter år og vegkategori. </Typography>
+        <Typography variant="subtitle1"> {t('teknisk.statistics.header')} </Typography> 
+        <Typography variant="body1" > {t('teknisk.statistics.description')} </Typography>
         {/* We have to use suspense here, or else the Suspense surrounding the entire app would kick in while loading the statistics (with recoil), 
               briefly showing a white screen with a spinner */}
-        <Suspense fallback={<Typography variant="body1" style={{ textAlign: 'center', paddingTop: '10px', zIndex: 10 }}>Henter statistikk ...</Typography>}>
+        <Suspense fallback={<Typography variant="body1" style={{ textAlign: 'center', paddingTop: '10px', zIndex: 10 }}>{t('teknisk.statistics.loading')}</Typography>}>
           <StatisticsTable />
         </Suspense>
-        <Typography variant="subtitle1"> {tekniskText.subheader2} </Typography>
-        {Object.entries(versionLog).map(([versionNumber, changes]) => (
+        <Typography variant="subtitle1"> {t('versjonslogg.header')} </Typography>
+       {Object.entries(versionLog).map(([versionNumber, changes]) => (
           <>
             <Typography variant="subtitle1"> {versionNumber} </Typography>
             <ul className={classes.bullets}>

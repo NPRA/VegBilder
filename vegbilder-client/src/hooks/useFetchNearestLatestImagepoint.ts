@@ -1,4 +1,5 @@
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import { loadedImagePointsState } from 'recoil/atoms';
 import { availableYearsQuery, yearQueryParameterState, viewQueryParamterState, latLngZoomQueryParameterState } from 'recoil/selectors';
@@ -12,19 +13,20 @@ const useFetchNearestLatestImagePoint = (
   notFoundMessage: string,
   fetchMethodNearestLatest: fetchMethodNearestLatest = 'default',
 ) => {
+  const { t } = useTranslation('snackbar', {keyPrefix: "fetchMessage"});
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
-  const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
+  const [currentYear,] = useRecoilState(yearQueryParameterState);
   const [, setView] = useRecoilState(viewQueryParamterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const fetchImagePointsByLatLongAndYear = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder ved dette området. Prøv å klikke et annet sted.'
+    t('error2') 
   );
 
   const fetchImagePointsByLatLongAndYearWithCustomRadius = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder på punktet du valgte. Velg et annet punkt.',
+    t('error3'),
     'findImagePointWithCustomRadius'
   )
 
@@ -38,12 +40,12 @@ const useFetchNearestLatestImagePoint = (
 
     if (!loadedImagePoints || currentYear === 'Nyeste') {
       for (const year of availableYears) {
-        showMessage(`Leter etter bilder i ${year}...`);
+        showMessage(t('searching', {year}));
         await fetchFunction(latlng, year, radius).then((imagePoint) => {
           if (imagePoint) {
             const year = imagePoint.properties.AAR;
             showMessage(
-              `Avslutter nyeste og viser bilder fra ${year}, som er det året med de nyeste bildene i området.`
+              t('imageFound', {year})
             );
             foundImage = true;
           }

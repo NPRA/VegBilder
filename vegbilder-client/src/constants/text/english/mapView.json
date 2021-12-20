@@ -1,0 +1,15 @@
+{
+  "buttons": {
+    "openImage": "Open image",
+    "moreInfo": "More information",
+    "hideInfo": "Hide information",
+    "position": "Find my position"
+  },
+  "preview": {
+    "imageAlt": "Image of the road"
+  },
+  "legend": {
+    "green": "County road",
+    "purple": "National road"
+  }
+}

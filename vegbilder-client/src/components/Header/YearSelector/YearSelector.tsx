@@ -6,6 +6,7 @@ import { InputBase, ListSubheader } from '@material-ui/core';
 import { createStyles,  makeStyles, WithStyles, withStyles } from '@material-ui/core/styles';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import { CheckmarkIcon, CalendarIcon } from 'components/Icons/Icons';
 import {
@@ -106,6 +107,7 @@ interface IYearSelectorProps {
 
 const YearSelector = ({ showMessage }: IYearSelectorProps) => {
   const classes = useStyles();
+  const { t } = useTranslation(['snackbar', 'common']);
   const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
   const [currentYear, setCurrentYear] = useRecoilState(yearQueryParameterState);
   const [currentView, ] = useRecoilState(viewQueryParamterState);
@@ -115,7 +117,7 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
 
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder fra valgt år for punktet du er i. Velg et annet år eller et annet punkt.',
+    t('snackbar:fetchMessage.error6'),
     'findImageNearbyCurrentImagePoint'
   );
 
@@ -158,16 +160,16 @@ const YearSelector = ({ showMessage }: IYearSelectorProps) => {
         MenuProps={{ classes: { paper: classes.dropdownStyle }, variant: 'menu' }}
       >
         {/*A bug in ListSubheader fires an unforseen onClick event which needs to be stopped.*/}
-        <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Periode</ListSubheader>
+        <ListSubheader onClickCapture={(e) => e.stopPropagation()}>{t('common:yearSelector.category1')}</ListSubheader>
         <MenuItem
           value={'Nyeste'}
           className={classes.item}
           style={{ color: currentYear === 'Nyeste' ? Theme.palette.common.orangeDark : '' }}
         >
           {currentYear === 'Nyeste' ? <CheckmarkIcon className={classes.checkmarkStyle} /> : null}
-          {'Nyeste'}
+          {t('common:yearSelector.nyeste')}
         </MenuItem>
-        <ListSubheader onClickCapture={(e) => e.stopPropagation()}>Årstall</ListSubheader>
+        <ListSubheader onClickCapture={(e) => e.stopPropagation()}>{t('common:yearSelector.category2')}</ListSubheader>
         {availableYearsForAllImageTypes['all'].map((year) => (
           <MenuItem
             key={year}

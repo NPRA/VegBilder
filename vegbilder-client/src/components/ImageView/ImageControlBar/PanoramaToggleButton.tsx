@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useResetRecoilState } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import { FormGroup, FormControlLabel, Tooltip, Typography, makeStyles } from '@material-ui/core';
 import { Switch } from '@material-ui/core';
@@ -31,7 +32,7 @@ const PanoramaToggleButton = ({
   isZoomedInImage, 
   setIsZoomedInImage, 
   currentImagePoint}: IPanoramaToggleButton) => {
-
+  const { t } = useTranslation('imageView', {keyPrefix: 'panorama'});
   // Used by popover (reactour)
   const elementRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -120,13 +121,15 @@ const PanoramaToggleButton = ({
     }
   };
 
+  const tooltipTitle = currentImageType !== 'panorama' ? t('noPanorama') : '';
+
   return (
     <div ref={wrapperRef}>
       <FormGroup>
-        <Tooltip ref={elementRef} title={currentImageType !== 'panorama' ? 'Dette bildet har ikke 360-visning' : ''}>
+        <Tooltip ref={elementRef} title={tooltipTitle}>
           <FormControlLabel
             control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaModeIsActive} onChange={switchPanoramaMode} name="Panorama-toggle" />}
-            label="360-visning"
+            label={t('label')}
             labelPlacement="top"
             className={classes.panoramaLabel}
           />
@@ -140,7 +143,7 @@ const PanoramaToggleButton = ({
           />
             <ReactourPopover sizes={sizes} position="top" styles={popoverStyles}>
               <CloseButton onClick={handlePopoverRemoval} customStyle={{height: '1.5rem', width: '1.5rem'}} iconSize='small'/>
-              <Typography>Her kan du skru av og på 360-visning</Typography>
+              <Typography>{t('panorama.popover')}</Typography>
             </ReactourPopover>
             </div>
         : null}

@@ -1,5 +1,6 @@
 import React from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
+import {useTranslation} from "react-i18next";
 
 import { REPORT_ERROR_SCHEME_URL } from 'constants/urls';
 import FeedbackFormFrame from 'components/FeedbackFormFrame/FeedbackFormFrame';
@@ -30,15 +31,16 @@ interface IOpenErrorSchemeTextButtonProps {
 
 const OpenErrorSchemeTextButton = ({ openForm, setOpenForm }: IOpenErrorSchemeTextButtonProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('pageInformation', {keyPrefix: "tilbakemeldingsskjemaFeil"});
 
   return (
     <>
       <Typography variant="body1">
-        {!openForm ? 'Eventuelle feil sendes inn i eget ' : ''}
+        {!openForm ? t('text1') : ''}
         <button className={classes.openFeedbackScheme} onClick={() => setOpenForm(!openForm)}>
-          {openForm ? 'Lukk feilmeldingskjema' : ' skjema'}
+          {openForm ? t('buttonText1') : t('buttonText2')}
         </button>{' '}
-        {!openForm ? ' eller med menyvalget «Flere funksjoner» under valgt bilde.' : ''}
+        {!openForm ? t('text2') : ''}
       </Typography>
       {openForm ? <FeedbackFormFrame formLink={REPORT_ERROR_SCHEME_URL} /> : null}
     </>

@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import orderBy from 'lodash/orderBy';
 import { useRecoilValue, useRecoilState } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { isEvenNumber } from 'utilities/mathUtilities';
@@ -70,6 +71,7 @@ const ImageViewer = ({
   panoramaModeIsActive
 }: IImageViewerProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('snackbar');
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const { command, resetCommand } = useCommand();
@@ -128,7 +130,7 @@ const ImageViewer = ({
     const latlngCurrentImagePoint = getImagePointLatLng(currentImagePoint);
 
     if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) {
-      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
+      showMessage(t('navigation.error1')); 
       return;
     }
     const nearestImagePointInOppositeLane = findNearestImagePoint(
@@ -144,7 +146,7 @@ const ImageViewer = ({
         setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 16 });
       }
     } else {
-      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
+      showMessage(('navigation.error1'));
     }
   }, [
     currentImagePoint,
@@ -307,7 +309,7 @@ const ImageViewer = ({
             setCurrentImagePoint(nextImagePoint);
             if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
-            showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
+            showMessage(t('navigation.lastImage'));
           }
           break;
         case commandTypes.goBackwards:
@@ -316,7 +318,7 @@ const ImageViewer = ({
             setCurrentImagePoint(previousImagePoint);
             if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
-            showMessage('Dette er første bilde i serien. Velg nytt bildepunkt i kartet.');
+            showMessage(t('navigation.firstImage')); 
           }
           break;
         case commandTypes.turnAround:
@@ -370,7 +372,7 @@ const ImageViewer = ({
         playNextImage(nextImagePoint);
       } else {
         setAutoPlay(false);
-        showMessage('Stopper film, dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
+        showMessage(t('navigation.animationLastImage'));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

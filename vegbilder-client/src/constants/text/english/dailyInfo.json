@@ -1,0 +1,15 @@
+{
+  "buttons": {
+    "moreInfo": "More information",
+    "hideInfo": "Hide information"
+  },
+  "imageInfo": {
+    "header": "CURRENT INFORMATION",
+    "location": "LOCATION",
+    "speed": "SPEED LIMITS",
+    "traffic": "TRAFFIC VOLUME",
+    "maskedObjects": "MASKED OBJECTS",
+    "contracts": "CONTRACT AREAS",
+    "nordkapp": "NORTH CAPE"
+  }
+}

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { useTranslation } from "react-i18next";
 
 import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
@@ -87,6 +88,7 @@ interface IImagePreviewAndInfoProps {
 
 const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('mapView');
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [showInformation, setShowInformation] = useState(false);
@@ -99,13 +101,15 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
       openImageView();
     };
 
+    const tooltipTitle = t('buttons.openImage');
+
     return (
       <div className={classes.imagePreviewAndInfo}>
         <div className={classes.imagePreview}>
           <div className={classes.imageMetadata}>
             <ImageMetadata />
-            <div className={classes.buttons}>
-              <Tooltip title="Åpne bilde">
+            <div className={classes.buttons}> 
+              <Tooltip title={tooltipTitle}>
                 <IconButton className={classes.enlargeButton} onClick={openImage}>
                   <EnlargeIcon />
                 </IconButton>
@@ -116,7 +120,7 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
             <img
             src={getImageUrl(currentImagePoint)}
             className={classes.image}
-            alt="Bilde tatt langs veg"
+            alt={t('preview.imageAlt')}
             onClick={openImage}
             />
         </div>
