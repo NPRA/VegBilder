@@ -425,7 +425,6 @@ const ImageControlButtons = ({
     
     return (
       <Tooltip title={title}>
-        <span>
         <IconButton
           disabled={isZoomedInImage || isImageWith360Capabilities}
           aria-label={t('baselineAria')}
@@ -434,7 +433,6 @@ const ImageControlButtons = ({
         >
           {<MeasureIcon />}
         </IconButton>
-        </span>
       </Tooltip>
     );
   };
@@ -472,7 +470,7 @@ const ImageControlButtons = ({
   };
 
   const playIconButton = () => {
-    const tooltipTitle = t('animationOn');
+    const tooltipTitle = t('animationStart');
     return (
       <Tooltip title={tooltipTitle}>
         <IconButton
