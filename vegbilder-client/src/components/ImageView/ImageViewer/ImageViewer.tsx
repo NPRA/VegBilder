@@ -181,7 +181,7 @@ const ImageViewer = ({
           return orderBy(
             currentLaneImagePoints,
             ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'], 
-            [sortOrder, sortOrder, sortOrder, sortOrder]
+            [sortOrder, sortOrder, sortOrder]
           );
         }
       };
