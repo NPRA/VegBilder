@@ -92,7 +92,7 @@ const About = () => {
           label={t('checkboxLabel')}
           checked={hideWasSet}
         />
-        <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: '16.5rem'}}>
+        <div style={{display: "flex", alignItems: "center", justifyContent: "space-between", width: '17rem'}}>
           <Typography>{t('lng')} </Typography>
           <div style={{display: "flex", justifyContent: "flex-end"}}>
             <Button onClick={() => changeLanguage('no')} style={{color: i18n.resolvedLanguage === 'no' ? '#F67F00' : '', padding: '0px'}}>Norsk (nb)</Button>

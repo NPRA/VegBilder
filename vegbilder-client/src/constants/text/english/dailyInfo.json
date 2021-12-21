@@ -9,7 +9,6 @@
     "speed": "SPEED LIMITS",
     "traffic": "TRAFFIC VOLUME",
     "maskedObjects": "MASKED OBJECTS",
-    "contracts": "CONTRACT AREAS",
-    "nordkapp": "NORTH CAPE"
+    "contracts": "CONTRACT AREAS"
   }
 }
