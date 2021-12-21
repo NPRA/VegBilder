@@ -415,7 +415,7 @@ const ImageInfo = ({
               <div className={classes.NordkappLindesnesHeader}>
                 <DistanceToIcon className={classes.icon} />
                 <Typography variant="subtitle2" className={classes.NordkappLindesnesHeaderWord}>
-                  {t('imageInfo.nordkapp')}        
+                  Nordkapp        
                 </Typography>
                 <Typography variant="subtitle2" className={classes.NordkappLindesnesHeaderWord}>
                   Lindesnes
