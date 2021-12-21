@@ -62,6 +62,12 @@ const findNearestImagePoint = (
   }
 };
 
+const getDistanceInMillisecondsBetweenImagePoints = (imagePoint1: IImagePoint, imagePoint2: IImagePoint) => {
+  const imagePoint1Time = getImagePointDateObjWithTime(imagePoint1).getTime();
+  const imagePoint2Time = getImagePointDateObjWithTime(imagePoint2).getTime();
+  return Math.abs(imagePoint1Time-imagePoint2Time);
+};
+
 const getDistanceToBetweenImagePoints = (imagePoint1: IImagePoint, imagePoint2: IImagePoint) => {
   const image1Latlng = getImagePointLatLng(imagePoint1);
   const image2Latlng = getImagePointLatLng(imagePoint2);
@@ -300,7 +306,7 @@ const getFilteredImagePoints = (
         : findLatestImageSeries(availableImageSeriesForRoadReference);
     if (imagePointsForRoadReference) {
       filteredImagePoints = [...filteredImagePoints, ...imagePointsForRoadReference];
-    }
+      }
     }
     return filteredImagePoints;
   }
@@ -434,6 +440,7 @@ export {
   getFormattedDateString,
   getImagePointDateObjWithTime,
   getDistanceToBetweenImagePoints,
+  getDistanceInMillisecondsBetweenImagePoints,
   getBearingBetweenImagePoints,
   shouldIncludeImagePoint,
   getFilteredImagePoints,
