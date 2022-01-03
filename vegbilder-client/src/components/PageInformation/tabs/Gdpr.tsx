@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
-import {Trans, useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 import OpenErrorSchemeTextButton from '../common/OpenErrorSchemeTextButton';
 
@@ -34,7 +34,7 @@ const Gdpr = () => {
           </Typography>
           <Typography variant="body1" className={classes.paragraphs}>
             {' '}
-            {t('text1')}<a className={classes.link} target="_blank" href="https://gdpr-info.eu/">GDPR</a>{t('text2')}
+            {t('text1')}<a className={classes.link} target="_blank" rel="noreferrer" href="https://gdpr-info.eu/">GDPR</a>{t('text2')}
           </Typography>
         </>
       )}

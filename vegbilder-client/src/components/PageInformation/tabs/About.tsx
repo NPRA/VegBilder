@@ -64,7 +64,7 @@ const About = () => {
       <Typography variant="h4"> {t('header')}</Typography>
       <img
         src={`${process.env.PUBLIC_URL}/images/E6-Dovrefjell-Snohetta-lower.jpg`}
-        alt="Bilde av E6 ved Dovrefjell Snøhetta"
+        alt={t('image_description')}
         width="100%"
         className={classes.image}
       />

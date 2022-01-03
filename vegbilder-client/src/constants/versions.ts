@@ -1,4 +1,7 @@
 const versionLog = {
+  'v2.0.1': [
+    'Gjort noen endringer på den engelske oversettelsen'
+  ],
   'v2.0.0': [
     'Lagt til muligheten til å bytte mellom norsk og engelsk',
     'Lagt til visning av 360-bilder'

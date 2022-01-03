@@ -33,7 +33,7 @@
     "header": "Teknisk",
     "subheader1": "API-er",
     "subheader2": "Versjonslogg",
-    "text1": "Stendsnavn, kommune og fylke hentes fra ",
+    "text1": "Navn på steder, kommuner og fylker hentes fra ",
     "text2": "Informasjon om vegnettet hentes fra ",
     "statistics": {
       "header": "Bilder i løsningen",
@@ -57,9 +57,5 @@
   },
   "versjonslogg": {
     "header": "Versjonslogg"
-  },
-  "settings": {
-    "header": "Innstillinger",
-    "onBoarding": "Vis velkomstmelding ved oppstart"
   }
 }
