@@ -1,6 +1,7 @@
 const versionLog = {
   'v2.0.0': [
-    'Lagt til visning av 360-bilder.'
+    'Lagt til muligheten til å bytte mellom norsk og engelsk',
+    'Lagt til visning av 360-bilder'
   ],
   'v1.3.16': [
     'Oppdatert til Geonorges nye api for stedsnavn',
@@ -8,7 +9,7 @@ const versionLog = {
   ],
   'v1.3.8': [
     'Kan sende med vegsystemreferanse i url',
-    'La til statistikk som gir en oversikt over hvor mange bilder som er tilgjengelige.'
+    'La til statistikk som gir en oversikt over hvor mange bilder som er tilgjengelige'
   ],
   'v1.3.5': ['Pakkeoppdateringer, inkludert en stor endring i kartet og diverse kodeforbedringer'],
   'v1.3.4': ['Bedre skalering av headeren,'],
