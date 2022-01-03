@@ -6,6 +6,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import { ClickAwayListener, ListSubheader } from '@material-ui/core';
 import { debounce } from 'lodash';
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
@@ -121,6 +122,7 @@ interface ISearchProps {
 
 const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const classes = useStyles();
+  const { t } = useTranslation(['snackbar', 'common']);
   const [searchString, setSearchString] = useState('');
   const [stedsnavnOptions, setStedsnavnOptions] = useState<IStedsnavn[]>([]);
   const filteredStedsnavnOptions = stedsnavnOptions.filter((stedsnavn) => !(stedsnavn.kommuner === null)); //Nytt geonorge-api kan returnere steder utenfor Norge med kommune + fylke = null. Disse filtrerer vi derfor vekk.
@@ -137,12 +139,12 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const throwError = useAsyncError();
   const fetchNearestImagePoint = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder i nærheten av stedet du søkte på.'
+    t('snackbar:fetchMessage.error4')
   );
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
-    'Fant ingen bilder i nærheten'
+    t('snackbar:fetchMessage.error5') 
   );
 
 
@@ -177,7 +179,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
           const newReferanceState = [vegsystemData, ...vegSystemReferanser];
           setVegSystemReferanser(newReferanceState);
         } else {
-          showMessage('Ugyldig ERF-veg');
+          showMessage(t('snackbar:fetchMessage.errorERF')); 
           setVegSystemReferanser([]);
         }
       }, 300),
@@ -321,7 +323,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
           <MagnifyingGlassIcon />
         </div>
         <InputBase
-          placeholder="Søk"
+          placeholder={t('common:searchbar.placeholder')}
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,

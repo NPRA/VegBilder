@@ -1,0 +1,15 @@
+{
+  "buttons": {
+    "openImage": "Åpne bilde",
+    "moreInfo": "Mer informasjon",
+    "hideInfo": "Skjul informasjon",
+    "position": "Finn min posisjon"
+  },
+  "preview": {
+    "imageAlt": "Bilde tatt langs veg"
+  },
+  "legend": {
+    "green": "Fylkesveier",
+    "purple": "Riksveger"
+  }
+}

@@ -3,6 +3,7 @@ import { Grid, makeStyles, Snackbar, ThemeProvider, Typography } from '@material
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { useRecoilState } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
@@ -75,6 +76,7 @@ const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {.
 
 const App = () => {
   const classes = useStyles();
+  const { t } = useTranslation('snackbar', {keyPrefix:"fetchMessage"});
   const [view, setView] = useRecoilState(viewQueryParamterState);
   const { setCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -97,14 +99,14 @@ const App = () => {
   let capitalisedRequesterName = requester && requester.charAt(0).toUpperCase() + requester.slice(1);
 
   const getSnackbarMessage = (fetchType?: string) => {
+    const messageWithRequesterName = t('requesterError', {requester: capitalisedRequesterName});
     switch(fetchType) {
       case "findImagePointWithCustomRadius":
-        return (requester ? `Vi fant ingen bilder fra punktet du valgte i ${capitalisedRequesterName}. Velg et annet punkt.` :
-        "Vi fant ingen bilder fra punktet du valgte. Velg et annet punkt på kartet.");
+        return (requester ? messageWithRequesterName : t('error3')); 
       case "findImageById":
-        return 'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.';
+        return t('error7'); 
       default:
-        return 'Fant ingen bilder i nærheten.';
+        return t('error5'); 
     }
   }
 
@@ -205,7 +207,7 @@ const App = () => {
     const radius = searchParams.get('radius');
     const requester = searchParams.get('requester');
 
-    // This parameter is only used to formulate the snackbar message and is therefore
+    // This parameter is only used to formulate the snackbar message and is then
     // removed from the url.
     if (requester) {
       removeUrlParameter('requester');
@@ -213,10 +215,11 @@ const App = () => {
 
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
+      const vegrefErrorMessage = t('vegrefError', {vegsystemreferanse: vegsystemreferanseQuery});
       if (validVegsystemReferanse) {
         openAppByVegsystemreferanse(validVegsystemReferanse, yearQuery);
       } else {
-        showSnackbarMessage(`Fant ingen treff på vegsystemreferanse "${vegsystemreferanseQuery}". Prøv igjen i søkefeltet.`);
+        showSnackbarMessage(vegrefErrorMessage); 
       };
       setCurrentVegsystemreferanseState(null);
     }

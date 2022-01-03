@@ -1,6 +1,7 @@
 import React from 'react';
 import { makeStyles, Paper, Typography } from '@material-ui/core';
 import { useRecoilValue } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import { currentImagePointState, currentLatLngZoomState } from 'recoil/atoms';
 
@@ -27,6 +28,7 @@ const useStyles = makeStyles(() => ({
 
 const RoadColorExplaination = () => {
   const classes = useStyles();
+  const { t } = useTranslation('mapView', {keyPrefix: "legend"});
   const currentImagePoint = useRecoilValue(currentImagePointState);
   const zoomLevel = useRecoilValue(currentLatLngZoomState).zoom;
 
@@ -48,11 +50,11 @@ const RoadColorExplaination = () => {
               alt="Markør for fylkesveger"
               className={classes.markers}
             />
-            <Typography variant="body1">Fylkesveger</Typography>
+            <Typography variant="body1">{t('green')}</Typography>
           </div>
           <div className={classes.colorRoadRow}>
             <img src={getMarkerIcon('E')} alt="Markør for riksveger" className={classes.markers} />
-            <Typography variant="body1">Riksveger</Typography>
+            <Typography variant="body1">{t('purple')}</Typography>
           </div>
         </Paper>
       ) : null}

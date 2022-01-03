@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
+import {useTranslation} from "react-i18next";
 
-import { gdprText } from 'constants/text';
 import OpenErrorSchemeTextButton from '../common/OpenErrorSchemeTextButton';
 
 const useStyles = makeStyles(() => ({
@@ -12,6 +12,7 @@ const useStyles = makeStyles(() => ({
 
 const Gdpr = () => {
   const classes = useStyles();
+  const { t } = useTranslation('pageInformation', {keyPrefix: 'GDPR'});
   const [openForm, setOpenForm] = useState(false);
 
   return (
@@ -20,11 +21,11 @@ const Gdpr = () => {
         <>
           <Typography variant="h4" className={classes.paragraphs}>
             {' '}
-            {gdprText.header}
+            {t('header')}
           </Typography>
           <Typography variant="body1" className={classes.paragraphs}>
             {' '}
-            {gdprText.text1}{' '}
+            {t('text1')}{' '}
           </Typography>
         </>
       )}

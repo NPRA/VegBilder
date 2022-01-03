@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { find } from 'lodash';
+import { useTranslation } from "react-i18next";
 
 import { settings } from 'constants/settings';
 import { ILatlng, IImagePoint } from 'types';
@@ -25,9 +26,11 @@ type fetchMethod = 'default' | 'findByImageId' | 'findImageNearbyCurrentImagePoi
 
 const useFetchNearestImagePoint = (
   showMessage: (message: string, duration?: number) => void,
-  errorMessage = 'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.',
+  errorMessage?: string,
   fetchMethod: fetchMethod = 'default',
 ) => {
+  const { t } = useTranslation('snackbar');
+  const derivedErrorMessage = errorMessage ? errorMessage : t('fetchMessage.error1');
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -45,7 +48,7 @@ const useFetchNearestImagePoint = (
       !isBboxWithinContainingBbox(bboxVisibleMapArea, loadedImagePoints.bbox)
 
     if (shouldFetchNewImagePointsFromOGC) {
-      showMessage(`Leter etter bilder i ${year}...`);
+      showMessage(t('fetchMessage.searching', {year})); 
       return fetchImagePointsFromOGC(year, bboxVisibleMapArea).then((imagePoints: IImagePoint[] | undefined) => {
         if (imagePoints && imagePoints.length) {
           let nearestImagePoint;
@@ -62,10 +65,10 @@ const useFetchNearestImagePoint = (
             handleFoundNearestImagePoint(nearestImagePoint, year);
             return nearestImagePoint;
           } else {
-            showMessage(errorMessage);
+            showMessage(derivedErrorMessage);
           }
         } else {
-          showMessage(errorMessage);
+          showMessage(derivedErrorMessage);
         }
       })
     } else {

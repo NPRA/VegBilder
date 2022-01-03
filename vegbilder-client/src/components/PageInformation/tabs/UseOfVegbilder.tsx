@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { makeStyles, Typography } from '@material-ui/core';
+import {useTranslation} from "react-i18next";
 
-import { helpText } from 'constants/text';
 import OpenErrorSchemeTextButton from '../common/OpenErrorSchemeTextButton';
 
 const useStyles = makeStyles(() => ({
@@ -12,6 +12,7 @@ const useStyles = makeStyles(() => ({
 
 const UseOfVebilder = () => {
   const classes = useStyles();
+  const { t } = useTranslation('pageInformation', {keyPrefix: 'bruk'});
   const [openForm, setOpenForm] = useState(false);
 
   return (
@@ -20,19 +21,19 @@ const UseOfVebilder = () => {
         <>
           <Typography variant="h4" className={classes.paragraphs}>
             {' '}
-            {helpText.header1}
+            {t('header')}
           </Typography>
           <Typography variant="body1" className={classes.paragraphs}>
             {' '}
-            {helpText.text1}{' '}
+            {t('text1')}{' '}
           </Typography>
           <Typography variant="body1" className={classes.paragraphs}>
             {' '}
-            {helpText.text2}
+            {t('text2')}
           </Typography>
           <Typography variant="body1" className={classes.paragraphs}>
             {' '}
-            {helpText.text3}
+            {t('text3')}
           </Typography>
         </>
       )}

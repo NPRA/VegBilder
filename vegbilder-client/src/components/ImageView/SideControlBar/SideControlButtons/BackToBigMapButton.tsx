@@ -1,6 +1,7 @@
 import { Tooltip, makeStyles, IconButton } from '@material-ui/core';
 import { ArrowBack } from '@material-ui/icons';
 import React from 'react';
+import { useTranslation } from "react-i18next";
 
 const useStyles = makeStyles((theme) => ({
   backToMapButton: {
@@ -37,13 +38,16 @@ interface IBackToBigMapButton {
 
 const BackToBigMapButton = ({ setView, isZoomedInImage }: IBackToBigMapButton) => {
   const classes = useStyles();
+  const { t } = useTranslation('imageView', {keyPrefix: "sidebar"});
 
   const handleClick = () => {
     setView('map');
   };
+  
+  const tooltipTitle = t('back');
 
   return (
-    <Tooltip title="Tilbake til hovedkart">
+    <Tooltip title={tooltipTitle}>
       <IconButton
         className={isZoomedInImage ? classes.buttonDisabled : classes.backToMapButton}
         onClick={handleClick}

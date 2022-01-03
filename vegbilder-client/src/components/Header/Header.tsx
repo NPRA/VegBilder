@@ -3,6 +3,7 @@ import AppBar from '@material-ui/core/AppBar';
 import { Toolbar, Grid, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilState } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import Search from './Search/Search';
 import YearSelector from './YearSelector/YearSelector';
@@ -50,9 +51,12 @@ interface IHeaderProps {
 
 const Header = ({ showMessage, setMapView, showInformation, setShowInformation }: IHeaderProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('common');
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [, setCurrentVegsystemreferanse] = useRecoilState(vegsystemreferanseState);
+
+  const tooltipTitle: string = t('pageInfo');
 
   const resetToDefaultStates = () => {
     setCurrentImagePoint(null);
@@ -79,10 +83,9 @@ const Header = ({ showMessage, setMapView, showInformation, setShowInformation }
           <Grid item className={classes.dateAndYearSelectorContainer}>
             <YearSelector showMessage={showMessage} />
           </Grid>
-
-          <Tooltip title="Informasjon om Vegbilder">
+          <Tooltip title={tooltipTitle}> 
             <IconButton
-              aria-label="Informasjon om Vegbilder"
+              aria-label={tooltipTitle}
               className={classes.button}
               onClick={() => setShowInformation(!showInformation)}
             >
