@@ -1,7 +1,7 @@
 {
   "sidebar": {
     "back": "Back to main map",
-    "minmapShow": "Show minimap",
+    "minimapShow": "Show minimap",
     "minimapHide": "Hide minimap",
     "minimapAria": "Show/hide minimap"
   },

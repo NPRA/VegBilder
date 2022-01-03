@@ -1,7 +1,7 @@
 {
   "sidebar": {
     "back": "Tilbake til hovedkart",
-    "minmapShow": "Vis kart",
+    "minimapShow": "Vis kart",
     "minimapHide": "Skjul kart",
     "minimapAria": "Vis/skjul kart"
   },
