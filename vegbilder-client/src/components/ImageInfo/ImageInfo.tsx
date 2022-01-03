@@ -1,5 +1,6 @@
 import React, { FunctionComponent, SVGProps, useEffect, useState } from 'react';
 import { makeStyles, Paper, SvgIconTypeMap, Typography } from '@material-ui/core';
+import { useTranslation } from "react-i18next";
 
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
@@ -126,6 +127,7 @@ const ImageInfo = ({
   maxHeight,
 }: IImageInfoProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('dailyInfo');
   const [fylkesNavn, setFylkesNavn] = useState('');
   const [kommuneNavn, setKommuneNavn] = useState('');
   const [position, setPosition] = useState<ILatlng>();
@@ -291,6 +293,7 @@ const ImageInfo = ({
         setDistanceToNordkapp(kmToNordkapp);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imagePoint]);
 
   interface IItemGroupContainerProps {
@@ -324,12 +327,12 @@ const ImageInfo = ({
           disabled={disabled ?? false}
         />
         <Typography variant="subtitle1" className={classes.infoHeader}>
-          Dagsaktuell informasjon
+          {t('imageInfo.header')} 
         </Typography>
       </div>
       {imagePoint ? (
         <div className={classes.scrollContainer}>
-          <ItemGroupContainer headline="Plassering" Icon={RoomOutlined}>
+          <ItemGroupContainer headline={t('imageInfo.location')} Icon={RoomOutlined}>
             <Typography variant="body1" className={classes.lines}>
               {vegsystemreferanse.length ? vegsystemreferanse : ''}
             </Typography>
@@ -341,7 +344,7 @@ const ImageInfo = ({
             {broNavn.length ? (
               <>
                 {broNavn.map((broNavn) => (
-                  <Typography variant="body1" className={classes.lines}>
+                  <Typography key={broNavn} variant="body1" className={classes.lines}>
                     {`${broNavn} (bru)`}
                   </Typography>
                 ))}
@@ -364,16 +367,16 @@ const ImageInfo = ({
             ) : null}
           </ItemGroupContainer>
           {fartsgrense.length ? (
-            <ItemGroupContainer headline="Fartsgrense" Icon={SpeedOutlined}>
-              {fartsgrense.map((fart) => (
-                <Typography variant="body1" className={classes.lines}>{`${fart}km/h`}</Typography>
+            <ItemGroupContainer headline={t('imageInfo.speed')} Icon={SpeedOutlined}>
+              {fartsgrense.map((fart, index) => (
+                <Typography key={index} variant="body1" className={classes.lines}>{`${fart}km/h`}</Typography>
               ))}
             </ItemGroupContainer>
           ) : null}
           {trafikkMengde.length ? (
-            <ItemGroupContainer headline="Trafikkmengde" Icon={CommuteOutlined}>
+            <ItemGroupContainer headline={t('imageInfo.traffic')} Icon={CommuteOutlined}> 
               {trafikkMengde.map((trafikkMengdeItem) => (
-                <Typography variant="body1" className={classes.lines}>
+                <Typography key={trafikkMengdeItem} variant="body1" className={classes.lines}>
                   {trafikkMengdeItem}
                 </Typography>
               ))}
@@ -381,12 +384,12 @@ const ImageInfo = ({
           ) : null}
           {imagePoint.properties.DETEKTERTEOBJEKTER ? (
             <ItemGroupContainer
-              headline={`Maskerte objekter (${getNumberOfDetectedObjects(imagePoint)})`}
+              headline={`${t('imageInfo.maskedObjects')} (${getNumberOfDetectedObjects(imagePoint)})`} 
               Icon={SladdetIcon}
             >
               <div className={classes.detectedObjects}>
                 {Object.keys(getDetectedObjectsJson(imagePoint)).map((item) => (
-                  <div className={classes.detectedObjectFrame}>
+                  <div key={item} className={classes.detectedObjectFrame}>
                     {' '}
                     <Typography variant="body1" className={classes.lines}>
                       {item}
@@ -397,9 +400,10 @@ const ImageInfo = ({
             </ItemGroupContainer>
           ) : null}
           {kontraktsområder.length ? (
-            <ItemGroupContainer headline="Kontraktsområder" Icon={ContractIcon}>
-              {kontraktsområder.map((kontraktsområde) => (
+            <ItemGroupContainer headline={t('imageInfo.contracts')} Icon={ContractIcon}>
+              {kontraktsområder.map((kontraktsområde, index) => (
                 <Typography
+                  key={index}
                   variant="body1"
                   className={classes.lines}
                 >{`${kontraktsområde}`}</Typography>
@@ -411,7 +415,7 @@ const ImageInfo = ({
               <div className={classes.NordkappLindesnesHeader}>
                 <DistanceToIcon className={classes.icon} />
                 <Typography variant="subtitle2" className={classes.NordkappLindesnesHeaderWord}>
-                  Nordkapp
+                  Nordkapp        
                 </Typography>
                 <Typography variant="subtitle2" className={classes.NordkappLindesnesHeaderWord}>
                   Lindesnes

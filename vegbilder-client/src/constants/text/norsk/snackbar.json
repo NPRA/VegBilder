@@ -1,0 +1,23 @@
+{
+  "fetchMessage": {
+    "searching": "Leter etter bilder i {{year}} ...",
+    "error1": "Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.",
+    "error2": "Fant ingen bilder ved dette området. Prøv å klikke et annet sted.",
+    "error3": "Fant ingen bilder på punktet du valgte. Velg et annet punkt.",
+    "error4": "Fant ingen bilder i nærheten av stedet du søkte på.",
+    "error5": "Fant ingen bilder i nærheten.",
+    "error6": "Fant ingen bilder fra valgt år for punktet du er i. Velg et annet år eller et annet punkt.",
+    "error7": "Fant ikke angitt bildepunkt. Prøv å klikke i stedet.",
+    "errorERF": "Ugyldig ERF-veg",
+    "locationError": "Fant ikke posisjonen din",
+    "vegrefError": "Fant ingen treff på vegsystemreferanse {{vegsystemreferanse}}. Prøv igjen i søkefeltet.",
+    "requesterError": "Vi fant ingen bilder fra punktet du valgte i {{requester}}. Velg et annet punkt.",
+    "imageFound": "Avslutter nyeste og viser bilder fra {{year}}, som er det året med de nyeste bildene i området."
+  },
+  "navigation": {
+    "error1": "Finner ingen nærtliggende bilder i motsatt kjøreretning",
+    "lastImage": "Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.",
+    "firstImage": "Dette er første bilde i serien. Velg nytt bildepunkt i kartet.",
+    "animationLastImage": "Stopper film, dette er siste bilde i serien. Velg nytt bildepunkt i kartet."
+  }
+}

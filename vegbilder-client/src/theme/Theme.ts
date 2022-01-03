@@ -5,9 +5,11 @@ import LFTEticaSemiBoldWoff from 'fonts/LFT_Etica_Semibold.woff';
 
 declare module '@material-ui/core/styles/createPalette' {
   interface CommonColors {
+    grayLight: string;
     grayDark: string;
     grayDarker: string;
     grayRegular: string;
+    grayRegularLight: string;
     grayMedium: string;
     grayIcons: string;
     grayMenuItems: string;
@@ -16,6 +18,8 @@ declare module '@material-ui/core/styles/createPalette' {
   }
 }
 
+const grayLight = '#f5f5f5';
+const grayRegularLight = '#ececec80';
 const grayRegular = '#ececec';
 const grayIcons = '#c4c4c4';
 const charcoalLighter = '#646A70';
@@ -115,6 +119,7 @@ export default createMuiTheme({
       grayDark: grayDark,
       grayDarker: grayDarker,
       grayRegular: grayRegular,
+      grayRegularLight: grayRegularLight,
       grayIcons: grayIcons,
       grayMenuItems: grayMenuItems,
       charcoalLighter: charcoalLighter,
@@ -152,6 +157,7 @@ export default createMuiTheme({
         color: grayMenuItems,
         boxShadow: '2px 7px 7px rgba(0, 0, 0, 0.35)',
         borderRadius: '10px',
+        border: `0.5px solid ${grayDark}`,
       },
     },
     MuiButton: {
@@ -171,7 +177,6 @@ export default createMuiTheme({
         fontFamily: '"LFT-Etica"',
         borderRadius: '0.625rem',
         borderStyle: 'none',
-        backgroundColor: grayDark,
         color: grayIcons,
         width: '2.3125rem',
         height: '2.1875rem',
@@ -272,6 +277,66 @@ export default createMuiTheme({
           backgroundColor: grayDarker,
         },
       },
+    },
+    MuiFormControlLabel: {
+      label: {
+        '&$disabled': {
+          color: grayRegular,
+          opacity: '40%',
+        }
+      },
+      disabled: {},
+    },
+    MuiSwitch: {
+      root: {
+        width: 30,
+        height: 15,
+        padding: 0,
+        margin: 1,
+      },
+      switchBase: {
+        height: 15,
+        width: 15,
+        padding: 0,
+        color: grayLight,
+        '&$checked': {
+          transform: 'translateX(15px)',
+          '& + $track': {
+            opacity: 1,
+            border: 'none',
+          },
+        },
+        '&:hover': {
+          backgroundColor: 'transparent',
+        },
+        '&:focusVisible $thumb': {
+          color: 'orangeDark',
+          border: '6px solid #fff',
+        },
+      },
+      colorSecondary: {
+        '&$checked': {
+          color: grayLight
+        },
+        '&$disabled': {
+          opacity: '40%'
+        }
+      },
+      thumb: {
+        width: 15,
+        height: 15,
+      },
+      track: {
+        borderRadius: 26 / 2,
+        border: `none`,
+        backgroundColor: grayRegularLight,
+        opacity: 1,
+        '$checked$checked + &': {
+          backgroundColor: orangeDark
+        }
+      },
+      checked: {},
+      disabled: {}
     },
     MuiTableRow: {
      root: {

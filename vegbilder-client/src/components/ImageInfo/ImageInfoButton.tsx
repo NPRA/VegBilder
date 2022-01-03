@@ -1,5 +1,6 @@
 import React from 'react';
 import { IconButton, makeStyles, Tooltip } from '@material-ui/core';
+import { useTranslation } from "react-i18next";
 
 import { InformIcon } from 'components/Icons/Icons';
 
@@ -46,12 +47,14 @@ const ImageInfoButton = ({
   disabled,
 }: IImageInfoButtonProps) => {
   const classes = useStyles();
-
+  const { t } = useTranslation('dailyInfo', {keyPrefix: "buttons"});
+  const tooltipMessage = showInformation ? t('hideInfo') :  t('moreInfo')
+  
   return (
-    <Tooltip title={showInformation ? 'Skjul informasjon' : 'Mer informasjon'}>
+    <Tooltip title={tooltipMessage}> 
       <IconButton
         disabled={disabled}
-        aria-label="Mer informasjon"
+        aria-label={t('moreInfo')}
         className={
           disabled ? classes.buttonDisabled : showInformation ? classes.active : classes.button
         }

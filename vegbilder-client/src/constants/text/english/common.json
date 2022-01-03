@@ -1,0 +1,11 @@
+{
+  "pageInfo": "Page information",
+  "yearSelector": {
+    "category1": "PERIOD",
+    "category2": "YEARS",
+    "nyeste": "Latest"
+  },
+  "searchbar": {
+    "placeholder": "Search..."
+  }
+}

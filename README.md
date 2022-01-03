@@ -26,7 +26,7 @@ De andre undermappene i `src` inneholder forskjellige klasser av hjelpefiler:
 - `utilities` inneholder hjelpefunksjoner
 - `constants` inneholder konstanter og versjonslogg
 - `recoil` inneholder atoms og selectors for tilstandshåndtering 
--  `fonts` inneholder egendefinerte fonter (SVV-standard)
+- `fonts` inneholder egendefinerte fonter (SVV-standard)
 
 ## Teknologier
 
@@ -35,6 +35,12 @@ De andre undermappene i `src` inneholder forskjellige klasser av hjelpefiler:
 - [TypeScript](https://www.typescriptlang.org/) utvider javascript ved å legge til typer
 - [Leaflet](https://leafletjs.com/) kart
 - [Recoiljs](https://recoiljs.org/) bibliotek for tilstandshåndtering
+- [react-pannellum](https://github.com/NPRA/react-pannellum/tree/vegbilder-modifications) brukes til 360-visning
+
+## Bruk av react-pannellum 
+Det var et par situasjoner hvor den originale [react-pannellum](https://github.com/hoaiduyit/react-pannellum) gjorde det utfordrende å få til ønsket funksjonalitet i Vegbilder. For eksempel ønsket vi i Vegbilder å kunne zoome både ved å skrolle og ved å bruke knapper i menyen. Dette ble utfordrende fordi det ikke var mulig for zoom-knappen å lytte til endringer i pannellum-instansens interne zoom-state når skrollingen endret denne. Det samme gjaldt fullskjermvisningen. I tillegg la react-pannellum aktivt på en popup ved høyreklikk, noe som ikke var ønskelig.
+
+For å kunne gjøre de nødvendige tilpasningene av koden som vi ønsket, lagde vi en egen fork av react-pannellum som nå brukes av Vegbilder. [Forken ligger på NPRA](https://github.com/NPRA/react-pannellum/tree/vegbilder-modifications). For å unngå å gjøre endringer på den originale kildekoden, har Vegbilder en egen branch på denne forken (vegbilder-modifications) som hentes i `package.json`.
 
 ## Atlas Bygge & Utrullning
 
@@ -47,7 +53,7 @@ scrier@svv-vm-d033:~/Git/VegBilder/vegbilder-client$ npm install
 ```
 
 ```
-scrier@svv-vm-d033:~/Git/VegBilder/vegbilder-client$ npm build
+scrier@svv-vm-d033:~/Git/VegBilder/vegbilder-client$ npm run-script build
 ```
 
 ### Pakk eksisterende løsning

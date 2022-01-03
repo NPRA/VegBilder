@@ -1,0 +1,65 @@
+{
+  "tabs": {
+    "om": "ABOUT",
+    "bruk": "USE",
+    "GDPR": "GDPR",
+    "tilbakemelding": "FEEDBACK",
+    "teknisk": "TECHNICAL"
+  },
+  "omVegbilder": 
+  {  
+    "header": "About VEGBILDER",
+    "image_description": "Snøhetta seen from E6 at Hjerkinn.",
+    "image_credits": "Photo: Knut Opeide, Statens Vegvesen",
+    "text1": "Vegbilder (Road Images) is a web-based application for displaying images of the Norwegian road network. The images are taken on a yearly basis and are continuously made available in the application. The application is developed and maintained by the Norwegian Public Road administration (NPRA).",
+    "text2": "The NPRA reserve the right to make changes to the application content or to restrict access to the content, if necessary. The data presented in the application can contain errors. The user is personally responsible for how they make use the application and the application data.",
+    "checkboxLabel": "Don't show this again",
+    "lng": "Available languages:"
+  },
+  "bruk": {
+    "header": "How to use VEGBILDER",
+    "text1": "The points on the map represent images. Clicking on the map will start a search for the most recent image taken in the selected point. If an image is found, a preview is shown. If no images are found within 300m of the selected point, the map will zoom in to make the search easier.",
+    "text2": "The search field can be used to look for specific location names or road references. Select a specific year to narrow the search. The year selector can also be used to look for images from other years in a selected image point.",
+    "text3": "Click on the image preview to open the image viewer. ",
+    "text4": "Errors can be reported using this form or in the «More» menu of a selected image.",
+    "text5": "Suggestions/feedback can be sent in here "
+  },
+  "GDPR": {
+    "header": "GDPR",
+    "text1": "To comply with the applicable ",
+    "text2":  " regulations, the images are anonymised in an automated process before publication."
+  },
+  "teknisk": {
+    "header": "Technical",
+    "subheader1": "APIs",
+    "subheader2": "Version log",
+    "text1": "Location names, municipalities and counties are retreived from ",
+    "text2": "Road details are retrieved from ",
+    "statistics": {
+      "header": "Images on this application",
+      "description": "The table gives an overview of the number of images available on this application, sorted by year and road category.",
+      "loading": "Fetching statistics...",
+      "caption": "A table En tabell som gir en oversikt over hvor mange vegbilder som er tilgjengelige, kategorisert etter år og vegkategori.",
+      "column1": "Year",
+      "column2": "ER",
+      "column3": "NR",
+      "column4": "CR",
+      "column5": "Others",
+      "earlierYears" : " and older",
+      "buttonLabel": "Show and hide previous years."
+    }
+  },
+  "tilbakemeldingsskjemaFeil": {
+    "text1": "Errors can be reported using this ",
+    "buttonText1": "Close form",
+    "buttonText2": " form",
+    "text2": " or in the «More» menu of a selected image."
+  },
+  "versjonslogg": {
+    "header": "Version log (Norwegian only)"
+  },
+  "settings": {
+    "header": "Settings",
+    "onBoarding": "Show this window on Vis velkomstmelding ved oppstart"
+  }
+}

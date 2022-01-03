@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
 import { IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/styles';
+import { useTranslation } from "react-i18next";
 
 import { getImageUrl, getImagePointLatLng } from 'utilities/imagePointUtilities';
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import CloseButton from 'components/CloseButton/CloseButton';
 import { useRecoilState } from 'recoil';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
-import Theme from 'theme/Theme';
 import ImageInfo from 'components/ImageInfo/ImageInfo';
 import ImageInfoButton from 'components/ImageInfo/ImageInfoButton';
 import { EnlargeIcon } from 'components/Icons/Icons';
+import Theme from 'theme/Theme';
 
 const useStyles = makeStyles(() => ({
   image: {
@@ -19,8 +20,30 @@ const useStyles = makeStyles(() => ({
     maxHeight: '28vh',
     height: 'auto',
   },
+  panoramaImage: {
+    cursor: 'pointer',
+    height: '25vh',
+    width: '30vw',
+    minWidth: '16.375rem',
+    backgroundSize: '100vw',
+    backgroundPosition: 'center'
+  },
+  panoramaImageContainer: {
+    width: 'auto',
+    position: 'relative'
+  },
+  panoramaIcon: {
+    position: 'absolute',
+    fill: Theme.palette.common.orangeDark,
+    right: '4px',
+    bottom: '4px',
+    '& svg': {
+      verticalAlign: 'top'
+    }
+  },
   enlargeButton: {
     marginRight: '0.3rem',
+    backgroundColor: Theme.palette.common.grayDark,
   },
   infoButton: {
     margin: '0.4rem',
@@ -34,6 +57,7 @@ const useStyles = makeStyles(() => ({
     marginBottom: '0.35rem',
     maxHeight: '25rem',
     pointerEvents: 'all',
+    overflow: 'hidden',
   },
   imageMetadata: {
     borderRadius: '10px 10px 0 0',
@@ -64,6 +88,7 @@ interface IImagePreviewAndInfoProps {
 
 const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('mapView');
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const [, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [showInformation, setShowInformation] = useState(false);
@@ -76,13 +101,15 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
       openImageView();
     };
 
+    const tooltipTitle = t('buttons.openImage');
+
     return (
       <div className={classes.imagePreviewAndInfo}>
         <div className={classes.imagePreview}>
           <div className={classes.imageMetadata}>
             <ImageMetadata />
-            <div className={classes.buttons}>
-              <Tooltip title="Åpne bilde">
+            <div className={classes.buttons}> 
+              <Tooltip title={tooltipTitle}>
                 <IconButton className={classes.enlargeButton} onClick={openImage}>
                   <EnlargeIcon />
                 </IconButton>
@@ -90,12 +117,12 @@ const ImagePreviewAndInformation = ({ openImageView }: IImagePreviewAndInfoProps
               <CloseButton position={'unset'} onClick={() => setCurrentImagePoint(null)} />
             </div>
           </div>
-          <img
+            <img
             src={getImageUrl(currentImagePoint)}
             className={classes.image}
-            alt="Bilde tatt langs veg"
+            alt={t('preview.imageAlt')}
             onClick={openImage}
-          />
+            />
         </div>
         {showInformation ? (
           <ImageInfo

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Tooltip, IconButton, makeStyles } from '@material-ui/core';
+import { useTranslation } from "react-i18next";
 
 import { MapIcon } from 'components/Icons/Icons';
 
@@ -47,12 +48,15 @@ const HideShowMiniMapButton = ({
   isZoomedInImage,
 }: IHideShowMiniMapButtonProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('imageView', {keyPrefix: "sidebar"});
+
+  const tooltipTitle = miniMapVisible ? t('minimapHide') : t('minimapShow');
 
   return (
-    <Tooltip title={miniMapVisible ? 'Skjul kart' : 'Vis kart'}>
+    <Tooltip title={tooltipTitle}>
       <IconButton
         disabled={isZoomedInImage}
-        aria-label="Vis/skjul kart"
+        aria-label={t('minimapAria')}
         className={
           isZoomedInImage
             ? classes.buttonDisabled

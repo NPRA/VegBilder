@@ -2,15 +2,15 @@ import React, { useEffect, useReducer, useRef, useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from '@material-ui/styles';
 import { useRecoilValue } from 'recoil';
-
 import ImageControlBar from './ImageControlBar/ImageControlBar';
 import ImageViewer from './ImageViewer/ImageViewer';
 import { currentImagePointState } from 'recoil/atoms';
 import History from './History/History';
 import ReportErrorFeedback from './ReportErrorFeedback/ReportErrorFeedback';
-import { DEFAULT_TIME_BETWEEN_IMAGES } from 'constants/defaultParamters';
+import { DEFAULT_TIME_BETWEEN_IMAGES, DEFAULT_TIME_BETWEEN_IMAGES_360 } from 'constants/defaultParamters';
 import CloseButton from 'components/CloseButton/CloseButton';
 import SideControlBar from './SideControlBar/SideControlBar';
+import { getImageType } from "utilities/imagePointUtilities";
 
 const useStyles = makeStyles(() => ({
   content: {
@@ -55,12 +55,13 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const classes = useStyles();
   const [isHistoryMode, setIsHistoryMode] = useState(false);
   const currentImagePoint = useRecoilValue(currentImagePointState);
+  const currentImageType = currentImagePoint ? getImageType(currentImagePoint) : '';
   const [showReportErrorsScheme, setShowReportErrorsScheme] = useState(false);
   const [isZoomedInImage, setIsZoomedInImage] = useState(false);
   const imageContainerRef = useRef<HTMLImageElement>(null);
   const [cursor, setCursor] = useState('zoom-in');
   const [timeBetweenImages, setTimeBetweenImages] = useState(DEFAULT_TIME_BETWEEN_IMAGES);
-
+  const [panoramaModeIsActive, setPanoramaModeIsActive] = useState(false);
   const [meterLineVisible, setMeterLineVisible] = useState(false);
 
   const maxScrollHeight =
@@ -137,6 +138,17 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   const [, dispatch] = useReducer(scrollReducer, initialScrollState);
 
   useEffect(() => {
+    if (currentImageType === 'panorama') {
+      setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES_360);
+    } else {
+      setTimeBetweenImages(DEFAULT_TIME_BETWEEN_IMAGES);
+    };
+    if (currentImageType !== 'panorama') {
+      setPanoramaModeIsActive(false);
+    };
+  }, [currentImageType])
+
+  useEffect(() => {
     isZoomedInImage ? setCursor('grab') : setCursor('zoom-in');
   }, [isZoomedInImage]);
 
@@ -145,6 +157,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   }, [isZoomedInImage]);
 
   // We add mouse event handlers that lets the user drag the image to scroll. If the user only clicks we zoom in/out.
+  // Not used while in panorama mode.
   useEffect(() => {
     const currentImageContainerRef = imageContainerRef.current;
     if (!currentImageContainerRef) return;
@@ -161,7 +174,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
 
     const onMouseUp = (event: MouseEvent) => {
       shouldScroll = false;
-      if (!mouseMoved && !isHistoryMode) {
+      if (!mouseMoved && !isHistoryMode && !panoramaModeIsActive) {
         const isCurrentlyZoomedInImage = isZoomedInImage;
         if (isCurrentlyZoomedInImage) {
           // zoom out and reset state
@@ -213,7 +226,7 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
       currentImageContainerRef.removeEventListener('mouseout', onMouseOut);
       currentImageContainerRef.removeEventListener('mousemove', onMouseMove);
     };
-  }, [isZoomedInImage, isHistoryMode]);
+  }, [isZoomedInImage, isHistoryMode, panoramaModeIsActive]);
 
   const handleZoomOut = () => {
     setIsZoomedInImage(false);
@@ -222,30 +235,36 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
   return (
     <>
       <Grid item className={classes.content}>
-        {isHistoryMode ? (
-          <div className={classes.imageseries}>
-            {' '}
+      {isHistoryMode ? 
+          (
+            <div className={classes.imageseries}>
             <ImageViewer
               meterLineVisible={meterLineVisible}
               timeBetweenImages={timeBetweenImages}
+              isHistoryMode={isHistoryMode}
               showMessage={showSnackbarMessage}
+              panoramaModeIsActive={panoramaModeIsActive}
             />
             <History setIsHistoryMode={setIsHistoryMode} />
           </div>
-        ) : (
-          <div
+          ) 
+          : (
+            <div
             className={classes.imageCointainer}
-            style={{ cursor: isHistoryMode ? 'initial' : cursor }}
-            ref={imageContainerRef}
+            style={{ cursor }}
+            ref={!panoramaModeIsActive ? imageContainerRef : null}
           >
             <ImageViewer
               meterLineVisible={meterLineVisible}
               timeBetweenImages={timeBetweenImages}
+              isHistoryMode={isHistoryMode}
               showMessage={showSnackbarMessage}
               isZoomedInImage={isZoomedInImage}
+              panoramaModeIsActive={panoramaModeIsActive}
             />
           </div>
-        )}
+          )}
+       
         <SideControlBar
           setView={setView}
           isZoomedInImage={isZoomedInImage}
@@ -265,12 +284,15 @@ const ImageView = ({ setView, showSnackbarMessage }: IImageViewProps) => {
           setIsZoomedInImage={setIsZoomedInImage}
           isHistoryMode={isHistoryMode}
           setIsHistoryMode={setIsHistoryMode}
+          panoramaModeIsActive={panoramaModeIsActive}
+          setPanoramaModeIsActive={setPanoramaModeIsActive}
+          currentImagePoint={currentImagePoint}
         />
       </Grid>
       {showReportErrorsScheme ? (
         <ReportErrorFeedback setVisible={() => setShowReportErrorsScheme(false)} />
       ) : null}
-      {isZoomedInImage ? <CloseButton onClick={handleZoomOut} positionToTop={'7.1rem'} /> : null}
+      {isZoomedInImage ? <CloseButton onClick={handleZoomOut} positionToTop={'6.2rem'} positionToRight={'0.5rem'} /> : null}
     </>
   );
 };

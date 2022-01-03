@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TileLayer, MapContainer, useMapEvents, useMap } from 'react-leaflet';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import { LeafletMouseEvent } from 'leaflet';
+import { useTranslation } from "react-i18next";
+
 
 import { crsUtm33N } from 'constants/crs';
 import ImagePointMapLayers from './ImagePointMapLayers/ImagePointMapLayers';
@@ -22,15 +24,19 @@ interface IMapContainerEventHandlerProps {
   setCursor: (cursor: string) => void;
 }
 
+//This "component" is only used to get a reference to the map and update the view in certain situations (e.g. click to zoom).
 const ChangeMapView = ({ center, zoom }: { center: ILatlng; zoom: number | undefined }) => {
   const map = useMap();
-  if (center && zoom) {
-    map.setView(center, zoom);
-  }
+  useEffect(() => {
+    if (center && zoom) {
+      map.setView(center, zoom);
+    }
+  }, [center, zoom, map]);
   return null;
 };
 
 const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEventHandlerProps) => {
+  const { t } = useTranslation('snackbar', {keyPrefix: "fetchMessage"});
   const [mouseMoved, setMouseMoved] = useState(false);
   const [scrolling, setScrolling] = useState(false);
   const currentYear = useRecoilValue(currentYearState);
@@ -40,7 +46,7 @@ const MapContainerEventHandler = ({ showMessage, setCursor }: IMapContainerEvent
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
-    'Fant ingen bilder i nærheten av der du klikket. Prøv å klikke et annet sted.'
+    t('error1')
   );
 
   const fetchNearestImagePointByYearAndLatLng = useFetchNearestImagePoint(showMessage);

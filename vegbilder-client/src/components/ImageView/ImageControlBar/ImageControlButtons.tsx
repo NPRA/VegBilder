@@ -6,13 +6,19 @@ import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import { Replay }  from '@material-ui/icons';
 import ReportIcon from '@material-ui/icons/Report';
 import ShareIcon from '@material-ui/icons/Share';
 import ExploreOutlinedIcon from '@material-ui/icons/ExploreOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import proj4 from 'proj4';
 import clsx from 'clsx';
+// A Pannellum instance is global, which makes it possible to call its methods, e.g. getHfov, from any component.
+// The pannellum library does not provide a .d.ts file for Typescript.
+// @ts-ignore
+import { getHfov, setHfov, getYaw, setYaw, getPitch, setPitch, toggleFullscreen as togglePanoramaFullscreen } from 'react-pannellum';
+import { useTranslation } from "react-i18next";
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import {
@@ -22,7 +28,6 @@ import {
   DotsHorizontalIcon,
   HistoryIcon,
   MeasureIcon,
-  MeasureDisabledIcon,
   PlayIcon,
   StopIcon,
   TimerIcon,
@@ -30,25 +35,38 @@ import {
   PauseIcon,
   ZoomOutIcon,
   ZoomInIcon,
+  EnlargeIcon
 } from '../../Icons/Icons';
 import useCopyToClipboard from 'hooks/useCopyToClipboard';
 import { getShareableUrlForImage } from 'utilities/urlUtilities';
-import { playVideoState, currentLatLngZoomState } from 'recoil/atoms';
+import { getImageType } from 'utilities/imagePointUtilities';
+import { playVideoState, currentLatLngZoomState, currentPannellumHfovState, panoramaFullscreenIsOnState, isPanoramaMinOrMaxZoomState } from 'recoil/atoms';
 import Theme from 'theme/Theme';
 import { Link, ListSubheader } from '@material-ui/core';
-import { TIMER_OPTIONS } from 'constants/defaultParamters';
+import { TIMER_OPTIONS, TIMER_OPTIONS_360 } from 'constants/defaultParamters';
 import { imagePointQueryParameterState } from 'recoil/selectors';
 import { VEGKART } from 'constants/urls';
+import { defaultPannellumSettings } from 'constants/settings';
 
-const useStyles = makeStyles((theme) => ({
+interface StyleProps {
+  is360Image: boolean;
+}
+
+const useStyles = makeStyles<typeof Theme, StyleProps>((theme) => ({
   button: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
+    '@media (max-width:780px) and (orientation: portrait)': {
+      margin: props => props.is360Image ? '0.75rem' : '1rem',
+    }
   },
   buttonDisabled: {
     margin: '1.25rem',
     backgroundColor: 'transparent',
     opacity: '30%',
+    '@media (max-width:780px) and (orientation: portrait)': {
+      margin: '0.75rem'
+    }
   },
   activeButton: {
     backgroundColor: 'transparent',
@@ -88,6 +106,7 @@ interface IImageControlButtonsProps {
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
   isHistoryMode: boolean;
   setIsHistoryMode: (isHistoryMode: boolean) => void;
+  panoramaModeIsActive: boolean;
 }
 
 const ImageControlButtons = ({
@@ -101,10 +120,11 @@ const ImageControlButtons = ({
   setIsZoomedInImage,
   isHistoryMode,
   setIsHistoryMode,
+  panoramaModeIsActive: panoramaIsActive
 }: IImageControlButtonsProps) => {
-  const classes = useStyles();
   const { setCommand } = useCommand();
-  const currentImagePoint = useRecoilValue(imagePointQueryParameterState);
+  const currentImagePoint = useRecoilValue(imagePointQueryParameterState); 
+  const { t } = useTranslation('imageView', {keyPrefix: "controlBar"});
 
   const { copyToClipboard } = useCopyToClipboard();
 
@@ -113,6 +133,8 @@ const ImageControlButtons = ({
   const [playVideo, setPlayVideo] = useRecoilState(playVideoState);
   const [playMode, setPlayMode] = useState(false);
   const currentCoordinates = useRecoilValue(currentLatLngZoomState);
+  const [CURRENT_TIMER_OPTIONS, setTimerOptions] = useState(TIMER_OPTIONS);
+  const [panoramaFullscreenIsOn, ] = useRecoilState(panoramaFullscreenIsOnState);
 
   const handleMoreControlsClose = () => setMoreControlsAnchorEl(null);
   const handleTimerOptionsClose = () => setTimerOptionsAnchorEl(null);
@@ -122,16 +144,76 @@ const ImageControlButtons = ({
   const handleMoreControlsClick = (event: MouseEvent) =>
     setMoreControlsAnchorEl(event.currentTarget);
 
+  const [pannellumHfovState, setCurrentPannellumHfovState] = useRecoilState(currentPannellumHfovState);
+  const [isPanoramaMinOrMaxZoom, setIsPanoramaMinOrMaxZoom] = useRecoilState(isPanoramaMinOrMaxZoomState);
+  const resetPanoramaMinOrMaxZoom = useResetRecoilState(isPanoramaMinOrMaxZoomState);
+  const isImageWith360Capabilities = currentImagePoint && getImageType(currentImagePoint) === 'panorama' ? true : false;
+
+  const classes = useStyles({is360Image: isImageWith360Capabilities});
+
+  type zoomType = 'zoomIn' | 'zoomOut';
+
+  const zoom360 = (zoomType: zoomType) => {
+    if (zoomType === 'zoomIn' && !isPanoramaMinOrMaxZoom.isMaxZoom) {
+      let newZoomIn = Math.max(getHfov() - 10, defaultPannellumSettings.minHfovBounds);
+      setHfov(newZoomIn);
+      setCurrentPannellumHfovState(newZoomIn);
+    } else if (zoomType === 'zoomOut' && !isPanoramaMinOrMaxZoom.isMinZoom) {
+      let newZoomOut = Math.min(getHfov() + 10, defaultPannellumSettings.maxHfovBounds);
+      setCurrentPannellumHfovState(newZoomOut);
+      setHfov(newZoomOut);
+    }
+  }
+
+  const activatePanoramaFullscreen = () => {
+    if (!panoramaFullscreenIsOn) {
+      togglePanoramaFullscreen();
+    };
+  };
+
+  useEffect(() => {
+    const updateZoomMinAndMax = () => {
+      if (pannellumHfovState <= defaultPannellumSettings.minHfovBounds) {
+        setIsPanoramaMinOrMaxZoom({"isMinZoom": false, "isMaxZoom": true})
+      } else if (pannellumHfovState >= defaultPannellumSettings.maxHfovBounds) {
+        setIsPanoramaMinOrMaxZoom({"isMinZoom": true, "isMaxZoom": false})
+      } else {
+        setIsPanoramaMinOrMaxZoom({"isMinZoom": false, "isMaxZoom": false});
+      }
+    }
+    updateZoomMinAndMax();
+  }, [pannellumHfovState, setIsPanoramaMinOrMaxZoom]); 
+
+  useEffect(() => {
+    if (panoramaIsActive) {
+      setTimerOptions(TIMER_OPTIONS_360);
+    } else {
+      setTimerOptions(TIMER_OPTIONS);
+    }
+  }, [panoramaIsActive])
+
   const copyShareableUrlToClipboard = () => {
     if (currentImagePoint) {
-      showMessage('Lenke kopiert til utklippstavle');
+      showMessage(t('linkCopied'));
       const shareableUrl = getShareableUrlForImage();
       copyToClipboard(shareableUrl);
     }
   };
 
+  const reset360View = () => {
+    if (getYaw() !== 0 || getPitch() !== 0 || getHfov() !== 100) {
+      setYaw(0);
+      setPitch(0);
+      setHfov(100);
+      resetPanoramaMinOrMaxZoom();
+    };
+  };
+
   const handleHistoryButtonClick = () => {
     setIsHistoryMode(!isHistoryMode);
+    if (isZoomedInImage) {
+      setIsZoomedInImage(!isZoomedInImage);
+    };
   };
 
   const getLinkToVegkart = () => {
@@ -171,11 +253,12 @@ const ImageControlButtons = ({
   }, [setCommand]);
 
   const changeSpeedButtonMenu = () => {
+    const tooltipMessage = t('animationSpeed');
     return (
       <>
-        <Tooltip title="Bytt hastighet på avspilling">
+        <Tooltip title={tooltipMessage}> 
           <IconButton
-            aria-label="Bytt hastighet på avspilling"
+            aria-label={tooltipMessage}
             onClick={handleTimerOptionsClick}
             className={timerOptionsAnchorEl ? classes.activeButton : classes.button}
           >
@@ -197,8 +280,8 @@ const ImageControlButtons = ({
             horizontal: 'center',
           }}
         >
-          <ListSubheader> Hastighet </ListSubheader>
-          {TIMER_OPTIONS.map((option, i) => (
+          <ListSubheader> {t('animationSpeedMenu.header')} </ListSubheader>
+          {CURRENT_TIMER_OPTIONS.map((option, i) => (
             <MenuItem
               key={i}
               onClick={() => {
@@ -210,7 +293,7 @@ const ImageControlButtons = ({
               {option === timeBetweenImages && <CheckmarkIcon className={classes.iconStyle} />}
               <ListItemText
                 key={`Text${i}`}
-                primary={(option / 1000).toString() + ' sekunder'}
+                primary={(option / 1000).toString() + t('animationSpeedMenu.seconds')}
                 style={{
                   color: option === timeBetweenImages ? Theme.palette.common.orangeDark : '',
                 }}
@@ -223,14 +306,15 @@ const ImageControlButtons = ({
   };
 
   const zoomInOutButton = () => {
+    const tooltipMessage = isZoomedInImage ? t('zoomOut') : t('zoomIn');
     return (
-      <Tooltip title={isZoomedInImage ? 'Vis skalert bilde' : 'Vis bilde i 1:1 størrelse'}>
+      <Tooltip title={tooltipMessage}>
         <IconButton
           disabled={isHistoryMode}
-          aria-label="Zoom inn/ut"
+          aria-label={t('zoomAria')}
           className={isHistoryMode ? classes.buttonDisabled : classes.button}
           onClick={() => {
-            setIsZoomedInImage(!isZoomedInImage);
+          setIsZoomedInImage(!isZoomedInImage);
             if (isZoomedInImage) setMeterLineVisible(false);
           }}
         >
@@ -240,11 +324,46 @@ const ImageControlButtons = ({
     );
   };
 
-  const changeDirectionButton = () => {
+  const zoomInOut360Button = (zoomType: zoomType) => {
+    const tooltipMessage = zoomType === 'zoomIn' ? t('zoomIn360') : t('zoomOut360');
     return (
-      <Tooltip title="Bytt kjøreretning">
+      <Tooltip title={tooltipMessage}>
         <IconButton
-          aria-label="Bytt kjøreretning"
+          disabled={isHistoryMode || (zoomType === 'zoomIn' && isPanoramaMinOrMaxZoom.isMaxZoom) || (zoomType === 'zoomOut' && isPanoramaMinOrMaxZoom.isMinZoom)}
+          aria-label={zoomType}
+          className={isHistoryMode || (zoomType === 'zoomIn' && isPanoramaMinOrMaxZoom.isMaxZoom) || (zoomType === 'zoomOut' && isPanoramaMinOrMaxZoom.isMinZoom) ? classes.buttonDisabled : classes.button}
+          onClick={() => {
+            zoom360(zoomType);
+          }}
+        >
+          {zoomType === "zoomIn" ? <ZoomInIcon/> : <ZoomOutIcon/>}
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
+  const moveInDirectionButton = (direction: string) => {
+    const tooltipTitle = direction === 'forwards' ? t('goForwards') : t('goBackwards');
+    const command = direction === 'forwards' ? commandTypes.goForwards : commandTypes.goBackwards;
+    return (
+      <Tooltip title={tooltipTitle}>
+      <IconButton
+        aria-label={tooltipTitle}
+        className={classes.button}
+        onClick={() => setCommand(command)}
+      >
+       {direction === 'forwards' ? <ArrowUpIcon /> : <ArrowDownIcon />}
+      </IconButton>
+    </Tooltip>
+    )
+  }
+
+  const changeDirectionButton = () => {
+    const tooltipMessage = t('turn');
+    return (
+      <Tooltip title={tooltipMessage}>
+        <IconButton
+          aria-label={tooltipMessage}
           className={clsx(classes.button, classes.arrowTurnButton)}
           onClick={() => setCommand(commandTypes.turnAround)}
         >
@@ -255,10 +374,11 @@ const ImageControlButtons = ({
   };
 
   const historyButton = () => {
+    const tooltipMessage = t('history');
     return (
-      <Tooltip title="Bilder fra andre datoer">
+      <Tooltip title={tooltipMessage}>
         <IconButton
-          aria-label="Bilder fra andre datoer"
+          aria-label={tooltipMessage}
           className={isHistoryMode ? classes.activeButton : classes.button}
           onClick={handleHistoryButtonClick}
         >
@@ -268,27 +388,78 @@ const ImageControlButtons = ({
     );
   };
 
-  const hideShowBasisLineButton = () => {
+  const panoramaFullscreenButton = () => {
+    const tooltipMessage = t('fullscreen360');
     return (
-      <Tooltip title={meterLineVisible ? 'Deaktiver basislinje' : 'Aktiver basislinje'}>
+      <Tooltip title={tooltipMessage}>
         <IconButton
-          disabled={isZoomedInImage}
-          aria-label="Deaktiver/Aktiver basislinje"
-          className={isZoomedInImage ? classes.buttonDisabled : classes.button}
+          disabled={isHistoryMode}
+          aria-label={t('fullscreen360aria')}
+          className={isHistoryMode ? classes.buttonDisabled : classes.button}
+          onClick={activatePanoramaFullscreen}
+        >
+          {<EnlargeIcon />}
+        </IconButton >
+      </Tooltip>
+    );
+  };
+
+
+  const hideShowBasisLineButton = () => {
+    let title = '';
+    let styleClass = '';
+    if (isImageWith360Capabilities) {
+      title = t('noBaseline');
+      styleClass = classes.buttonDisabled;
+    } else if (isZoomedInImage) {
+      title = '';
+      styleClass = classes.buttonDisabled;
+    } 
+    else if (!meterLineVisible) {
+      title = t('baselineActivate');
+      styleClass = classes.button;
+    } else {
+      title = t('baselineDeactivate');
+      styleClass = classes.activeButton;
+    };
+    
+    return (
+      <Tooltip title={title}>
+        <IconButton
+          disabled={isZoomedInImage || isImageWith360Capabilities}
+          aria-label={t('baselineAria')}
+          className={styleClass}
           onClick={() => setMeterLineVisible(!meterLineVisible)}
         >
-          {meterLineVisible ? <MeasureIcon /> : <MeasureDisabledIcon />}
+          {<MeasureIcon />}
         </IconButton>
       </Tooltip>
     );
   };
 
-  const moreFunctionsButton = () => {
+  const reset360ViewButton = () => {
+    const tooltipTitle = t('reset360View');
     return (
-      <Tooltip title="Flere funksjoner">
+      <Tooltip title={tooltipTitle}>
+        <IconButton
+          disabled={isHistoryMode}
+          aria-label={tooltipTitle}
+          className={isHistoryMode ? classes.buttonDisabled : classes.button}
+          onClick={reset360View}
+        >
+          {<Replay />}
+        </IconButton >
+      </Tooltip>
+    );
+  };
+
+  const moreFunctionsButton = () => {
+    const tooltipTitle = t('more');
+    return (
+      <Tooltip title={tooltipTitle}>
         <IconButton
           disabled={playVideo}
-          aria-label="Flere funksjoner"
+          aria-label={tooltipTitle}
           onClick={handleMoreControlsClick}
           className={moreControlsAnchorEl ? classes.activeButton : classes.button}
         >
@@ -298,11 +469,12 @@ const ImageControlButtons = ({
     );
   };
 
-  const playIconButton = (tooltip: string) => {
+  const playIconButton = () => {
+    const tooltipTitle = t('animationStart');
     return (
-      <Tooltip title={tooltip}>
+      <Tooltip title={tooltipTitle}>
         <IconButton
-          aria-label="Start animasjonsmodus"
+          aria-label={t('animationStart')}
           className={
             isHistoryMode
               ? classes.buttonDisabled
@@ -324,10 +496,11 @@ const ImageControlButtons = ({
   };
 
   const stopAnimationButton = () => {
+    const tooltipTitle = t('animationExit');
     return (
-      <Tooltip title="Gå ut av animasjonsmodus">
+      <Tooltip title={tooltipTitle}>
         <IconButton
-          aria-label="Gå ut av animasjonsmodus"
+          aria-label={tooltipTitle}
           className={classes.button}
           onClick={() => {
             setPlayVideo(false);
@@ -341,13 +514,14 @@ const ImageControlButtons = ({
   };
 
   const renderPlayVideoMenu = () => {
+    const tooltipTitle = playVideo ? t('animationPause') : t('animationOn');
     return (
       <>
         {stopAnimationButton()}
         {/* pause button  */}
-        <Tooltip title={playVideo ? 'Pause avspilling' : 'Spill av animasjon'}>
+        <Tooltip title={tooltipTitle}>
           <IconButton
-            aria-label={playVideo ? 'Pause avspilling' : 'Spill av'}
+            aria-label={tooltipTitle}
             className={classes.button}
             onClick={() => {
               setPlayVideo(!playVideo);
@@ -368,33 +542,20 @@ const ImageControlButtons = ({
         {playMode ? renderPlayVideoMenu() : null}
         {!playMode && !playVideo ? (
           <>
-            {/*  Render normal menu */}
-            {zoomInOutButton()}
-            {/* move backwards arrow button  */}
-            <Tooltip title="Gå bakover">
-              <IconButton
-                aria-label="Gå bakover"
-                className={classes.button}
-                onClick={() => setCommand(commandTypes.goBackwards)}
-              >
-                <ArrowDownIcon />
-              </IconButton>
-            </Tooltip>
+            {/*  Render menu */}
+            {!panoramaIsActive && zoomInOutButton()}
+            {panoramaIsActive && panoramaFullscreenButton()}
+            {panoramaIsActive && zoomInOut360Button("zoomIn")}
+            {panoramaIsActive && zoomInOut360Button("zoomOut")}
 
-            {/* move forwards arrow button  */}
-            <Tooltip title="Gå fremover">
-              <IconButton
-                aria-label="Gå fremover"
-                className={classes.button}
-                onClick={() => setCommand(commandTypes.goForwards)}
-              >
-                <ArrowUpIcon />
-              </IconButton>
-            </Tooltip>
-
+            {panoramaIsActive && reset360ViewButton()}
+            {/* moevement buttons  */}
+            {moveInDirectionButton("backwards")}
+            {moveInDirectionButton("forwards")}
             {changeDirectionButton()}
-            {playIconButton('Start animasjonsmodus')}
-            {hideShowBasisLineButton()}
+
+            {playIconButton()}
+            {!panoramaIsActive && hideShowBasisLineButton()}
             {historyButton()}
             {moreFunctionsButton()}
           </>
@@ -427,7 +588,7 @@ const ImageControlButtons = ({
             <ListItemIcon>
               <ReportIcon />
             </ListItemIcon>
-            <ListItemText primary="Meld feil" />{' '}
+            <ListItemText primary={t('moreMenu.error')} />{' '}
           </MenuItem>
 
           <MenuItem
@@ -439,7 +600,7 @@ const ImageControlButtons = ({
             <ListItemIcon>
               <ShareIcon />
             </ListItemIcon>
-            <ListItemText primary="Del" />
+            <ListItemText primary={t('moreMenu.share')} />
           </MenuItem>
 
           <Link target="_blank" rel="noopener noreferer" href={getLinkToVegkart()}>
@@ -447,7 +608,7 @@ const ImageControlButtons = ({
               <ListItemIcon>
                 <ExploreOutlinedIcon />
               </ListItemIcon>
-              <ListItemText primary="Gå til Vegkart" />
+              <ListItemText primary={t('moreMenu.vegkart')} />
             </MenuItem>
           </Link>
         </Menu>

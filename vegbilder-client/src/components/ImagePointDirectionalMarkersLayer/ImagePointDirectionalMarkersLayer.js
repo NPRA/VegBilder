@@ -180,9 +180,10 @@ const ImagePointDirectionalMarkersLayer = ({ shouldUseMapBoundsAsTargetBbox }) =
   useEffect(() => {
     if (filteredImagePoints) {
       const mapBbox = createBboxForVisibleMapArea();
-      const imagePoints = filteredImagePoints.filter((imagePoint) =>
-        imagePointIsWithinBbox(imagePoint, mapBbox)
-      );
+      const imagePoints = filteredImagePoints.filter((imagePoint) => {
+        return imagePointIsWithinBbox(imagePoint, mapBbox);
+      });
+
       setImagePointsToRender(imagePoints);
     }
   }, [filteredImagePoints, createBboxForVisibleMapArea]);

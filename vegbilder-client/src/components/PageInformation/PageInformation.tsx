@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button, Divider, makeStyles } from '@material-ui/core';
+import { useTranslation } from "react-i18next";
 
 import PopUpWrapper from 'components/wrappers/PopUpWrapper';
 import UseOfVebilder from './tabs/UseOfVegbilder';
@@ -31,18 +32,19 @@ interface IInformationProps {
 
 const PageInformation = ({ setVisible }: IInformationProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('pageInformation', {keyPrefix: "tabs"});
   const [selectedTab, setSelectedTab] = useState('Om');
 
-  const tabs = ['Om', 'Bruk', 'GDPR', 'Tilbakemelding', 'Teknisk'];
+  const tabs = [t('om'), t('bruk'), t('GDPR'), t('tilbakemelding'), t('teknisk')];
 
   const getComponentByTab = (tab: string) => {
-    if (tab === 'Bruk') {
+    if (tab === t('bruk')) {
       return <UseOfVebilder />;
-    } else if (tab === 'Teknisk') {
+    } else if (tab === t('teknisk')) {
       return <Teknisk />;
-    } else if (tab === 'GDPR') {
+    } else if (tab === t('GDPR')) {
       return <Gdpr />;
-    } else if (tab === 'Tilbakemelding') {
+    } else if (tab === t('tilbakemelding')) {
       return <FeedbackFormFrame formLink={FEEDBACK_SCHEME_URL} />;
     }
     return <About />;
@@ -56,6 +58,7 @@ const PageInformation = ({ setVisible }: IInformationProps) => {
         <div className={classes.tabs}>
           {tabs.map((tab) => (
             <Button
+              key={tab}
               style={{ color: tab === selectedTab ? Theme.palette.common.orangeDark : '' }}
               onClick={() => setSelectedTab(tab)}
             >

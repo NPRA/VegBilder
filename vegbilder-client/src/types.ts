@@ -1,5 +1,9 @@
 import { Dictionary } from 'lodash';
 
+/*
+  URL: Url to the original image (only blurred)
+  URLPREVIEW: Url to an optimised version of the original image more suitable for preview
+*/
 export interface IImagePoint {
   type: string;
   id: string;
@@ -9,6 +13,7 @@ export interface IImagePoint {
   };
   geometry_name: string;
   properties: {
+    BILDETYPE: string;
     AAR: number;
     TIDSPUNKT: string;
     FYLKENUMMER: string;
@@ -27,6 +32,7 @@ export interface IImagePoint {
     REFLINKPOSISJON: number;
     RETNING: number;
     URL: string;
+    URLPREVIEW: string;
     BASELINEINFO: string;
     DETEKTERTEOBJEKTER: string | null;
   };
@@ -55,3 +61,5 @@ export interface ILoadedImagePoints {
 export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'radius' | 'requester';
 
 export type viewTypes = 'map' | 'image';
+
+export type imageType = 'planar' | 'panorama' | 'all';

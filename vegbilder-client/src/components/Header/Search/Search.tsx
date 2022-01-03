@@ -1,11 +1,12 @@
 import React, { useEffect, useState, KeyboardEvent, useMemo } from 'react';
 import InputBase from '@material-ui/core/InputBase';
-import { fade, makeStyles } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import MenuItem from '@material-ui/core/MenuItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { ClickAwayListener, ListSubheader } from '@material-ui/core';
 import { debounce } from 'lodash';
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import getVegByVegsystemreferanse from 'apis/NVDB/getVegByVegsystemreferanse';
 import { matchAndPadVegsystemreferanse } from 'utilities/vegsystemreferanseUtilities';
@@ -18,12 +19,13 @@ import {
 } from 'recoil/selectors';
 import useAsyncError from 'hooks/useAsyncError';
 import useFetchNearestImagePoint from 'hooks/useFetchNearestImagePoint';
-import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { currentYearState } from 'recoil/atoms';
+import useFetchNearestLatestImagePoint from 'hooks/useFetchNearestLatestImagepoint';
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { getCoordinatesFromWkt } from 'utilities/latlngUtilities';
 import { ILatlng } from 'types';
 import { IGeonorgeResponse, IStedsnavn, IVegsystemData } from './types';
+
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -31,10 +33,13 @@ const useStyles = makeStyles((theme) => ({
   },
   search: {
     position: 'relative',
+    alignItems: 'center',
     borderRadius: theme.shape.borderRadius,
-    backgroundColor: fade(theme.palette.secondary.main, 0.8),
+    backgroundColor: theme.palette.common.grayDark,
+    minWidth: '44ch',
+    maxWidth: '70ch',
     '&:hover': {
-      backgroundColor: fade(theme.palette.secondary.main, 1.0),
+      backgroundColor: theme.palette.common.grayMedium,
     },
     marginLeft: 0,
     width: '100%',
@@ -53,6 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   inputRoot: {
     color: 'inherit',
+    width: '90%',
   },
   inputInput: {
     padding: theme.spacing(1.1, 1.1, 1.1, 0),
@@ -60,7 +66,6 @@ const useStyles = makeStyles((theme) => ({
     paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
     width: '100%',
     [theme.breakpoints.up('sm')]: {
-      width: '50ch',
       height: '3ch',
     },
   },
@@ -92,6 +97,22 @@ const useStyles = makeStyles((theme) => ({
       display: 'none',
     },
   },
+  button: {
+    '&:hover': {
+      color: theme.palette.common.orangeDark,
+      backgroundColor: theme.palette.common.grayDark,
+      '& span': {
+        '& svg': {
+          '& path': {
+            stroke: theme.palette.common.orangeDark,
+          },
+          '& circle': {
+            stroke: theme.palette.common.orangeDark,
+          },
+        },
+      },
+    },
+  },
 }));
 
 interface ISearchProps {
@@ -101,6 +122,7 @@ interface ISearchProps {
 
 const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const classes = useStyles();
+  const { t } = useTranslation(['snackbar', 'common']);
   const [searchString, setSearchString] = useState('');
   const [stedsnavnOptions, setStedsnavnOptions] = useState<IStedsnavn[]>([]);
   const filteredStedsnavnOptions = stedsnavnOptions.filter((stedsnavn) => !(stedsnavn.kommuner === null)); //Nytt geonorge-api kan returnere steder utenfor Norge med kommune + fylke = null. Disse filtrerer vi derfor vekk.
@@ -117,12 +139,12 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
   const throwError = useAsyncError();
   const fetchNearestImagePoint = useFetchNearestImagePoint(
     showMessage,
-    'Fant ingen bilder i nærheten av stedet du søkte på.'
+    t('snackbar:fetchMessage.error4')
   );
 
   const fetchNearestLatestImagePoint = useFetchNearestLatestImagePoint(
     showMessage,
-    'Fant ingen bilder i nærheten'
+    t('snackbar:fetchMessage.error5') 
   );
 
 
@@ -157,7 +179,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
           const newReferanceState = [vegsystemData, ...vegSystemReferanser];
           setVegSystemReferanser(newReferanceState);
         } else {
-          showMessage('Ugyldig ERF-veg');
+          showMessage(t('snackbar:fetchMessage.errorERF')); 
           setVegSystemReferanser([]);
         }
       }, 300),
@@ -284,7 +306,8 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
     }
   };
 
-  //Enkelte fylker, f.eks. Troms of Finnmark, har flere navn (bla.a. på samisk) hvor alle navnene er satt sammen i en string av typen "navn - navn2 - navn3". Ettersom språket ellers er bokmål bruker vi bare dette for å få plass i nedtrekksmenyen.
+  // Enkelte fylker, f.eks. Troms of Finnmark, har flere navn (bla.a. på samisk) hvor alle navnene er satt sammen 
+  // i en tekststreng av typen "navn - navn2 - navn3". Ettersom språket ellers er bokmål bruker vi bare dette for å få plass i nedtrekksmenyen.
   const formatFylkesnavn = (fylke: string) => {
     if (fylke.includes("-")) {
       return fylke.split("-")[0].trim();
@@ -300,7 +323,7 @@ const Search = ({ showMessage, setMapView }: ISearchProps) => {
           <MagnifyingGlassIcon />
         </div>
         <InputBase
-          placeholder="Søk"
+          placeholder={t('common:searchbar.placeholder')}
           classes={{
             root: classes.inputRoot,
             input: classes.inputInput,

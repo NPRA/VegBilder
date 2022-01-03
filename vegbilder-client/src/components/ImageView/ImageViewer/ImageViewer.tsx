@@ -2,25 +2,30 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import orderBy from 'lodash/orderBy';
 import { useRecoilValue, useRecoilState } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { isEvenNumber } from 'utilities/mathUtilities';
 import {
   getImagePointLatLng,
   getImageUrl,
+  getImageUrlOfOriginalImage,
   findNearestImagePoint,
   usesOldVegreferanse,
   areOnSameOrConsecutiveRoadParts,
   shouldIncludeImagePoint,
+  getDistanceInMillisecondsBetweenImagePoints
 } from 'utilities/imagePointUtilities';
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
 import { IImagePoint } from 'types';
 import { imagePointQueryParameterState, latLngZoomQueryParameterState } from 'recoil/selectors';
 import { debounce } from 'lodash';
+import PanoramaImage from './PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
+    position:  'relative',
     height: '100%',
     minWidth: '70%',
     backgroundColor: theme.palette.primary.main,
@@ -53,6 +58,8 @@ interface IImageViewerProps {
   isZoomedInImage?: boolean;
   timeBetweenImages: number;
   meterLineVisible: boolean;
+  isHistoryMode: boolean;
+  panoramaModeIsActive: boolean;
 }
 
 const ImageViewer = ({
@@ -60,8 +67,11 @@ const ImageViewer = ({
   isZoomedInImage,
   timeBetweenImages,
   meterLineVisible,
+  isHistoryMode,
+  panoramaModeIsActive
 }: IImageViewerProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('snackbar');
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const filteredImagePoints = useRecoilValue(filteredImagePointsState);
   const { command, resetCommand } = useCommand();
@@ -70,7 +80,7 @@ const ImageViewer = ({
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
-  const [currentLaneImagePoints, setCurrentLaneImagePoints] = useState<IImagePoint[]>([]);
+  const [currentImageSeriesOfCurrentLane, setCurrentImageSeriesOfCurrentLane] = useState<IImagePoint[]>([]);
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
 
   const imgRef = useRef<HTMLImageElement>(null);
@@ -120,7 +130,7 @@ const ImageViewer = ({
     const latlngCurrentImagePoint = getImagePointLatLng(currentImagePoint);
 
     if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) {
-      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
+      showMessage(t('navigation.error1')); 
       return;
     }
     const nearestImagePointInOppositeLane = findNearestImagePoint(
@@ -133,10 +143,10 @@ const ImageViewer = ({
       );
       if (latlngNearestImagePointInOppositeLane) {
         setCurrentImagePoint(nearestImagePointInOppositeLane);
-        setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 15 });
+        setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 16 });
       }
     } else {
-      showMessage('Finner ingen nærtliggende bilder i motsatt kjøreretning');
+      showMessage(('navigation.error1'));
     }
   }, [
     currentImagePoint,
@@ -166,30 +176,81 @@ const ImageViewer = ({
         if (usesOldVegreferanse(currentImagePoint)) {
           return orderBy(
             currentLaneImagePoints,
-            ['properties.HP', 'properties.METER'],
+            ['properties.HP','properties.METER'], 
             [sortOrder, sortOrder]
           );
         } else {
           return orderBy(
             currentLaneImagePoints,
-            ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'],
+            ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'], 
             [sortOrder, sortOrder, sortOrder]
           );
         }
       };
       if (filteredImagePoints && currentImagePoint) {
         const sortedImagePointsForCurrentLane = getSortedImagePointsForCurrentLane();
-        setCurrentLaneImagePoints(sortedImagePointsForCurrentLane);
+        /*
+        Note: Dersom alle vegref + feltkode var unike kunne vi fint brukt variablen over som gjeldende bildeserie.
+        Det finnes derimot situasjoner (eks. før og etter tunnell på motorvei) hvor to retninger har samme vegref + feltkode. 
+        (Eks. EV6 S32D1 F1 finnes i både nordgående og sørgående kjøreretning). 
+        I disse situasjonene hadde man da endt opp med å følge et felt i ei retning (eks nordgående), 
+        som så plutselig hadde snudd og gått motsatt vei (sørgående, selv om vegen egentlig fortsetter nordover). 
+
+        Vår løsning er derfor å sørge for at bildene som havner i bildeserien til det punktet man er i har maks 30 sek avstand mellom hverandre. Da
+        regner vi med at bildene har samme kjøreretning. Dersom avstanden mellom to bilder er mer enn 30 sek, går vi ut ifra at de enten har forskjellige kjøreretninger
+        eller at tidsavstanden uansett er så stor at vi anser dem som å tilhøre separate bildeserier.
+
+        Dersom vi ønsker å gå tilbake til gammel løsning hvor vi tar for gitt at et felt kun har én kjørertning, 
+        må vi sette sortedImagePointsForCurrentLane til state (mao. ikke bruke funksjonen under).
+
+        Funksjonen under lager en ny bildeserie hvor alle bildene er tatt med maks 30 sek avstand. 
+        */
+        const getCurrentImageSeriesOfCurrentLane = () => {
+          const indexOfCurrentImagePoint = sortedImagePointsForCurrentLane.findIndex((ip) => ip.id === currentImagePoint.id);
+  
+          const getStartIndexOfCurrentImageSeries = () => {
+            const defaultStartIndex = 0;
+            if (indexOfCurrentImagePoint > defaultStartIndex) {
+              for (let currentIndex = indexOfCurrentImagePoint; currentIndex > defaultStartIndex; currentIndex--) {
+                if (getDistanceInMillisecondsBetweenImagePoints(sortedImagePointsForCurrentLane[currentIndex], sortedImagePointsForCurrentLane[currentIndex - 1]) > 30000) {
+                  return currentIndex;
+                };
+              };
+            }
+            return defaultStartIndex;
+          };
+
+          const getEndIndexOfCurrentImageSeries = () => {
+            const defaultEndIndex = sortedImagePointsForCurrentLane.length - 1;
+            if (indexOfCurrentImagePoint < defaultEndIndex) {
+              for (let currentIndex = indexOfCurrentImagePoint; currentIndex < defaultEndIndex; currentIndex++) {
+                if (getDistanceInMillisecondsBetweenImagePoints(sortedImagePointsForCurrentLane[currentIndex], sortedImagePointsForCurrentLane[currentIndex + 1]) > 30000) {
+                  return currentIndex;
+                };
+              };
+            };
+            return defaultEndIndex;
+          };
+
+          const startIndexOfCurrentImageSeries = getStartIndexOfCurrentImageSeries();
+          const endIndexOfCurrentImageSeries = getEndIndexOfCurrentImageSeries();
+
+          return sortedImagePointsForCurrentLane.slice(startIndexOfCurrentImageSeries, endIndexOfCurrentImageSeries + 1); // Lager en ny liste hvor alle bildepunktene har maks 30 sek avstand mellom neste/forrige bildepunkt.
+        };
+
+        const currentImageSeriesOfCurrentLane = getCurrentImageSeriesOfCurrentLane();
+
+        setCurrentImageSeriesOfCurrentLane(currentImageSeriesOfCurrentLane);
       }
     }
   }, [filteredImagePoints, currentImagePoint]);
 
   // Set next and previous image points
   useEffect(() => {
-    if (!currentImagePoint || !currentLaneImagePoints || currentLaneImagePoints.length === 0)
+    if (!currentImagePoint || !currentImageSeriesOfCurrentLane || currentImageSeriesOfCurrentLane.length === 0)
       return;
 
-    const currentIndex = currentLaneImagePoints.findIndex((ip) => ip.id === currentImagePoint.id);
+    const currentIndex = currentImageSeriesOfCurrentLane.findIndex((ip) => ip.id === currentImagePoint.id);
     if (currentIndex === -1) {
       setNextImagePoint(null);
       setPreviousImagePoint(null);
@@ -216,7 +277,7 @@ const ImageViewer = ({
      */
 
     let nextImagePoint =
-      nextIndex < currentLaneImagePoints.length ? currentLaneImagePoints[nextIndex] : null;
+      nextIndex < currentImageSeriesOfCurrentLane.length ? currentImageSeriesOfCurrentLane[nextIndex] : null;
 
     if (nextImagePoint?.id === currentImagePoint.id) return;
     if (
@@ -226,7 +287,7 @@ const ImageViewer = ({
       nextImagePoint = null;
     }
 
-    let previousImagePoint = previousIndex >= 0 ? currentLaneImagePoints[previousIndex] : null;
+    let previousImagePoint = previousIndex >= 0 ? currentImageSeriesOfCurrentLane[previousIndex] : null;
     if (
       previousImagePoint &&
       !areOnSameOrConsecutiveRoadParts(previousImagePoint, currentImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
@@ -235,7 +296,7 @@ const ImageViewer = ({
     }
     setNextImagePoint(nextImagePoint);
     setPreviousImagePoint(previousImagePoint);
-  }, [currentImagePoint, currentLaneImagePoints]);
+  }, [currentImagePoint, currentImageSeriesOfCurrentLane]);
 
   // Apply command if present
   useEffect(() => {
@@ -248,7 +309,7 @@ const ImageViewer = ({
             setCurrentImagePoint(nextImagePoint);
             if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
-            showMessage('Dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
+            showMessage(t('navigation.lastImage'));
           }
           break;
         case commandTypes.goBackwards:
@@ -257,7 +318,7 @@ const ImageViewer = ({
             setCurrentImagePoint(previousImagePoint);
             if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
-            showMessage('Dette er første bilde i serien. Velg nytt bildepunkt i kartet.');
+            showMessage(t('navigation.firstImage')); 
           }
           break;
         case commandTypes.turnAround:
@@ -311,7 +372,7 @@ const ImageViewer = ({
         playNextImage(nextImagePoint);
       } else {
         setAutoPlay(false);
-        showMessage('Stopper film, dette er siste bilde i serien. Velg nytt bildepunkt i kartet.');
+        showMessage(t('navigation.animationLastImage'));
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -327,16 +388,24 @@ const ImageViewer = ({
     <>
       <div className={classes.imageArea}>
         {currentImagePoint && (
-          <>
-            <img
-              id="vegbilde"
-              src={getImageUrl(currentImagePoint)}
-              alt="vegbilde"
-              className={isZoomedInImage ? classes.enlargedImage : classes.image}
-              ref={imgRef}
-              onLoad={onImageLoaded}
-            />
-            {renderMeterLine()}
+           <>
+           {panoramaModeIsActive ? (
+             <PanoramaImage 
+             imageUrl={getImageUrlOfOriginalImage(currentImagePoint)} 
+             isHistoryMode={isHistoryMode}/>
+           ) : (
+             <>
+               <img
+                 id="vegbilde"
+                 src={getImageUrl(currentImagePoint)}
+                 alt="vegbilde"
+                 className={isZoomedInImage ? classes.enlargedImage : classes.image}
+                 ref={imgRef}
+                 onLoad={onImageLoaded}
+               />
+               {renderMeterLine()}
+             </>
+            )}
           </>
         )}
       </div>

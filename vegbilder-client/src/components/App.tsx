@@ -3,6 +3,7 @@ import { Grid, makeStyles, Snackbar, ThemeProvider, Typography } from '@material
 import CssBaseline from '@material-ui/core/CssBaseline';
 import MuiAlert, { AlertProps } from '@material-ui/lab/Alert';
 import { useRecoilState } from 'recoil';
+import { useTranslation } from "react-i18next";
 
 import { commandTypes, useCommand } from 'contexts/CommandContext';
 import theme from 'theme/Theme';
@@ -75,6 +76,7 @@ const Alert = (props: AlertProps) => <MuiAlert elevation={6} variant="filled" {.
 
 const App = () => {
   const classes = useStyles();
+  const { t } = useTranslation('snackbar', {keyPrefix:"fetchMessage"});
   const [view, setView] = useRecoilState(viewQueryParamterState);
   const { setCommand } = useCommand();
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
@@ -87,22 +89,24 @@ const App = () => {
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const isMobile = useIsMobile();
 
+  const searchParams = new URLSearchParams(window.location.search);
+
   const onbardingIsHidden = localStorage.getItem('HideSplashOnStartup') === 'true';
   const [showPageInformation, setShowPageInformation] = useState(!onbardingIsHidden);
 
-  const searchParams = new URLSearchParams(window.location.search);
+
   const requester = searchParams.get('requester');
   let capitalisedRequesterName = requester && requester.charAt(0).toUpperCase() + requester.slice(1);
 
   const getSnackbarMessage = (fetchType?: string) => {
+    const messageWithRequesterName = t('requesterError', {requester: capitalisedRequesterName});
     switch(fetchType) {
       case "findImagePointWithCustomRadius":
-        return (requester ? `Vi fant ingen bilder fra punktet du valgte i ${capitalisedRequesterName}. Velg et annet punkt.` :
-        "Vi fant ingen bilder fra punktet du valgte. Velg et annet punkt på kartet.");
+        return (requester ? messageWithRequesterName : t('error3')); 
       case "findImageById":
-        return 'Fant ikke angitt bildepunkt. Prøv å klikke i stedet.';
+        return t('error7'); 
       default:
-        return 'Fant ingen bilder i nærheten.';
+        return t('error5'); 
     }
   }
 
@@ -129,9 +133,9 @@ const App = () => {
     getSnackbarMessage()
   );
 
-  // Muligheten for å leite etter bilder innenfor en brukerspesifisert radius 
-  // er ment for å gi eksterne løsninger som ønsker å lenke til Vegbilder (f.eks. https://vegkart.atlas.vegvesen.no/) 
-  // muligheten til å tilpasse "søk" via url.
+ 
+  // This variant is meant to give external solutions, such as Vegkart (https://vegkart.atlas.vegvesen.no/) 
+  // the opportunity to customise their "search "for an image by adding the parameter "radius" to the url.
   const fetchNearestLatestImagePointWithCustomRadius = useFetchNearestLatestImagePoint(
     showSnackbarMessage,
     getSnackbarMessage('findImagePointWithCustomRadius'),
@@ -160,7 +164,7 @@ const App = () => {
 
   const openAppByVegsystemreferanse = async (
     vegsystemreferanse: string | undefined,
-    year: string | null
+    year: string | null,
   ) => {
     if (vegsystemreferanse) {
       const vegResponse = await getVegByVegsystemreferanse(vegsystemreferanse);
@@ -203,17 +207,19 @@ const App = () => {
     const radius = searchParams.get('radius');
     const requester = searchParams.get('requester');
 
-    // Brukes per nå kun til å gi spesifiserte tilbakemeldinger i snackbar og skal ikke bli liggende i url.
+    // This parameter is only used to formulate the snackbar message and is then
+    // removed from the url.
     if (requester) {
       removeUrlParameter('requester');
     };
 
     if (vegsystemreferanseQuery) {
       const validVegsystemReferanse = matchAndPadVegsystemreferanse(vegsystemreferanseQuery);
+      const vegrefErrorMessage = t('vegrefError', {vegsystemreferanse: vegsystemreferanseQuery});
       if (validVegsystemReferanse) {
         openAppByVegsystemreferanse(validVegsystemReferanse, yearQuery);
       } else {
-        showSnackbarMessage(`Fant ingen treff på vegsystemreferanse "${vegsystemreferanseQuery}". Prøv igjen i søkefeltet.`);
+        showSnackbarMessage(vegrefErrorMessage); 
       };
       setCurrentVegsystemreferanseState(null);
     }
@@ -234,11 +240,11 @@ const App = () => {
     else if (imageIdQuery && imageIdQuery.length > 1) {
       if (latQuery && lngQuery && yearQuery && yearQuery !== 'latest') {
         const latlng = { lat: parseFloat(latQuery), lng: parseFloat(lngQuery) };
-        fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery));
+          fetchNearestImagePointToYearAndCoordinatesByImageId(latlng, parseInt(yearQuery));
       }
     }
 
-    // Initialize year, zoom, lat, and lng when opening the app the default way
+    // Initialize year, imageType, zoom, lat, and lng when opening the app the default way
     else {
       if (!yearQuery) {
         setCurrentYear('Nyeste');
@@ -250,6 +256,7 @@ const App = () => {
         setCurrentView(DEFAULT_VIEW);
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleSnackbarClose = (reason: any) => {
@@ -259,7 +266,8 @@ const App = () => {
     setSnackbarVisible(false);
   };
 
-  // For å få snackbar til å vises til den krysses vekk av bruker må autoHideDuration settes til null.
+  // To make the snackbar visible until the user clicks it away, we need to set the autoHideDuration property of
+  // the snackbar to null (not 0). Other numbers work fine.
   const deriveSnackbarDurationFromDuration = (duration: number) => {
     if (duration === 0) {
       return null;

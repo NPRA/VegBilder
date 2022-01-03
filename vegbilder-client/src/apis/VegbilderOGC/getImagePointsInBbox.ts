@@ -1,16 +1,14 @@
 import { IBbox } from 'types';
 import vegbilderOGC from './vegbilderOGC';
 
-const getImagePointsInBbox = async (bbox: IBbox, year: number) => {
+const getImagePointsInBbox = async (bbox: IBbox, typename: string) => {
   const srsname = 'urn:ogc:def:crs:EPSG::4326';
-  const typename = `vegbilder_1_0:Vegbilder_${year}`;
 
   const params = {
     service: 'WFS',
     version: '2.0.0',
     request: 'GetFeature',
     typenames: typename,
-    typename: typename,
     startindex: 0,
     count: 10000,
     srsname: srsname,

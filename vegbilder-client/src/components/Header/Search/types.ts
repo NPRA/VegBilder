@@ -1,9 +1,9 @@
 export interface IGeonorgeResponse {
-  metadata: Metadata;
+  metadata: IGeonorgeMetadata;
   navn:     IStedsnavn[];
 }
 
-export interface Metadata {
+export interface IGeonorgeMetadata {
   treffPerSide:      number;
   side:              number;
   totaltAntallTreff: number;

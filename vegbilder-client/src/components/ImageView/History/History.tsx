@@ -2,27 +2,30 @@ import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import CloseIcon from '@material-ui/icons/Close';
+import { useTranslation } from "react-i18next";
 import { IconButton, Typography } from '@material-ui/core';
 import groupBy from 'lodash/groupBy';
-import { Dictionary } from 'lodash';
+import { NumericDictionary } from 'lodash';
+
+import CloseIcon from '@material-ui/icons/Close';
 
 import {
-  getBearingBetweenImagePoints,
   getDateString,
-  getDistanceToBetweenImagePoints,
   getFilteredImagePoints,
   getImagePointLatLng,
+  getImageType,
   getImageUrl,
-  getRoadReference,
+  getNearestImagePointInSameDirectionOfImagePoint,
+  getRoadReference
 } from 'utilities/imagePointUtilities';
-import { IImagePoint } from 'types';
-import { SelectIcon } from 'components/Icons/Icons';
+import { IImagePoint, ILoadedImagePoints } from 'types';
+import { SelectIcon, UnselectedIcon, PanoramaIcon } from 'components/Icons/Icons';
 import {
   availableYearsQuery,
   imagePointQueryParameterState,
   latLngZoomQueryParameterState,
   yearQueryParameterState,
+  availableYears
 } from 'recoil/selectors';
 import getImagePointsInTilesOverlappingBbox from 'apis/VegbilderOGC/getImagePointsInTilesOverlappingBbox';
 import { filteredImagePointsState, loadedImagePointsState } from 'recoil/atoms';
@@ -77,33 +80,43 @@ const useStyles = makeStyles((theme) => ({
     position: 'relative',
     paddingBottom: '1rem',
   },
+  panoramaImage: {
+    cursor: 'pointer',
+    height: '20vh',
+    backgroundSize: '100vw',
+    backgroundPosition: 'center',
+    borderRadius: '0px 0px 4px 4px'
+  },
   image: {
     display: 'block',
     width: '100%',
-    paddingBottom: '0.5rem',
-    borderRadius: '4px',
+    borderRadius: '0px 0px 4px 4px',
     cursor: 'pointer',
   },
-  selectIcon: {
-    position: 'absolute',
-    top: '0.2rem',
-    right: '0.2rem',
+  infoIcons: {
+    display: 'flex',
+    flexDirection: 'row',
+    columnGap: '10px',
+    alignItems: 'center',
+    '@media (max-width:780px) and (orientation: portrait)': {
+      alignItems: 'flex-end',
+      flexDirection: 'column'
+    }
   },
   info: {
     display: 'flex',
-    justifyContent: 'space-evenly',
+    flexFlow: 'row no-wrap',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     margin: 0,
-    paddingBottom: '1rem',
-  },
+    padding: '8px 12px',
+    borderRadius: '4px 4px 0px 0px',
+    backgroundColor: theme.palette.common.grayDarker
+  }
 }));
 
 const getDateObj = (imagePoint: IImagePoint) => {
   const dateString = getDateString(imagePoint); // format: 2020-08-20
-  return new Date(dateString);
-};
-
-const getDateObjWithTime = (imagePoint: IImagePoint) => {
-  const dateString = imagePoint.properties.TIDSPUNKT; // format: 2020-08-20T09:30:19Z
   return new Date(dateString);
 };
 
@@ -117,19 +130,74 @@ const getDateAndTimeString = (imagePoint: IImagePoint) => {
   return `${dateTime?.date} kl. ${dateTime?.time}`;
 };
 
-const imagePointsAreOnSameVegkategori = (imagePointA: IImagePoint, imagePointB: IImagePoint) => {
-  return imagePointA.properties.VEGKATEGORI === imagePointB.properties.VEGKATEGORI;
-};
-
 interface IHistoryProps {
   setIsHistoryMode: (isHistoryMode: boolean) => void;
 }
 
+// Her finner vi bilder, av alle tilgjengelige bildetyper, som er nærmest current image point innen hver tilgjengelige dato.
+// Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
+async function findAndSetHistoryImagePoints(
+    currentImagePoint: IImagePoint | null, 
+   loadedImagePoints: ILoadedImagePoints | null, 
+   historyImagePoints: IImagePoint[],
+   setHistoryImagePoints: React.Dispatch<React.SetStateAction<IImagePoint[]>>, 
+   availableYearsForAllImageTypes: availableYears) 
+   {
+    if (currentImagePoint && loadedImagePoints) {
+    const shouldNotRecalcualteHistoryImages = historyImagePoints.includes(currentImagePoint);
+      if (!shouldNotRecalcualteHistoryImages) {
+      setHistoryImagePoints([]);
+      const currentCoordinates = getImagePointLatLng(currentImagePoint);
+      const currentImagePointTime = getDateObj(currentImagePoint).getTime();
+
+      setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
+
+      if (currentCoordinates) {
+        const bbox = {
+          west: currentCoordinates.lng,
+          south: currentCoordinates.lat,
+          east: currentCoordinates.lng, // create the smallest possible bbox area
+          north: currentCoordinates.lat,
+        };
+
+        for (const [imageType, years] of Object.entries(availableYearsForAllImageTypes)) {
+          if (imageType === 'all' || !years.length) {
+            return;
+          }
+          for (const year of years) {
+            let typename = imageType === 'panorama' ? `vegbilder_1_0:Vegbilder_360_${year}` : `vegbilder_1_0:Vegbilder_${year}`;
+            await getImagePointsInTilesOverlappingBbox(bbox, typename).then((res) => {
+              const imagePoints = res.imagePoints;
+              const imagePointsGroupedByTime: NumericDictionary<IImagePoint[]> = groupBy(
+                imagePoints,
+                (imagePoint: IImagePoint) => getDateObj(imagePoint).getTime()
+              );
+              const uniqueDatesInOtherYears: Set<number> = new Set(
+                Object.keys(imagePointsGroupedByTime).map((time) => Number(time)).filter((time) => time !== currentImagePointTime)
+              );
+              for (const uniqueDate of uniqueDatesInOtherYears) {
+                const nearestImagePointInSameDirection = getNearestImagePointInSameDirectionOfImagePoint(imagePointsGroupedByTime[uniqueDate], currentImagePoint);
+                  if (nearestImagePointInSameDirection) {
+                    setHistoryImagePoints((prevState) => [
+                      ...prevState,
+                      nearestImagePointInSameDirection,
+                    ]);
+                  }
+                }
+            });
+          }
+        }
+      }
+    }
+  }
+}
+
+
 const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const classes = useStyles();
+  const { t } = useTranslation('imageView', {keyPrefix: "history"});
 
-  const availableYears = useRecoilValue(availableYearsQuery);
-
+  const availableYearsForAllImageTypes = useRecoilValue(availableYearsQuery);
   const [currentCoordinates, setCurrentCoordinates] = useRecoilState(latLngZoomQueryParameterState);
   const [currentImagePoint, setCurrentImagePoint] = useRecoilState(imagePointQueryParameterState);
   const loadedImagePoints = useRecoilValue(loadedImagePointsState);
@@ -142,7 +210,10 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
   const handleImageClick = (imagePoint: IImagePoint) => {
     const latlng = getImagePointLatLng(imagePoint);
     if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
+    setCurrentImagePoint(imagePoint);
+
     const yearOfClickedImage = imagePoint.properties.AAR;
+
     if (yearOfClickedImage !== currentYear) {
       setCurrentYear(yearOfClickedImage);
       if (loadedImagePoints) {
@@ -150,8 +221,6 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
         fetchImagePointsFromOGC(yearOfClickedImage, bbox);
       }
     }
-
-    setCurrentImagePoint(imagePoint);
   };
 
   useEffect(() => {
@@ -166,137 +235,16 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
     setIsHistoryMode(false);
   };
 
-  const getCurrentImagePointBearing = (
-    imagePoints: IImagePoint[],
-    currentImagePoint: IImagePoint
-  ) => {
-    const currentImagePointDateWithTime = getDateObjWithTime(currentImagePoint).getTime();
-
-    // find an image point within 30 seconds from currentImagePoint (which is then most likely on the same line)
-    const imagePointCloseToCurrent = imagePoints.find(
-      (imagePoint) =>
-        getDateObjWithTime(imagePoint).getTime() < currentImagePointDateWithTime + 30000 &&
-        getDateObjWithTime(imagePoint).getTime() > currentImagePointDateWithTime - 30000
-    );
-
-    if (imagePointCloseToCurrent) {
-      return getBearingBetweenImagePoints(currentImagePoint, imagePointCloseToCurrent);
-    }
-  };
-
-  // I useEffekt'en finner vi bilder som er nærmest current image point innen hver tilgjengelige dato.
-  // Dette er fordi bilder fra forskjellige datoer som er svært nærtliggende kan ha ulike meterreferanser.
-  // For å finne retningen av bildet så har vi to muligheter: se på retning (som ikke alle bilder har), eller regne ut bearing.
-  // I de tilfellene vi må regne ut bearing (når bildet ikke har retning) så finner vi først bearing mellom currentImagePoint og et nærliggende bilde (et bilde tatt
-  // mindre enn 30 sek etter må være veldig nærliggende). Også sammenligner vi den bearingen/retningen med de resterende bildene.
-  // til slutt så finner vi det bildet som er absolutt nærmest.
   useEffect(() => {
-    if (currentImagePoint && loadedImagePoints) {
-      const shouldNotRecalcualteHistoryImages = historyImagePoints.includes(currentImagePoint);
-      if (!shouldNotRecalcualteHistoryImages) {
-        setHistoryImagePoints([]);
-        const currentCoordinates = getImagePointLatLng(currentImagePoint);
-        const currentImagePointTime = getDateObj(currentImagePoint).getTime();
-        const currentImagePointBearing = getCurrentImagePointBearing(
-          loadedImagePoints.imagePoints,
-          currentImagePoint
-        );
-        const currentImagePointDirection = currentImagePoint.properties.RETNING;
-
-        const maxDistance = 50; // meters (avoid getting a picture on a totally different road)
-
-        setHistoryImagePoints((prevState) => [currentImagePoint, ...prevState]);
-
-        if (currentCoordinates) {
-          const bbox = {
-            west: currentCoordinates.lng,
-            south: currentCoordinates.lat,
-            east: currentCoordinates.lng, // create the smallest possible bbox area
-            north: currentCoordinates.lat,
-          };
-          availableYears.forEach(async (year) => {
-            await getImagePointsInTilesOverlappingBbox(bbox, year).then((res) => {
-              const imagePoints = res.imagePoints;
-              const uniqueDates: Set<number> = new Set();
-              const imagePointsGroupedByTime: Dictionary<IImagePoint[]> = groupBy(
-                imagePoints,
-                (imagePoint: IImagePoint) => {
-                  const time = getDateObj(imagePoint).getTime();
-                  if (time !== currentImagePointTime) {
-                    uniqueDates.add(time);
-                    return time;
-                  }
-                }
-              );
-
-              [...uniqueDates].forEach((date) => {
-                const imagePointsInSameDirection = imagePointsGroupedByTime[date].filter(
-                  (imagePoint: IImagePoint) => {
-                    if (imagePoint) {
-                      if (imagePointsAreOnSameVegkategori(currentImagePoint, imagePoint)) {
-                        const distanceBetween = getDistanceToBetweenImagePoints(
-                          currentImagePoint,
-                          imagePoint
-                        );
-                        if (distanceBetween && distanceBetween < maxDistance) {
-                          const imagePointDirection = imagePoint.properties.RETNING; // this property is more reliable than bearing, so we check this first.
-                          if (imagePointDirection && currentImagePointDirection) {
-                            if (
-                              imagePointDirection < currentImagePointDirection + 10 &&
-                              imagePointDirection > currentImagePointDirection - 10
-                            )
-                              return imagePoint;
-                          } else {
-                            const bearingBetween = getBearingBetweenImagePoints(
-                              currentImagePoint,
-                              imagePoint
-                            );
-                            if (
-                              currentImagePointBearing &&
-                              bearingBetween &&
-                              bearingBetween < currentImagePointBearing + 10 &&
-                              bearingBetween > currentImagePointBearing - 10
-                            ) {
-                              return imagePoint;
-                            }
-                          }
-                        }
-                      }
-                    }
-                    return false;
-                  }
-                );
-                if (imagePointsInSameDirection.length) {
-                  const closestImagePointInSameDirection = imagePointsInSameDirection.reduce(
-                    (prevImgpoint, currImgPoint) => {
-                      const prevDistance =
-                        getDistanceToBetweenImagePoints(currentImagePoint, prevImgpoint) ?? 10000;
-                      const currDistance =
-                        getDistanceToBetweenImagePoints(currentImagePoint, currImgPoint) ?? 10000;
-                      return prevDistance < currDistance ? prevImgpoint : currImgPoint;
-                    }
-                  );
-                  if (closestImagePointInSameDirection) {
-                    setHistoryImagePoints((prevState) => [
-                      ...prevState,
-                      closestImagePointInSameDirection,
-                    ]);
-                  }
-                }
-              });
-            });
-          });
-        }
-      }
-    }
+    findAndSetHistoryImagePoints(currentImagePoint, loadedImagePoints, historyImagePoints, setHistoryImagePoints, availableYearsForAllImageTypes);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentImagePoint, availableYears]);
+  }, [currentImagePoint, availableYearsForAllImageTypes]);
 
   return (
     <Paper className={classes.historyContent} square={true}>
       <div className={classes.historyHeader}>
         <Typography variant="h3" className={classes.headerText}>
-          Samme lokasjon og kjøreretning
+          {t('header')}
         </Typography>
         <IconButton onClick={onClose} className={classes.closeButton}>
           <CloseIcon />
@@ -305,20 +253,24 @@ const History = ({ setIsHistoryMode }: IHistoryProps) => {
       {currentImagePoint
         ? sortImagePointsByDate(historyImagePoints)?.map((imagePoint) => (
             <div key={imagePoint.id}>
+              <div className={classes.info}>
+                <div>
+                  <Typography variant="h5">{getRoadReference(imagePoint).complete}</Typography>
+                  <Typography variant="body1">{getDateAndTimeString(imagePoint)}</Typography>
+                </div>
+                <div className={classes.infoIcons}>
+                  {getImageType(imagePoint) === 'panorama' ? <PanoramaIcon/> : null}
+                  {imagePoint.id === currentImagePoint?.id ?
+                    <SelectIcon /> : <UnselectedIcon />}
+                </div>
+              </div>
               <div className={classes.imageContainer}>
-                {imagePoint.id === currentImagePoint?.id ? (
-                  <SelectIcon className={classes.selectIcon} />
-                ) : null}
-                <img
+                  <img
                   src={getImageUrl(imagePoint)}
                   alt={imagePoint.id}
                   className={classes.image}
                   onClick={() => handleImageClick(imagePoint)}
                 />
-              </div>
-              <div className={classes.info}>
-                <Typography variant="h5">{getRoadReference(imagePoint).complete}</Typography>
-                <Typography variant="body1">{getDateAndTimeString(imagePoint)}</Typography>
               </div>
             </div>
           ))

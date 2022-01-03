@@ -1,0 +1,11 @@
+{
+  "pageInfo": "Informasjon om Vegbilder",
+  "yearSelector": {
+    "category1": "PERIODE",
+    "category2": "ÅRSTALL",
+    "nyeste": "Nyeste"
+  },
+  "searchbar": {
+    "placeholder": "Søk..."
+  }
+}

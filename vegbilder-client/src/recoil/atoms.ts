@@ -1,4 +1,5 @@
 import { DEFAULT_COORDINATES } from 'constants/defaultParamters';
+import { defaultPannellumSettings } from "constants/settings";
 import { atom } from 'recoil';
 import { IImagePoint, ILatlng, ILoadedImagePoints, viewTypes } from 'types';
 import { IStatisticsFeature } from "components/PageInformation/tabs/Teknisk/StatisticsTable/types";
@@ -12,7 +13,7 @@ export const playVideoState = atom<boolean>({
 
 export const currentYearState = atom<string | number>({
   key: 'currentYear',
-  default: parseInt(searchParams.get('year')!) || 'Nyeste',
+  default: parseInt(searchParams.get('year')!) || 'Nyeste' || '',
 });
 
 export const currentVegsystemreferanseState = atom<string | null>({
@@ -58,4 +59,19 @@ export const filteredImagePointsState = atom<IImagePoint[] | null>({
 export const availableStatistics = atom<IStatisticsFeature[] | null>({
   key: 'availableStatistics',
   default: [],
+});
+
+export const currentPannellumHfovState = atom<number>({
+  key: 'currentPannellumHfovState',
+  default: defaultPannellumSettings.defaultHfov,
+});
+
+export const panoramaFullscreenIsOnState = atom<boolean>({
+  key: 'panoramaFullscreenIsOnState',
+  default: false,
+});
+
+export const isPanoramaMinOrMaxZoomState = atom<{isMinZoom: boolean, isMaxZoom: boolean}>({
+  key: 'isPanoramaMinOrMaxZoomState',
+  default: defaultPannellumSettings.minOrMaxZoom,
 })

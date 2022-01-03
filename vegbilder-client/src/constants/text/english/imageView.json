@@ -1,0 +1,50 @@
+{
+  "sidebar": {
+    "back": "Back to main map",
+    "minimapShow": "Show minimap",
+    "minimapHide": "Hide minimap",
+    "minimapAria": "Show/hide minimap"
+  },
+  "controlBar": {
+    "zoomIn": "Show 1:1 image",
+    "zoomOut": "Show scaled image",
+    "zoomAria": "Zoom in or out",
+    "zoomIn360": "Zoom in",
+    "zoomOut360": "Zoom out",
+    "fullscreen360": "Show full screen",
+    "fullscreen360aria": "Activate full screen",
+    "reset360View": "Reset view",
+    "goBackwards": "Go backwards",
+    "goForwards": "Go forwards",
+    "turn": "Change direction",
+    "animationStart": "Start animation mode",
+    "animationExit": "Exit animation mode",
+    "animationOn": "Play",
+    "animationPause": "Pause",
+    "animationSpeed": "Adjust playback speed",
+    "animationSpeedMenu": {
+      "header": "SPEED",
+      "seconds": " seconds"
+    },
+    "baselineActivate": "Show baseline",
+    "baselineDeactivate": "Hide baseline",
+    "noBaseline": "This image has no baseline",
+    "baselineAria": "Activate/Deactivate baseline",
+    "history": "Other dates",
+    "more": "More",
+    "moreMenu": {
+      "error": "Report an error",
+      "share": "Share",
+      "vegkart": "Go to Vegkart"
+    },
+    "linkCopied": "Link copied to clipboard"
+  },
+  "panorama": {
+    "label": "360 view",
+    "noPanorama": "This image doesn't have 360 capabilities",
+    "popover": "Toggle to turn 360 view on and off"
+  },
+  "history": {
+    "header": "Same location and direction"
+  }
+}

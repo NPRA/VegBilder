@@ -1,9 +1,11 @@
-import React from 'react';
+import React, { SetStateAction } from 'react';
 import { AppBar, Grid } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 
 import ImageMetadata from 'components/ImageMetadata/ImageMetadata';
 import ImageControlButtons from './ImageControlButtons';
+import { IImagePoint } from "types";
+import PanoramaToggleButton from './PanoramaToggleButton';
 
 const useStyles = makeStyles((theme) => ({
   appbar: {
@@ -26,6 +28,10 @@ const useStyles = makeStyles((theme) => ({
     height: '3.5rem',
     marginRight: '1rem',
   },
+  panoramaToggle: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  }
 }));
 
 interface IImageControlBarProps {
@@ -39,6 +45,9 @@ interface IImageControlBarProps {
   setIsZoomedInImage: (isZoomedIn: boolean) => void;
   isHistoryMode: boolean;
   setIsHistoryMode: (isHistoryMode: boolean) => void;
+  panoramaModeIsActive: boolean;
+  setPanoramaModeIsActive: (status: SetStateAction<boolean>) => void;
+  currentImagePoint: IImagePoint | null;
 }
 
 const ImageControlBar = ({
@@ -52,6 +61,9 @@ const ImageControlBar = ({
   setIsZoomedInImage,
   isHistoryMode,
   setIsHistoryMode,
+  panoramaModeIsActive,
+  setPanoramaModeIsActive,
+  currentImagePoint
 }: IImageControlBarProps) => {
   const classes = useStyles();
 
@@ -73,9 +85,19 @@ const ImageControlBar = ({
             setIsZoomedInImage={setIsZoomedInImage}
             isHistoryMode={isHistoryMode}
             setIsHistoryMode={setIsHistoryMode}
+            panoramaModeIsActive={panoramaModeIsActive}
           />
         </Grid>
-        <Grid item className={classes.rightItem} />
+        <Grid item className={classes.rightItem}>
+            <div className={classes.panoramaToggle}>
+              <PanoramaToggleButton 
+                panoramaModeIsActive={panoramaModeIsActive} 
+                setPanoramaModeIsActive={setPanoramaModeIsActive} 
+                isZoomedInImage={isZoomedInImage}
+                setIsZoomedInImage={setIsZoomedInImage}
+                currentImagePoint={currentImagePoint} />
+            </div> 
+        </Grid>
       </Grid>
     </AppBar>
   );
