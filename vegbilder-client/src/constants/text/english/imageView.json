@@ -8,11 +8,11 @@
   "controlBar": {
     "zoomIn": "Show 1:1 image",
     "zoomOut": "Show scaled image",
-    "zoomAria": "Zoom in/out",
+    "zoomAria": "Zoom in or out",
     "zoomIn360": "Zoom in",
     "zoomOut360": "Zoom out",
-    "fullscreen360": "Fullscreen",
-    "fullscreen360aria": "Activate fullscreen",
+    "fullscreen360": "Show full screen",
+    "fullscreen360aria": "Activate full screen",
     "reset360View": "Reset view",
     "goBackwards": "Go backwards",
     "goForwards": "Go forwards",
@@ -21,7 +21,7 @@
     "animationExit": "Exit animation mode",
     "animationOn": "Play",
     "animationPause": "Pause",
-    "animationSpeed": "Change playback speed",
+    "animationSpeed": "Adjust playback speed",
     "animationSpeedMenu": {
       "header": "SPEED",
       "seconds": " seconds"
@@ -40,9 +40,9 @@
     "linkCopied": "Link copied to clipboard"
   },
   "panorama": {
-    "label": "360-view",
-    "noPanorama": "This image doesn't have 360-capabilities",
-    "popover": "Toggle to turn 360-view on and off"
+    "label": "360 view",
+    "noPanorama": "This image doesn't have 360 capabilities",
+    "popover": "Toggle to turn 360 view on and off"
   },
   "history": {
     "header": "Same location and direction"

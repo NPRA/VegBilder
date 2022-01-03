@@ -26,7 +26,8 @@
   },
   "GDPR": {
     "header": "GDPR",
-    "text1": "For å ivareta gjeldene personvernregler (GDPR) er alle bilder anonymisert før publisering. Prosessen er automatisert."
+    "text1": "For å ivareta gjeldene personvernregler (",
+    "text2": ") er alle bilder anonymisert før publisering. Prosessen er automatisert."
   },
   "teknisk": {
     "header": "Teknisk",

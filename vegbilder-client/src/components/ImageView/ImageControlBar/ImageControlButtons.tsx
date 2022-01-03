@@ -438,7 +438,7 @@ const ImageControlButtons = ({
   };
 
   const reset360ViewButton = () => {
-    const tooltipTitle = t('reset360view');
+    const tooltipTitle = t('reset360View');
     return (
       <Tooltip title={tooltipTitle}>
         <IconButton

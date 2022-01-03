@@ -50,7 +50,7 @@ const HideShowMiniMapButton = ({
   const classes = useStyles();
   const { t } = useTranslation('imageView', {keyPrefix: "sidebar"});
 
-  const tooltipTitle = miniMapVisible ? t('minimapHide') : t('minimagShow');
+  const tooltipTitle = miniMapVisible ? t('minimapHide') : t('minimapShow');
 
   return (
     <Tooltip title={tooltipTitle}>

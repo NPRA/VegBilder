@@ -8,10 +8,10 @@
   "controlBar": {
     "zoomIn": "Vis bilde i 1:1 størrelse",
     "zoomOut": "Vis skalert bilde",
-    "zoomAria": "Zoom inn/ut",
+    "zoomAria": "Zoom inn eller ut",
     "zoomIn360": "Zoom inn",
     "zoomOut360": "Zoom ut",
-    "fullscreen360": "Fullskjermvisning",
+    "fullscreen360": "Vis i fullskjerm",
     "fullscreen360aria": "Aktiver fullskjermvisning",
     "reset360View": "Tilbakestill visning",
     "goBackwards": "Gå mot kjøreretning",
