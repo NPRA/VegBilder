@@ -17,7 +17,7 @@ export const WSGEONORGE = 'https://ws.geonorge.no/';
 export const NVDBAPI = 'https://nvdbapiles-v3.atlas.vegvesen.no/';
 
 export const OGC_URL =
-   process.env.NODE_ENV === 'development' || settings.productionMode
-     ? VEGBILDER_OGC
-     :
+//   process.env.NODE_ENV === 'development' || settings.productionMode
+//     ? VEGBILDER_OGC
+//     :
   VEGBILDER_OGC_UTV;
