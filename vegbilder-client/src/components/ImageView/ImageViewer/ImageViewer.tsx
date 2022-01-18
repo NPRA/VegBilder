@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import orderBy from 'lodash/orderBy';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 import { useCommand, commandTypes } from 'contexts/CommandContext';
 import { isEvenNumber } from 'utilities/mathUtilities';
@@ -14,7 +14,7 @@ import {
   usesOldVegreferanse,
   areOnSameOrConsecutiveRoadParts,
   shouldIncludeImagePoint,
-  getDistanceInMillisecondsBetweenImagePoints
+  getDistanceInMillisecondsBetweenImagePoints,
 } from 'utilities/imagePointUtilities';
 import MeterLineCanvas from './MeterLineCanvas';
 import { playVideoState, filteredImagePointsState } from 'recoil/atoms';
@@ -25,7 +25,7 @@ import PanoramaImage from './PanoramaImage/PanoramaImage';
 
 const useStyles = makeStyles((theme) => ({
   imageArea: {
-    position:  'relative',
+    position: 'relative',
     height: '100%',
     minWidth: '70%',
     backgroundColor: theme.palette.primary.main,
@@ -68,7 +68,7 @@ const ImageViewer = ({
   timeBetweenImages,
   meterLineVisible,
   isHistoryMode,
-  panoramaModeIsActive
+  panoramaModeIsActive,
 }: IImageViewerProps) => {
   const classes = useStyles();
   const { t } = useTranslation('snackbar');
@@ -80,7 +80,9 @@ const ImageViewer = ({
 
   const [nextImagePoint, setNextImagePoint] = useState<IImagePoint | null>(null);
   const [previousImagePoint, setPreviousImagePoint] = useState<IImagePoint | null>(null);
-  const [currentImageSeriesOfCurrentLane, setCurrentImageSeriesOfCurrentLane] = useState<IImagePoint[]>([]);
+  const [currentImageSeriesOfCurrentLane, setCurrentImageSeriesOfCurrentLane] = useState<
+    IImagePoint[]
+  >([]);
   const [imageElement, setImageElement] = useState<HTMLImageElement | null>(null);
 
   const imgRef = useRef<HTMLImageElement>(null);
@@ -130,7 +132,7 @@ const ImageViewer = ({
     const latlngCurrentImagePoint = getImagePointLatLng(currentImagePoint);
 
     if (imagePointsInOppositeLane.length === 0 || !latlngCurrentImagePoint) {
-      showMessage(t('navigation.error1')); 
+      showMessage(t('navigation.error1'));
       return;
     }
     const nearestImagePointInOppositeLane = findNearestImagePoint(
@@ -146,7 +148,7 @@ const ImageViewer = ({
         setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 16 });
       }
     } else {
-      showMessage(('navigation.error1'));
+      showMessage('navigation.error1');
     }
   }, [
     currentImagePoint,
@@ -176,13 +178,13 @@ const ImageViewer = ({
         if (usesOldVegreferanse(currentImagePoint)) {
           return orderBy(
             currentLaneImagePoints,
-            ['properties.HP','properties.METER'], 
+            ['properties.HP', 'properties.METER'],
             [sortOrder, sortOrder]
           );
         } else {
           return orderBy(
             currentLaneImagePoints,
-            ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'], 
+            ['properties.STREKNING', 'properties.DELSTREKNING', 'properties.METER'],
             [sortOrder, sortOrder, sortOrder]
           );
         }
@@ -206,16 +208,27 @@ const ImageViewer = ({
         Funksjonen under lager en ny bildeserie hvor alle bildene er tatt med maks 30 sek avstand. 
         */
         const getCurrentImageSeriesOfCurrentLane = () => {
-          const indexOfCurrentImagePoint = sortedImagePointsForCurrentLane.findIndex((ip) => ip.id === currentImagePoint.id);
-  
+          const indexOfCurrentImagePoint = sortedImagePointsForCurrentLane.findIndex(
+            (ip) => ip.id === currentImagePoint.id
+          );
+
           const getStartIndexOfCurrentImageSeries = () => {
             const defaultStartIndex = 0;
             if (indexOfCurrentImagePoint > defaultStartIndex) {
-              for (let currentIndex = indexOfCurrentImagePoint; currentIndex > defaultStartIndex; currentIndex--) {
-                if (getDistanceInMillisecondsBetweenImagePoints(sortedImagePointsForCurrentLane[currentIndex], sortedImagePointsForCurrentLane[currentIndex - 1]) > 30000) {
+              for (
+                let currentIndex = indexOfCurrentImagePoint;
+                currentIndex > defaultStartIndex;
+                currentIndex--
+              ) {
+                if (
+                  getDistanceInMillisecondsBetweenImagePoints(
+                    sortedImagePointsForCurrentLane[currentIndex],
+                    sortedImagePointsForCurrentLane[currentIndex - 1]
+                  ) > 30000
+                ) {
                   return currentIndex;
-                };
-              };
+                }
+              }
             }
             return defaultStartIndex;
           };
@@ -223,34 +236,58 @@ const ImageViewer = ({
           const getEndIndexOfCurrentImageSeries = () => {
             const defaultEndIndex = sortedImagePointsForCurrentLane.length - 1;
             if (indexOfCurrentImagePoint < defaultEndIndex) {
-              for (let currentIndex = indexOfCurrentImagePoint; currentIndex < defaultEndIndex; currentIndex++) {
-                if (getDistanceInMillisecondsBetweenImagePoints(sortedImagePointsForCurrentLane[currentIndex], sortedImagePointsForCurrentLane[currentIndex + 1]) > 30000) {
+              for (
+                let currentIndex = indexOfCurrentImagePoint;
+                currentIndex < defaultEndIndex;
+                currentIndex++
+              ) {
+                if (
+                  getDistanceInMillisecondsBetweenImagePoints(
+                    sortedImagePointsForCurrentLane[currentIndex],
+                    sortedImagePointsForCurrentLane[currentIndex + 1]
+                  ) > 30000
+                ) {
                   return currentIndex;
-                };
-              };
-            };
+                }
+              }
+            }
             return defaultEndIndex;
           };
 
           const startIndexOfCurrentImageSeries = getStartIndexOfCurrentImageSeries();
           const endIndexOfCurrentImageSeries = getEndIndexOfCurrentImageSeries();
 
-          return sortedImagePointsForCurrentLane.slice(startIndexOfCurrentImageSeries, endIndexOfCurrentImageSeries + 1); // Lager en ny liste hvor alle bildepunktene har maks 30 sek avstand mellom neste/forrige bildepunkt.
+          return sortedImagePointsForCurrentLane.slice(
+            startIndexOfCurrentImageSeries,
+            endIndexOfCurrentImageSeries + 1
+          ); // Lager en ny liste hvor alle bildepunktene har maks 30 sek avstand mellom neste/forrige bildepunkt.
         };
 
-        const currentImageSeriesOfCurrentLane = getCurrentImageSeriesOfCurrentLane();
+        // This if-check is to avoid an "can't access properties of undefined"-error which is caused when the user selects a new year.
+        // Because filteredImagePoints is updated before currentImagePoint, we get a state where the years are different.
+        // This causes te error in getCurrentImageSeriesOfCurrentLane, which presumes that the currentImagePoint is in
+        // the filteredImagePoints list.
+        if (currentImagePoint.properties.AAR === filteredImagePoints[0].properties.AAR) {
+          const currentImageSeriesOfCurrentLane = getCurrentImageSeriesOfCurrentLane();
 
-        setCurrentImageSeriesOfCurrentLane(currentImageSeriesOfCurrentLane);
+          setCurrentImageSeriesOfCurrentLane(currentImageSeriesOfCurrentLane);
+        }
       }
     }
   }, [filteredImagePoints, currentImagePoint]);
 
   // Set next and previous image points
   useEffect(() => {
-    if (!currentImagePoint || !currentImageSeriesOfCurrentLane || currentImageSeriesOfCurrentLane.length === 0)
+    if (
+      !currentImagePoint ||
+      !currentImageSeriesOfCurrentLane ||
+      currentImageSeriesOfCurrentLane.length === 0
+    )
       return;
 
-    const currentIndex = currentImageSeriesOfCurrentLane.findIndex((ip) => ip.id === currentImagePoint.id);
+    const currentIndex = currentImageSeriesOfCurrentLane.findIndex(
+      (ip) => ip.id === currentImagePoint.id
+    );
     if (currentIndex === -1) {
       setNextImagePoint(null);
       setPreviousImagePoint(null);
@@ -277,7 +314,9 @@ const ImageViewer = ({
      */
 
     let nextImagePoint =
-      nextIndex < currentImageSeriesOfCurrentLane.length ? currentImageSeriesOfCurrentLane[nextIndex] : null;
+      nextIndex < currentImageSeriesOfCurrentLane.length
+        ? currentImageSeriesOfCurrentLane[nextIndex]
+        : null;
 
     if (nextImagePoint?.id === currentImagePoint.id) return;
     if (
@@ -287,7 +326,8 @@ const ImageViewer = ({
       nextImagePoint = null;
     }
 
-    let previousImagePoint = previousIndex >= 0 ? currentImageSeriesOfCurrentLane[previousIndex] : null;
+    let previousImagePoint =
+      previousIndex >= 0 ? currentImageSeriesOfCurrentLane[previousIndex] : null;
     if (
       previousImagePoint &&
       !areOnSameOrConsecutiveRoadParts(previousImagePoint, currentImagePoint) // Avoid jumping to a road part which is not directly connected to the current one
@@ -318,7 +358,7 @@ const ImageViewer = ({
             setCurrentImagePoint(previousImagePoint);
             if (latlng) setCurrentCoordinates({ ...latlng, zoom: currentCoordinates.zoom });
           } else {
-            showMessage(t('navigation.firstImage')); 
+            showMessage(t('navigation.firstImage'));
           }
           break;
         case commandTypes.turnAround:
@@ -388,23 +428,24 @@ const ImageViewer = ({
     <>
       <div className={classes.imageArea}>
         {currentImagePoint && (
-           <>
-           {panoramaModeIsActive ? (
-             <PanoramaImage 
-             imageUrl={getImageUrlOfOriginalImage(currentImagePoint)} 
-             isHistoryMode={isHistoryMode}/>
-           ) : (
-             <>
-               <img
-                 id="vegbilde"
-                 src={getImageUrl(currentImagePoint)}
-                 alt="vegbilde"
-                 className={isZoomedInImage ? classes.enlargedImage : classes.image}
-                 ref={imgRef}
-                 onLoad={onImageLoaded}
-               />
-               {renderMeterLine()}
-             </>
+          <>
+            {panoramaModeIsActive ? (
+              <PanoramaImage
+                imageUrl={getImageUrlOfOriginalImage(currentImagePoint)}
+                isHistoryMode={isHistoryMode}
+              />
+            ) : (
+              <>
+                <img
+                  id="vegbilde"
+                  src={getImageUrl(currentImagePoint)}
+                  alt="vegbilde"
+                  className={isZoomedInImage ? classes.enlargedImage : classes.image}
+                  ref={imgRef}
+                  onLoad={onImageLoaded}
+                />
+                {renderMeterLine()}
+              </>
             )}
           </>
         )}

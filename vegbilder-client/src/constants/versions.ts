@@ -1,18 +1,19 @@
 const versionLog = {
-  'v2.0.1': [
-    'Gjort noen endringer på den engelske oversettelsen'
+  'v2.0.3': [
+    '🐞 Bugfiks: Fikset bytte av år i filteret når man er i bildevisningen. Mulig å bytte år igjen uten å få feilmelding.',
   ],
+  'v2.0.1': ['Gjort noen endringer på den engelske oversettelsen'],
   'v2.0.0': [
     'Lagt til muligheten til å bytte mellom norsk og engelsk',
-    'Lagt til visning av 360-bilder'
+    'Lagt til visning av 360-bilder',
   ],
   'v1.3.16': [
     'Oppdatert til Geonorges nye api for stedsnavn',
-    'Mulig å legge til parameteren "radius" i url for å begrense søk etter bilder til innenfor en radius (i meter) fra et koordinat'
+    'Mulig å legge til parameteren "radius" i url for å begrense søk etter bilder til innenfor en radius (i meter) fra et koordinat',
   ],
   'v1.3.8': [
     'Kan sende med vegsystemreferanse i url',
-    'La til statistikk som gir en oversikt over hvor mange bilder som er tilgjengelige'
+    'La til statistikk som gir en oversikt over hvor mange bilder som er tilgjengelige',
   ],
   'v1.3.5': ['Pakkeoppdateringer, inkludert en stor endring i kartet og diverse kodeforbedringer'],
   'v1.3.4': ['Bedre skalering av headeren,'],
