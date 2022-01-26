@@ -1,22 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useResetRecoilState } from 'recoil';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 import { FormGroup, FormControlLabel, Tooltip, Typography, makeStyles } from '@material-ui/core';
 import { Switch } from '@material-ui/core';
 import { useRect } from '@reactour/utils';
 import { Mask } from '@reactour/mask';
-import { Popover as ReactourPopover } from "@reactour/popover";
+import { Popover as ReactourPopover } from '@reactour/popover';
 
 import CloseButton from 'components/CloseButton/CloseButton';
 import { isPanoramaMinOrMaxZoomState } from 'recoil/atoms';
-import { getImageType } from "utilities/imagePointUtilities";
-import { IImagePoint } from "types";
+import { getImageType } from 'utilities/imagePointUtilities';
+import { IImagePoint } from 'types';
 
 const useStyles = makeStyles(() => ({
   panoramaLabel: {
-    textAlign: 'center'  //Used to make sure text is centered when resizing window
-  }
+    textAlign: 'center', //Used to make sure text is centered when resizing window
+  },
 }));
 interface IPanoramaToggleButton {
   panoramaModeIsActive: boolean;
@@ -27,12 +27,13 @@ interface IPanoramaToggleButton {
 }
 
 const PanoramaToggleButton = ({
-  panoramaModeIsActive, 
-  setPanoramaModeIsActive, 
-  isZoomedInImage, 
-  setIsZoomedInImage, 
-  currentImagePoint}: IPanoramaToggleButton) => {
-  const { t } = useTranslation('imageView', {keyPrefix: 'panorama'});
+  panoramaModeIsActive,
+  setPanoramaModeIsActive,
+  isZoomedInImage,
+  setIsZoomedInImage,
+  currentImagePoint,
+}: IPanoramaToggleButton) => {
+  const { t } = useTranslation('imageView', { keyPrefix: 'panorama' });
   // Used by popover (reactour)
   const elementRef = useRef(null);
   const wrapperRef = useRef(null);
@@ -62,24 +63,19 @@ const PanoramaToggleButton = ({
       right: 'left',
       left: 'right',
     };
-  
+
     const width = 16;
     const height = 12;
     const isVertical = position === 'top' || position === 'bottom';
     const spaceFromSide = 57;
     const styleObj = {
-      [isVertical ? 'borderLeft' : 'borderTop']: `${width /
-        2}px solid transparent`, // CSS Triangle width
-      [isVertical ? 'borderRight' : 'borderBottom']: `${width /
-        2}px solid transparent`, // CSS Triangle width
-      [`border${position[0].toUpperCase()}${position.substring(
-        1
-      )}`]: `${height}px solid #2E3539`, // CSS Triangle height
-      [isVertical ? opositeSide[horizontalAlign] : verticalAlign]:
-        height + spaceFromSide, // space from side
+      [isVertical ? 'borderLeft' : 'borderTop']: `${width / 2}px solid transparent`, // CSS Triangle width
+      [isVertical ? 'borderRight' : 'borderBottom']: `${width / 2}px solid transparent`, // CSS Triangle width
+      [`border${position[0].toUpperCase()}${position.substring(1)}`]: `${height}px solid #2E3539`, // CSS Triangle height
+      [isVertical ? opositeSide[horizontalAlign] : verticalAlign]: height + spaceFromSide, // space from side
       [opositeSide[position]]: -height + 2,
     };
-  
+
     return {
       '&::after': {
         content: "''",
@@ -100,22 +96,23 @@ const PanoramaToggleButton = ({
         left: '30px',
         top: '-10px',
         transition: 'none',
-        ...createPopopArrow(state.position, state.verticalAlign, state.horizontalAlign)
-      }
-    }
-  }
+        ...createPopopArrow(state.position, state.verticalAlign, state.horizontalAlign),
+      };
+    },
+  };
 
   const handlePopoverRemoval = () => {
     localStorage.setItem(HIDE_POPOVER, 'true');
     setShowPopover(false);
-  }
+  };
 
   const switchPanoramaMode = () => {
     setPanoramaModeIsActive(!panoramaModeIsActive);
     resetPanoramaMinOrMaxZoom();
-    if (isZoomedInImage) { /* Reset zoom in planar-view, if active */
+    if (isZoomedInImage) {
+      /* Reset zoom in planar-view, if active */
       setIsZoomedInImage(!isZoomedInImage);
-    };
+    }
     if (!hidePopoverIsSet) {
       handlePopoverRemoval();
     }
@@ -128,28 +125,35 @@ const PanoramaToggleButton = ({
       <FormGroup>
         <Tooltip ref={elementRef} title={tooltipTitle}>
           <FormControlLabel
-            control={<Switch disabled={currentImageType !== 'panorama' ? true: false} checked={panoramaModeIsActive} onChange={switchPanoramaMode} name="Panorama-toggle" />}
+            control={
+              <Switch
+                disabled={currentImageType !== 'panorama' ? true : false}
+                checked={panoramaModeIsActive}
+                onChange={switchPanoramaMode}
+                name="Panorama-toggle"
+              />
+            }
             label={t('label')}
             labelPlacement="top"
             className={classes.panoramaLabel}
           />
         </Tooltip>
       </FormGroup>
-        {showPopover ? 
+      {showPopover ? (
         <div>
-          <Mask 
-          sizes={sizes}
-          styles={{maskWrapper: base => ({...base, zIndex: 99999})}}
-          />
-            <ReactourPopover sizes={sizes} position="top" styles={popoverStyles}>
-              <CloseButton onClick={handlePopoverRemoval} customStyle={{height: '1.5rem', width: '1.5rem'}} iconSize='small'/>
-              <Typography>{t('panorama.popover')}</Typography>
-            </ReactourPopover>
-            </div>
-        : null}
+          <Mask sizes={sizes} styles={{ maskWrapper: (base) => ({ ...base, zIndex: 99999 }) }} />
+          <ReactourPopover sizes={sizes} position="top" styles={popoverStyles}>
+            <CloseButton
+              onClick={handlePopoverRemoval}
+              customStyle={{ height: '1.5rem', width: '1.5rem' }}
+              iconSize="small"
+            />
+            <Typography>{t('popover')}</Typography>
+          </ReactourPopover>
+        </div>
+      ) : null}
     </div>
-  )
+  );
 };
-
 
 export default PanoramaToggleButton;
