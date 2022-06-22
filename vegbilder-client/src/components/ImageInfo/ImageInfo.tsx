@@ -1,6 +1,6 @@
 import React, { FunctionComponent, SVGProps, useEffect, useState } from 'react';
 import { makeStyles, Paper, SvgIconTypeMap, Typography } from '@material-ui/core';
-import { useTranslation } from "react-i18next";
+import { useTranslation } from 'react-i18next';
 
 import { getImagePointLatLng } from 'utilities/imagePointUtilities';
 import { IImagePoint, ILatlng } from 'types';
@@ -8,11 +8,12 @@ import { GetKommuneAndFylkeByLatLng } from 'apis/geonorge/getKommuneAndFylkeByLa
 import { getDistanceFromLatLonInKm } from 'utilities/latlngUtilities';
 import GetVegObjektByVegsystemreferanseAndVegobjektid from 'apis/NVDB/getVegObjektByVegsystemreferanseAndVegobjektid';
 import ImageInfoButton from './ImageInfoButton';
-import { CommuteOutlined, RoomOutlined, SpeedOutlined } from '@material-ui/icons';
+import { CommuteOutlined, RoomOutlined, SpeedOutlined, DateRange } from '@material-ui/icons';
 import { OverridableComponent } from '@material-ui/core/OverridableComponent';
 import { ContractIcon, DistanceToIcon, SladdetIcon } from 'components/Icons/Icons';
 import GetVeglenkesekvenserByVegsystemreferanse from 'apis/NVDB/getVeglenkesekvenserByVegsystemreferanse';
 import GetPositionDataByLatLng from 'apis/NVDB/getPositionDataByLatLng';
+import { toLocaleDateAndTime } from 'utilities/dateTimeUtilities';
 
 const useStyles = makeStyles((theme) => ({
   infoContainer: {
@@ -140,6 +141,7 @@ const ImageInfo = ({
   const [broNavn, setBroNavn] = useState<(string | number)[]>([]);
   const [tunnelNavn, setTunnelNavn] = useState<(string | number)[]>([]);
   const [vegsystemreferanse, setVegsystemReferanse] = useState('');
+  const [lagretTid, setLagretTid] = useState<{ date: string; time: string }>();
 
   const fartsgrenseId = 105;
   const broId = 60;
@@ -292,6 +294,9 @@ const ImageInfo = ({
         setDistanceToLindesnes(kmToLindesnes);
         setDistanceToNordkapp(kmToNordkapp);
       }
+      if (imagePoint.properties.LAGRET_TID) {
+        setLagretTid(toLocaleDateAndTime(imagePoint.properties.LAGRET_TID));
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [imagePoint]);
@@ -327,7 +332,7 @@ const ImageInfo = ({
           disabled={disabled ?? false}
         />
         <Typography variant="subtitle1" className={classes.infoHeader}>
-          {t('imageInfo.header')} 
+          {t('imageInfo.header')}
         </Typography>
       </div>
       {imagePoint ? (
@@ -369,12 +374,16 @@ const ImageInfo = ({
           {fartsgrense.length ? (
             <ItemGroupContainer headline={t('imageInfo.speed')} Icon={SpeedOutlined}>
               {fartsgrense.map((fart, index) => (
-                <Typography key={index} variant="body1" className={classes.lines}>{`${fart}km/h`}</Typography>
+                <Typography
+                  key={index}
+                  variant="body1"
+                  className={classes.lines}
+                >{`${fart}km/h`}</Typography>
               ))}
             </ItemGroupContainer>
           ) : null}
           {trafikkMengde.length ? (
-            <ItemGroupContainer headline={t('imageInfo.traffic')} Icon={CommuteOutlined}> 
+            <ItemGroupContainer headline={t('imageInfo.traffic')} Icon={CommuteOutlined}>
               {trafikkMengde.map((trafikkMengdeItem) => (
                 <Typography key={trafikkMengdeItem} variant="body1" className={classes.lines}>
                   {trafikkMengdeItem}
@@ -384,7 +393,9 @@ const ImageInfo = ({
           ) : null}
           {imagePoint.properties.DETEKTERTEOBJEKTER ? (
             <ItemGroupContainer
-              headline={`${t('imageInfo.maskedObjects')} (${getNumberOfDetectedObjects(imagePoint)})`} 
+              headline={`${t('imageInfo.maskedObjects')} (${getNumberOfDetectedObjects(
+                imagePoint
+              )})`}
               Icon={SladdetIcon}
             >
               <div className={classes.detectedObjects}>
@@ -410,12 +421,21 @@ const ImageInfo = ({
               ))}
             </ItemGroupContainer>
           ) : null}
+          {lagretTid ? (
+            <ItemGroupContainer headline={t('imageInfo.date_published')} Icon={DateRange}>
+              <Typography
+                key={imagePoint.properties.LAGRET_TID}
+                variant="body1"
+                className={classes.lines}
+              >{`${lagretTid.date} kl. ${lagretTid.time}`}</Typography>
+            </ItemGroupContainer>
+          ) : null}
           {position ? (
             <Paper className={classes.itemGroupContainer}>
               <div className={classes.NordkappLindesnesHeader}>
                 <DistanceToIcon className={classes.icon} />
                 <Typography variant="subtitle2" className={classes.NordkappLindesnesHeaderWord}>
-                  Nordkapp        
+                  Nordkapp
                 </Typography>
                 <Typography variant="subtitle2" className={classes.NordkappLindesnesHeaderWord}>
                   Lindesnes

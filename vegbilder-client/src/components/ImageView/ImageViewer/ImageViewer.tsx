@@ -148,7 +148,7 @@ const ImageViewer = ({
         setCurrentCoordinates({ ...latlngNearestImagePointInOppositeLane, zoom: 16 });
       }
     } else {
-      showMessage('navigation.error1');
+      showMessage(t('navigation.error1'));
     }
   }, [
     currentImagePoint,

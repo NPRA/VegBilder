@@ -6,8 +6,7 @@
     "tilbakemelding": "FEEDBACK",
     "teknisk": "TECHNICAL"
   },
-  "omVegbilder": 
-  {  
+  "omVegbilder": {
     "header": "About VEGBILDER",
     "image_description": "Snøhetta, as seen from E6 at Hjerkinn.",
     "image_credits": "Photo: Knut Opeide, Statens Vegvesen",
@@ -27,14 +26,14 @@
   "GDPR": {
     "header": "GDPR",
     "text1": "To comply with ",
-    "text2":  ", the images are anonymised in an automated process before publication."
+    "text2": ", the images are anonymised in an automated process before publication."
   },
   "teknisk": {
     "header": "Technical",
     "subheader1": "APIs",
     "subheader2": "Version log",
     "text1": "The name of locations, counties and municipalities are retreived from ",
-    "text2": "Information about the road network are retrieved from ",
+    "text2": "Information about the road network is retrieved from ",
     "statistics": {
       "header": "Images on this application",
       "description": "The table gives an overview of the number of images available on this application, sorted by year and road category.",
@@ -45,7 +44,7 @@
       "column3": "NR",
       "column4": "CR",
       "column5": "Others",
-      "earlierYears" : " and older",
+      "earlierYears": " and older",
       "buttonLabel": "Show and hide previous years."
     }
   },

@@ -16,6 +16,7 @@ export interface IImagePoint {
     BILDETYPE: string;
     AAR: number;
     TIDSPUNKT: string;
+    LAGRET_TID?: string;
     FYLKENUMMER: string;
     VEGKATEGORI: string;
     VEGSTATUS: string;
@@ -58,7 +59,16 @@ export interface ILoadedImagePoints {
   availableDates?: string[];
 }
 
-export type queryParameterNames = 'imageId' | 'year' | 'view' | 'lat' | 'lng' | 'zoom' | 'vegsystemreferanse' | 'radius' | 'requester';
+export type queryParameterNames =
+  | 'imageId'
+  | 'year'
+  | 'view'
+  | 'lat'
+  | 'lng'
+  | 'zoom'
+  | 'vegsystemreferanse'
+  | 'radius'
+  | 'requester';
 
 export type viewTypes = 'map' | 'image';
 
