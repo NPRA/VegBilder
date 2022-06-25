@@ -9,6 +9,7 @@
     "speed": "FARTSGRENSER",
     "traffic": "TRAFIKKMENGDE",
     "maskedObjects": "MASKERTE OBJEKTER",
-    "contracts": "KONTRAKTSOMRÅDER"
+    "contracts": "KONTRAKTSOMRÅDER",
+    "date_published": "PUBLISERT"
   }
 }

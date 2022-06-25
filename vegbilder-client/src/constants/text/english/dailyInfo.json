@@ -9,6 +9,7 @@
     "speed": "SPEED LIMITS",
     "traffic": "TRAFFIC VOLUME",
     "maskedObjects": "MASKED OBJECTS",
-    "contracts": "CONTRACT AREAS"
+    "contracts": "CONTRACT AREAS",
+    "date_published": "PUBLISHED"
   }
 }
