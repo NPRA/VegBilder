@@ -1,5 +1,5 @@
 const versionLog = {
-  'v2.0.6': ['Lagt til visning av publiseringsdato på vegbilder som har dette.'],
+  'v2.0.9': ['Lagt til visning av publiseringsdato på vegbilder som har dette.'],
   'v2.0.5': ['Fikset en liten språkfeil'],
   'v2.0.3': [
     '🐞 Bugfiks: Fikset bytte av år i filteret når man er i bildevisningen. Mulig å bytte år igjen uten å få feilmelding.',
