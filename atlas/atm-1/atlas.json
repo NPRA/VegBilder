@@ -2,6 +2,6 @@
   "schemaVersion": "v1",
   "type": "Deployment",
   "spec": {
-    "environment": "utvikling"
+    "environment": "atm-1"
   }
 }

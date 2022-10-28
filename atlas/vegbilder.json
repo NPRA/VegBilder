@@ -5,11 +5,10 @@
     "name": "vegbilder",
     "replicas": 1,
     "image": {
-      "type": "GavImageDescriptor",
+      "type": "ImageReferenceDescriptor",
       "spec": {
-        "artifactId": "vegbilder",
-        "groupid": "no.vegvesen.vegfoto",
-        "version": "0.1.11",
+        "tag": "2.0.9",
+        "imageRepositoryName": "atlas-docker.artrepo.vegvesen.no/vegfoto/vegbilder",
         "port": 8080
       }
     }

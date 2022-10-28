@@ -6,7 +6,7 @@
       "type": "ImageReferenceDescriptor",
       "spec": {
         "imageRepositoryName": "atlas-docker.artrepo.vegvesen.no/vegfoto/vegbilder",
-        "tag": "1.3.2",
+        "tag": "2.0.9",
         "port": 8080
       }
     },
