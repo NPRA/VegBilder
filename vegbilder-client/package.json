@@ -27,7 +27,7 @@
     "react-leaflet": "^3.2.0",
     "react-pannellum": "git://github.com/NPRA/react-pannellum.git#vegbilder-modifications",
     "react-responsive": "^8.2.0",
-    "react-scripts": "^4.0.3",
+    "react-scripts": "^5.0.1",
     "recoil": "^0.3.1",
     "typescript": "^4.3.4",
     "use-leaflet": "^1.6.1"
